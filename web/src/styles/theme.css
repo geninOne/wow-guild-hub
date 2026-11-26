@@ -6287,7 +6287,7 @@ img {
   white-space: nowrap;
 }
 
-/* Fußzeile bei allen Kacheln gleich hoch, auch leer; der Zuwachs einzeilig und gedämpft. */
+/* Fußzeile bei allen Kacheln gleich hoch, auch leer; der Zuwachs einzeilig, gedämpft und wie der Wert rechtsbündig. */
 .attribute-foot {
   display: block;
   height: 1.7rem;
@@ -6298,6 +6298,7 @@ img {
   font-size: 0.8rem;
   font-variant-numeric: tabular-nums;
   line-height: 1.7rem;
+  text-align: right;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
