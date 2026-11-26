@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
-  <!-- Neutrales Platzhalter-Wappen: Schild mit Streitaxt. Eigenes Logo über SEITE_LOGO. -->
+  <!-- Neutrales Platzhalter-Wappen: Schild mit Streitaxt. Eigenes Logo über SITE_LOGO. -->
   <defs>
     <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#ffe08a"/>

@@ -6,17 +6,17 @@ interface ImportMetaEnv {
   /** Datum der Version aus CHANGELOG.md (sonst Baudatum) als JJJJ-MM-TT. */
   readonly VITE_VERSION_DATUM?: string;
   /** Angaben zur Seite, siehe .env.example. */
-  readonly SEITE_NAME?: string;
-  readonly SEITE_LOGO?: string;
-  readonly SEITE_LOGO_ALT?: string;
-  readonly SEITE_UNTERTITEL?: string;
-  readonly SEITE_DISCORD?: string;
-  readonly SEITE_IMPRESSUM_NAME?: string;
-  readonly SEITE_IMPRESSUM_ANSCHRIFT?: string;
-  readonly SEITE_IMPRESSUM_EMAIL?: string;
-  readonly SEITE_UMAMI_ID?: string;
+  readonly SITE_NAME?: string;
+  readonly SITE_LOGO?: string;
+  readonly SITE_LOGO_ALT?: string;
+  readonly SITE_TAGLINE?: string;
+  readonly SITE_DISCORD?: string;
+  readonly SITE_IMPRINT_NAME?: string;
+  readonly SITE_IMPRINT_ADDRESS?: string;
+  readonly SITE_IMPRINT_EMAIL?: string;
+  readonly SITE_UMAMI_ID?: string;
   /** Angebotene Sprachen, kommagetrennt: de, en, schwaebisch, bayrisch. */
-  readonly SEITE_SPRACHEN?: string;
+  readonly SITE_LANGUAGES?: string;
   /** Name der Wochenzeitung. */
-  readonly SEITE_ZEITUNG?: string;
+  readonly SITE_NEWSPAPER?: string;
 }

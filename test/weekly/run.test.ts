@@ -47,7 +47,7 @@ test("snapshotDates: letzter Stand vor der Woche, sonst frühester in der Woche"
 
 test("wertet die letzte abgeschlossene Woche aus und schreibt Ergebnis und Index", async () => {
   // Installation mit Dialekten, wie die Bärenklaue-Gilden
-  vi.stubEnv("SEITE_SPRACHEN", "de,schwaebisch,bayrisch,en");
+  vi.stubEnv("SITE_LANGUAGES", "de,schwaebisch,bayrisch,en");
   onTestFinished(() => {
     vi.unstubAllEnvs();
   });

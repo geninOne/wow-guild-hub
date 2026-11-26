@@ -1,6 +1,6 @@
 // Neue Version vorbereiten: node scripts/release.mjs <patch|minor|major|aktuell>
 // patch, minor, major: erhöht die Version in package.json und package-lock.json, macht aus
-// "Unveröffentlicht" in CHANGELOG.md den Abschnitt der neuen Version, committet "Version X.Y.Z" und setzt
+// "Unreleased" in CHANGELOG.md den Abschnitt der neuen Version, committet "Version X.Y.Z" und setzt
 // das Tag vX.Y.Z. aktuell: setzt nur das Tag für die Version in package.json (Abschnitt muss existieren).
 // Gepusht wird nicht. Der Release-Workflow (Knopf "Run workflow") ruft dieses Skript selbst auf.
 import { execFileSync } from "node:child_process";

@@ -1,5 +1,5 @@
 /** Platzhalter in `index.html` für die öffentliche Adresse der Seite (Open Graph verlangt absolute Bildadressen). */
-export const SITE_URL_PLACEHOLDER = "%SITE_URL%";
+export const SITE_URL_PLACEHOLDER = "{{SITE_URL}}";
 
 /**
  * Setzt die Adresse ein. Netlify stellt sie beim Bauen als `URL` bereit; lokal fehlt sie, dann bleiben die

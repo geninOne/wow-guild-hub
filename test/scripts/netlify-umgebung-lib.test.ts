@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import {
   NETLIFY_VARIABLEN,
-  SEITE_VARIABLEN,
+  SITE_VARIABLEN,
   setzeVariablen,
   variablenAusEnv,
   variablenAusUmgebung,
@@ -14,8 +14,8 @@ GUILD_SLUGS=bärenklaue,goldene-bärenklaue
 BNET_REGION=eu
 BNET_LOCALE=
 COLLECT_CONCURRENCY=10
-TAKT=an
-TAKT_GILDE_MINUTEN=60
+LOCAL_SCHEDULER=on
+LOCAL_SCHEDULER_GUILD_MINUTES=60
 FREMD=x
 `;
 
@@ -36,27 +36,27 @@ describe("variablenAusEnv", () => {
       "BNET_CLIENT_SECRET",
       "GUILD_SLUGS",
       "GUILD_RANKS",
-      "TITEL_ABMELDUNGEN",
+      "TITLE_OPT_OUTS",
       "WOW_VERSION",
       "BNET_REGION",
       "BNET_LOCALE",
       "COLLECT_CONCURRENCY",
       "COLLECT_BUDGET_MS",
-      "ZEITUNG_KI_URL",
-      "ZEITUNG_KI_SCHLUESSEL",
-      "ZEITUNG_MODELL",
-      "ZEITUNG_AUFWAND",
-      "ZEITUNG_KI_OUTPUT_CONFIG",
-      ...SEITE_VARIABLEN,
+      "NEWSPAPER_AI_URL",
+      "NEWSPAPER_AI_KEY",
+      "NEWSPAPER_AI_MODEL",
+      "NEWSPAPER_AI_EFFORT",
+      "NEWSPAPER_AI_OUTPUT_CONFIG",
+      ...SITE_VARIABLEN,
     ]);
-    expect(SEITE_VARIABLEN.every((v) => v.startsWith("SEITE_"))).toBe(true);
+    expect(SITE_VARIABLEN.every((v) => v.startsWith("SITE_"))).toBe(true);
     expect(NETLIFY_VARIABLEN).not.toContain("ANTHROPIC_API_KEY");
   });
 
   test("KI-Variablen kommen mit, wenn sie einen Wert haben", () => {
-    const keys = variablenAusEnv(`${ENV}ZEITUNG_KI_URL=https://gateway.example\nZEITUNG_KI_SCHLUESSEL=\nANTHROPIC_API_KEY=x\n`).map((v) => v.key);
-    expect(keys).toContain("ZEITUNG_KI_URL");
-    expect(keys).not.toContain("ZEITUNG_KI_SCHLUESSEL");
+    const keys = variablenAusEnv(`${ENV}NEWSPAPER_AI_URL=https://gateway.example\nNEWSPAPER_AI_KEY=\nANTHROPIC_API_KEY=x\n`).map((v) => v.key);
+    expect(keys).toContain("NEWSPAPER_AI_URL");
+    expect(keys).not.toContain("NEWSPAPER_AI_KEY");
     expect(keys).not.toContain("ANTHROPIC_API_KEY");
   });
 });
@@ -71,7 +71,7 @@ describe("variablenAusUmgebung", () => {
         GUILD_RANKS: "",
         BNET_REGION: "us",
         COLLECT_BUDGET_MS: "15000",
-        TAKT: "an",
+        LOCAL_SCHEDULER: "on",
       }),
     ).toEqual([
       { key: "BNET_CLIENT_ID", value: "id-wert-123" },
@@ -86,13 +86,13 @@ describe("variablenAusUmgebung", () => {
 
   test("KI-Variablen sind freiwillig: fehlen sie, kommen sie nicht mit und nichts scheitert", () => {
     const zugang = { BNET_CLIENT_ID: "id", BNET_CLIENT_SECRET: "geheim", GUILD_SLUGS: "g" };
-    const ohne = variablenAusUmgebung({ ...zugang, ZEITUNG_KI_URL: "", ANTHROPIC_API_KEY: "netlify" }).map((v) => v.key);
+    const ohne = variablenAusUmgebung({ ...zugang, NEWSPAPER_AI_URL: "", ANTHROPIC_API_KEY: "netlify" }).map((v) => v.key);
     expect(ohne.filter((k) => k.startsWith("ZEITUNG") || k.startsWith("ANTHROPIC"))).toEqual([]);
-    const mit = variablenAusUmgebung({ ...zugang, ZEITUNG_KI_URL: "https://gateway.example", ZEITUNG_KI_SCHLUESSEL: "s", ZEITUNG_MODELL: "anthropic-router" });
+    const mit = variablenAusUmgebung({ ...zugang, NEWSPAPER_AI_URL: "https://gateway.example", NEWSPAPER_AI_KEY: "s", NEWSPAPER_AI_MODEL: "anthropic-router" });
     expect(mit.slice(-3)).toEqual([
-      { key: "ZEITUNG_KI_URL", value: "https://gateway.example" },
-      { key: "ZEITUNG_KI_SCHLUESSEL", value: "s" },
-      { key: "ZEITUNG_MODELL", value: "anthropic-router" },
+      { key: "NEWSPAPER_AI_URL", value: "https://gateway.example" },
+      { key: "NEWSPAPER_AI_KEY", value: "s" },
+      { key: "NEWSPAPER_AI_MODEL", value: "anthropic-router" },
     ]);
   });
 

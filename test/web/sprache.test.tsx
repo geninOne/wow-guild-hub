@@ -27,7 +27,7 @@ afterEach(() => {
 
 /** Alle vier Sprachen angeboten, wie auf einer Installation mit Dialekten. */
 function mitDialekten() {
-  vi.stubEnv("SEITE_SPRACHEN", "de,schwaebisch,bayrisch,en");
+  vi.stubEnv("SITE_LANGUAGES", "de,schwaebisch,bayrisch,en");
 }
 
 function seite() {
@@ -48,7 +48,7 @@ test("Standard ist Deutsch, der Umschalter bietet ohne Angabe Deutsch und Englis
   expect(screen.getByText(/^Daten aus der Blizzard-API, stündlich aktualisiert/)).toBeTruthy();
 });
 
-test("Mit SEITE_SPRACHEN bietet der Umschalter auch die Dialekte, Deutsch vorn", () => {
+test("Mit SITE_LANGUAGES bietet der Umschalter auch die Dialekte, Deutsch vorn", () => {
   mitDialekten();
   seite();
   expect(umschalter().value).toBe("de");
@@ -56,7 +56,7 @@ test("Mit SEITE_SPRACHEN bietet der Umschalter auch die Dialekte, Deutsch vorn",
 });
 
 test("Nur Deutsch angeboten: kein Umschalter", () => {
-  vi.stubEnv("SEITE_SPRACHEN", "de");
+  vi.stubEnv("SITE_LANGUAGES", "de");
   seite();
   expect(screen.queryByRole("combobox", { name: "Sprache" })).toBeNull();
   expect(angeboteneSprachen()).toEqual(["de"]);
@@ -101,7 +101,7 @@ test("Browser auf Englisch ohne gemerkte Wahl ergibt Englisch", () => {
 
 test("Browser auf Englisch, aber Englisch nicht angeboten: Deutsch", () => {
   browserSprache("en-US");
-  vi.stubEnv("SEITE_SPRACHEN", "de,bayrisch");
+  vi.stubEnv("SITE_LANGUAGES", "de,bayrisch");
   expect(gemerkteSprache()).toBe("de");
 });
 

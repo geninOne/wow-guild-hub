@@ -46,7 +46,7 @@ const WETTER_SPRACHE: Alle<string> = {
   bayrisch: "auf Bayrisch",
 };
 
-/** Was der Systemprompt über die Installation wissen muss: Name der Zeitung (SEITE_ZEITUNG) und Gildennamen. */
+/** Was der Systemprompt über die Installation wissen muss: Name der Zeitung (SITE_NEWSPAPER) und Gildennamen. */
 export interface PromptRahmen {
   zeitung?: string;
   gilden?: string[];
@@ -341,7 +341,7 @@ export function createClaudeGenerator(options: ClaudeGeneratorOptions): TextGene
       ...(options.outputConfig
         ? { output_config: { effort: options.effort ?? "low", format: { type: "json_schema" as const, schema: ctx.wetter ? SCHEMA_MIT_WETTER : SCHEMA } } }
         : {}),
-      system: systemPrompt(sprache, Boolean(ctx.wetter), { zeitung: ctx.zeitung ?? process.env.SEITE_ZEITUNG, gilden: ctx.gilden }),
+      system: systemPrompt(sprache, Boolean(ctx.wetter), { zeitung: ctx.zeitung ?? process.env.SITE_NEWSPAPER, gilden: ctx.gilden }),
       messages: [
         {
           role: "user",
@@ -369,7 +369,7 @@ export function createClaudeGenerator(options: ClaudeGeneratorOptions): TextGene
   }
 
   // Alle Fassungen gleichzeitig, damit es nicht länger dauert als eine: Hochdeutsch, Englisch und die angebotenen
-  // Dialekte (SEITE_SPRACHEN), damit fremde Installationen keine Dialekt-Aufrufe bezahlen. Scheitert Hochdeutsch,
+  // Dialekte (SITE_LANGUAGES), damit fremde Installationen keine Dialekt-Aufrufe bezahlen. Scheitert Hochdeutsch,
   // schreiben die Satzbausteine alles; scheitert eine andere Sprache, springen die Satzbausteine für sie ein.
   return async (facts, context): Promise<TextResult> => {
     const sprachen = sprachenFuer(context);
@@ -440,23 +440,23 @@ export function createClaudeGenerator(options: ClaudeGeneratorOptions): TextGene
 }
 
 /**
- * Texter nach Umgebung. Claude schreibt nur über das eigene AI Gateway: `ZEITUNG_KI_URL` (Basis-URL) und
- * `ZEITUNG_KI_SCHLUESSEL` (geht als `x-api-key` mit). Fehlt eines davon, schreiben die Satzbausteine.
+ * Texter nach Umgebung. Claude schreibt nur über das eigene AI Gateway: `NEWSPAPER_AI_URL` (Basis-URL) und
+ * `NEWSPAPER_AI_KEY` (geht als `x-api-key` mit). Fehlt eines davon, schreiben die Satzbausteine.
  *
  * `ANTHROPIC_API_KEY` und `ANTHROPIC_BASE_URL` werden absichtlich nicht gelesen: Netlifys eigenes AI Gateway
  * setzt beide in jeder Function von selbst, und dann liefe die KI über Netlify-Credits statt über unser Gateway.
  *
- * Weitere Einstellungen: `ZEITUNG_MODELL` (Vorgabe anthropic-router), `ZEITUNG_KI_OUTPUT_CONFIG=an` schickt
- * Aufwand und JSON-Schema mit, `ZEITUNG_AUFWAND` (Vorgabe low) gilt nur dann.
+ * Weitere Einstellungen: `NEWSPAPER_AI_MODEL` (Vorgabe anthropic-router), `NEWSPAPER_AI_OUTPUT_CONFIG=on` schickt
+ * Aufwand und JSON-Schema mit, `NEWSPAPER_AI_EFFORT` (Vorgabe low) gilt nur dann.
  */
 export function generatorFromEnv(
   env: Record<string, string | undefined> = process.env,
   optionen: { fetch?: typeof fetch } = {},
 ): TextGenerator {
-  const baseURL = env.ZEITUNG_KI_URL?.trim();
-  const schluessel = env.ZEITUNG_KI_SCHLUESSEL?.trim();
+  const baseURL = env.NEWSPAPER_AI_URL?.trim();
+  const schluessel = env.NEWSPAPER_AI_KEY?.trim();
   if (!baseURL || !schluessel) return bausteinGenerator;
-  const effort = EFFORTS.find((e) => e === env.ZEITUNG_AUFWAND) ?? "low";
+  const effort = EFFORTS.find((e) => e === env.NEWSPAPER_AI_EFFORT) ?? "low";
   const client = new Anthropic({
     // Alles ausdrücklich, damit das SDK nichts aus ANTHROPIC_*-Variablen oder Profilen nachlädt.
     apiKey: schluessel,
@@ -470,8 +470,8 @@ export function generatorFromEnv(
   });
   return createClaudeGenerator({
     client,
-    model: env.ZEITUNG_MODELL?.trim() || DEFAULT_MODEL,
-    outputConfig: env.ZEITUNG_KI_OUTPUT_CONFIG === "an",
+    model: env.NEWSPAPER_AI_MODEL?.trim() || DEFAULT_MODEL,
+    outputConfig: env.NEWSPAPER_AI_OUTPUT_CONFIG === "on",
     effort,
   });
 }

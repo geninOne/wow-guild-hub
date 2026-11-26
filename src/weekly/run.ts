@@ -17,7 +17,7 @@ import { isOptedOut, rankTitles, TITLE_OPT_OUTS } from "./titles";
 export interface WeeklyDeps {
   store: JsonStore;
   now: () => Date;
-  /** Abmeldeliste für Titel; Standard aus `TITEL_ABMELDUNGEN`. */
+  /** Abmeldeliste für Titel; Standard aus `TITLE_OPT_OUTS`. */
   optOuts?: (string | number)[];
   /** Texter für die Zeitung; Standard nach Umgebung (Claude API mit Schlüssel, sonst Satzbausteine). */
   generator?: TextGenerator;

@@ -7,9 +7,9 @@ export { fassungIn, SPRACH_NAMEN, SPRACHEN, type Fassungen, type Sprache } from 
 /** Schlüssel im localStorage, unter dem die Wahl je Besucher gemerkt wird (Name aus der Anfangszeit, bleibt). */
 export const SPRACH_SCHLUESSEL = "wow-guild-hub-sprache";
 
-/** Sprachen, die diese Installation anbietet (SEITE_SPRACHEN, Standard Deutsch und Englisch). */
+/** Sprachen, die diese Installation anbietet (SITE_LANGUAGES, Standard Deutsch und Englisch). */
 export function angeboteneSprachen(): Sprache[] {
-  return aktiveSprachen(import.meta.env.SEITE_SPRACHEN);
+  return aktiveSprachen(import.meta.env.SITE_LANGUAGES);
 }
 
 /**

@@ -243,7 +243,7 @@ test("Satzbausteine: jeder Topf hat Hochdeutsch, Englisch, Schwäbisch und Bayri
   }
 });
 
-test("Zeitungsname: SEITE_ZEITUNG für alle Sprachen, sonst Gildenblatt, Guild Gazette, Gildeblatt und Gildnblatt", async () => {
+test("Zeitungsname: SITE_NEWSPAPER für alle Sprachen, sonst Gildenblatt, Guild Gazette, Gildeblatt und Gildnblatt", async () => {
   const { zeitungsName } = await import("../../src/weekly/bausteine-woche");
   expect(zeitungsName("de")).toBe("Gildenblatt");
   expect(zeitungsName("en", "")).toBe("Guild Gazette");
@@ -282,21 +282,21 @@ test("geteilter Titel: die Zeitung nennt beim Gleichstand an der Spitze den Tite
   expect(result.some((f) => f.kind === "titel" && f.titleId === "dauerlaeufer")).toBe(false);
 });
 
-test("ohne SEITE_SPRACHEN gibt es Deutsch und Englisch, aber keine Dialekte", async () => {
+test("ohne SITE_LANGUAGES gibt es Deutsch und Englisch, aber keine Dialekte", async () => {
   const { writeIssue } = await import("../../src/weekly/zeitung-text");
-  const vorher = process.env.SEITE_SPRACHEN;
-  delete process.env.SEITE_SPRACHEN;
+  const vorher = process.env.SITE_LANGUAGES;
+  delete process.env.SITE_LANGUAGES;
   try {
     const issue = writeIssue([{ kind: "stosszeit", weekday: 4, hour: 20, count: 9 }], { week: "2026-11-21", name: () => "x" });
     const d = issue.articles[0].dialekte as Record<string, { headline: string; text: string }>;
     expect(Object.keys(d)).toEqual(["en"]);
     expect(`${d.en.headline} ${d.en.text}`).toMatch(/Friday|20:00/);
     expect(Object.keys(issue.mottoDialekte)).toEqual(["en"]);
-    process.env.SEITE_SPRACHEN = "de,bayrisch";
+    process.env.SITE_LANGUAGES = "de,bayrisch";
     const mitBayrisch = writeIssue([{ kind: "ruhig" }], { week: "2026-11-21", name: () => "x" });
     expect(Object.keys(mitBayrisch.articles[0].dialekte ?? {}).sort()).toEqual(["bayrisch", "en"]);
   } finally {
-    if (vorher === undefined) delete process.env.SEITE_SPRACHEN;
-    else process.env.SEITE_SPRACHEN = vorher;
+    if (vorher === undefined) delete process.env.SITE_LANGUAGES;
+    else process.env.SITE_LANGUAGES = vorher;
   }
 });

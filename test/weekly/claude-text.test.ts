@@ -14,7 +14,7 @@ const FACTS: ZeitungFact[] = [
 ];
 const names: Record<number, string> = { 1: "Anna", 2: "Bodo", 3: "Cleo" };
 const ctx = { week: "2026-W46", name: (id: number) => names[id], allNames: ["Anna", "Bodo", "Cleo"] };
-/** Wie eine Installation mit allen Sprachen (SEITE_SPRACHEN=de,schwaebisch,bayrisch,en). */
+/** Wie eine Installation mit allen Sprachen (SITE_LANGUAGES=de,schwaebisch,bayrisch,en). */
 const ctxAlle = { ...ctx, sprachen: SPRACHEN };
 
 const good = {
@@ -149,13 +149,13 @@ test("generatorFromEnv: ANTHROPIC_API_KEY und ANTHROPIC_BASE_URL allein führen 
   const netlify = { ANTHROPIC_API_KEY: "netlify-schluessel", ANTHROPIC_BASE_URL: "https://netlify.example/anthropic" };
   expect(generatorFromEnv({})).toBe(bausteinGenerator);
   expect(generatorFromEnv(netlify)).toBe(bausteinGenerator);
-  expect(generatorFromEnv({ ...netlify, ZEITUNG_KI_URL: "https://gateway.example" })).toBe(bausteinGenerator);
-  expect(generatorFromEnv({ ...netlify, ZEITUNG_KI_SCHLUESSEL: "eigener-schluessel" })).toBe(bausteinGenerator);
-  expect(generatorFromEnv({ ZEITUNG_KI_URL: " ", ZEITUNG_KI_SCHLUESSEL: "eigener-schluessel" })).toBe(bausteinGenerator);
+  expect(generatorFromEnv({ ...netlify, NEWSPAPER_AI_URL: "https://gateway.example" })).toBe(bausteinGenerator);
+  expect(generatorFromEnv({ ...netlify, NEWSPAPER_AI_KEY: "eigener-schluessel" })).toBe(bausteinGenerator);
+  expect(generatorFromEnv({ NEWSPAPER_AI_URL: " ", NEWSPAPER_AI_KEY: "eigener-schluessel" })).toBe(bausteinGenerator);
 });
 
 test("generatorFromEnv: mit eigenen Variablen gehen Basis-URL, x-api-key und Modell an das Gateway, nie an Netlify", async () => {
-  vi.stubEnv("SEITE_SPRACHEN", "");
+  vi.stubEnv("SITE_LANGUAGES", "");
   onTestFinished(() => {
     vi.unstubAllEnvs();
   });
@@ -164,14 +164,14 @@ test("generatorFromEnv: mit eigenen Variablen gehen Basis-URL, x-api-key und Mod
     ANTHROPIC_API_KEY: "netlify-schluessel",
     ANTHROPIC_BASE_URL: "https://netlify.example/anthropic",
     ANTHROPIC_AUTH_TOKEN: "netlify-token",
-    ZEITUNG_KI_URL: "https://gateway.example/claude",
-    ZEITUNG_KI_SCHLUESSEL: "eigener-schluessel",
-    ZEITUNG_MODELL: "mein-router",
+    NEWSPAPER_AI_URL: "https://gateway.example/claude",
+    NEWSPAPER_AI_KEY: "eigener-schluessel",
+    NEWSPAPER_AI_MODEL: "mein-router",
   };
   const result = await generatorFromEnv(env, { fetch: fetchFn })(FACTS, ctx);
   expect(result).toMatchObject({ generator: "claude", model: "router-antwort" });
   expect(result.fallback).toBeUndefined();
-  // Ohne SEITE_SPRACHEN nur Deutsch und Englisch: keine bezahlten Dialekt-Aufrufe
+  // Ohne SITE_LANGUAGES nur Deutsch und Englisch: keine bezahlten Dialekt-Aufrufe
   expect(anfragen).toHaveLength(2);
   for (const a of anfragen) {
     expect(a.url).toBe("https://gateway.example/claude/v1/messages");
@@ -185,22 +185,22 @@ test("generatorFromEnv: mit eigenen Variablen gehen Basis-URL, x-api-key und Mod
   }
 });
 
-test("generatorFromEnv: Vorgabemodell anthropic-router, output_config nur mit ZEITUNG_KI_OUTPUT_CONFIG=an", async () => {
-  const basis = { ZEITUNG_KI_URL: "https://gateway.example", ZEITUNG_KI_SCHLUESSEL: "eigener-schluessel" };
+test("generatorFromEnv: Vorgabemodell anthropic-router, output_config nur mit NEWSPAPER_AI_OUTPUT_CONFIG=on", async () => {
+  const basis = { NEWSPAPER_AI_URL: "https://gateway.example", NEWSPAPER_AI_KEY: "eigener-schluessel" };
   const ohne = fakeFetch();
   await generatorFromEnv(basis, { fetch: ohne.fetchFn })(FACTS, ctx);
   expect(ohne.anfragen[0].body).toMatchObject({ model: "anthropic-router" });
   expect(ohne.anfragen[0].body).not.toHaveProperty("output_config");
 
   const mit = fakeFetch();
-  await generatorFromEnv({ ...basis, ZEITUNG_KI_OUTPUT_CONFIG: "an", ZEITUNG_AUFWAND: "high" }, { fetch: mit.fetchFn })(FACTS, ctx);
+  await generatorFromEnv({ ...basis, NEWSPAPER_AI_OUTPUT_CONFIG: "on", NEWSPAPER_AI_EFFORT: "high" }, { fetch: mit.fetchFn })(FACTS, ctx);
   expect(mit.anfragen[0].body).toMatchObject({ output_config: { effort: "high", format: { type: "json_schema" } } });
 });
 
 test("generatorFromEnv: ungültige Antwort des Gateways führt zum Rückfall", async () => {
   const { fetchFn } = fakeFetch("Tut mir leid, heute kein JSON.");
   const log = vi.spyOn(console, "warn").mockImplementation(() => {});
-  const result = await generatorFromEnv({ ZEITUNG_KI_URL: "https://gateway.example", ZEITUNG_KI_SCHLUESSEL: "s" }, { fetch: fetchFn })(FACTS, ctx);
+  const result = await generatorFromEnv({ NEWSPAPER_AI_URL: "https://gateway.example", NEWSPAPER_AI_KEY: "s" }, { fetch: fetchFn })(FACTS, ctx);
   expect(result).toEqual({ ...(await bausteinGenerator(FACTS, ctx)), fallback: expect.stringContaining("JSON") });
   expect(log).toHaveBeenCalledTimes(1);
   log.mockRestore();
@@ -258,11 +258,11 @@ test("Systemprompt: Name der Zeitung und Gilden aus dem Rahmen, ohne festen Gild
   expect(systemPrompt("de", false, { gilden: ["Eisenfaust"] })).toContain("der World-of-Warcraft-Gilde Eisenfaust.");
 });
 
-test("KI: Englisch kommt immer dazu, Dialekte nur mit SEITE_SPRACHEN; SEITE_ZEITUNG und Gilden landen im Prompt", async () => {
-  const vorher = { sprachen: process.env.SEITE_SPRACHEN, zeitung: process.env.SEITE_ZEITUNG };
+test("KI: Englisch kommt immer dazu, Dialekte nur mit SITE_LANGUAGES; SITE_NEWSPAPER und Gilden landen im Prompt", async () => {
+  const vorher = { sprachen: process.env.SITE_LANGUAGES, zeitung: process.env.SITE_NEWSPAPER };
   try {
-    process.env.SEITE_SPRACHEN = "de,schwaebisch";
-    process.env.SEITE_ZEITUNG = "Bärenklaue-Blatt";
+    process.env.SITE_LANGUAGES = "de,schwaebisch";
+    process.env.SITE_NEWSPAPER = "Bärenklaue-Blatt";
     const { client, create } = fakeClient(good);
     const result = await createClaudeGenerator({ client, log: () => {} })(FACTS, { ...ctx, gilden: ["Eisenfaust"] });
     const systeme = create.mock.calls.map((c) => (c[0] as { system: string }).system);
@@ -273,7 +273,7 @@ test("KI: Englisch kommt immer dazu, Dialekte nur mit SEITE_SPRACHEN; SEITE_ZEIT
     expect(Object.keys(result.articles[0].dialekte ?? {})).toEqual(["en", "schwaebisch"]);
     expect(Object.keys(result.mottoDialekte ?? {})).toEqual(["en", "schwaebisch"]);
   } finally {
-    for (const [k, v] of [["SEITE_SPRACHEN", vorher.sprachen], ["SEITE_ZEITUNG", vorher.zeitung]] as const) {
+    for (const [k, v] of [["SITE_LANGUAGES", vorher.sprachen], ["SITE_NEWSPAPER", vorher.zeitung]] as const) {
       if (v === undefined) delete process.env[k];
       else process.env[k] = v;
     }

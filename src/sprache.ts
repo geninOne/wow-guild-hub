@@ -1,11 +1,11 @@
 // Sprachen der Seite: Deutsch (Standard) und Englisch für alle, Schwäbisch und Bayrisch als einschaltbare Dialekte.
-// Welche davon eine Installation anbietet, steht in SEITE_SPRACHEN (kommagetrennt, Deutsch immer dabei).
+// Welche davon eine Installation anbietet, steht in SITE_LANGUAGES (kommagetrennt, Deutsch immer dabei).
 // Gemeinsam für Server (Zeitung, Titel, Statistik) und Oberfläche.
 
 export const SPRACHEN = ["de", "en", "schwaebisch", "bayrisch"] as const;
 export type Sprache = (typeof SPRACHEN)[number];
 
-/** Die Dialekte neben Hochdeutsch, nur auf Wunsch (SEITE_SPRACHEN). */
+/** Die Dialekte neben Hochdeutsch, nur auf Wunsch (SITE_LANGUAGES). */
 export const DIALEKTE = ["schwaebisch", "bayrisch"] as const;
 export type Dialekt = (typeof DIALEKTE)[number];
 
@@ -14,7 +14,7 @@ export type Fassungen<T = string> = { de: T; en: T } & Partial<Record<Dialekt, T
 
 export const STANDARD_SPRACHE: Sprache = "de";
 
-/** Ohne SEITE_SPRACHEN gibt es Deutsch und Englisch. */
+/** Ohne SITE_LANGUAGES gibt es Deutsch und Englisch. */
 export const STANDARD_SPRACHEN: readonly Sprache[] = ["de", "en"];
 
 export const SPRACH_NAMEN: Record<Sprache, string> = {
@@ -33,7 +33,7 @@ export function istDialekt(sprache: Sprache): sprache is Dialekt {
 }
 
 /**
- * Angebotene Sprachen aus SEITE_SPRACHEN, in der Reihenfolge der Angabe. Deutsch ist immer dabei und steht vorn,
+ * Angebotene Sprachen aus SITE_LANGUAGES, in der Reihenfolge der Angabe. Deutsch ist immer dabei und steht vorn,
  * Unbekanntes fällt weg. Leer oder fehlend heißt Deutsch und Englisch.
  */
 export function aktiveSprachen(raw: string | undefined | null): Sprache[] {

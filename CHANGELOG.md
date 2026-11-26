@@ -1,28 +1,28 @@
-# Änderungen
+# Changelog
 
-Alle nennenswerten Änderungen an WoW Guild Hub. Versionsnummern nach
-[Semantic Versioning](https://semver.org/lang/de/): Patch für Korrekturen, Minor für neue Inhalte,
-Major für Änderungen, nach denen Betreiber etwas umstellen müssen.
+All notable changes to WoW Guild Hub. Version numbers follow
+[Semantic Versioning](https://semver.org/): patch for fixes, minor for new content,
+major for changes that require operators to adjust something.
 
-Neue Einträge kommen unter "Unveröffentlicht". `npm run release:patch`, `release:minor` oder
-`release:major` macht daraus den Abschnitt der neuen Version, committet und setzt das Tag.
+New entries go under "Unreleased". `npm run release:patch`, `release:minor` or
+`release:major` turns them into the section of the new version, commits and sets the tag.
 
-## Unveröffentlicht
+## Unreleased
 
-Erste öffentliche Version. Die Seite entstand für eine Gemeinschaft aus zwei Gilden in WoW Forever und ist jetzt
-für jede Gilde nutzbar.
+First public version. The site was built for a community of two guilds in WoW Forever and can now
+be used by any guild.
 
-- **Gilde, Charaktere, Berufe:** Mitgliederliste mit Filtern, Charakterseiten mit Ausrüstung, Talenten, Berufen,
-  Ruf, Dungeons und Raids sowie Monatsrückblick, Berufe-Verzeichnis mit Rezepten. Mehrere Gilden lassen sich zu
-  einer Gemeinschaft zusammenfassen.
-- **Statistik:** Klassen- und Levelverteilung, Heatmap der Aktivität, Gildenstatistik nach Woche, Monat und
-  gesamt, Dungeons und Raids der ganzen Gilde.
-- **Spaßtitel und Wochenzeitung:** zwölf Titel je Woche mit Ehrentafel und eine Wochenzeitung aus
-  Satzbausteinen oder, mit eigenem KI-Gateway, von Claude geschrieben.
-- **Sprachen:** Deutsch und Englisch, auf Wunsch zusätzlich Schwäbisch und Bayrisch (`SEITE_SPRACHEN`).
-- **Konfiguration nur über Umgebungsvariablen:** Gilde, Rangnamen, Spielversion, Name, Logo, Farben, Discord,
-  Impressum und Umami (siehe `.env.example`). Impressum und Datenschutzerklärung sind Vorlagen mit Platzhaltern.
-- **Erweiterungen:** Module für eigene Reiter, Seiten, Charakterdaten, Zeitungsartikel und Rechtstexte
+- **Guild, characters, professions:** member list with filters, character pages with gear, talents, professions,
+  reputation, dungeons and raids plus a monthly review, profession directory with recipes. Several guilds can be
+  combined into one community.
+- **Statistics:** class and level distribution, activity heatmap, guild statistics by week, month and
+  all time, dungeons and raids of the whole guild.
+- **Fun titles and weekly newspaper:** twelve titles per week with a hall of fame, and a weekly newspaper built from
+  text blocks or, with your own AI gateway, written by Claude.
+- **Languages:** German and English, optionally also Swabian and Bavarian (`SITE_LANGUAGES`).
+- **Configuration via environment variables only:** guild, rank names, game version, name, logo, colors, Discord,
+  imprint and Umami (see `.env.example`). Imprint and privacy policy are templates with placeholders.
+- **Extensions:** modules for custom tabs, pages, character data, newspaper articles and legal texts
   (`docs/erweiterungen.md`).
-- **Installation:** "Deploy to Netlify"-Knopf, Daten aus der Blizzard-API, gespeichert in Netlify Blobs, lokal mit
-  Docker. Prüfung mit oxlint, vitest, Typecheck und Build bei jedem Pull Request, Dependabot für npm und Actions.
+- **Installation:** "Deploy to Netlify" button, data from the Blizzard API stored in Netlify Blobs, locally with
+  Docker. Checks with oxlint, vitest, typecheck and build on every pull request, Dependabot for npm and Actions.

@@ -25,14 +25,14 @@ const DISCORD = "https://discord.gg/beispiel";
 
 /** Vollständige Seitenangaben wie auf einer echten Installation. */
 function mitSeite() {
-  vi.stubEnv("SEITE_NAME", "Musterzunft");
-  vi.stubEnv("SEITE_LOGO", "/musterzunft.png");
-  vi.stubEnv("SEITE_UNTERTITEL", "Eine Gemeinschaft");
-  vi.stubEnv("SEITE_DISCORD", DISCORD);
-  vi.stubEnv("SEITE_IMPRESSUM_NAME", impressum.name);
-  vi.stubEnv("SEITE_IMPRESSUM_ANSCHRIFT", impressum.anschrift.join(" | "));
-  vi.stubEnv("SEITE_IMPRESSUM_EMAIL", impressum.email);
-  vi.stubEnv("SEITE_UMAMI_ID", "5e709613-0000-0000-0000-000000000000");
+  vi.stubEnv("SITE_NAME", "Musterzunft");
+  vi.stubEnv("SITE_LOGO", "/musterzunft.png");
+  vi.stubEnv("SITE_TAGLINE", "Eine Gemeinschaft");
+  vi.stubEnv("SITE_DISCORD", DISCORD);
+  vi.stubEnv("SITE_IMPRINT_NAME", impressum.name);
+  vi.stubEnv("SITE_IMPRINT_ADDRESS", impressum.anschrift.join(" | "));
+  vi.stubEnv("SITE_IMPRINT_EMAIL", impressum.email);
+  vi.stubEnv("SITE_UMAMI_ID", "5e709613-0000-0000-0000-000000000000");
 }
 
 test("DataState zeigt den Leerzustand bei 503", () => {
@@ -125,7 +125,7 @@ test("ohne Angaben: neutrales Logo, kein Discord, kein Untertitel, keine Rechtss
 });
 
 test("Discord nur mit https-Adresse", () => {
-  vi.stubEnv("SEITE_DISCORD", "javascript:alert(1)");
+  vi.stubEnv("SITE_DISCORD", "javascript:alert(1)");
   render(
     <MemoryRouter>
       <App />
@@ -180,7 +180,7 @@ test("ohne eingesetzte Version zeigt der Fuß keine Versionszeile", () => {
   expect(screen.queryByText(/^Version /)).toBeNull();
 });
 
-test("Impressum zeigt die Angaben aus SEITE_IMPRESSUM_… und den Hinweis zu Blizzard", () => {
+test("Impressum zeigt die Angaben aus SITE_IMPRINT_… und den Hinweis zu Blizzard", () => {
   mitSeite();
   render(
     <MemoryRouter initialEntries={["/impressum"]}>
@@ -221,7 +221,7 @@ test("Datenschutz ist eine Vorlage mit Platzhaltern je Abschnitt und Kontakt aus
 
 test("Datenschutz ohne Umami erwähnt Umami nicht", () => {
   mitSeite();
-  vi.stubEnv("SEITE_UMAMI_ID", "");
+  vi.stubEnv("SITE_UMAMI_ID", "");
   render(
     <MemoryRouter initialEntries={["/datenschutz"]}>
       <App />

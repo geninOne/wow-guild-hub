@@ -8,11 +8,11 @@ import {
   zielVersion,
 } from "../../scripts/release-lib.mjs";
 
-const CHANGELOG = `# Änderungen
+const CHANGELOG = `# Changelog
 
 Einleitung.
 
-## Unveröffentlicht
+## Unreleased
 
 ## 1.0.0 (2026-11-06)
 
@@ -59,22 +59,22 @@ describe("changelogAbschnitt", () => {
 });
 
 describe("changelogFreigeben", () => {
-  const mitEintrag = CHANGELOG.replace("## Unveröffentlicht\n", "## Unveröffentlicht\n\n- Neue Berufe-Ansicht.\n");
+  const mitEintrag = CHANGELOG.replace("## Unreleased\n", "## Unreleased\n\n- Neue Berufe-Ansicht.\n");
 
-  test("macht aus Unveröffentlicht einen datierten Abschnitt und legt ein neues leeres an", () => {
+  test("macht aus Unreleased einen datierten Abschnitt und legt ein neues leeres an", () => {
     const neu = changelogFreigeben(mitEintrag, "1.1.0", "2026-11-07");
-    expect(neu).toContain("## Unveröffentlicht\n\n## 1.1.0 (2026-11-07)\n\n- Neue Berufe-Ansicht.\n\n## 1.0.0 (2026-11-06)");
+    expect(neu).toContain("## Unreleased\n\n## 1.1.0 (2026-11-07)\n\n- Neue Berufe-Ansicht.\n\n## 1.0.0 (2026-11-06)");
     expect(changelogAbschnitt(neu, "1.1.0")).toEqual({ datum: "2026-11-07", inhalt: "- Neue Berufe-Ansicht." });
     expect(changelogAbschnitt(neu, "1.0.0")?.inhalt).toBe("- Erste Version.\n- Zweiter Punkt.");
   });
 
-  test("bricht ab, wenn unter Unveröffentlicht nichts steht", () => {
-    expect(() => changelogFreigeben(CHANGELOG, "1.1.0", "2026-11-07")).toThrow(/Unveröffentlicht/);
+  test("bricht ab, wenn unter Unreleased nichts steht", () => {
+    expect(() => changelogFreigeben(CHANGELOG, "1.1.0", "2026-11-07")).toThrow(/Unreleased/);
   });
 
-  test("bricht ab, wenn der Abschnitt Unveröffentlicht fehlt", () => {
-    expect(() => changelogFreigeben("# Änderungen\n\n## 1.0.0 (2026-11-06)\n\n- x\n", "1.1.0", "2026-11-07")).toThrow(
-      /Unveröffentlicht/,
+  test("bricht ab, wenn der Abschnitt Unreleased fehlt", () => {
+    expect(() => changelogFreigeben("# Changelog\n\n## 1.0.0 (2026-11-06)\n\n- x\n", "1.1.0", "2026-11-07")).toThrow(
+      /Unreleased/,
     );
   });
 

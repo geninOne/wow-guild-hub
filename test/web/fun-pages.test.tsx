@@ -595,14 +595,14 @@ test("Titel auf Englisch: Seitenkopf, Kacheln und Wochenzeitung ohne Gildennamen
   expect(screen.getByRole("link", { name: "Read this week's Guild Gazette" })).toBeTruthy();
   expect(document.body.textContent).not.toMatch(/Gildeblatt|Bärenklaue/);
   cleanup();
-  vi.stubEnv("SEITE_ZEITUNG", "Gildenkurier");
+  vi.stubEnv("SITE_NEWSPAPER", "Gildenkurier");
   renderAt("/titel", <Route path="/titel" element={<TitlesPage />} />);
   expect(await screen.findByRole("link", { name: "Gildenkurier dieser Woche lesen" })).toBeTruthy();
   vi.unstubAllEnvs();
 });
 
-test("Wrapped auf Englisch: Marke aus SEITE_NAME, Kennzahlen und Lieblingszeit", async () => {
-  vi.stubEnv("SEITE_NAME", "Die Tapferen");
+test("Wrapped auf Englisch: Marke aus SITE_NAME, Kennzahlen und Lieblingszeit", async () => {
+  vi.stubEnv("SITE_NAME", "Die Tapferen");
   mockFetch({ "/api/wrapped/anna": wrapped });
   render(<SpracheProvider start="en"><MemoryRouter><WrappedPanel slug="anna" /></MemoryRouter></SpracheProvider>);
   expect(await screen.findByText(/Levels gained, from 20 to 25/)).toBeTruthy();
@@ -655,8 +655,8 @@ test("Wochenzeitung auf Englisch: Kopf, Rubriken und Texte in der englischen Fas
   expect(screen.getByText("Level gesammelt.")).toBeTruthy();
 });
 
-test("SEITE_ZEITUNG gibt der Wochenzeitung in allen Sprachen denselben Namen", async () => {
-  vi.stubEnv("SEITE_ZEITUNG", "Bärenklaue-Blatt");
+test("SITE_NEWSPAPER gibt der Wochenzeitung in allen Sprachen denselben Namen", async () => {
+  vi.stubEnv("SITE_NEWSPAPER", "Bärenklaue-Blatt");
   try {
     mockFetch({ "/api/zeitung": issue });
     renderAt("/zeitung", <Route path="/zeitung" element={<ZeitungPage />} />, "en");

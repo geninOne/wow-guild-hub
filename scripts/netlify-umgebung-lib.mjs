@@ -6,44 +6,44 @@ import { parseEnv } from "node:util";
  * Wochenzeitung über das eigene AI Gateway, alle freiwillig: Fehlen sie, schreiben die Satzbausteine.
  * Bewusst nicht ANTHROPIC_API_KEY, denn den setzt Netlifys eigenes AI Gateway von selbst.
  */
-export const KI_VARIABLEN = ["ZEITUNG_KI_URL", "ZEITUNG_KI_SCHLUESSEL", "ZEITUNG_MODELL", "ZEITUNG_AUFWAND", "ZEITUNG_KI_OUTPUT_CONFIG"];
+export const KI_VARIABLEN = ["NEWSPAPER_AI_URL", "NEWSPAPER_AI_KEY", "NEWSPAPER_AI_MODEL", "NEWSPAPER_AI_EFFORT", "NEWSPAPER_AI_OUTPUT_CONFIG"];
 
 /** Angaben zur Seite, freiwillig, werden beim Bauen in Oberfläche und index.html eingesetzt (siehe .env.example). */
-export const SEITE_VARIABLEN = [
-  "SEITE_NAME",
-  "SEITE_SPRACHEN",
-  "SEITE_ZEITUNG",
-  "SEITE_BESCHREIBUNG",
-  "SEITE_UNTERTITEL",
-  "SEITE_LOGO",
-  "SEITE_LOGO_ALT",
-  "SEITE_FAVICON",
-  "SEITE_APPLE_ICON",
-  "SEITE_OG_BILD",
-  "SEITE_THEME_COLOR",
-  "SEITE_FARBEN",
-  "SEITE_DISCORD",
-  "SEITE_IMPRESSUM_NAME",
-  "SEITE_IMPRESSUM_ANSCHRIFT",
-  "SEITE_IMPRESSUM_EMAIL",
-  "SEITE_UMAMI_ID",
-  "SEITE_UMAMI_DOMAINS",
+export const SITE_VARIABLEN = [
+  "SITE_NAME",
+  "SITE_LANGUAGES",
+  "SITE_NEWSPAPER",
+  "SITE_DESCRIPTION",
+  "SITE_TAGLINE",
+  "SITE_LOGO",
+  "SITE_LOGO_ALT",
+  "SITE_FAVICON",
+  "SITE_APPLE_ICON",
+  "SITE_OG_IMAGE",
+  "SITE_THEME_COLOR",
+  "SITE_COLORS",
+  "SITE_DISCORD",
+  "SITE_IMPRINT_NAME",
+  "SITE_IMPRINT_ADDRESS",
+  "SITE_IMPRINT_EMAIL",
+  "SITE_UMAMI_ID",
+  "SITE_UMAMI_DOMAINS",
 ];
 
-/** Variablen, die die Functions auf Netlify brauchen. Der lokale Taktgeber (TAKT*) gehört nicht dazu. */
+/** Variablen, die die Functions auf Netlify brauchen. Der lokale Taktgeber (LOCAL_SCHEDULER*) gehört nicht dazu. */
 export const NETLIFY_VARIABLEN = [
   "BNET_CLIENT_ID",
   "BNET_CLIENT_SECRET",
   "GUILD_SLUGS",
   "GUILD_RANKS",
-  "TITEL_ABMELDUNGEN",
+  "TITLE_OPT_OUTS",
   "WOW_VERSION",
   "BNET_REGION",
   "BNET_LOCALE",
   "COLLECT_CONCURRENCY",
   "COLLECT_BUDGET_MS",
   ...KI_VARIABLEN,
-  ...SEITE_VARIABLEN,
+  ...SITE_VARIABLEN,
 ];
 
 /** Pflichtangaben ohne Standardwert. */

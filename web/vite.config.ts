@@ -8,7 +8,7 @@ import { seitenKopf, withSeite } from "./build/seite";
 import { withSiteUrl } from "./build/site-url";
 
 /**
- * Angaben aus den SEITE_-Variablen und die öffentliche Adresse (Netlify: Umgebungsvariable URL) in index.html
+ * Angaben aus den SITE_-Variablen und die öffentliche Adresse (Netlify: Umgebungsvariable URL) in index.html
  * einsetzen. Die Seitenangaben zuerst, denn das Teilen-Bild bekommt dabei den Platzhalter der Adresse.
  */
 function seitenAngaben(env: Record<string, string | undefined>): Plugin {
@@ -30,13 +30,13 @@ const { version, datum } = versionsAngaben();
 const wurzel = fileURLToPath(new URL("..", import.meta.url));
 
 export default defineConfig(({ mode }) => {
-  // SEITE_-Variablen aus der .env im Projektordner (lokal) und aus der Umgebung (Netlify); die Umgebung gewinnt.
-  // Nur Variablen mit Präfix VITE_ oder SEITE_ landen im Bundle, Geheimnisse aus der .env also nie.
-  const env = { ...loadEnv(mode, wurzel, ["SEITE_"]), ...process.env };
+  // SITE_-Variablen aus der .env im Projektordner (lokal) und aus der Umgebung (Netlify); die Umgebung gewinnt.
+  // Nur Variablen mit Präfix VITE_ oder SITE_ landen im Bundle, Geheimnisse aus der .env also nie.
+  const env = { ...loadEnv(mode, wurzel, ["SITE_"]), ...process.env };
   return {
     root: fileURLToPath(new URL(".", import.meta.url)),
     envDir: wurzel,
-    envPrefix: ["VITE_", "SEITE_"],
+    envPrefix: ["VITE_", "SITE_"],
     plugins: [react(), seitenAngaben(env), fehlerseite()],
     define: {
       "import.meta.env.VITE_VERSION": JSON.stringify(version),

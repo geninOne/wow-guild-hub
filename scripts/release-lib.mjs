@@ -1,6 +1,6 @@
 // Hilfen für Versionen und CHANGELOG.md, getrennt von den Kommandozeilen-Skripten, damit sie testbar sind.
 
-const UNVEROEFFENTLICHT = "## Unveröffentlicht";
+const UNRELEASED = "## Unreleased";
 const VERSION = /^(\d+)\.(\d+)\.(\d+)$/;
 
 /**
@@ -69,8 +69,8 @@ export function changelogAbschnitt(text, version) {
 }
 
 /**
- * Gibt die Einträge unter "Unveröffentlicht" als neue Version frei und legt darüber ein leeres
- * "Unveröffentlicht" an.
+ * Gibt die Einträge unter "Unreleased" als neue Version frei und legt darüber ein leeres
+ * "Unreleased" an.
  * @param {string} text
  * @param {string} version
  * @param {string} isoDatum zum Beispiel "2026-11-07"
@@ -79,15 +79,15 @@ export function changelogAbschnitt(text, version) {
 export function changelogFreigeben(text, version, isoDatum) {
   if (changelogAbschnitt(text, version)) throw new Error(`Version ${version} steht schon in CHANGELOG.md`);
   const { kopf, liste } = abschnitte(text);
-  const index = liste.findIndex((a) => a.ueberschrift === UNVEROEFFENTLICHT);
-  if (index === -1) throw new Error(`CHANGELOG.md hat keinen Abschnitt "${UNVEROEFFENTLICHT}"`);
+  const index = liste.findIndex((a) => a.ueberschrift === UNRELEASED);
+  if (index === -1) throw new Error(`CHANGELOG.md hat keinen Abschnitt "${UNRELEASED}"`);
   const inhalt = liste[index].zeilen.join("\n").trim();
   if (inhalt === "") {
-    throw new Error('Unter "Unveröffentlicht" in CHANGELOG.md steht nichts. Erst die Änderungen eintragen.');
+    throw new Error('Unter "Unreleased" in CHANGELOG.md steht nichts. Erst die Änderungen eintragen.');
   }
 
   const neu = [
-    { ueberschrift: UNVEROEFFENTLICHT, zeilen: [""] },
+    { ueberschrift: UNRELEASED, zeilen: [""] },
     { ueberschrift: `## ${version} (${isoDatum})`, zeilen: ["", inhalt, ""] },
     ...liste.slice(index + 1),
   ];

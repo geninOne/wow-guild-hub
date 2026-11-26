@@ -1,7 +1,7 @@
 # Veröffentlichung auf Netlify (jeder Produktions-Deploy kostet Credits), auf zwei Wegen:
 #
 # 1. Knopf: Actions, Release, Run workflow (Zweig main), Art wählen.
-#    patch, minor, major: Version erhöhen, "Unveröffentlicht" in CHANGELOG.md wird zum Abschnitt der
+#    patch, minor, major: Version erhöhen, "Unreleased" in CHANGELOG.md wird zum Abschnitt der
 #    neuen Version, Commit "Version X.Y.Z" nach main, Tag vX.Y.Z. aktuell: nur Tag für die Version in
 #    package.json (erster Live-Gang mit 1.0.0). Das Tag pusht der Workflow mit GITHUB_TOKEN; solche Pushes
 #    starten bewusst keinen weiteren Workflow, es gibt also keinen zweiten Deploy.
@@ -10,7 +10,7 @@
 # Danach jeweils: Netlify-Umgebungsvariablen aus GitHub-Secrets und -Variables setzen, deployen,
 # GitHub-Release mit dem Changelog-Abschnitt.
 # Secrets: NETLIFY_AUTH_TOKEN, NETLIFY_SITE_ID, BNET_CLIENT_ID, BNET_CLIENT_SECRET.
-# Variables: GUILD_SLUGS (Pflicht), optional GUILD_RANKS, TITEL_ABMELDUNGEN, WOW_VERSION, BNET_REGION, BNET_LOCALE,
+# Variables: GUILD_SLUGS (Pflicht), optional GUILD_RANKS, TITLE_OPT_OUTS, WOW_VERSION, BNET_REGION, BNET_LOCALE,
 # COLLECT_CONCURRENCY, COLLECT_BUDGET_MS (sonst Standardwert, siehe .env.example).
 # Nach einem Fehler "Re-run failed jobs" nutzen, nicht "Re-run all jobs" (das würde erneut eine Version anlegen).
 name: Release
@@ -140,7 +140,7 @@ jobs:
           BNET_CLIENT_SECRET: ${{ secrets.BNET_CLIENT_SECRET }}
           GUILD_SLUGS: ${{ vars.GUILD_SLUGS }}
           GUILD_RANKS: ${{ vars.GUILD_RANKS }}
-          TITEL_ABMELDUNGEN: ${{ vars.TITEL_ABMELDUNGEN }}
+          TITLE_OPT_OUTS: ${{ vars.TITLE_OPT_OUTS }}
           WOW_VERSION: ${{ vars.WOW_VERSION }}
           BNET_REGION: ${{ vars.BNET_REGION }}
           BNET_LOCALE: ${{ vars.BNET_LOCALE }}
@@ -148,30 +148,30 @@ jobs:
           COLLECT_BUDGET_MS: ${{ vars.COLLECT_BUDGET_MS }}
           # Wochenzeitung über das eigene AI Gateway, alles freiwillig: Fehlt etwas, wird es nicht gesetzt
           # (auf Netlify bleibt der bisherige Wert), und ohne URL oder Schlüssel schreiben die Satzbausteine.
-          ZEITUNG_KI_SCHLUESSEL: ${{ secrets.ZEITUNG_KI_SCHLUESSEL }}
-          ZEITUNG_KI_URL: ${{ vars.ZEITUNG_KI_URL }}
-          ZEITUNG_MODELL: ${{ vars.ZEITUNG_MODELL }}
-          ZEITUNG_AUFWAND: ${{ vars.ZEITUNG_AUFWAND }}
-          ZEITUNG_KI_OUTPUT_CONFIG: ${{ vars.ZEITUNG_KI_OUTPUT_CONFIG }}
+          NEWSPAPER_AI_KEY: ${{ secrets.NEWSPAPER_AI_KEY }}
+          NEWSPAPER_AI_URL: ${{ vars.NEWSPAPER_AI_URL }}
+          NEWSPAPER_AI_MODEL: ${{ vars.NEWSPAPER_AI_MODEL }}
+          NEWSPAPER_AI_EFFORT: ${{ vars.NEWSPAPER_AI_EFFORT }}
+          NEWSPAPER_AI_OUTPUT_CONFIG: ${{ vars.NEWSPAPER_AI_OUTPUT_CONFIG }}
           # Angaben zur Seite (Name, Logo, Farben, Impressum ...), alle freiwillig, siehe .env.example.
-          SEITE_NAME: ${{ vars.SEITE_NAME }}
-          SEITE_SPRACHEN: ${{ vars.SEITE_SPRACHEN }}
-          SEITE_ZEITUNG: ${{ vars.SEITE_ZEITUNG }}
-          SEITE_BESCHREIBUNG: ${{ vars.SEITE_BESCHREIBUNG }}
-          SEITE_UNTERTITEL: ${{ vars.SEITE_UNTERTITEL }}
-          SEITE_LOGO: ${{ vars.SEITE_LOGO }}
-          SEITE_LOGO_ALT: ${{ vars.SEITE_LOGO_ALT }}
-          SEITE_FAVICON: ${{ vars.SEITE_FAVICON }}
-          SEITE_APPLE_ICON: ${{ vars.SEITE_APPLE_ICON }}
-          SEITE_OG_BILD: ${{ vars.SEITE_OG_BILD }}
-          SEITE_THEME_COLOR: ${{ vars.SEITE_THEME_COLOR }}
-          SEITE_FARBEN: ${{ vars.SEITE_FARBEN }}
-          SEITE_DISCORD: ${{ vars.SEITE_DISCORD }}
-          SEITE_IMPRESSUM_NAME: ${{ vars.SEITE_IMPRESSUM_NAME }}
-          SEITE_IMPRESSUM_ANSCHRIFT: ${{ vars.SEITE_IMPRESSUM_ANSCHRIFT }}
-          SEITE_IMPRESSUM_EMAIL: ${{ vars.SEITE_IMPRESSUM_EMAIL }}
-          SEITE_UMAMI_ID: ${{ vars.SEITE_UMAMI_ID }}
-          SEITE_UMAMI_DOMAINS: ${{ vars.SEITE_UMAMI_DOMAINS }}
+          SITE_NAME: ${{ vars.SITE_NAME }}
+          SITE_LANGUAGES: ${{ vars.SITE_LANGUAGES }}
+          SITE_NEWSPAPER: ${{ vars.SITE_NEWSPAPER }}
+          SITE_DESCRIPTION: ${{ vars.SITE_DESCRIPTION }}
+          SITE_TAGLINE: ${{ vars.SITE_TAGLINE }}
+          SITE_LOGO: ${{ vars.SITE_LOGO }}
+          SITE_LOGO_ALT: ${{ vars.SITE_LOGO_ALT }}
+          SITE_FAVICON: ${{ vars.SITE_FAVICON }}
+          SITE_APPLE_ICON: ${{ vars.SITE_APPLE_ICON }}
+          SITE_OG_IMAGE: ${{ vars.SITE_OG_IMAGE }}
+          SITE_THEME_COLOR: ${{ vars.SITE_THEME_COLOR }}
+          SITE_COLORS: ${{ vars.SITE_COLORS }}
+          SITE_DISCORD: ${{ vars.SITE_DISCORD }}
+          SITE_IMPRINT_NAME: ${{ vars.SITE_IMPRINT_NAME }}
+          SITE_IMPRINT_ADDRESS: ${{ vars.SITE_IMPRINT_ADDRESS }}
+          SITE_IMPRINT_EMAIL: ${{ vars.SITE_IMPRINT_EMAIL }}
+          SITE_UMAMI_ID: ${{ vars.SITE_UMAMI_ID }}
+          SITE_UMAMI_DOMAINS: ${{ vars.SITE_UMAMI_DOMAINS }}
         run: node scripts/netlify-umgebung.mjs --aus-umgebung
 
       # Die CLI baut selbst (npm run build mit URL der Site), bündelt die Functions samt Zeitplan
@@ -183,24 +183,24 @@ jobs:
           NETLIFY_TELEMETRY_DISABLED: "1"
           TAG: ${{ steps.tag.outputs.tag }}
           # Die Oberfläche wird hier gebaut; die Angaben zur Seite direkt mitgeben, nicht nur auf Netlify.
-          SEITE_NAME: ${{ vars.SEITE_NAME }}
-          SEITE_SPRACHEN: ${{ vars.SEITE_SPRACHEN }}
-          SEITE_ZEITUNG: ${{ vars.SEITE_ZEITUNG }}
-          SEITE_BESCHREIBUNG: ${{ vars.SEITE_BESCHREIBUNG }}
-          SEITE_UNTERTITEL: ${{ vars.SEITE_UNTERTITEL }}
-          SEITE_LOGO: ${{ vars.SEITE_LOGO }}
-          SEITE_LOGO_ALT: ${{ vars.SEITE_LOGO_ALT }}
-          SEITE_FAVICON: ${{ vars.SEITE_FAVICON }}
-          SEITE_APPLE_ICON: ${{ vars.SEITE_APPLE_ICON }}
-          SEITE_OG_BILD: ${{ vars.SEITE_OG_BILD }}
-          SEITE_THEME_COLOR: ${{ vars.SEITE_THEME_COLOR }}
-          SEITE_FARBEN: ${{ vars.SEITE_FARBEN }}
-          SEITE_DISCORD: ${{ vars.SEITE_DISCORD }}
-          SEITE_IMPRESSUM_NAME: ${{ vars.SEITE_IMPRESSUM_NAME }}
-          SEITE_IMPRESSUM_ANSCHRIFT: ${{ vars.SEITE_IMPRESSUM_ANSCHRIFT }}
-          SEITE_IMPRESSUM_EMAIL: ${{ vars.SEITE_IMPRESSUM_EMAIL }}
-          SEITE_UMAMI_ID: ${{ vars.SEITE_UMAMI_ID }}
-          SEITE_UMAMI_DOMAINS: ${{ vars.SEITE_UMAMI_DOMAINS }}
+          SITE_NAME: ${{ vars.SITE_NAME }}
+          SITE_LANGUAGES: ${{ vars.SITE_LANGUAGES }}
+          SITE_NEWSPAPER: ${{ vars.SITE_NEWSPAPER }}
+          SITE_DESCRIPTION: ${{ vars.SITE_DESCRIPTION }}
+          SITE_TAGLINE: ${{ vars.SITE_TAGLINE }}
+          SITE_LOGO: ${{ vars.SITE_LOGO }}
+          SITE_LOGO_ALT: ${{ vars.SITE_LOGO_ALT }}
+          SITE_FAVICON: ${{ vars.SITE_FAVICON }}
+          SITE_APPLE_ICON: ${{ vars.SITE_APPLE_ICON }}
+          SITE_OG_IMAGE: ${{ vars.SITE_OG_IMAGE }}
+          SITE_THEME_COLOR: ${{ vars.SITE_THEME_COLOR }}
+          SITE_COLORS: ${{ vars.SITE_COLORS }}
+          SITE_DISCORD: ${{ vars.SITE_DISCORD }}
+          SITE_IMPRINT_NAME: ${{ vars.SITE_IMPRINT_NAME }}
+          SITE_IMPRINT_ADDRESS: ${{ vars.SITE_IMPRINT_ADDRESS }}
+          SITE_IMPRINT_EMAIL: ${{ vars.SITE_IMPRINT_EMAIL }}
+          SITE_UMAMI_ID: ${{ vars.SITE_UMAMI_ID }}
+          SITE_UMAMI_DOMAINS: ${{ vars.SITE_UMAMI_DOMAINS }}
         run: >-
           npx --yes netlify-cli@27.16.2 deploy
           --prod

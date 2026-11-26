@@ -48,7 +48,7 @@ export interface OberflaechenErweiterung {
   datenschutz?: ComponentType;
   /**
    * Eigenes Impressum statt der Platzhalter-Vorlage des Kerns. Es gilt das erste angemeldete Modul, das eines hat.
-   * Die Seite erscheint wie die Vorlage nur mit `SEITE_IMPRESSUM_NAME`.
+   * Die Seite erscheint wie die Vorlage nur mit `SITE_IMPRINT_NAME`.
    */
   impressumSeite?: ComponentType;
   /** Eigene Datenschutzerklärung statt der Vorlage, sonst wie `impressumSeite`. */

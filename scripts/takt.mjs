@@ -2,7 +2,7 @@
 import { retryUntilOk, waitUntilReachable } from "./takt-lib.mjs";
 
 const base = process.env.TRIGGER_BASE_URL ?? "http://localhost:8888";
-const guildMinutes = Number(process.env.TAKT_GILDE_MINUTEN ?? 60);
+const guildMinutes = Number(process.env.LOCAL_SCHEDULER_GUILD_MINUTES ?? 60);
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 function log(text) {
@@ -21,8 +21,8 @@ async function trigger(name) {
   }
 }
 
-if ((process.env.TAKT ?? "an") === "aus") {
-  log("ausgeschaltet (TAKT=aus)");
+if ((process.env.LOCAL_SCHEDULER ?? "on") === "off") {
+  log("ausgeschaltet (LOCAL_SCHEDULER=off)");
 } else {
   log(`an: collect-guild alle ${guildMinutes} Minuten, collect-static und collect-weekly täglich`);
   (async () => {

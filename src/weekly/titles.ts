@@ -238,7 +238,7 @@ export function titleDef(id: string): TitleDef | undefined {
 }
 
 /**
- * Abmeldeliste aus der Umgebungsvariable `TITEL_ABMELDUNGEN`: kommagetrennt Slug, Name oder Charakter-ID der
+ * Abmeldeliste aus der Umgebungsvariable `TITLE_OPT_OUTS`: kommagetrennt Slug, Name oder Charakter-ID der
  * Charaktere, die keine Spaßtitel bekommen sollen. Reine Zahlen gelten als ID.
  */
 export function parseOptOuts(raw: string | undefined): (string | number)[] {
@@ -250,7 +250,7 @@ export function parseOptOuts(raw: string | undefined): (string | number)[] {
 }
 
 export const TITLE_OPT_OUTS: (string | number)[] = parseOptOuts(
-  typeof process === "undefined" ? undefined : process.env.TITEL_ABMELDUNGEN,
+  typeof process === "undefined" ? undefined : process.env.TITLE_OPT_OUTS,
 );
 
 /** Steht das Mitglied (per ID, Slug oder Name, Groß- und Kleinschreibung egal) auf der Abmeldeliste? */

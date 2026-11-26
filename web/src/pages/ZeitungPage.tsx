@@ -13,9 +13,9 @@ import { useSprache, type Fassungen, type Sprache, fassungIn } from "../lib/spra
 import { zeitungsName } from "../../../src/weekly/bausteine-woche";
 import { zahlLocale } from "../lib/format";
 
-/** Name der Zeitung: SEITE_ZEITUNG oder der Standardname der Sprache. */
+/** Name der Zeitung: SITE_NEWSPAPER oder der Standardname der Sprache. */
 function zeitung(sprache: Sprache): string {
-  return zeitungsName(sprache, import.meta.env.SEITE_ZEITUNG);
+  return zeitungsName(sprache, import.meta.env.SITE_NEWSPAPER);
 }
 
 const UND: Record<Sprache, string> = { de: "und", en: "and", schwaebisch: "ond", bayrisch: "und" };

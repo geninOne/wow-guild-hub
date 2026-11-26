@@ -4,17 +4,17 @@
 //                       docker compose exec app npm run zeitung:ki-test -- --output-config
 // Ohne Container:       node --env-file=.env scripts/ki-test.mjs
 //
-// Liest ZEITUNG_KI_URL, ZEITUNG_KI_SCHLUESSEL und ZEITUNG_MODELL (Vorgabe anthropic-router), schickt eine
+// Liest NEWSPAPER_AI_URL, NEWSPAPER_AI_KEY und NEWSPAPER_AI_MODEL (Vorgabe anthropic-router), schickt eine
 // Anfrage an <URL>/v1/messages mit x-api-key und meldet Status, Modell, Abbruchgrund und ob die Antwort
 // gültiges JSON ist. Mit --output-config kommt output_config (Aufwand und JSON-Schema) mit; klappt das, kann
-// ZEITUNG_KI_OUTPUT_CONFIG=an gesetzt werden. Der Schlüssel wird nie ausgegeben.
-const url = process.env.ZEITUNG_KI_URL?.trim();
-const schluessel = process.env.ZEITUNG_KI_SCHLUESSEL?.trim();
-const modell = process.env.ZEITUNG_MODELL?.trim() || "anthropic-router";
+// NEWSPAPER_AI_OUTPUT_CONFIG=on gesetzt werden. Der Schlüssel wird nie ausgegeben.
+const url = process.env.NEWSPAPER_AI_URL?.trim();
+const schluessel = process.env.NEWSPAPER_AI_KEY?.trim();
+const modell = process.env.NEWSPAPER_AI_MODEL?.trim() || "anthropic-router";
 const mitOutputConfig = process.argv.includes("--output-config");
 
 if (!url || !schluessel) {
-  console.error("ZEITUNG_KI_URL oder ZEITUNG_KI_SCHLUESSEL fehlt. Beides in .env eintragen (im Container danach docker compose up -d).");
+  console.error("NEWSPAPER_AI_URL oder NEWSPAPER_AI_KEY fehlt. Beides in .env eintragen (im Container danach docker compose up -d).");
   process.exit(1);
 }
 

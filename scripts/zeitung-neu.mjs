@@ -1,5 +1,5 @@
 // Erzeugt Zeitungsausgaben (und die Titel derselben Woche) NUR in der lokalen Umgebung neu, z. B. nachdem
-// das eigene AI Gateway (ZEITUNG_KI_URL, ZEITUNG_KI_SCHLUESSEL) hinterlegt wurde. Normalerweise wird eine Ausgabe genau einmal erzeugt und nie wieder.
+// das eigene AI Gateway (NEWSPAPER_AI_URL, NEWSPAPER_AI_KEY) hinterlegt wurde. Normalerweise wird eine Ausgabe genau einmal erzeugt und nie wieder.
 //
 // Aufruf im Container:  docker compose exec app npm run zeitung:neu                 (neueste Ausgabe)
 //                       docker compose exec app npm run zeitung:neu -- 2026-11-21   (bestimmte Wochen, benannt nach ihrem Samstag)
@@ -33,7 +33,7 @@ try {
 
   const geloescht = await loescheWochenergebnisse(speicher, wochen);
   log(`${geloescht} Ausgaben zum Neu-Erzeugen entfernt: ${wochen.join(", ")}`);
-  log(process.env.ZEITUNG_KI_URL && process.env.ZEITUNG_KI_SCHLUESSEL ? "Texte schreibt Claude über das eigene AI Gateway." : "ZEITUNG_KI_URL oder ZEITUNG_KI_SCHLUESSEL fehlt: Texte kommen aus den Satzbausteinen.");
+  log(process.env.NEWSPAPER_AI_URL && process.env.NEWSPAPER_AI_KEY ? "Texte schreibt Claude über das eigene AI Gateway." : "NEWSPAPER_AI_URL oder NEWSPAPER_AI_KEY fehlt: Texte kommen aus den Satzbausteinen.");
 
   const res = await fetch(`${basis}/.netlify/functions/collect-weekly`);
   await res.text();

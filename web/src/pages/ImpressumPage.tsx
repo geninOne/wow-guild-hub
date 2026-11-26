@@ -2,7 +2,7 @@ import { Link } from "react-router";
 import { Anschrift, EmailLink, impressum, RechtstextHinweis } from "../components/Kontakt";
 
 /**
- * Platzhalter für das Impressum. Name, Anschrift und E-Mail kommen aus `SEITE_IMPRESSUM_…`; die übrigen Texte muss
+ * Platzhalter für das Impressum. Name, Anschrift und E-Mail kommen aus `SITE_IMPRINT_…`; die übrigen Texte muss
  * jeder Betreiber selbst verfassen. Eigene Rechtstexte setzt ein Modul über `impressumSeite` ein
  * (docs/erweiterungen.md).
  */
