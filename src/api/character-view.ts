@@ -59,6 +59,8 @@ export function buildCharacterView(input: {
   classes: NamedList | null;
   races: NamedList | null;
   itemIcons: IconMap | null;
+  /** Blob `static/item-levels`: Ersatz, wenn Blizzard die Stufe in der Ausrüstung nicht mehr mitliefert. */
+  itemLevels?: Record<string, number | null> | null;
   rankNames: RankNames;
   recipeNames?: RecipeNames | null;
   recipeDetails?: RecipeDetails | null;
@@ -74,6 +76,9 @@ export function buildCharacterView(input: {
   const { statValues: _values, statTexts: _texts, ...shown } = stored;
   const character: CharacterRecord = {
     ...shown,
+    equipment: stored.equipment.map((i) =>
+      i.itemLevel === null ? { ...i, itemLevel: input.itemLevels?.[String(i.itemId)] ?? null } : i,
+    ),
     professions: stored.professions.map((p) => ({ ...p, recipes: recipeDisplayNames(p, input.recipeNames ?? null, input.recipeDetails) })),
   };
   const home = memberGuild(guild, member);

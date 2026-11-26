@@ -157,7 +157,7 @@ async function route(
       const member = decoded === null ? undefined : findMember(guild, decoded);
       if (!member) return json(NOT_FOUND, 404, "none");
       const zusatz = Promise.all(erweiterungen.map(async (e) => [e.id, await e.charakter?.({ store, guild, member })] as const));
-      const [record, classes, races, itemIcons, recipeNames, recipeDetails, instanceDefs, reputationFactions, instanceImages, weekly, zusatzDaten, attributes] =
+      const [record, classes, races, itemIcons, recipeNames, recipeDetails, instanceDefs, reputationFactions, instanceImages, weekly, zusatzDaten, attributes, itemLevels] =
         await Promise.all([
         store.get<CharacterRecord>(`characters/${member.id}`),
         store.get<NamedList>("static/classes"),
@@ -171,9 +171,10 @@ async function route(
         latestWeekly(store),
         zusatz,
         store.get<CharacterAttributesRecord>(`attributes/${member.id}`),
+        store.get<Record<string, number | null>>("static/item-levels"),
       ]);
       const view = buildCharacterView({
-        member, record, guild, classes, races, itemIcons, rankNames: RANK_NAMES, recipeNames, recipeDetails, instanceDefs,
+        member, record, guild, classes, races, itemIcons, itemLevels, rankNames: RANK_NAMES, recipeNames, recipeDetails, instanceDefs,
         reputationFactions, instanceImages, attributes,
       });
       if (!view) return json(NOT_FOUND, 404, "none");
