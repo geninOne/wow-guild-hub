@@ -23,18 +23,12 @@ const T = {
     schwaebisch: (base: string, plus: string) => `Grondwert ${base}, ${plus} durch Ausrüschtung ond Buffs`,
     bayrisch: (base: string, plus: string) => `Grundwert ${base}, ${plus} durch Ausrüstung und Buffs`,
   },
-  /** Kurz und einzeilig unter dem Wert; die lange Fassung steht im Tooltip und für Screenreader. */
-  bonusKurz: {
-    de: (plus: string) => `${plus} Ausrüstung`,
-    en: (plus: string) => `${plus} gear`,
-    schwaebisch: (plus: string) => `${plus} Ausrüschtung`,
-    bayrisch: (plus: string) => `${plus} Ausrüstung`,
-  },
+  /** Fußzeile jeder Kachel mit Zuwachs: sichtbar, damit sie auch auf dem Handy und für Screenreader erklärt ist. */
   bonus: {
-    de: (plus: string) => `davon ${plus} durch Ausrüstung und Buffs`,
-    en: (plus: string) => `incl. ${plus} from gear and buffs`,
-    schwaebisch: (plus: string) => `davo ${plus} durch Ausrüschtung ond Buffs`,
-    bayrisch: (plus: string) => `davo ${plus} durch Ausrüstung und Buffs`,
+    de: (plus: string) => `${plus} durch Ausrüstung und Buffs`,
+    en: (plus: string) => `${plus} from gear and buffs`,
+    schwaebisch: (plus: string) => `${plus} durch Ausrüschtung ond Buffs`,
+    bayrisch: (plus: string) => `${plus} durch Ausrüstung und Buffs`,
   },
 } satisfies Record<string, Fassungen<unknown>>;
 
@@ -328,19 +322,16 @@ function AttributeTile({ row, view }: { row: AttributeRow; view: AttributesView 
   const plus = row.base !== undefined && row.value > row.base
     ? `+${(row.value - row.base).toLocaleString(zahlLocale(), { maximumFractionDigits: 1 })}`
     : null;
-  // Fester Aufbau für alle Kacheln: Symbol links, rechts Beschriftung, Wert und eine Bonuszeile, die auch leer
-  // ihre Höhe behält. So stehen Symbole, Beschriftungen und Werte in jeder Kachel auf derselben Linie.
+  // Gleicher Aufbau für alle Kacheln: oben Symbol, Beschriftung und Wert auf einer Linie, unten eine Fußzeile
+  // fester Höhe, auch ohne Zuwachs. So sind alle Kacheln gleich hoch und die Werte stehen bündig.
   return (
     <li className="attribute-tile" title={title} style={{ "--attribute-color": color } as CSSProperties}>
-      <AttributeGlyph glyph={glyph} color={color} />
-      <span className="attribute-text">
+      <span className="attribute-head">
+        <AttributeGlyph glyph={glyph} color={color} />
         <span className="attribute-label">{label}</span>
         <span className="attribute-value">{formatValue(row)}</span>
-        <span className="attribute-bonus" aria-hidden="true">
-          {plus ? t(T.bonusKurz)(plus) : "\u00a0"}
-        </span>
-        {plus && <span className="sr-only">{t(T.bonus)(plus)}</span>}
       </span>
+      <span className="attribute-foot">{plus ? t(T.bonus)(plus) : "\u00a0"}</span>
     </li>
   );
 }
