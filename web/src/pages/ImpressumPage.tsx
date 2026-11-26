@@ -4,7 +4,7 @@ import { Anschrift, EmailLink, impressum, RechtstextHinweis } from "../component
 /**
  * Platzhalter für das Impressum. Name, Anschrift und E-Mail kommen aus `WEBSITE_IMPRINT_…`; die übrigen Texte muss
  * jeder Betreiber selbst verfassen. Eigene Rechtstexte setzt ein Modul über `impressumSeite` ein
- * (docs/erweiterungen.md).
+ * (docs/extensions.md).
  */
 export function ImpressumPage() {
   const { name, email } = impressum();

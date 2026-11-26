@@ -82,8 +82,8 @@ npm run build
 
 ## Commits
 
-Kurze Betreffzeile auf Deutsch nach dem Muster `Bereich: was sich ändert`, z. B.
-`Berufe: Filter nach Rezeptstufe`. Im Text darunter, falls nötig, warum. Ein Commit soll für sich bauen und die
+Kurze Betreffzeile auf Englisch nach dem Muster `Area: what changes`, z. B.
+`Professions: filter by recipe rank`. Im Text darunter, falls nötig, warum. Ein Commit soll für sich bauen und die
 Tests bestehen.
 
 ## Versionen

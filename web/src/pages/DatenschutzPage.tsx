@@ -15,7 +15,7 @@ function Platzhalter({ titel, inhalt }: { titel: string; inhalt: string }) {
 /**
  * Platzhalter für die Datenschutzerklärung. Sie nennt nur, welche Abschnitte nötig sind; den Text muss jeder
  * Betreiber selbst verfassen und prüfen lassen. Eigene Rechtstexte setzt ein Modul über `datenschutzSeite` ein
- * (docs/erweiterungen.md). Abschnitte von Modulen (`datenschutz`) erscheinen weiter.
+ * (docs/extensions.md). Abschnitte von Modulen (`datenschutz`) erscheinen weiter.
  */
 export function DatenschutzPage() {
   const { umami, discord } = seite();

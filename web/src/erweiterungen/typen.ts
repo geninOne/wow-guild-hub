@@ -1,5 +1,5 @@
 // Schnittstellen für Module (Erweiterungen) in der Oberfläche. Ein Modul meldet sich in `index.ts` an; die Seiten des
-// Kerns zeigen dann seine Reiter, Abzeichen, Routen und Datenschutz-Abschnitte. Anleitung: docs/erweiterungen.md.
+// Kerns zeigen dann seine Reiter, Abzeichen, Routen und Datenschutz-Abschnitte. Anleitung: docs/extensions.md.
 import type { ComponentType } from "react";
 import type { CharacterView } from "../../../src/api/types";
 import type { Fassungen } from "../lib/sprache";

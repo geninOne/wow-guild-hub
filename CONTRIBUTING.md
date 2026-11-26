@@ -81,8 +81,8 @@ npm run build
 
 ## Commits
 
-A short subject line in German following the pattern `Area: what changes`, e.g.
-`Berufe: Filter nach Rezeptstufe`. In the body below, if needed, explain why. Each commit should build on its own
+A short subject line in English following the pattern `Area: what changes`, e.g.
+`Professions: filter by recipe rank`. In the body below, if needed, explain why. Each commit should build on its own
 and pass the tests.
 
 ## Versions

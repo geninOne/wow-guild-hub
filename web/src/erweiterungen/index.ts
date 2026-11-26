@@ -1,5 +1,5 @@
 // Angemeldete Erweiterungen der Oberfläche. Ein Modul anmelden heißt: importieren und in die Liste eintragen.
-// Anleitung: docs/erweiterungen.md.
+// Anleitung: docs/extensions.md.
 import type { OberflaechenErweiterung } from "./typen";
 
 export const OBERFLAECHEN_ERWEITERUNGEN: readonly OberflaechenErweiterung[] = [

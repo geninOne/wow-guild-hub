@@ -1,6 +1,6 @@
 // Schnittstellen für Module (Erweiterungen) auf dem Server. Ein Modul meldet sich in `index.ts` an und hängt sich
 // an feste Stellen: eigene API-Routen, Zusatzdaten für die Charakterseite und Meldungen für die Wochenzeitung.
-// Anleitung: docs/erweiterungen.md.
+// Anleitung: docs/extensions.md.
 import type { GuildRecord, MemberSummary } from "../model";
 import type { Fassungen } from "../sprache";
 import type { JsonStore } from "../store";
