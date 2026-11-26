@@ -25,7 +25,8 @@ Entstanden f체r eine Gemeinschaft aus zwei Gilden in WoW Forever, jetzt offen f�
 
 - **Gilde:** alle Mitglieder mit Klasse, Volk, Stufe, Rang und Gegenstandsstufe, mit Filtern und Sortierung.
   Mehrere Gilden (etwa eine Horde- und eine Allianzgilde) lassen sich zu einer Gemeinschaft zusammenfassen.
-- **Charakterseite:** Ausr체stung mit Tooltips, Talentb채ume, Berufe, Ruf, Fortschritt in Dungeons und Raids und
+- **Charakterseite:** Ausr체stung mit Tooltips, Werte wie im Arsenal (Gesundheit, Ressource, Prim채rwerte, Angriff,
+  Zauber, Verteidigung), Talentb채ume, Berufe, Ruf, Fortschritt in Dungeons und Raids und
   ein monatlicher R체ckblick.
 - **Berufe:** Verzeichnis aller Rezepte der Gilde, wer was herstellen kann, mit Materialien.
 - **Statistik:** Klassen- und Levelverteilung, Heatmap der Aktivit채t, Gildenstatistik als Kuriosit채tenwand

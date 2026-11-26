@@ -492,3 +492,65 @@ test("Unbekannter Charakter auf Schwäbisch", async () => {
   expect(await screen.findByText("Charakter net gfonda")).toBeTruthy();
   expect(screen.getByText("Den Charakter kennet mr net.")).toBeTruthy();
 });
+
+const werte: CharacterView["attributes"] = {
+  available: true,
+  fetchedAt: "2026-11-26T03:00:00.000Z",
+  resource: { id: 1, kind: "rage", name: "Wut" },
+  groups: [
+    {
+      id: "basis",
+      rows: [
+        { key: "health", kind: "number", value: 4210 },
+        { key: "power", kind: "number", value: 100 },
+        { key: "strength", kind: "number", value: 152, base: 120 },
+      ],
+    },
+    { id: "angriff", rows: [{ key: "melee_crit", kind: "percent", value: 5.25 }] },
+    { id: "verteidigung", rows: [{ key: "armor", kind: "number", value: 1830 }] },
+  ],
+};
+
+test("Reiter Werte zeigt Grundwerte als Kacheln, Ressource nach Art und Gruppen", async () => {
+  mockFetch(200, gelmarView({ attributes: werte }));
+  renderAt("/charakter/gelmar-soulvenn?reiter=werte");
+  expect(await screen.findByText("Gesundheit")).toBeTruthy();
+  expect(screen.getByRole("tab", { name: "Werte" }).getAttribute("aria-selected")).toBe("true");
+  expect(screen.getByText("4.210")).toBeTruthy();
+  expect(screen.getByText("Wut")).toBeTruthy();
+  const staerke = screen.getByText("Stärke").closest("li")!;
+  expect(within(staerke).getByText("152")).toBeTruthy();
+  expect(within(staerke).getByText("+32")).toBeTruthy();
+  expect(staerke.getAttribute("title")).toBe("Grundwert 120, +32 durch Ausrüstung und Effekte");
+  expect(screen.getByRole("heading", { name: "Angriff" })).toBeTruthy();
+  expect(screen.getByText("5,25 %")).toBeTruthy();
+  expect(screen.getByRole("heading", { name: "Verteidigung" })).toBeTruthy();
+  expect(screen.queryByRole("heading", { name: "Zauber" })).toBeNull();
+});
+
+test("Reiter Werte auf Englisch", async () => {
+  mockFetch(200, gelmarView({ attributes: { ...werte, resource: { id: 6, kind: "runic_power", name: "Runenmacht" } } }));
+  render(
+    <SpracheProvider start="en">
+      <MemoryRouter initialEntries={["/charakter/gelmar-soulvenn?reiter=werte"]}>
+        <Routes>
+          <Route path="/charakter/:key" element={<CharacterPage />} />
+        </Routes>
+      </MemoryRouter>
+    </SpracheProvider>,
+  );
+  expect(await screen.findByText("Health")).toBeTruthy();
+  expect(screen.getByRole("tab", { name: "Stats" })).toBeTruthy();
+  expect(screen.getByText("Runic Power")).toBeTruthy();
+  expect(screen.getByText("Melee Crit")).toBeTruthy();
+});
+
+test("Reiter Werte ohne Daten: Hinweis statt leerer Seite", async () => {
+  mockFetch(200, gelmarView());
+  renderAt("/charakter/gelmar-soulvenn?reiter=werte");
+  expect(await screen.findByText("Die Werte werden gerade zusammengetragen. Schau bald wieder vorbei.")).toBeTruthy();
+  cleanup();
+  mockFetch(200, gelmarView({ attributes: { available: false, fetchedAt: "2026-11-26T03:00:00.000Z", resource: null, groups: [] } }));
+  renderAt("/charakter/gelmar-soulvenn?reiter=werte");
+  expect(await screen.findByText("Blizzard liefert für diesen Charakter keine Werte.")).toBeTruthy();
+});

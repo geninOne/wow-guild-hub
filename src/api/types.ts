@@ -143,6 +143,26 @@ export interface ReputationView {
   }[];
 }
 
+export type AttributeGroupId = "basis" | "angriff" | "zauber" | "verteidigung";
+export type ResourceKind = "mana" | "rage" | "focus" | "energy" | "runic_power" | "other";
+
+export interface AttributeRow {
+  /** Feldname bei Blizzard, etwa `strength` oder `melee_crit`; die Seite beschriftet danach. */
+  key: string;
+  kind: "number" | "percent";
+  value: number;
+  /** Grundwert ohne Ausrüstung, nur wenn er vom Wert abweicht. */
+  base?: number;
+}
+
+export interface AttributesView {
+  available: boolean;
+  /** Zeitpunkt des Abrufs; null, wenn noch nie geholt. */
+  fetchedAt: string | null;
+  resource: { id: number; kind: ResourceKind; name: string } | null;
+  groups: { id: AttributeGroupId; rows: AttributeRow[] }[];
+}
+
 export interface CharacterView {
   character: CharacterRecord;
   className: string;
@@ -156,6 +176,8 @@ export interface CharacterView {
   itemIcons: Record<string, string | null>;
   instances: InstancesView;
   reputation: ReputationView;
+  /** Grundwerte wie im Arsenal; fehlt bei älteren Antworten. */
+  attributes?: AttributesView;
   /** Schlüssel: Rezept-ID, nur Rezepte des Charakters mit gespeicherten Details. */
   recipes: Record<string, RecipeView>;
   /** Spaßtitel der letzten ausgewerteten Woche; fehlt bei älteren Antworten. */

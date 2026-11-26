@@ -6220,3 +6220,130 @@ img {
     height: 1rem;
   }
 }
+
+/* Charakter: Werte wie im Arsenal. Oben die Grundwerte als Kacheln, darunter Angriff, Zauber und Verteidigung. */
+.attributes {
+  display: grid;
+  gap: var(--gap);
+}
+
+.attributes .panel-title {
+  margin-bottom: 0.75rem;
+}
+
+.attribute-tiles,
+.attribute-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.attribute-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr));
+  gap: 0.6rem;
+}
+
+.attribute-tile {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 0.75rem;
+  align-items: center;
+  padding: 0.65rem 0.8rem;
+  background: rgb(0 0 0 / 0.22);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--attribute-color, var(--gold-2));
+  border-radius: var(--radius);
+}
+
+.attribute-tile .attribute-glyph {
+  grid-row: 1 / span 2;
+  width: 2.6rem;
+  height: 2.6rem;
+}
+
+.attribute-tile .attribute-label {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.attribute-tile .attribute-value {
+  grid-column: 2;
+  color: var(--text-bright);
+  font-family: var(--font-head);
+  font-size: 1.35rem;
+  line-height: 1.2;
+}
+
+.attribute-bonus {
+  grid-column: 2;
+  color: var(--success);
+}
+
+.attribute-glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 35%, color-mix(in srgb, currentColor 28%, transparent), rgb(0 0 0 / 0.35));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 55%, transparent);
+}
+
+.attribute-glyph svg {
+  width: 62%;
+  height: 62%;
+}
+
+.attribute-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: var(--gap);
+  align-items: start;
+}
+
+.attribute-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid rgb(255 255 255 / 0.05);
+}
+
+.attribute-row:last-child {
+  border-bottom: 0;
+}
+
+.attribute-row .attribute-value {
+  color: var(--text-bright);
+  text-align: right;
+}
+
+.attributes-stand {
+  margin: 0;
+  text-align: right;
+}
+
+@media (max-width: 640px) {
+  .attribute-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .attribute-tile {
+    column-gap: 0.55rem;
+    padding: 0.55rem 0.6rem;
+  }
+
+  .attribute-tile .attribute-glyph {
+    width: 2.1rem;
+    height: 2.1rem;
+  }
+
+  .attribute-tile .attribute-value {
+    font-size: 1.15rem;
+  }
+}

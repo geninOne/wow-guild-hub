@@ -224,3 +224,29 @@ test("fuelleBeispieldaten mit Serverstart: nichts davor, alte Beispieldaten von 
   expect(await s.get("weekly/index")).toEqual({ weeks: ["2026-W42"] });
   expect(await s.get("weekly/2026-W42")).toEqual({ week: "2026-W42" });
 });
+
+test("erzeugeWerte: Ressource nach Klasse, gleich bei gleicher ID, als Beispieldaten markiert", async () => {
+  const { erzeugeWerte } = await import("../../scripts/beispieldaten-lib.mjs");
+  const krieger = erzeugeWerte({ id: 7, level: 30, classId: 1 }, "t");
+  expect(krieger).toEqual(erzeugeWerte({ id: 7, level: 30, classId: 1 }, "t"));
+  expect(krieger).toMatchObject({ fetchedAt: "t", powerType: { id: 1, name: "Wut" }, testdaten: true });
+  expect(krieger.fields).not.toHaveProperty("mana_regen");
+  expect(krieger.fields.strength.effective).toBeGreaterThan(krieger.fields.intellect.effective);
+  const magier = erzeugeWerte({ id: 8, level: 30, classId: 8 }, "t");
+  expect(magier.powerType).toEqual({ id: 0, name: "Mana" });
+  expect(magier.fields.mana_regen).toBeGreaterThan(0);
+  expect(erzeugeWerte({ id: 9, level: 30, classId: 4 }, "t").powerType.id).toBe(3);
+  expect(erzeugeWerte({ id: 9, level: 30, classId: 6 }, "t").powerType.id).toBe(6);
+});
+
+test("fuelleBeispieldaten legt fehlende Werte an, echte bleiben, entfernen löscht nur erfundene", async () => {
+  const s = await lokalerSpeicher(ordner);
+  const gilde = await s.get("guild");
+  const [erster, zweiter] = gilde.members.filter((m: { former: boolean; hasProfile: boolean }) => !m.former && m.hasProfile);
+  await s.set(`attributes/${erster.id}`, { fetchedAt: "echt", fields: { health: 1 }, powerType: null });
+  const res = await fuelleBeispieldaten(s, "2026-11-16T10:00:00.000Z");
+  expect(res.werte).toBeGreaterThan(0);
+  expect((await s.get(`attributes/${zweiter.id}`)).testdaten).toBe(true);
+  await entferneBeispieldaten(s);
+  expect(await s.list("attributes/")).toEqual([`attributes/${erster.id}`]);
+});

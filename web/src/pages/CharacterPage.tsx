@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { Link, useLocation, useParams, useSearchParams } from "react-router";
 import { professionSlug } from "../../../src/transform/professions";
 import type { CharacterView, TalentView } from "../../../src/api/types";
+import { AttributesPanel } from "../components/AttributesPanel";
 import { ClassName } from "../components/ClassName";
 import { DataState } from "../components/DataState";
 import { FactionCrest } from "../components/FactionCrest";
@@ -21,6 +22,7 @@ import { useSprache, type Fassungen } from "../lib/sprache";
 
 const TABS = [
   { id: "ausruestung", label: { de: "Ausrüstung", en: "Equipment", schwaebisch: "Ausrüschtung", bayrisch: "Ausrüstung" } },
+  { id: "werte", label: { de: "Werte", en: "Stats", schwaebisch: "Werte", bayrisch: "Werte" } },
   { id: "talente", label: { de: "Talente", en: "Talents", schwaebisch: "Talente", bayrisch: "Talente" } },
   { id: "berufe", label: { de: "Berufe", en: "Professions", schwaebisch: "Berufe", bayrisch: "Berufe" } },
   { id: "dungeons", label: { de: "Dungeons & Raids", en: "Dungeons & Raids", schwaebisch: "Dungeons & Raids", bayrisch: "Dungeons & Raids" } },
@@ -233,6 +235,8 @@ function TabContent({ tab, view }: { tab: string; view: CharacterView }) {
   switch (tab) {
     case "ausruestung":
       return <EquipmentTab view={view} />;
+    case "werte":
+      return <AttributesPanel view={view.attributes} />;
     case "talente":
       return <TalentsTab view={view} />;
     case "berufe":

@@ -4,7 +4,9 @@ import { INSTANCE_IMAGE_IDS } from "../instance-images";
 import { PROFESSION_NAMES_DE } from "../transform/professions";
 import { runPool } from "../lib/pool";
 import type {
+  AttributesIndex,
   CharacterRecord,
+  GuildRecord,
   IconMap,
   InstanceAchievement,
   InstanceAchievementsRecord,
@@ -15,6 +17,7 @@ import type {
 } from "../model";
 import type { JsonStore } from "../store";
 import { toRecipeDetail } from "../transform/recipes";
+import { toAttributes } from "../transform/attributes";
 import { buildTalentTree, treeIdFromHref } from "../transform/talent-tree";
 import type { CollectDeps } from "./guild";
 
@@ -28,6 +31,10 @@ export interface StaticRunReport {
   reputationGroupsChecked: number;
   instanceImagesAdded: number;
   professionIconsAdded: number;
+  /** Charaktere, deren Werte dieser Lauf geholt hat (Ansicht "Werte"). */
+  attributesFetched: number;
+  /** Charaktere, deren Werte veraltet sind, aber im Budget keinen Platz mehr hatten; sie folgen im nächsten Lauf. */
+  attributesPending: number;
   skipped: number;
   durationMs: number;
 }
@@ -189,6 +196,65 @@ async function fillReputationFactions(deps: CollectDeps, deadline: number): Prom
   return { checked: added, skipped: pool.skipped.length };
 }
 
+/** Was der Sammler über einen Charakter weiß, um zu entscheiden, ob seine Werte neu geholt werden. */
+interface AttributeCandidate {
+  id: number;
+  slug: string;
+  lastLoginAt: string | null;
+}
+
+/**
+ * Charaktere, deren Werte fehlen oder seit dem letzten Abruf eingeloggt waren, nur dann ändern sich Werte.
+ * Fehlende zuerst, dann die ältesten; was nicht ins Budget passt, kommt im nächsten Lauf dran.
+ */
+export function attributesDue(candidates: AttributeCandidate[], index: AttributesIndex): AttributeCandidate[] {
+  const fetched = (c: AttributeCandidate) => index[String(c.id)] ?? "";
+  return candidates
+    .filter((c) => {
+      const at = fetched(c);
+      return at === "" || (c.lastLoginAt !== null && c.lastLoginAt > at);
+    })
+    .sort((a, b) => fetched(a).localeCompare(fetched(b)) || a.id - b.id);
+}
+
+/**
+ * Werte (`/statistics`) je Charakter in eigene Blobs `attributes/<id>`, gestaffelt über die täglichen Läufe.
+ * 404 wird als Datensatz ohne Felder gespeichert, damit der Charakter erst nach dem nächsten Login wieder dran ist.
+ */
+async function fillAttributes(
+  deps: CollectDeps,
+  candidates: AttributeCandidate[],
+  deadline: number,
+  at: string,
+): Promise<{ fetched: number; pending: number }> {
+  const key = "attributes/index";
+  const index = (await deps.store.get<AttributesIndex>(key)) ?? {};
+  const due = attributesDue(candidates, index);
+  let fetched = 0;
+  await runPool(
+    due,
+    async (c) => {
+      const path = `/profile/wow/character/${encodeURIComponent(c.slug)}/statistics`;
+      const res = await deps.client.get(path, "profile");
+      if (res.status === 200) {
+        await deps.store.set(`attributes/${c.id}`, toAttributes(res.data, at));
+      } else if (res.status === 404) {
+        // Vorhandene Werte bleiben stehen, nur ein Datensatz ohne Werte wird angelegt.
+        if (!(await deps.store.get(`attributes/${c.id}`))) {
+          await deps.store.set(`attributes/${c.id}`, { fetchedAt: at, fields: null, powerType: null });
+        }
+      } else {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      index[String(c.id)] = at;
+      fetched++;
+    },
+    { concurrency: deps.config.concurrency, deadline },
+  );
+  if (fetched > 0) await deps.store.set(key, index);
+  return { fetched, pending: due.length - fetched };
+}
+
 export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunReport> {
   const { client, store, config } = deps;
   const started = Date.now();
@@ -236,10 +302,14 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
   // Rezeptdetails und Gegenstands-Icons für alles, was Gildenmitglieder tragen, kennen und verarbeiten.
   const itemIds: number[] = [];
   const recipeIds: number[] = [];
+  // Im selben Durchgang die aktiven Charaktere mit Profil als Kandidaten für die Werte.
+  const active = new Set(((await store.get<GuildRecord>("guild"))?.members ?? []).filter((m) => !m.former).map((m) => m.id));
+  const attributeCandidates: AttributeCandidate[] = [];
   for (const key of await store.list("characters/")) {
     const rec = await store.get<CharacterRecord>(key);
     for (const item of rec?.equipment ?? []) if (item.itemId) itemIds.push(item.itemId);
     for (const p of rec?.professions ?? []) recipeIds.push(...(p.recipeIds ?? []));
+    if (rec?.hasProfile && active.has(rec.id)) attributeCandidates.push({ id: rec.id, slug: rec.slug, lastLoginAt: rec.lastLoginAt });
   }
   const recipes = await fillRecipes(deps, recipeIds, deadline);
   for (const r of Object.values(recipes.map)) for (const reagent of r?.reagents ?? []) itemIds.push(reagent.id);
@@ -263,6 +333,8 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
     deadline,
     "static-retail",
   );
+  // Zuletzt, damit die Werte nie Icons und Rezepte aus dem Budget drängen.
+  const attributes = await fillAttributes(deps, attributeCandidates, deadline, at);
 
   return {
     at,
@@ -274,6 +346,8 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
     reputationGroupsChecked: reputation.checked,
     instanceImagesAdded: images.added,
     professionIconsAdded: professionIcons.added,
+    attributesFetched: attributes.fetched,
+    attributesPending: attributes.pending,
     skipped:
       skipped +
       spells.skipped +

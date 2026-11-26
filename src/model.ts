@@ -459,3 +459,23 @@ export interface WeeklyIndex {
    */
   entries?: Record<string, { headline: string; dialekte?: Dialekte<string>; from?: string; to?: string; testdaten?: boolean }>;
 }
+
+/**
+ * Ein Feld der Charakterwerte (Endpunkt `/statistics` des Profils): eine Zahl oder die Zahlen eines Objekts,
+ * etwa `{ base, effective }` bei Primärwerten oder `{ rating, rating_bonus, value }` bei Krit und Ausweichen.
+ */
+export type AttributeField = number | Record<string, number>;
+
+/** Blob `attributes/<Charakter-ID>`: Grundwerte eines Charakters, vom täglichen Sammler geholt. */
+export interface CharacterAttributesRecord {
+  fetchedAt: string;
+  /** Zahlenfelder der Antwort, Schlüssel wie bei Blizzard; null, wenn Blizzard keine Werte liefert (404). */
+  fields: Record<string, AttributeField> | null;
+  /** Ressource (Mana, Wut, Energie, Runenmacht ...); null ohne Angabe. */
+  powerType: { id: number; name: string } | null;
+  /** Nur bei erfundenen Werten aus den lokalen Beispieldaten. */
+  testdaten?: boolean;
+}
+
+/** Blob `attributes/index`: je Charakter-ID der Zeitpunkt des letzten Abrufs der Werte. */
+export type AttributesIndex = Record<string, string>;

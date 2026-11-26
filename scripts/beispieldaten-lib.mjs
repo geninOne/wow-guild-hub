@@ -312,6 +312,62 @@ export async function entferneBeispieldatenVor(speicher, serverstart) {
   return entfernt;
 }
 
+/** Ressource je Klasse wie bei Blizzard (Power-Type-ID und Name); alle übrigen Klassen nutzen Mana. */
+const RESSOURCE = { 1: { id: 1, name: "Wut" }, 4: { id: 3, name: "Energie" }, 6: { id: 6, name: "Runenmacht" } };
+/** Hauptwert je Klasse: Krieger, Paladin, Todesritter Stärke; Jäger, Schurke Beweglichkeit; sonst Intelligenz. */
+const HAUPTWERT = { 1: "strength", 2: "strength", 6: "strength", 3: "agility", 4: "agility" };
+
+/**
+ * Erfundene Werte (Ansicht "Werte") für einen Charakter, in der Form des Datensatzes `attributes/<id>`.
+ * Grob nach Level und Klasse, gleich bei gleicher ID. Trägt `testdaten: true`.
+ * @param {{ id: number, level: number, classId: number }} c
+ * @param {string} jetztIso
+ */
+export function erzeugeWerte(c, jetztIso) {
+  const r = zufall(`werte-${c.id}`);
+  const L = Math.max(1, c.level);
+  const haupt = HAUPTWERT[c.classId] ?? "intellect";
+  const primaer = (key) => {
+    const base = Math.round(18 + L * (key === haupt ? 1.6 : 0.7) + r() * 6);
+    return { base, effective: base + Math.round(L * (key === haupt ? 1.2 : 0.4) * r()) };
+  };
+  const strength = primaer("strength");
+  const agility = primaer("agility");
+  const intellect = primaer("intellect");
+  const stamina = primaer("stamina");
+  const spirit = primaer("spirit");
+  const ressource = RESSOURCE[c.classId] ?? { id: 0, name: "Mana" };
+  const mana = ressource.id === 0;
+  const prozent = (basis) => ({ rating: 0, rating_bonus: 0, value: Math.round((basis + r() * 4) * 100) / 100 });
+  const ruestung = Math.round(L * (haupt === "strength" ? 45 : haupt === "agility" ? 22 : 12) * (0.8 + r() * 0.4));
+  return {
+    fetchedAt: jetztIso,
+    fields: {
+      health: Math.round(stamina.effective * 10 + L * 18),
+      power: mana ? intellect.effective * 15 + L * 20 : 100,
+      strength,
+      agility,
+      intellect,
+      stamina,
+      spirit,
+      attack_power: Math.round(strength.effective * 2 + (haupt === "agility" ? agility.effective : 0)),
+      melee_crit: prozent(haupt === "intellect" ? 1 : 4),
+      ranged_crit: prozent(haupt === "agility" ? 4 : 1),
+      spell_power: mana ? Math.round(L * 1.5 * r()) : 0,
+      spell_crit: prozent(mana ? 3 : 0.5),
+      ...(mana ? { mana_regen: Math.round(spirit.effective / 4 + 8), mana_regen_combat: Math.round(r() * L * 0.3) } : {}),
+      armor: { base: ruestung, effective: ruestung + Math.round(agility.effective * 2) },
+      dodge: prozent(haupt === "agility" ? 5 : 2),
+      parry: haupt === "strength" ? prozent(5) : { rating: 0, rating_bonus: 0, value: 0 },
+      block: c.classId === 1 || c.classId === 2 ? prozent(4) : { rating: 0, rating_bonus: 0, value: 0 },
+      fire_resistance: { base: 0, effective: r() < 0.3 ? Math.round(r() * 30) : 0 },
+      shadow_resistance: { base: 0, effective: r() < 0.3 ? Math.round(r() * 30) : 0 },
+    },
+    powerType: ressource,
+    testdaten: true,
+  };
+}
+
 /**
  * Füllt den Speicher mit Beispieldaten. Echte Aktivitätswochen und Tagesstände bleiben unberührt.
  * Wochenergebnisse im Zeitraum werden gelöscht, damit die Auswertung sie neu berechnet.
@@ -331,8 +387,14 @@ export async function fuelleBeispieldaten(speicher, jetztIso, log = () => {}, se
   }
 
   const datensaetze = {};
+  let werte = 0;
   for (const m of gilde.members.filter((x) => !x.former && x.hasProfile)) {
     datensaetze[String(m.id)] = await speicher.get(`characters/${m.id}`);
+    // Werte nur, wo der Sammler noch keine geholt hat; echte Werte ersetzen sie beim nächsten statischen Lauf.
+    if (!(await speicher.get(`attributes/${m.id}`))) {
+      await speicher.set(`attributes/${m.id}`, erzeugeWerte(m, jetztIso));
+      werte++;
+    }
   }
 
   let aktivitaet = 0;
@@ -362,8 +424,9 @@ export async function fuelleBeispieldaten(speicher, jetztIso, log = () => {}, se
   }
   const geloescht = await loescheWochenergebnisse(speicher, [...alteWochen, ...wochen]);
   log(`${aktivitaet} Aktivitätswochen, ${staende.size} Tagesstände geschrieben, ${echte.size} echte Tagesstände unverändert.`);
+  log(`${werte} Charaktere mit erfundenen Werten.`);
   log(`${geloescht} Wochenergebnisse zur Neuberechnung entfernt.`);
-  return { aktivitaet, tagesstaende: staende.size, wochen };
+  return { aktivitaet, tagesstaende: staende.size, wochen, werte };
 }
 
 /** Index ohne die genannten Wochen, samt ihrer Archiv-Einträge. */
@@ -389,11 +452,11 @@ export async function loescheWochenergebnisse(speicher, wochen) {
   return geloescht;
 }
 
-/** Entfernt alles mit `testdaten: true` (Aktivität, Tagesstände, Wochenergebnisse). */
+/** Entfernt alles mit `testdaten: true` (Aktivität, Tagesstände, Wochenergebnisse, Werte). */
 export async function entferneBeispieldaten(speicher, log = () => {}) {
   let entfernt = 0;
   const wochen = [];
-  for (const prefix of ["activity/", "history/", "weekly/"]) {
+  for (const prefix of ["activity/", "history/", "weekly/", "attributes/"]) {
     for (const key of await speicher.list(prefix)) {
       if (key === "weekly/index") continue;
       const wert = await speicher.get(key);

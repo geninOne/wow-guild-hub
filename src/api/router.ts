@@ -1,4 +1,5 @@
 import type {
+  CharacterAttributesRecord,
   CharacterRecord,
   GuildRecord,
   IconMap,
@@ -156,7 +157,7 @@ async function route(
       const member = decoded === null ? undefined : findMember(guild, decoded);
       if (!member) return json(NOT_FOUND, 404, "none");
       const zusatz = Promise.all(erweiterungen.map(async (e) => [e.id, await e.charakter?.({ store, guild, member })] as const));
-      const [record, classes, races, itemIcons, recipeNames, recipeDetails, instanceDefs, reputationFactions, instanceImages, weekly, zusatzDaten] =
+      const [record, classes, races, itemIcons, recipeNames, recipeDetails, instanceDefs, reputationFactions, instanceImages, weekly, zusatzDaten, attributes] =
         await Promise.all([
         store.get<CharacterRecord>(`characters/${member.id}`),
         store.get<NamedList>("static/classes"),
@@ -169,10 +170,11 @@ async function route(
         store.get<IconMap>("static/instance-images"),
         latestWeekly(store),
         zusatz,
+        store.get<CharacterAttributesRecord>(`attributes/${member.id}`),
       ]);
       const view = buildCharacterView({
         member, record, guild, classes, races, itemIcons, rankNames: RANK_NAMES, recipeNames, recipeDetails, instanceDefs,
-        reputationFactions, instanceImages,
+        reputationFactions, instanceImages, attributes,
       });
       if (!view) return json(NOT_FOUND, 404, "none");
       view.titles = weekly ? characterTitles(weekly, member.id) : [];
