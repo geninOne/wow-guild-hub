@@ -1,9 +1,10 @@
-import { beforeEach, describe, expect, test } from "vitest";
-import type { ApiResult } from "../../src/blizzard/client";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import type { ApiResult, BlizzardClient } from "../../src/blizzard/client";
 import type { Config } from "../../src/config";
-import { MAX_RETRIES_PER_RUN, attributesDue, retriesDue, runStaticCollection } from "../../src/collect/static";
+import { ATTRIBUTES_BUDGET_SHARE, MAX_RETRIES_PER_RUN, attributesDue, retriesDue, runStaticCollection } from "../../src/collect/static";
 import type {
   CharacterAttributesRecord,
+  CharacterRecord,
   IconMap,
   InstanceAchievementsRecord,
   NamedList,
@@ -344,6 +345,90 @@ describe("Werte der Charaktere", () => {
     expect(await store.get("attributes/index")).toBeNull();
     routes["/profile/wow/character/eins/statistics"] = stats(1);
     expect(await run({ budgetMs: 0 })).toMatchObject({ attributesFetched: 0, attributesPending: 1 });
+  });
+
+  describe("Simulation: voller Nachholbedarf bei langsamer API", () => {
+    // Jede Anfrage kostet 100 ms auf der vorgetäuschten Uhr; Date.now() steht sonst still.
+    const LATENCY_MS = 100;
+    const BUDGET_MS = 10_000;
+    const CHARACTERS = 30;
+    const START = Date.parse("2026-11-06T03:00:00.000Z");
+
+    beforeEach(() => {
+      vi.useFakeTimers({ toFake: ["Date"] });
+      vi.setSystemTime(START);
+    });
+    afterEach(() => vi.useRealTimers());
+
+    const slow = (inner: BlizzardClient): BlizzardClient => ({
+      async get(path, ns) {
+        vi.setSystemTime(Date.now() + LATENCY_MS);
+        return inner.get(path, ns);
+      },
+    });
+
+    async function backlog() {
+      // Je Charakter 20 Gegenstände ohne Stufe und ohne Icon: 600 fehlende Icons, 300 Stufen je Lauf.
+      for (let id = 1; id <= CHARACTERS; id++) {
+        await character(id, `c${id}`, "2026-11-05T10:00:00.000Z");
+        const rec = (await store.get<CharacterRecord>(`characters/${id}`))!;
+        const equipment = Array.from({ length: 20 }, (_, i) => ({
+          slot: `S${i}`, slotName: `S${i}`, itemId: id * 100 + i, name: "x", quality: "EPIC", itemLevel: null, enchantments: [],
+        }));
+        await store.set(`characters/${id}`, { ...rec, equipment });
+        routes[`/profile/wow/character/c${id}/statistics`] = stats(id);
+      }
+      await guild(Array.from({ length: CHARACTERS }, (_, i) => i + 1));
+      // Alte Leereinträge ohne Zeitstempel, wie vor v2.1.1: werden alle erneut geprüft.
+      const nulls = Object.fromEntries(Array.from({ length: 200 }, (_, i) => [String(90_000 + i), null]));
+      await store.set("static/spell-icons", nulls);
+    }
+
+    const simulate = () =>
+      runStaticCollection({ client: slow(fake), store, config: { ...config, budgetMs: BUDGET_MS }, now: () => new Date(Date.now()) });
+
+    test("die Werte bekommen schon im ersten Lauf ihren Anteil und sind nach wenigen Läufen vollständig", async () => {
+      await backlog();
+      const first = await simulate();
+      // Ohne eigenes Budget waren es hier 0: Icons und Stufen fraßen die ganze Zeit.
+      expect(first.attributesFetched).toBeGreaterThanOrEqual(10);
+      // Die Nachholaufgaben kommen trotzdem voran.
+      expect(first.itemIconsAdded + first.itemLevelsAdded).toBeGreaterThan(0);
+      // Nicht länger als das Budget plus die Anfragen, die beim Ablauf noch unterwegs sind.
+      expect(first.durationMs).toBeLessThanOrEqual(BUDGET_MS + config.concurrency * LATENCY_MS);
+
+      let runs = 1;
+      let pending = first.attributesPending;
+      while (pending > 0 && runs < 5) {
+        pending = (await simulate()).attributesPending;
+        runs++;
+      }
+      expect(pending).toBe(0);
+      expect(runs).toBeLessThanOrEqual(3);
+      expect(Object.keys((await store.get("attributes/index")) ?? {})).toHaveLength(CHARACTERS);
+    });
+
+    test("ohne fällige Werte bekommen die Nachholaufgaben das ganze Budget", async () => {
+      await backlog();
+      const index = Object.fromEntries(Array.from({ length: CHARACTERS }, (_, i) => [String(i + 1), "2026-11-06T00:00:00.000Z"]));
+      await store.set("attributes/index", index);
+      const rep = await simulate();
+      expect(rep.attributesFetched).toBe(0);
+      // Deutlich mehr als der Anteil ohne Reserve hergäbe.
+      expect(rep.durationMs).toBeGreaterThan(BUDGET_MS * (1 - ATTRIBUTES_BUDGET_SHARE) + LATENCY_MS * config.concurrency);
+    });
+
+    test("neue Charaktere vor fälligen Aktualisierungen", async () => {
+      await backlog();
+      // Charaktere 1 bis 20 haben alte Werte und waren seitdem eingeloggt, 21 bis 30 sind neu.
+      const index = Object.fromEntries(Array.from({ length: 20 }, (_, i) => [String(i + 1), "2026-11-01T00:00:00.000Z"]));
+      await store.set("attributes/index", index);
+      fake.calls.length = 0;
+      const rep = await simulate();
+      const order = fake.calls.filter((p) => p.endsWith("/statistics")).map((p) => Number(/c(\d+)\//.exec(p)![1]));
+      expect(rep.attributesFetched).toBeGreaterThanOrEqual(10);
+      expect(order.slice(0, 10).sort((a, b) => a - b)).toEqual([21, 22, 23, 24, 25, 26, 27, 28, 29, 30]);
+    });
   });
 });
 

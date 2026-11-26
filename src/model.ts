@@ -466,7 +466,7 @@ export interface WeeklyIndex {
  */
 export type AttributeField = number | Record<string, number>;
 
-/** Blob `attributes/<Charakter-ID>`: Grundwerte eines Charakters, vom täglichen Sammler geholt. */
+/** Blob `attributes/<Charakter-ID>`: Grundwerte eines Charakters, vom statischen Sammler alle vier Stunden geholt. */
 export interface CharacterAttributesRecord {
   fetchedAt: string;
   /** Zahlenfelder der Antwort, Schlüssel wie bei Blizzard; null, wenn Blizzard keine Werte liefert (404). */

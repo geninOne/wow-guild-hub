@@ -67,9 +67,10 @@ Unterstützt wird derzeit **WoW Forever** (`WOW_VERSION=forever`). Retail und Cl
 5. **Gilde gestalten und neu bauen:** Weitere Angaben wie Logo, Farben, Rangnamen, Sprachen, Discord und
    Impressum stehen kommentiert in [.env.example](.env.example). Danach in Netlify "Deploys", "Trigger deploy".
 
-Fertig. Der Sammler läuft stündlich (`collect-guild`), statische Spieldaten täglich (`collect-static`), die
-Wochenauswertung sonntags früh (`collect-weekly`). Nach dem ersten Lauf, spätestens nach einer Stunde, sind
-Daten da. Wer nicht warten will, löst die Läufe in Netlify unter "Functions" einmal von Hand aus.
+Fertig. Der Sammler läuft stündlich (`collect-guild`), statische Spieldaten und die Charakterwerte alle vier
+Stunden (`collect-static`, jeweils um halb, versetzt zu den anderen Läufen), die Wochenauswertung sonntags früh
+(`collect-weekly`). Nach dem ersten Lauf, spätestens nach einer Stunde, sind Daten da; der Reiter "Werte" füllt
+sich in den nächsten statischen Läufen. Wer nicht warten will, löst die Läufe in Netlify unter "Functions" einmal von Hand aus.
 
 **Kosten:** Netlify baut bei jedem Push auf `main` neu. Wer Credits sparen will, schaltet unter "Build & deploy"
 die automatischen Builds ab und veröffentlicht nur über den Release-Workflow (siehe unten).
