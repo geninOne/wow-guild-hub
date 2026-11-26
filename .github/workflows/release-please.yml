@@ -1,0 +1,85 @@
+# Versionen und Releases des öffentlichen Repos, ohne Deploy (das Repo hat keine eigene Seite).
+#
+# Nach jedem Push auf main pflegt release-please einen Release-PR "chore(main): release X.Y.Z" mit neuer Version in
+# package.json und package-lock.json, dem Abschnitt in CHANGELOG.md und .release-please-manifest.json. Die
+# Version ergibt sich aus den Conventional Commits seit dem letzten Release: fix = patch, feat = minor,
+# "!" oder BREAKING CHANGE = major. Wird der Release-PR gemergt, entstehen Tag vX.Y.Z und ein GitHub-Release
+# mit denselben Notizen. Einstellungen: release-please-config.json.
+#
+# Token: Mit der GitHub App (Variable BOT_APP_CLIENT_ID, Secret BOT_APP_PRIVATE_KEY) läuft die Prüfung
+# auch auf dem Release-PR. Ohne App nutzt der Workflow GITHUB_TOKEN; dann muss unter Settings, Actions, General
+# "Allow GitHub Actions to create and approve pull requests" an sein, und die Prüfung startet auf dem Release-PR
+# nicht von selbst (PRs von GITHUB_TOKEN lösen keine Workflows aus).
+#
+# Läuft nur in geninOne/wow-guild-hub, nie in Forks oder im privaten Repo, das upstream übernimmt.
+name: Release Please
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-please
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    name: Release-PR und Release
+    if: github.repository == 'geninOne/wow-guild-hub'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Token der GitHub App
+        id: app
+        if: vars.BOT_APP_CLIENT_ID != ''
+        uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc # v3.4.0
+        with:
+          client-id: ${{ vars.BOT_APP_CLIENT_ID }}
+          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      # Einmalig: Die erste Version steht schon von Hand in CHANGELOG.md und im Manifest. Solange es gar kein
+      # Release gibt, wird es hier aus diesem Abschnitt angelegt, damit release-please ab dort weiterzählt.
+      - name: Erstes Release anlegen, falls es noch keins gibt
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token || github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          if [ -n "$(gh release list --limit 1 --json tagName --jq '.[].tagName')" ]; then
+            echo "Es gibt schon Releases, nichts zu tun."
+            exit 0
+          fi
+          version="$(node -p "require('./.release-please-manifest.json')['.']")"
+          node scripts/changelog-abschnitt.mjs "$version" > "$RUNNER_TEMP/notizen.md"
+          gh release create "v$version" --target "$GITHUB_SHA" --title "v$version" --notes-file "$RUNNER_TEMP/notizen.md"
+
+      - name: release-please
+        id: release
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        with:
+          token: ${{ steps.app.outputs.token || github.token }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+      # Bei einer neuen Hauptversion heißt der Abschnitt mit den Breaking Changes im GitHub-Release "Upgrade notes",
+      # damit Betreiber sofort sehen, was sie anpassen müssen (Umgebungsvariablen, Schritte bei Netlify).
+      - name: Upgrade notes bei einer Hauptversion
+        if: steps.release.outputs.release_created == 'true' && steps.release.outputs.minor == '0' && steps.release.outputs.patch == '0'
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token || github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ steps.release.outputs.tag_name }}
+        run: |
+          gh release view "$TAG" --json body --jq .body > "$RUNNER_TEMP/notizen.md"
+          sed -i 's/^### ⚠ BREAKING CHANGES$/### ⚠ Upgrade notes (breaking changes)/' "$RUNNER_TEMP/notizen.md"
+          gh release edit "$TAG" --notes-file "$RUNNER_TEMP/notizen.md"
