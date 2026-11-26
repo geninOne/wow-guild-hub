@@ -6,6 +6,7 @@ type Kind = AttributeRow["kind"];
 /**
  * Welche Felder der Antwort in welcher Gruppe stehen, in dieser Reihenfolge. Felder, die die Antwort nicht hat,
  * entfallen; so passt dieselbe Tabelle für Forever, Classic und Retail. `zeroHidden`: nur zeigen, wenn nicht 0.
+ * Forever liefert auch Felder aus Retail (Meisterschaft, Vielseitigkeit, Lebensraub ...), dort meist mit 0.
  */
 export const ATTRIBUTE_GROUPS: { id: AttributeGroupId; rows: { key: string; kind: Kind; zeroHidden?: boolean }[] }[] = [
   {
@@ -24,14 +25,16 @@ export const ATTRIBUTE_GROUPS: { id: AttributeGroupId; rows: { key: string; kind
     id: "angriff",
     rows: [
       { key: "attack_power", kind: "number" },
+      { key: "ranged_attack_power", kind: "number", zeroHidden: true },
+      { key: "main_hand_dps", kind: "number", zeroHidden: true },
       { key: "melee_crit", kind: "percent" },
       { key: "ranged_crit", kind: "percent" },
-      { key: "melee_haste", kind: "percent" },
-      { key: "ranged_haste", kind: "percent" },
+      { key: "melee_haste", kind: "percent", zeroHidden: true },
+      { key: "ranged_haste", kind: "percent", zeroHidden: true },
       { key: "melee_hit", kind: "percent", zeroHidden: true },
       { key: "ranged_hit", kind: "percent", zeroHidden: true },
-      { key: "hit_rating", kind: "number", zeroHidden: true },
       { key: "expertise", kind: "number", zeroHidden: true },
+      { key: "armor_penetration", kind: "number", zeroHidden: true },
       { key: "mastery", kind: "percent", zeroHidden: true },
       { key: "versatility", kind: "number", zeroHidden: true },
     ],
@@ -40,6 +43,7 @@ export const ATTRIBUTE_GROUPS: { id: AttributeGroupId; rows: { key: string; kind
     id: "zauber",
     rows: [
       { key: "spell_power", kind: "number" },
+      { key: "spell_healing", kind: "number", zeroHidden: true },
       { key: "spell_crit", kind: "percent" },
       { key: "spell_haste", kind: "percent", zeroHidden: true },
       { key: "spell_hit", kind: "percent", zeroHidden: true },
@@ -77,8 +81,9 @@ function pick(field: AttributeField | undefined, kind: Kind): { value: number; b
   if (typeof field === "number") return { value: field, base: null };
   const value = kind === "percent" ? (num(field.value) ?? num(field.effective)) : (num(field.effective) ?? num(field.value) ?? num(field.rating));
   if (value === null) return null;
+  // Forever meldet bei Rüstung den Grundwert 0; ein Grundwert zählt nur, wenn er da ist und abweicht.
   const base = num(field.base);
-  return { value, base: base !== null && base !== value ? base : null };
+  return { value, base: base !== null && base > 0 && base !== value ? base : null };
 }
 
 /** Werte des Charakters nach Gruppen. Ohne Datensatz oder ohne Felder ist `available` falsch. */

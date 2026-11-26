@@ -1,6 +1,7 @@
 import { expect, test } from "vitest";
 import { buildAttributesView } from "../../src/api/attributes-view";
 import { toAttributes } from "../../src/transform/attributes";
+import { loadFixture } from "../helpers/fixtures";
 
 /** Antwort in der Form von `/statistics` (gekürzt), Werte erfunden. */
 const RAW = {
@@ -77,4 +78,19 @@ test("ohne Datensatz, ohne Felder (404) oder ohne bekannte Felder nicht verfügb
     available: false, fetchedAt: "t", resource: null, groups: [],
   });
   expect(buildAttributesView({ fetchedAt: "t", fields: { unbekannt: 3 }, powerType: null }).available).toBe(false);
+});
+
+test("echte Forever-Antwort: Retail-Felder mit 0 entfallen, Rüstung ohne Grundwert 0", () => {
+  const view = buildAttributesView(toAttributes(loadFixture("statistics-forever").data, "t"));
+  expect(view.resource).toEqual({ id: 0, kind: "mana", name: "Mana" });
+  const keys = Object.fromEntries(view.groups.map((g) => [g.id, g.rows.map((r) => r.key)]));
+  expect(keys).toEqual({
+    basis: ["health", "power", "strength", "agility", "intellect", "stamina", "spirit"],
+    angriff: ["attack_power", "main_hand_dps", "melee_crit", "ranged_crit", "melee_haste", "ranged_haste"],
+    zauber: ["spell_power", "spell_crit", "spell_haste", "mana_regen", "mana_regen_combat"],
+    verteidigung: ["armor", "defense", "dodge", "parry", "block"],
+  });
+  const armor = view.groups[3].rows[0];
+  expect(armor).toEqual({ key: "armor", kind: "number", value: 395 });
+  expect(view.groups[1].rows.find((r) => r.key === "melee_crit")?.value).toBeCloseTo(4.2007);
 });
