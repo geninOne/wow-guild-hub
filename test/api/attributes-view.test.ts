@@ -94,3 +94,22 @@ test("echte Forever-Antwort: Retail-Felder mit 0 entfallen, Rüstung ohne Grundw
   expect(armor).toEqual({ key: "armor", kind: "number", value: 395 });
   expect(view.groups[1].rows.find((r) => r.key === "melee_crit")?.value).toBeCloseTo(4.2007);
 });
+
+test("Effektivwert 0 bei Grundwert über 0 (Forever-Ausreißer) entfällt, echte Nullen bleiben", () => {
+  const view = buildAttributesView(
+    toAttributes(
+      {
+        health: 1660,
+        strength: { base: 28, effective: 0 },
+        agility: { base: 31, effective: 0 },
+        intellect: { base: 111, effective: 221 },
+        attack_power: 0,
+        parry: { rating_bonus: 0, value: 0, rating_normalized: 0 },
+        armor: { base: 0, effective: 0 },
+      },
+      "t",
+    ),
+  );
+  const keys = Object.fromEntries(view.groups.map((g) => [g.id, g.rows.map((r) => r.key)]));
+  expect(keys).toEqual({ basis: ["health", "intellect"], angriff: ["attack_power"], verteidigung: ["armor", "parry"] });
+});

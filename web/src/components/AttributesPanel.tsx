@@ -18,10 +18,17 @@ const T = {
   },
   stand: { de: "Stand", en: "As of", schwaebisch: "Stand", bayrisch: "Stand" },
   grundwert: {
-    de: (base: string, plus: string) => `Grundwert ${base}, ${plus} durch Ausrüstung und Effekte`,
-    en: (base: string, plus: string) => `Base ${base}, ${plus} from gear and effects`,
-    schwaebisch: (base: string, plus: string) => `Grondwert ${base}, ${plus} durch Ausrüschtung ond Effekte`,
-    bayrisch: (base: string, plus: string) => `Grundwert ${base}, ${plus} durch Ausrüstung und Effekte`,
+    de: (base: string, plus: string) => `Grundwert ${base}, ${plus} durch Ausrüstung und Buffs`,
+    en: (base: string, plus: string) => `Base ${base}, ${plus} from gear and buffs`,
+    schwaebisch: (base: string, plus: string) => `Grondwert ${base}, ${plus} durch Ausrüschtung ond Buffs`,
+    bayrisch: (base: string, plus: string) => `Grundwert ${base}, ${plus} durch Ausrüstung und Buffs`,
+  },
+  /** Sichtbar unter dem Wert, damit die Plus-Zahl auch auf dem Handy und für Screenreader erklärt ist. */
+  bonus: {
+    de: (plus: string) => `davon ${plus} durch Ausrüstung und Buffs`,
+    en: (plus: string) => `incl. ${plus} from gear and buffs`,
+    schwaebisch: (plus: string) => `davo ${plus} durch Ausrüschtung ond Buffs`,
+    bayrisch: (plus: string) => `davo ${plus} durch Ausrüstung und Buffs`,
   },
 } satisfies Record<string, Fassungen<unknown>>;
 
@@ -299,7 +306,7 @@ function useRowLook(row: AttributeRow, view: AttributesView): { label: string; g
   return { label: LABELS[row.key] ? t(LABELS[row.key]) : row.key, ...look };
 }
 
-/** Hinweis zum Grundwert, wenn Ausrüstung und Effekte den Wert ändern. */
+/** Hinweis zum Grundwert, wenn Ausrüstung und Buffs den Wert ändern. */
 function useBaseTooltip(row: AttributeRow): string | undefined {
   const { t } = useSprache();
   if (row.base === undefined) return undefined;
@@ -309,16 +316,18 @@ function useBaseTooltip(row: AttributeRow): string | undefined {
 }
 
 function AttributeTile({ row, view }: { row: AttributeRow; view: AttributesView }) {
+  const { t } = useSprache();
   const { label, glyph, color } = useRowLook(row, view);
   const title = useBaseTooltip(row);
+  const plus = row.base !== undefined && row.value > row.base
+    ? `+${(row.value - row.base).toLocaleString(zahlLocale(), { maximumFractionDigits: 1 })}`
+    : null;
   return (
     <li className="attribute-tile" title={title} style={{ "--attribute-color": color } as CSSProperties}>
       <AttributeGlyph glyph={glyph} color={color} />
       <span className="attribute-label">{label}</span>
       <span className="attribute-value num">{formatValue(row)}</span>
-      {row.base !== undefined && row.value > row.base && (
-        <span className="attribute-bonus num small">+{(row.value - row.base).toLocaleString(zahlLocale(), { maximumFractionDigits: 1 })}</span>
-      )}
+      {plus && <span className="attribute-bonus small">{t(T.bonus)(plus)}</span>}
     </li>
   );
 }

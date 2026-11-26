@@ -81,6 +81,9 @@ function pick(field: AttributeField | undefined, kind: Kind): { value: number; b
   if (typeof field === "number") return { value: field, base: null };
   const value = kind === "percent" ? (num(field.value) ?? num(field.effective)) : (num(field.effective) ?? num(field.value) ?? num(field.rating));
   if (value === null) return null;
+  // Forever meldet vereinzelt Effektivwert 0 bei Grundwert über 0 (gesehen: Stärke und Beweglichkeit eines Magiers).
+  // Ausrüstung und Buffs können einen Wert nicht auf 0 drücken; die Zeile entfällt, statt eine falsche 0 zu zeigen.
+  if (value === 0 && (num(field.base) ?? 0) > 0) return null;
   // Forever meldet bei Rüstung den Grundwert 0; ein Grundwert zählt nur, wenn er da ist und abweicht.
   const base = num(field.base);
   return { value, base: base !== null && base > 0 && base !== value ? base : null };
