@@ -28,7 +28,8 @@ All screenshots show a made-up demo guild with sample data.
 
 - **Guild:** all members with class, race, level, rank and item level, with filters and sorting. Several guilds
   (say, a Horde and an Alliance guild) can be combined into one community.
-- **Character page:** gear with tooltips, talent trees, professions, reputation, progress in dungeons and raids,
+- **Character page:** gear with tooltips, stats like in the Armory (health, resource, primary stats, attack, spells,
+  defense), talent trees, professions, reputation, progress in dungeons and raids,
   and a monthly review.
 - **Professions:** a directory of all the guild's recipes, who can craft what, with materials.
 - **Statistics:** class and level distribution, an activity heatmap, guild statistics as a wall of curiosities

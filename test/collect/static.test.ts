@@ -1,8 +1,9 @@
-import { beforeEach, expect, test } from "vitest";
+import { beforeEach, describe, expect, test } from "vitest";
 import type { ApiResult } from "../../src/blizzard/client";
 import type { Config } from "../../src/config";
-import { runStaticCollection } from "../../src/collect/static";
+import { attributesDue, runStaticCollection } from "../../src/collect/static";
 import type {
+  CharacterAttributesRecord,
   IconMap,
   InstanceAchievementsRecord,
   NamedList,
@@ -267,4 +268,94 @@ test("Berufssymbole für alle bekannten Berufe", async () => {
   const icons = await store.get<IconMap>("static/profession-icons");
   expect(icons?.["186"]).toBe("https://render.worldofwarcraft.com/forever-eu/icons/56/136248.jpg");
   expect(icons?.["171"]).toBeNull();
+});
+
+describe("Werte der Charaktere", () => {
+  async function character(id: number, slug: string, lastLoginAt: string | null, hasProfile = true) {
+    const rec = buildCharacterRecord(
+      { id, name: slug, surname: null, slug, level: 30, classId: 1, raceId: 2, rank: 3 },
+      { profile: null, specializations: null, equipment: null, media: null, professions: null, raids: null, achievements: null, statistics: null, reputations: null },
+      "t",
+    );
+    await store.set(`characters/${id}`, { ...rec, hasProfile, lastLoginAt });
+  }
+  async function guild(ids: number[], former: number[] = []) {
+    const members = [...ids, ...former].map((id) => ({ id, former: former.includes(id) }));
+    await store.set("guild", { members });
+  }
+  const stats = (health: number): ApiResult => ({
+    status: 200,
+    data: { health, power: 100, power_type: { id: 1, name: "Wut" }, strength: { base: 50, effective: 70 } },
+  });
+  const attributeCalls = () => fake.calls.filter((p) => p.endsWith("/statistics"));
+
+  test("holt fehlende Werte aktiver Charaktere mit Profil, nicht Ehemalige und nicht ohne Profil", async () => {
+    await character(1, "eins", "2026-11-05T10:00:00.000Z");
+    await character(2, "zwei", null, false);
+    await character(3, "drei", "2026-11-05T10:00:00.000Z");
+    await guild([1, 2], [3]);
+    routes["/profile/wow/character/eins/statistics"] = stats(1000);
+    const rep = await run();
+    expect(rep).toMatchObject({ attributesFetched: 1, attributesPending: 0 });
+    expect(attributeCalls()).toEqual(["/profile/wow/character/eins/statistics"]);
+    expect(await store.get<CharacterAttributesRecord>("attributes/1")).toEqual({
+      fetchedAt: "2026-11-06T03:00:00.000Z",
+      fields: { health: 1000, power: 100, strength: { base: 50, effective: 70 } },
+      powerType: { id: 1, name: "Wut" },
+    });
+    expect(await store.get("attributes/index")).toEqual({ "1": "2026-11-06T03:00:00.000Z" });
+  });
+
+  test("zweiter Lauf holt nur nach neuem Login", async () => {
+    await character(1, "eins", "2026-11-05T10:00:00.000Z");
+    await character(4, "vier", "2026-11-05T10:00:00.000Z");
+    await guild([1, 4]);
+    routes["/profile/wow/character/eins/statistics"] = stats(1000);
+    routes["/profile/wow/character/vier/statistics"] = stats(2000);
+    await run();
+    fake.calls.length = 0;
+    expect((await run()).attributesFetched).toBe(0);
+    expect(attributeCalls()).toEqual([]);
+    await character(4, "vier", "2026-11-06T12:00:00.000Z");
+    routes["/profile/wow/character/vier/statistics"] = stats(2500);
+    await runStaticCollection({ client: fake, store, config, now: () => new Date("2026-11-07T03:00:00.000Z") });
+    expect(attributeCalls()).toEqual(["/profile/wow/character/vier/statistics"]);
+    expect((await store.get<CharacterAttributesRecord>("attributes/4"))?.fields?.health).toBe(2500);
+  });
+
+  test("404 legt einen Datensatz ohne Werte an, behält aber vorhandene Werte", async () => {
+    await character(1, "eins", "2026-11-05T10:00:00.000Z");
+    await character(5, "fuenf", "2026-11-05T10:00:00.000Z");
+    await guild([1, 5]);
+    await store.set("attributes/1", { fetchedAt: "alt", fields: { health: 7 }, powerType: null });
+    await store.set("attributes/index", { "1": "2026-11-01T00:00:00.000Z" });
+    const rep = await run();
+    expect(rep.attributesFetched).toBe(2);
+    expect(await store.get("attributes/5")).toEqual({ fetchedAt: "2026-11-06T03:00:00.000Z", fields: null, powerType: null });
+    expect((await store.get<CharacterAttributesRecord>("attributes/1"))?.fields).toEqual({ health: 7 });
+  });
+
+  test("Serverfehler und knappes Budget: offen für den nächsten Lauf", async () => {
+    await character(1, "eins", null);
+    await guild([1]);
+    routes["/profile/wow/character/eins/statistics"] = { status: 503, data: null };
+    expect(await run()).toMatchObject({ attributesFetched: 0, attributesPending: 1 });
+    expect(await store.get("attributes/1")).toBeNull();
+    expect(await store.get("attributes/index")).toBeNull();
+    routes["/profile/wow/character/eins/statistics"] = stats(1);
+    expect(await run({ budgetMs: 0 })).toMatchObject({ attributesFetched: 0, attributesPending: 1 });
+  });
+});
+
+test("attributesDue: fehlende zuerst, dann die ältesten, nur nach neuem Login", () => {
+  const due = attributesDue(
+    [
+      { id: 1, slug: "a", lastLoginAt: "2026-11-05T00:00:00.000Z" },
+      { id: 2, slug: "b", lastLoginAt: "2026-11-05T00:00:00.000Z" },
+      { id: 3, slug: "c", lastLoginAt: null },
+      { id: 4, slug: "d", lastLoginAt: "2026-11-05T00:00:00.000Z" },
+    ],
+    { "1": "2026-11-04T00:00:00.000Z", "2": "2026-11-06T00:00:00.000Z", "4": "2026-11-03T00:00:00.000Z" },
+  );
+  expect(due.map((c) => c.id)).toEqual([3, 4, 1]);
 });

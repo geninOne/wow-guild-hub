@@ -13,8 +13,8 @@ This file is maintained by [release-please](https://github.com/googleapis/releas
 First public version. The site was built for a community of two guilds in WoW Forever and can now
 be used by any guild.
 
-- **Guild, characters, professions:** member list with filters, character pages with gear, talents, professions,
-  reputation, dungeons and raids plus a monthly review, profession directory with recipes. Several guilds can be
+- **Guild, characters, professions:** member list with filters, character pages with gear, stats, talents,
+  professions, reputation, dungeons and raids plus a monthly review, profession directory with recipes. Several guilds can be
   combined into one community.
 - **Statistics:** class and level distribution, activity heatmap, guild statistics by week, month and
   all time, dungeons and raids of the whole guild.

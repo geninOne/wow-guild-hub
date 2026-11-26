@@ -28,7 +28,8 @@ Alle Screenshots zeigen eine erfundene Demo-Gilde mit Beispieldaten (Oberfläche
 
 - **Gilde:** alle Mitglieder mit Klasse, Volk, Stufe, Rang und Gegenstandsstufe, mit Filtern und Sortierung.
   Mehrere Gilden (etwa eine Horde- und eine Allianzgilde) lassen sich zu einer Gemeinschaft zusammenfassen.
-- **Charakterseite:** Ausrüstung mit Tooltips, Talentbäume, Berufe, Ruf, Fortschritt in Dungeons und Raids und
+- **Charakterseite:** Ausrüstung mit Tooltips, Werte wie im Arsenal (Gesundheit, Ressource, Primärwerte, Angriff,
+  Zauber, Verteidigung), Talentbäume, Berufe, Ruf, Fortschritt in Dungeons und Raids und
   ein monatlicher Rückblick.
 - **Berufe:** Verzeichnis aller Rezepte der Gilde, wer was herstellen kann, mit Materialien.
 - **Statistik:** Klassen- und Levelverteilung, Heatmap der Aktivität, Gildenstatistik als Kuriositätenwand

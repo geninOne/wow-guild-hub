@@ -1,4 +1,5 @@
 import type {
+  CharacterAttributesRecord,
   CharacterRecord,
   GuildRecord,
   IconMap,
@@ -12,6 +13,7 @@ import type {
 import { rankName, type RankNames } from "./config";
 import { lookupName, memberGuild } from "./guild-view";
 import { DUNGEON_INFO, EXTRA_DUNGEONS } from "../instance-images";
+import { buildAttributesView } from "./attributes-view";
 import { buildInstancesView } from "./instances-view";
 import { recipeDisplayNames, recipeView } from "./recipes";
 import { buildReputationView } from "./reputation-view";
@@ -63,6 +65,7 @@ export function buildCharacterView(input: {
   instanceDefs?: InstanceAchievementsRecord | null;
   reputationFactions?: ReputationFactionsRecord | null;
   instanceImages?: IconMap | null;
+  attributes?: CharacterAttributesRecord | null;
 }): CharacterView | null {
   const { member, guild, classes, races, itemIcons, rankNames } = input;
   const stored = input.record ?? (member ? recordFromMember(member) : null);
@@ -101,6 +104,7 @@ export function buildCharacterView(input: {
     itemIcons: icons,
     instances: buildInstancesView(input.instanceDefs ?? null, stored.instances, input.instanceImages ?? null, DUNGEON_INFO, EXTRA_DUNGEONS, home.faction),
     reputation: buildReputationView(stored.reputations, input.reputationFactions ?? null),
+    attributes: buildAttributesView(input.attributes),
     recipes,
   };
 }

@@ -62,6 +62,15 @@ describe("handleApi", () => {
     expect((await body(res)).members).toHaveLength(2);
   });
 
+  test("Charakter mit Werten aus attributes/<id>, ohne Blob nicht verfügbar", async () => {
+    expect((await body(await handleApi(req("/api/characters/gelmar-soulvenn"), store))).attributes).toEqual({
+      available: false, fetchedAt: null, resource: null, groups: [],
+    });
+    await store.set("attributes/1647409", { fetchedAt: "2026-11-26T03:00:00.000Z", fields: { health: 900 }, powerType: null });
+    const view = await body(await handleApi(req("/api/characters/gelmar-soulvenn"), store));
+    expect(view.attributes.groups).toEqual([{ id: "basis", rows: [{ key: "health", kind: "number", value: 900 }] }]);
+  });
+
   test("Charakter per Slug und per ID, unbekannt 404 ohne Cache", async () => {
     expect((await body(await handleApi(req("/api/characters/gelmar-soulvenn"), store))).character.id).toBe(1647409);
     expect((await handleApi(req("/api/characters/1647409/"), store)).status).toBe(200);
