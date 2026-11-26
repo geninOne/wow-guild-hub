@@ -169,33 +169,46 @@ npm run typecheck
 npm run build
 ```
 
-## Updating
+## Staying up to date
 
-Pull new versions into your fork with "Sync fork" on GitHub, or locally:
+New versions appear as [releases](https://github.com/geninOne/wow-guild-hub/releases) with notes on what changed.
+Versions follow [Semantic Versioning](https://semver.org/): patch for fixes, minor for new features, major when you
+have to adjust something.
 
-```bash
-git remote add upstream https://github.com/geninOne/wow-guild-hub.git
-```
+1. **Get notified:** on the [repository page](https://github.com/geninOne/wow-guild-hub) choose "Watch", "Custom",
+   tick "Releases" and apply. GitHub then tells you about every new version.
+2. **Read the release notes.** For a major version (e.g. 3.0.0), the section "Upgrade notes" lists new or renamed
+   environment variables and steps on Netlify. Do these first.
+3. **Update your fork:** on GitHub, "Sync fork" on the page of your fork brings in the latest `main` (possibly with changes that are not
+   released yet). Or locally,
+   pinned to exactly one version:
 
-```bash
-git pull upstream main
-```
+   ```bash
+   git remote add upstream https://github.com/geninOne/wow-guild-hub.git
+   ```
 
-What changed is listed in [CHANGELOG.md](CHANGELOG.md). For a new major version (e.g. 2.0.0), check there
-whether new variables are needed.
+   ```bash
+   git pull upstream v2.1.0
+   ```
+
+   Then push as usual. If you changed files yourself, Git may report conflicts; keep your own settings in
+   environment variables and your own code in extensions (see above), then there are hardly any.
+4. **Publish:** with automatic builds, Netlify deploys right after the push. Otherwise use the release workflow
+   (below).
 
 ## Publishing via the release workflow (optional)
 
-Instead of on every push, the site can go live only with a new version. To do so, add in GitHub under
-"Settings", "Secrets and variables", "Actions":
+Instead of on every push, your site can go live only when you decide. To do so, turn off automatic builds on
+Netlify and add in your fork on GitHub under "Settings", "Secrets and variables", "Actions":
 
 - **Secrets:** `NETLIFY_AUTH_TOKEN`, `NETLIFY_SITE_ID`, `BNET_CLIENT_ID`, `BNET_CLIENT_SECRET`, optionally
   `NEWSPAPER_AI_KEY`
 - **Variables:** `GUILD_SLUGS` and, as needed, all other settings from `.env.example`
 
-Then "Actions", "Release", "Run workflow" with `patch`, `minor` or `major`. The workflow checks, bumps the
-version, writes the changelog section, sets the Netlify variables, deploys and creates a GitHub release. If a run
-fails, use "Re-run failed jobs", not "Re-run all jobs".
+Then "Actions", "Release", "Run workflow" on `main`. The workflow runs the checks, sets the Netlify variables and
+deploys exactly that state. Pushing a tag `vX.Y.Z` that matches `package.json` does the same. The version number
+comes from this repository; your fork does not bump it. Without the Netlify secrets the workflow deploys nothing,
+and in this repository itself it never runs.
 
 ## Structure
 

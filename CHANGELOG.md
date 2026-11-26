@@ -4,10 +4,11 @@ All notable changes to WoW Guild Hub. Version numbers follow
 [Semantic Versioning](https://semver.org/): patch for fixes, minor for new content,
 major for changes that require operators to adjust something.
 
-New entries go under "Unreleased". `npm run release:patch`, `release:minor` or
-`release:major` turns them into the section of the new version, commits and sets the tag.
+This file is maintained by [release-please](https://github.com/googleapis/release-please) from the
+[Conventional Commits](https://www.conventionalcommits.org/) on `main`. Please do not edit it by hand; see
+[CONTRIBUTING.md](CONTRIBUTING.md#commits-and-versions).
 
-## Unreleased
+## 2.0.0 (2026-11-26)
 
 First public version. The site was built for a community of two guilds in WoW Forever and can now
 be used by any guild.

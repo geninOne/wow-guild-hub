@@ -1,18 +1,21 @@
 import { describe, expect, test } from "vitest";
-import {
-  changelogAbschnitt,
-  changelogFreigeben,
-  heuteIso,
-  naechsteVersion,
-  pruefeTag,
-  zielVersion,
-} from "../../scripts/release-lib.mjs";
+import { changelogAbschnitt, heuteIso, pruefeTag } from "../../scripts/release-lib.mjs";
 
+// So schreibt release-please: Überschrift mit Link, Unterabschnitte mit "###".
 const CHANGELOG = `# Changelog
 
 Einleitung.
 
-## Unreleased
+## [1.1.0](https://github.com/geninOne/wow-guild-hub/compare/v1.0.0...v1.1.0) (2026-12-01)
+
+
+### Features
+
+* **berufe:** Filter nach Rezeptrang ([#7](https://github.com/geninOne/wow-guild-hub/issues/7))
+
+### [1.0.1](https://github.com/geninOne/wow-guild-hub/compare/v1.0.0...v1.0.1) (2026-11-20)
+
+* Korrektur.
 
 ## 1.0.0 (2026-11-06)
 
@@ -20,36 +23,23 @@ Einleitung.
 - Zweiter Punkt.
 `;
 
-describe("naechsteVersion", () => {
-  test("erhöht Patch, Minor und Major nach Semantic Versioning", () => {
-    expect(naechsteVersion("1.0.0", "patch")).toBe("1.0.1");
-    expect(naechsteVersion("1.2.3", "minor")).toBe("1.3.0");
-    expect(naechsteVersion("1.2.3", "major")).toBe("2.0.0");
-  });
-
-  test("lehnt unbekannte Art und ungültige Version ab", () => {
-    expect(() => naechsteVersion("1.0", "patch")).toThrow(/1\.0/);
-    expect(() => naechsteVersion("1.0.0", "riesig" as never)).toThrow(/patch, minor oder major/);
-  });
-});
-
-describe("zielVersion", () => {
-  test("aktuell veröffentlicht die Version ohne Erhöhung, sonst wie naechsteVersion", () => {
-    expect(zielVersion("1.0.0", "aktuell")).toEqual({ version: "1.0.0", erhoehen: false });
-    expect(zielVersion("1.0.0", "minor")).toEqual({ version: "1.1.0", erhoehen: true });
-  });
-
-  test("lehnt unbekannte Art mit allen erlaubten ab", () => {
-    expect(() => zielVersion("1.0.0", "" as never)).toThrow(/aktuell/);
-  });
-});
-
 describe("changelogAbschnitt", () => {
-  test("liefert Datum und Inhalt des Abschnitts einer Version", () => {
+  test("liefert Datum und Inhalt eines von Hand geschriebenen Abschnitts", () => {
     expect(changelogAbschnitt(CHANGELOG, "1.0.0")).toEqual({
       datum: "2026-11-06",
       inhalt: "- Erste Version.\n- Zweiter Punkt.",
     });
+  });
+
+  test("liest Überschriften von release-please mit Link und behält die Unterabschnitte", () => {
+    expect(changelogAbschnitt(CHANGELOG, "1.1.0")).toEqual({
+      datum: "2026-12-01",
+      inhalt: "### Features\n\n* **berufe:** Filter nach Rezeptrang ([#7](https://github.com/geninOne/wow-guild-hub/issues/7))",
+    });
+  });
+
+  test("erkennt auch Versionsüberschriften mit drei Rauten", () => {
+    expect(changelogAbschnitt(CHANGELOG, "1.0.1")).toEqual({ datum: "2026-11-20", inhalt: "* Korrektur." });
   });
 
   test("liefert null für eine unbekannte Version", () => {
@@ -58,34 +48,10 @@ describe("changelogAbschnitt", () => {
   });
 });
 
-describe("changelogFreigeben", () => {
-  const mitEintrag = CHANGELOG.replace("## Unreleased\n", "## Unreleased\n\n- Neue Berufe-Ansicht.\n");
-
-  test("macht aus Unreleased einen datierten Abschnitt und legt ein neues leeres an", () => {
-    const neu = changelogFreigeben(mitEintrag, "1.1.0", "2026-11-07");
-    expect(neu).toContain("## Unreleased\n\n## 1.1.0 (2026-11-07)\n\n- Neue Berufe-Ansicht.\n\n## 1.0.0 (2026-11-06)");
-    expect(changelogAbschnitt(neu, "1.1.0")).toEqual({ datum: "2026-11-07", inhalt: "- Neue Berufe-Ansicht." });
-    expect(changelogAbschnitt(neu, "1.0.0")?.inhalt).toBe("- Erste Version.\n- Zweiter Punkt.");
-  });
-
-  test("bricht ab, wenn unter Unreleased nichts steht", () => {
-    expect(() => changelogFreigeben(CHANGELOG, "1.1.0", "2026-11-07")).toThrow(/Unreleased/);
-  });
-
-  test("bricht ab, wenn der Abschnitt Unreleased fehlt", () => {
-    expect(() => changelogFreigeben("# Changelog\n\n## 1.0.0 (2026-11-06)\n\n- x\n", "1.1.0", "2026-11-07")).toThrow(
-      /Unreleased/,
-    );
-  });
-
-  test("bricht ab, wenn die Version schon im Changelog steht", () => {
-    expect(() => changelogFreigeben(mitEintrag, "1.0.0", "2026-11-07")).toThrow(/1\.0\.0/);
-  });
-});
-
 describe("pruefeTag", () => {
   test("akzeptiert ein Tag, das zur Version passt und einen Abschnitt hat", () => {
     expect(() => pruefeTag("v1.0.0", "1.0.0", CHANGELOG)).not.toThrow();
+    expect(() => pruefeTag("v1.1.0", "1.1.0", CHANGELOG)).not.toThrow();
   });
 
   test("lehnt ein Tag ab, das nicht zur Version in package.json passt", () => {

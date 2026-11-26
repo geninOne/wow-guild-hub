@@ -18,11 +18,14 @@ Mit deiner Teilnahme stimmst du dem [Verhaltenskodex](CODE_OF_CONDUCT.de.md) zu.
 1. Repository forken und einen Branch von `main` anlegen, z. B. `berufe-filter` oder `fix-talentbaum`.
 2. Klein bleiben: ein Thema je Pull Request, gern in mehreren kleinen Commits.
 3. Lokal prüfen (siehe unten). Die GitHub Action führt dieselben Schritte bei jedem Pull Request aus.
-4. Eintrag unter "Unreleased" in [CHANGELOG.md](CHANGELOG.md).
-5. Pull Request mit der Vorlage öffnen. Mindestens ein Review ist nötig, alle Prüfungen müssen grün sein.
+4. Pull Request mit der Vorlage öffnen. Sein **Titel** folgt [Conventional Commits](#commits-und-versionen), eine
+   Prüfung testet das. `CHANGELOG.md` und die Version bitte nicht anfassen, das macht release-please.
+5. Mindestens ein Review des Maintainers ist nötig, alle Prüfungen müssen grün sein. Gemergt wird mit "Squash and
+   merge", der Titel wird also zum Commit auf `main`.
 
-Pull Requests aus Forks bekommen keinen Zugriff auf Secrets. Was Zugangsdaten braucht, lässt sich deshalb nur
-lokal testen.
+Workflows auf Pull Requests aus Forks laufen mit `pull_request`: nur lesend, ohne Secrets. Was Zugangsdaten braucht,
+lässt sich deshalb nur lokal testen. Bei deinen ersten Beiträgen gibt der Maintainer die Läufe von Hand frei,
+bevor sie starten.
 
 ## Lokal entwickeln
 
@@ -80,14 +83,26 @@ npm run build
 - `npm run lint` (oxlint) muss ohne Befund durchlaufen.
 - Neue Logik bekommt Tests (vitest), Oberflächen-Bausteine Tests mit Testing Library.
 
-## Commits
+## Commits und Versionen
 
-Kurze Betreffzeile auf Englisch nach dem Muster `Area: what changes`, z. B.
-`Professions: filter by recipe rank`. Im Text darunter, falls nötig, warum. Ein Commit soll für sich bauen und die
-Tests bestehen.
+Titel von Pull Requests (und damit die Commits auf `main`) folgen [Conventional Commits](https://www.conventionalcommits.org/de/),
+auf Englisch: `<type>(<optionaler scope>): <summary>`, z. B. `feat(professions): filter by recipe rank` oder
+`fix: version in the footer`. Commits in deinem Branch sind frei, sie werden beim Mergen zusammengefasst.
 
-## Versionen
+| Type | Wofür | Release |
+|---|---|---|
+| `feat` | neue Funktion | Minor |
+| `fix` | Fehlerkorrektur | Patch |
+| `perf`, `revert` | schnellerer Code, Änderung zurücknehmen | Patch |
+| `docs`, `style`, `refactor`, `test`, `build`, `ci`, `chore` | alles andere | keins |
+| `!` nach dem Type, z. B. `feat!: …` | Änderung, nach der Betreiber etwas umstellen müssen (z. B. neue oder umbenannte Pflichtvariable) | Major |
 
-Versionen folgen [Semantic Versioning](https://semver.org/lang/de/): Patch für Korrekturen, Minor für neue
-Funktionen, Major für Änderungen, nach denen Betreiber etwas umstellen müssen (z. B. neue Pflichtvariablen).
-Releases macht der Maintainer.
+Versionen folgen [Semantic Versioning](https://semver.org/lang/de/). [release-please](https://github.com/googleapis/release-please)
+sammelt die gemergten Pull Requests in einem Release-PR mit neuer Version und Abschnitt in `CHANGELOG.md`. Merged
+der Maintainer ihn, entstehen ein Tag `vX.Y.Z` und ein GitHub-Release mit denselben Notizen. Das öffentliche Repo
+deployt selbst nichts.
+
+**Breaking Changes:** `!` im Titel und in der Beschreibung des Pull Requests "Upgrade notes" ausfüllen: welche
+Umgebungsvariablen neu, umbenannt oder entfallen sind und was Betreiber bei Netlify tun müssen. Beim Mergen setzt
+der Maintainer diese Hinweise als Fußzeile mit `BREAKING CHANGE:` in die Commit-Nachricht. Sie erscheinen dann in
+den Notizen der Hauptversion unter "Upgrade notes".

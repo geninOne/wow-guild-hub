@@ -1,6 +1,6 @@
 {
   "name": "wow-guild-hub",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -17,13 +17,9 @@
     "daten:beispiel": "node scripts/beispieldaten.mjs",
     "zeitung:neu": "node scripts/zeitung-neu.mjs",
     "zeitung:ki-test": "node scripts/ki-test.mjs",
-    "release:patch": "node scripts/release.mjs patch",
-    "release:minor": "node scripts/release.mjs minor",
-    "release:major": "node scripts/release.mjs major",
     "daten:uebernahme": "node scripts/blobs-uebernahme.mjs",
     "netlify:umgebung": "node scripts/netlify-umgebung.mjs",
     "daten:uebernahme:live": "node scripts/daten-uebernahme-live.mjs",
-    "release:aktuell": "node scripts/release.mjs aktuell",
     "statistik:erkunden": "node scripts/statistik-erkunden.mjs",
     "lint": "oxlint --deny-warnings ."
   },

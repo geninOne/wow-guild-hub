@@ -1,99 +1,37 @@
 // Hilfen für Versionen und CHANGELOG.md, getrennt von den Kommandozeilen-Skripten, damit sie testbar sind.
+// Versionen, CHANGELOG.md und Tags pflegt release-please (.github/workflows/release-please.yml).
 
-const UNRELEASED = "## Unreleased";
-const VERSION = /^(\d+)\.(\d+)\.(\d+)$/;
+/** Überschrift einer Version, wie release-please sie schreibt oder von Hand: "## [1.2.0](link) (2026-11-26)" oder "## 1.2.0 (2026-11-26)". */
+const VERSIONS_UEBERSCHRIFT = /^#{2,3} \[?(\d+\.\d+\.\d+)\]?(?:\([^)]*\))? \((\d{4}-\d{2}-\d{2})\)$/;
 
-/**
- * Nächste Versionsnummer nach Semantic Versioning.
- * @param {string} version zum Beispiel "1.0.0"
- * @param {"patch" | "minor" | "major"} art
- * @returns {string}
- */
-export function naechsteVersion(version, art) {
-  const teile = VERSION.exec(version);
-  if (!teile) throw new Error(`Version "${version}" hat nicht die Form X.Y.Z`);
-  const [major, minor, patch] = teile.slice(1).map(Number);
-  if (art === "patch") return `${major}.${minor}.${patch + 1}`;
-  if (art === "minor") return `${major}.${minor + 1}.0`;
-  if (art === "major") return `${major + 1}.0.0`;
-  throw new Error(`Unbekannte Art "${art}", erlaubt sind patch, minor oder major`);
-}
-
-/**
- * Zielversion eines Releases. "aktuell" veröffentlicht die Version aus package.json ohne Erhöhung
- * (zum Beispiel 1.0.0 beim ersten Live-Gang), sonst wie naechsteVersion.
- * @param {string} version
- * @param {"aktuell" | "patch" | "minor" | "major"} art
- * @returns {{ version: string, erhoehen: boolean }}
- */
-export function zielVersion(version, art) {
-  if (art === "aktuell") return { version, erhoehen: false };
-  if (!["patch", "minor", "major"].includes(art)) {
-    throw new Error(`Unbekannte Art "${art}", erlaubt sind aktuell, patch, minor oder major`);
-  }
-  return { version: naechsteVersion(version, art), erhoehen: true };
-}
-
-/** Zerlegt den Changelog in Kopf und Abschnitte (je Überschrift "## …"). */
+/** Zerlegt den Changelog in Abschnitte, je Überschrift "## …" oder Versionsüberschrift "### [x.y.z]". */
 function abschnitte(text) {
-  const zeilen = text.replace(/\r\n/g, "\n").split("\n");
-  const kopf = [];
   /** @type {{ ueberschrift: string, zeilen: string[] }[]} */
   const liste = [];
-  for (const zeile of zeilen) {
-    if (zeile.startsWith("## ")) liste.push({ ueberschrift: zeile.trimEnd(), zeilen: [] });
-    else if (liste.length === 0) kopf.push(zeile);
-    else liste[liste.length - 1].zeilen.push(zeile);
+  for (const zeile of text.replace(/\r\n/g, "\n").split("\n")) {
+    if (zeile.startsWith("## ") || VERSIONS_UEBERSCHRIFT.test(zeile.trimEnd())) {
+      liste.push({ ueberschrift: zeile.trimEnd(), zeilen: [] });
+    } else if (liste.length > 0) {
+      liste[liste.length - 1].zeilen.push(zeile);
+    }
   }
-  return { kopf, liste };
-}
-
-function versionsUeberschrift(ueberschrift) {
-  return /^## (\d+\.\d+\.\d+) \((\d{4}-\d{2}-\d{2})\)$/.exec(ueberschrift);
+  return liste;
 }
 
 /**
- * Abschnitt einer Version, Überschrift "## 1.0.0 (2026-11-06)".
+ * Abschnitt einer Version.
  * @param {string} text Inhalt von CHANGELOG.md
- * @param {string} version
+ * @param {string} version zum Beispiel "1.0.0"
  * @returns {{ datum: string, inhalt: string } | null}
  */
 export function changelogAbschnitt(text, version) {
-  for (const abschnitt of abschnitte(text).liste) {
-    const treffer = versionsUeberschrift(abschnitt.ueberschrift);
+  for (const abschnitt of abschnitte(text)) {
+    const treffer = VERSIONS_UEBERSCHRIFT.exec(abschnitt.ueberschrift);
     if (treffer && treffer[1] === version) {
       return { datum: treffer[2], inhalt: abschnitt.zeilen.join("\n").trim() };
     }
   }
   return null;
-}
-
-/**
- * Gibt die Einträge unter "Unreleased" als neue Version frei und legt darüber ein leeres
- * "Unreleased" an.
- * @param {string} text
- * @param {string} version
- * @param {string} isoDatum zum Beispiel "2026-11-07"
- * @returns {string}
- */
-export function changelogFreigeben(text, version, isoDatum) {
-  if (changelogAbschnitt(text, version)) throw new Error(`Version ${version} steht schon in CHANGELOG.md`);
-  const { kopf, liste } = abschnitte(text);
-  const index = liste.findIndex((a) => a.ueberschrift === UNRELEASED);
-  if (index === -1) throw new Error(`CHANGELOG.md hat keinen Abschnitt "${UNRELEASED}"`);
-  const inhalt = liste[index].zeilen.join("\n").trim();
-  if (inhalt === "") {
-    throw new Error('Unter "Unreleased" in CHANGELOG.md steht nichts. Erst die Änderungen eintragen.');
-  }
-
-  const neu = [
-    { ueberschrift: UNRELEASED, zeilen: [""] },
-    { ueberschrift: `## ${version} (${isoDatum})`, zeilen: ["", inhalt, ""] },
-    ...liste.slice(index + 1),
-  ];
-  const teile = [kopf.join("\n").trimEnd(), ""];
-  for (const abschnitt of [...liste.slice(0, index), ...neu]) teile.push(abschnitt.ueberschrift, ...abschnitt.zeilen);
-  return teile.join("\n").trimEnd() + "\n";
 }
 
 /**
@@ -112,7 +50,7 @@ export function pruefeTag(tag, version, changelog) {
 }
 
 /**
- * Heutiges Datum in deutscher Zeit als "JJJJ-MM-TT".
+ * Heutiges Datum in deutscher Zeit als "JJJJ-MM-TT" (Build ohne Changelog-Abschnitt der Version).
  * @param {Date} now
  * @returns {string}
  */

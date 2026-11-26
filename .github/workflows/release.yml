@@ -1,30 +1,23 @@
-# Veröffentlichung auf Netlify (jeder Produktions-Deploy kostet Credits), auf zwei Wegen:
+# Veröffentlichung einer eigenen Seite auf Netlify, gedacht für Forks (jeder Produktions-Deploy kostet Credits).
+# Im öffentlichen Repo geninOne/wow-guild-hub läuft er nie: Das Repo hat keine eigene Seite, dort entstehen nur
+# Versionen und GitHub-Releases (release-please.yml).
 #
-# 1. Knopf: Actions, Release, Run workflow (Zweig main), Art wählen.
-#    patch, minor, major: Version erhöhen, "Unreleased" in CHANGELOG.md wird zum Abschnitt der
-#    neuen Version, Commit "Version X.Y.Z" nach main, Tag vX.Y.Z. aktuell: nur Tag für die Version in
-#    package.json (erster Live-Gang mit 1.0.0). Das Tag pusht der Workflow mit GITHUB_TOKEN; solche Pushes
-#    starten bewusst keinen weiteren Workflow, es gibt also keinen zweiten Deploy.
-# 2. Tag v* von Hand pushen (nach npm run release:patch usw.).
+# Auslöser:
+# 1. Knopf: Actions, Release, Run workflow, Zweig wählen (meist main). Deployt genau diesen Stand.
+# 2. Tag v* pushen, zum Beispiel nach "git pull upstream vX.Y.Z". Das Tag muss zur Version in package.json passen.
+# Versionen werden hier nicht erhöht; sie kommen mit jedem Update aus dem öffentlichen Repo.
 #
-# Danach jeweils: Netlify-Umgebungsvariablen aus GitHub-Secrets und -Variables setzen, deployen,
-# GitHub-Release mit dem Changelog-Abschnitt.
+# Ohne die Secrets NETLIFY_AUTH_TOKEN und NETLIFY_SITE_ID deployt nichts: Beim Tag endet der Lauf mit einem
+# Hinweis, beim Knopf mit einem Fehler.
 # Secrets: NETLIFY_AUTH_TOKEN, NETLIFY_SITE_ID, BNET_CLIENT_ID, BNET_CLIENT_SECRET.
 # Variables: GUILD_SLUGS (Pflicht), optional GUILD_RANKS, TITLE_OPT_OUTS, WOW_VERSION, BNET_REGION, BNET_LOCALE,
 # COLLECT_CONCURRENCY, COLLECT_BUDGET_MS (sonst Standardwert, siehe .env.example).
-# Nach einem Fehler "Re-run failed jobs" nutzen, nicht "Re-run all jobs" (das würde erneut eine Version anlegen).
 name: Release
 
 on:
   push:
     tags: ["v*"]
   workflow_dispatch:
-    inputs:
-      art:
-        description: "Version: patch, minor oder major erhöhen, oder aktuell = Version aus package.json ohne Erhöhung (erster Live-Gang mit 1.0.0)"
-        type: choice
-        options: [patch, minor, major, aktuell]
-        default: patch
 
 permissions:
   contents: read
@@ -34,76 +27,51 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  voraussetzungen:
+    name: Voraussetzungen
+    if: github.repository != 'geninOne/wow-guild-hub'
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      bereit: ${{ steps.secrets.outputs.bereit }}
+    steps:
+      - name: Secrets vorhanden
+        id: secrets
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          BNET_CLIENT_ID: ${{ secrets.BNET_CLIENT_ID }}
+          BNET_CLIENT_SECRET: ${{ secrets.BNET_CLIENT_SECRET }}
+        run: |
+          fehlt=""
+          for name in NETLIFY_AUTH_TOKEN NETLIFY_SITE_ID BNET_CLIENT_ID BNET_CLIENT_SECRET; do
+            if [ -z "${!name}" ]; then fehlt="$fehlt $name"; fi
+          done
+          if [ -z "$fehlt" ]; then
+            echo "bereit=true" >> "$GITHUB_OUTPUT"
+          elif [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            echo "::error::Secrets fehlen:$fehlt"
+            exit 1
+          else
+            echo "::notice::Kein Deploy, Secrets fehlen:$fehlt"
+            echo "bereit=false" >> "$GITHUB_OUTPUT"
+          fi
+
   pruefen:
     name: Prüfung
+    needs: voraussetzungen
+    if: needs.voraussetzungen.outputs.bereit == 'true'
     uses: ./.github/workflows/ci.yml
-
-  version:
-    # Nur beim Knopf. Läuft auf genau dem geprüften Commit; ist main inzwischen weiter, scheitert der Push
-    # und es entsteht weder Commit noch Tag.
-    name: Version und Tag
-    if: github.event_name == 'workflow_dispatch'
-    needs: pruefen
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      contents: write
-    outputs:
-      tag: ${{ steps.version.outputs.tag }}
-    steps:
-      - name: Nur auf main
-        if: github.ref != 'refs/heads/main'
-        run: |
-          echo "::error::Release per Knopf nur auf main, gewählt war $GITHUB_REF"
-          exit 1
-
-      - uses: actions/checkout@v7
-        with:
-          ref: ${{ github.sha }}
-          fetch-depth: 0
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-
-      - name: Version, Changelog, Commit und Tag
-        id: version
-        env:
-          ART: ${{ inputs.art }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          node scripts/release.mjs "$ART"
-          echo "tag=v$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
-
-      - name: Commit nach main und Tag pushen
-        env:
-          TAG: ${{ steps.version.outputs.tag }}
-        run: git push --atomic origin HEAD:refs/heads/main "refs/tags/$TAG"
 
   veroeffentlichen:
     name: Auf Netlify veröffentlichen
-    needs: [pruefen, version]
-    # Beim Tag-Push ist "version" übersprungen, beim Knopf muss es geklappt haben.
-    if: >-
-      always()
-      && needs.pruefen.result == 'success'
-      && (needs.version.result == 'success'
-          || (needs.version.result == 'skipped' && github.event_name == 'push'))
+    needs: [voraussetzungen, pruefen]
+    if: needs.voraussetzungen.outputs.bereit == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    outputs:
-      tag: ${{ steps.tag.outputs.tag }}
     steps:
-      - name: Tag bestimmen
-        id: tag
-        env:
-          TAG: ${{ needs.version.outputs.tag || github.ref_name }}
-        run: echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-
       - uses: actions/checkout@v7
         with:
-          ref: refs/tags/${{ steps.tag.outputs.tag }}
           persist-credentials: false
 
       - uses: actions/setup-node@v7
@@ -113,23 +81,15 @@ jobs:
 
       - run: npm ci
 
-      - name: Tag passt zu package.json und CHANGELOG.md
-        env:
-          TAG: ${{ steps.tag.outputs.tag }}
-        run: node scripts/changelog-abschnitt.mjs --pruefe-tag "$TAG"
+      - name: Version bestimmen
+        id: version
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
 
-      - name: Secrets vorhanden
+      - name: Tag passt zu package.json und CHANGELOG.md
+        if: github.ref_type == 'tag'
         env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-          BNET_CLIENT_ID: ${{ secrets.BNET_CLIENT_ID }}
-          BNET_CLIENT_SECRET: ${{ secrets.BNET_CLIENT_SECRET }}
-        run: |
-          fehlt=0
-          for name in NETLIFY_AUTH_TOKEN NETLIFY_SITE_ID BNET_CLIENT_ID BNET_CLIENT_SECRET; do
-            if [ -z "${!name}" ]; then echo "::error::Secret $name fehlt"; fehlt=1; fi
-          done
-          exit "$fehlt"
+          TAG: ${{ github.ref_name }}
+        run: node scripts/changelog-abschnitt.mjs --pruefe-tag "$TAG"
 
       # Idempotent: neue Variablen anlegen, abweichende ersetzen, gleiche unverändert lassen. Gibt nur Namen aus.
       - name: Umgebungsvariablen der Netlify-Site setzen
@@ -181,7 +141,7 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
           NETLIFY_TELEMETRY_DISABLED: "1"
-          TAG: ${{ steps.tag.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
           # Die Oberfläche wird hier gebaut; die Angaben zur Seite direkt mitgeben, nicht nur auf Netlify.
           WEBSITE_NAME: ${{ vars.WEBSITE_NAME }}
           WEBSITE_LANGUAGES: ${{ vars.WEBSITE_LANGUAGES }}
@@ -205,35 +165,4 @@ jobs:
           npx --yes netlify-cli@27.16.2 deploy
           --prod
           --context production
-          --message "Version ${TAG#v}"
-
-  github-release:
-    # Eigener Job, damit ein erneuter Versuch nach einem Fehler hier nicht noch einmal deployt.
-    name: GitHub-Release
-    needs: veroeffentlichen
-    if: always() && needs.veroeffentlichen.result == 'success'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          ref: refs/tags/${{ needs.veroeffentlichen.outputs.tag }}
-          persist-credentials: false
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-
-      - name: Release mit dem Abschnitt aus CHANGELOG.md
-        env:
-          GH_TOKEN: ${{ github.token }}
-          TAG: ${{ needs.veroeffentlichen.outputs.tag }}
-        run: |
-          version="${TAG#v}"
-          node scripts/changelog-abschnitt.mjs "$version" > "$RUNNER_TEMP/release-notes.md"
-          gh release create "$TAG" \
-            --title "Version $version" \
-            --notes-file "$RUNNER_TEMP/release-notes.md" \
-            --verify-tag
+          --message "Version ${VERSION} (${GITHUB_SHA::7})"

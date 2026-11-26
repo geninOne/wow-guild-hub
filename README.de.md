@@ -169,33 +169,45 @@ npm run typecheck
 npm run build
 ```
 
-## Aktualisieren
+## Auf dem neuesten Stand bleiben
 
-Neue Versionen holst du in deinen Fork mit "Sync fork" auf GitHub oder lokal:
+Neue Versionen erscheinen als [Releases](https://github.com/geninOne/wow-guild-hub/releases) mit Notizen, was sich
+geändert hat. Versionen folgen [Semantic Versioning](https://semver.org/lang/de/): Patch für Korrekturen, Minor für
+neue Funktionen, Major, wenn du etwas umstellen musst.
 
-```bash
-git remote add upstream https://github.com/geninOne/wow-guild-hub.git
-```
+1. **Benachrichtigen lassen:** auf der [Seite des Repos](https://github.com/geninOne/wow-guild-hub) "Watch",
+   "Custom", Haken bei "Releases" und übernehmen. GitHub meldet dann jede neue Version.
+2. **Release-Notizen lesen.** Bei einer Hauptversion (z. B. 3.0.0) stehen unter "Upgrade notes" neue oder
+   umbenannte Umgebungsvariablen und Schritte bei Netlify. Die zuerst erledigen.
+3. **Fork aktualisieren:** auf GitHub auf der Seite deines Forks "Sync fork", das holt den neuesten Stand von
+   `main` (eventuell mit noch nicht veröffentlichten Änderungen). Oder lokal, genau auf eine Version festgelegt:
 
-```bash
-git pull upstream main
-```
+   ```bash
+   git remote add upstream https://github.com/geninOne/wow-guild-hub.git
+   ```
 
-Was sich geändert hat, steht in [CHANGELOG.md](CHANGELOG.md). Bei einer neuen Hauptversion (z. B. 2.0.0) dort
-nachlesen, ob neue Variablen nötig sind.
+   ```bash
+   git pull upstream v2.1.0
+   ```
+
+   Danach wie gewohnt pushen. Hast du selbst Dateien geändert, meldet Git eventuell Konflikte; eigene Einstellungen
+   gehören in Umgebungsvariablen und eigener Code in Erweiterungen (siehe oben), dann gibt es kaum welche.
+4. **Veröffentlichen:** Mit automatischen Builds deployt Netlify direkt nach dem Push. Sonst per Release-Workflow
+   (unten).
 
 ## Veröffentlichen per Release-Workflow (optional)
 
-Statt bei jedem Push kann die Seite nur bei einer neuen Version live gehen. Dafür in GitHub unter "Settings",
-"Secrets and variables", "Actions" eintragen:
+Statt bei jedem Push geht deine Seite nur live, wenn du es willst. Dafür bei Netlify die automatischen Builds
+abschalten und in deinem Fork auf GitHub unter "Settings", "Secrets and variables", "Actions" eintragen:
 
 - **Secrets:** `NETLIFY_AUTH_TOKEN`, `NETLIFY_SITE_ID`, `BNET_CLIENT_ID`, `BNET_CLIENT_SECRET`, optional
   `NEWSPAPER_AI_KEY`
 - **Variables:** `GUILD_SLUGS` und nach Bedarf alle übrigen Einstellungen aus `.env.example`
 
-Dann "Actions", "Release", "Run workflow" mit `patch`, `minor` oder `major`. Der Workflow prüft, erhöht die
-Version, schreibt den Changelog-Abschnitt, setzt die Netlify-Variablen, deployt und legt ein GitHub-Release an.
-Schlägt ein Lauf fehl, "Re-run failed jobs" nutzen, nicht "Re-run all jobs".
+Dann "Actions", "Release", "Run workflow" auf `main`. Der Workflow prüft, setzt die Netlify-Variablen und deployt
+genau diesen Stand. Ein gepushtes Tag `vX.Y.Z`, das zu `package.json` passt, macht dasselbe. Die Versionsnummer kommt
+aus diesem Repo; dein Fork erhöht sie nicht. Ohne die Netlify-Secrets deployt der Workflow nichts, und in diesem
+Repo selbst läuft er nie.
 
 ## Aufbau
 
