@@ -23,7 +23,13 @@ const T = {
     schwaebisch: (base: string, plus: string) => `Grondwert ${base}, ${plus} durch Ausrüschtung ond Buffs`,
     bayrisch: (base: string, plus: string) => `Grundwert ${base}, ${plus} durch Ausrüstung und Buffs`,
   },
-  /** Sichtbar unter dem Wert, damit die Plus-Zahl auch auf dem Handy und für Screenreader erklärt ist. */
+  /** Kurz und einzeilig unter dem Wert; die lange Fassung steht im Tooltip und für Screenreader. */
+  bonusKurz: {
+    de: (plus: string) => `${plus} Ausrüstung`,
+    en: (plus: string) => `${plus} gear`,
+    schwaebisch: (plus: string) => `${plus} Ausrüschtung`,
+    bayrisch: (plus: string) => `${plus} Ausrüstung`,
+  },
   bonus: {
     de: (plus: string) => `davon ${plus} durch Ausrüstung und Buffs`,
     en: (plus: string) => `incl. ${plus} from gear and buffs`,
@@ -322,12 +328,19 @@ function AttributeTile({ row, view }: { row: AttributeRow; view: AttributesView 
   const plus = row.base !== undefined && row.value > row.base
     ? `+${(row.value - row.base).toLocaleString(zahlLocale(), { maximumFractionDigits: 1 })}`
     : null;
+  // Fester Aufbau für alle Kacheln: Symbol links, rechts Beschriftung, Wert und eine Bonuszeile, die auch leer
+  // ihre Höhe behält. So stehen Symbole, Beschriftungen und Werte in jeder Kachel auf derselben Linie.
   return (
     <li className="attribute-tile" title={title} style={{ "--attribute-color": color } as CSSProperties}>
       <AttributeGlyph glyph={glyph} color={color} />
-      <span className="attribute-label">{label}</span>
-      <span className="attribute-value num">{formatValue(row)}</span>
-      {plus && <span className="attribute-bonus small">{t(T.bonus)(plus)}</span>}
+      <span className="attribute-text">
+        <span className="attribute-label">{label}</span>
+        <span className="attribute-value">{formatValue(row)}</span>
+        <span className="attribute-bonus" aria-hidden="true">
+          {plus ? t(T.bonusKurz)(plus) : "\u00a0"}
+        </span>
+        {plus && <span className="sr-only">{t(T.bonus)(plus)}</span>}
+      </span>
     </li>
   );
 }

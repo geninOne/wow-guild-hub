@@ -520,10 +520,15 @@ test("Reiter Werte zeigt Grundwerte als Kacheln, Ressource nach Art und Gruppen"
   expect(screen.getByText("Wut")).toBeTruthy();
   const staerke = screen.getByText("Stärke").closest("li")!;
   expect(within(staerke).getByText("152")).toBeTruthy();
-  expect(within(staerke).getByText("davon +32 durch Ausrüstung und Buffs")).toBeTruthy();
+  // Sichtbar kurz, für Screenreader ausführlich.
+  expect(within(staerke).getByText("+32 Ausrüstung").getAttribute("aria-hidden")).toBe("true");
+  expect(within(staerke).getByText("davon +32 durch Ausrüstung und Buffs").className).toBe("sr-only");
   expect(staerke.getAttribute("title")).toBe("Grundwert 120, +32 durch Ausrüstung und Buffs");
   // Ohne Zuwachs keine Erklärung.
-  expect(within(screen.getByText("Gesundheit").closest("li")!).queryByText(/durch Ausrüstung/)).toBeNull();
+  const gesundheit = screen.getByText("Gesundheit").closest("li")!;
+  expect(within(gesundheit).queryByText(/Ausrüstung/)).toBeNull();
+  // Die Bonuszeile bleibt auch leer stehen, damit alle Kacheln gleich aufgebaut sind.
+  expect(gesundheit.querySelector(".attribute-bonus")).not.toBeNull();
   expect(screen.getByRole("heading", { name: "Angriff" })).toBeTruthy();
   expect(screen.getByText("5,25 %")).toBeTruthy();
   expect(screen.getByRole("heading", { name: "Verteidigung" })).toBeTruthy();
@@ -545,6 +550,7 @@ test("Reiter Werte auf Englisch", async () => {
   expect(screen.getByRole("tab", { name: "Stats" })).toBeTruthy();
   expect(screen.getByText("Runic Power")).toBeTruthy();
   expect(screen.getByText("Melee Crit")).toBeTruthy();
+  expect(screen.getByText("+32 gear")).toBeTruthy();
   expect(screen.getByText("incl. +32 from gear and buffs")).toBeTruthy();
 });
 
