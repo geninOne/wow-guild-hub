@@ -6,7 +6,7 @@
 # "!" oder BREAKING CHANGE = major. Wird der Release-PR gemergt, entstehen Tag vX.Y.Z und ein GitHub-Release
 # mit denselben Notizen. Einstellungen: release-please-config.json.
 #
-# Token: Mit der GitHub App (Variable RELEASE_APP_CLIENT_ID, Secret RELEASE_APP_PRIVATE_KEY) läuft die Prüfung
+# Token: Mit der GitHub App (Variable BOT_APP_CLIENT_ID, Secret BOT_APP_PRIVATE_KEY) läuft die Prüfung
 # auch auf dem Release-PR. Ohne App nutzt der Workflow GITHUB_TOKEN; dann muss unter Settings, Actions, General
 # "Allow GitHub Actions to create and approve pull requests" an sein, und die Prüfung startet auf dem Release-PR
 # nicht von selbst (PRs von GITHUB_TOKEN lösen keine Workflows aus).
@@ -38,11 +38,11 @@ jobs:
     steps:
       - name: Token der GitHub App
         id: app
-        if: vars.RELEASE_APP_CLIENT_ID != ''
+        if: vars.BOT_APP_CLIENT_ID != ''
         uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc # v3.4.0
         with:
-          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
-          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          client-id: ${{ vars.BOT_APP_CLIENT_ID }}
+          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
 
       - uses: actions/checkout@v7
         with:
