@@ -1,0 +1,33 @@
+{
+  "status": 200,
+  "data": {
+    "id": 169,
+    "name": "Steamwheedle-Kartell",
+    "reputation_tiers": {
+      "id": 0
+    },
+    "factions": [
+      {
+        "name": "Booty Bay",
+        "id": 21
+      },
+      {
+        "name": "Gadgetzan",
+        "id": 369
+      },
+      {
+        "name": "Ratchet",
+        "id": 470
+      },
+      {
+        "name": "Everlook",
+        "id": 577
+      },
+      {
+        "name": "Powderfuse",
+        "id": 2827
+      }
+    ],
+    "is_header": true
+  }
+}

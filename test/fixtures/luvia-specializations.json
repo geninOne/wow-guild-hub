@@ -1,0 +1,99 @@
+{
+  "status": 200,
+  "data": {
+    "_links": {
+      "self": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/luvia-stav/specializations?namespace=profile-forever-eu"
+      }
+    },
+    "character": {
+      "key": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/luvia-stav?namespace=profile-forever-eu"
+      },
+      "name": "Luvia",
+      "id": 382219,
+      "surname": "Stav",
+      "slug": "luvia-stav"
+    },
+    "specialization_groups": [
+      {
+        "is_active": true,
+        "specializations": [
+          {
+            "specialization": {
+              "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/26?namespace=static-1.60.1_70399-forever-eu"
+              },
+              "name": "Waffen",
+              "id": 26
+            },
+            "talents": [
+              {
+                "talent": {
+                  "name": "Abwehr",
+                  "id": 135488
+                },
+                "spell_tooltip": {
+                  "spell": {
+                    "name": "Abwehr",
+                    "id": 16462
+                  },
+                  "description": "Erhöht Eure Parierchance um 5%.",
+                  "cast_time": "Passiv"
+                },
+                "talent_rank": 5
+              }
+            ],
+            "specialization_name": "Waffen",
+            "spent_points": 5
+          },
+          {
+            "specialization": {
+              "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/256?namespace=static-1.60.1_70399-forever-eu"
+              },
+              "name": "Furor",
+              "id": 256
+            },
+            "talents": [
+              {
+                "talent": {
+                  "name": "Grausamkeit",
+                  "id": 135470
+                },
+                "spell_tooltip": {
+                  "spell": {
+                    "name": "Grausamkeit",
+                    "id": 12320
+                  },
+                  "description": "Erhöht Eure kritische Trefferchance mit Nahkampfangriffen um 5%.",
+                  "cast_time": "Passiv",
+                  "power_cost": null
+                },
+                "talent_rank": 5
+              },
+              {
+                "talent": {
+                  "name": "Entfesselter Zorn",
+                  "id": 135468
+                },
+                "spell_tooltip": {
+                  "spell": {
+                    "name": "Entfesselter Zorn",
+                    "id": 12322
+                  },
+                  "description": "Gewährt Euch eine Chance von 24%, 1 zusätzliche Wut zu generieren, wenn Ihr Nahkampfschaden zufügt.",
+                  "cast_time": "Passiv",
+                  "power_cost": null
+                },
+                "talent_rank": 2
+              }
+            ],
+            "specialization_name": "Furor",
+            "spent_points": 7
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,230 @@
+{
+  "status": 200,
+  "data": {
+    "_links": {
+      "self": {
+        "href": "https://eu.api.blizzard.com/data/wow/talent-tree/?namespace=static-1.60.1_70399-forever-eu"
+      }
+    },
+    "spec_talent_trees": [
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1089/playable-specialization/574?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Gleichgewicht"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1089/playable-specialization/134?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Wilder Kampf"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1089/playable-specialization/573?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Wiederherstellung"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1100/playable-specialization/594?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Heilig"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1100/playable-specialization/267?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Schutz"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1100/playable-specialization/184?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Vergeltung"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1111/playable-specialization/253?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Meucheln"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1111/playable-specialization/38?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Kampf"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1111/playable-specialization/39?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Feingefühl"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1112/playable-specialization/237?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Arkan"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1112/playable-specialization/8?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Feuer"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1112/playable-specialization/6?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Frost"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1114/playable-specialization/613?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Disziplin"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1114/playable-specialization/56?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Heilig"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1114/playable-specialization/78?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Schattenmagie"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1116/playable-specialization/355?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Gebrechen"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1116/playable-specialization/354?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Dämonologie"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1116/playable-specialization/593?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Zerstörung"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1117/playable-specialization/26?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Waffen"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1117/playable-specialization/256?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Furor"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1117/playable-specialization/257?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Schutz"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1091/playable-specialization/50?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Tierherrschaft"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1091/playable-specialization/163?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Treffsicherheit"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1091/playable-specialization/51?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Überleben"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1082/playable-specialization/375?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Elementarkampf"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1082/playable-specialization/373?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Verstärkung"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1082/playable-specialization/374?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Wiederherstellung"
+      }
+    ],
+    "class_talent_trees": [
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1089?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Druide"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1100?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Paladin"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1111?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Schurke"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1112?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Magier"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1114?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Priester"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1116?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Hexenmeister"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1117?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Krieger"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1091?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Jäger"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1082?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Schamane"
+      }
+    ]
+  }
+}

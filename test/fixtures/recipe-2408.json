@@ -1,0 +1,33 @@
+{
+  "status": 200,
+  "data": {
+    "id": 2408,
+    "name": "Braune Leinenhose",
+    "media": {
+      "id": 2408
+    },
+    "crafted_item": {
+      "name": "Braune Leinenhose",
+      "id": 4343
+    },
+    "reagents": [
+      {
+        "reagent": {
+          "name": "Leinenstoffballen",
+          "id": 2996
+        },
+        "quantity": 2
+      },
+      {
+        "reagent": {
+          "name": "Grober Faden",
+          "id": 2320
+        },
+        "quantity": 1
+      }
+    ],
+    "crafted_quantity": {
+      "value": 1
+    }
+  }
+}

@@ -1,0 +1,11 @@
+node_modules
+.env
+.netlify
+dist
+.superpowers
+.idea
+/blobs-kopie
+/.erkundung
+
+# Lokale Anpassungen für docker compose (z. B. anderer Port)
+docker-compose.override.yml

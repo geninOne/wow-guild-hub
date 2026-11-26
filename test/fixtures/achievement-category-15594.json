@@ -1,0 +1,51 @@
+{
+  "status": 200,
+  "data": {
+    "id": 15594,
+    "name": "Schlachtzüge",
+    "achievements": [
+      {
+        "name": "Eroberer der Wildnis",
+        "id": 62034
+      },
+      {
+        "name": "Eroberer der Tiefen",
+        "id": 62035
+      },
+      {
+        "name": "Eroberer des Horts",
+        "id": 684
+      },
+      {
+        "name": "Eroberer der Wildnis",
+        "id": 64019
+      },
+      {
+        "name": "Eroberer der Tiefen",
+        "id": 64020
+      },
+      {
+        "name": "Eroberer des Horts",
+        "id": 64030
+      }
+    ],
+    "subcategories": [
+      {
+        "name": "Ausrüstung der Stufe 1",
+        "id": 15626
+      }
+    ],
+    "is_guild_category": false,
+    "aggregates_by_faction": {
+      "alliance": {
+        "quantity": 6,
+        "points": 2
+      },
+      "horde": {
+        "quantity": 6,
+        "points": 2
+      }
+    },
+    "display_order": 6
+  }
+}

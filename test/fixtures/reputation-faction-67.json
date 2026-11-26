@@ -1,0 +1,33 @@
+{
+  "status": 200,
+  "data": {
+    "id": 67,
+    "name": "Horde",
+    "reputation_tiers": {
+      "id": 0
+    },
+    "factions": [
+      {
+        "name": "Undercity",
+        "id": 68
+      },
+      {
+        "name": "Orgrimmar",
+        "id": 76
+      },
+      {
+        "name": "Thunder Bluff",
+        "id": 81
+      },
+      {
+        "name": "Darkspear",
+        "id": 530
+      }
+    ],
+    "player_faction": {
+      "type": "HORDE",
+      "name": "Horde"
+    },
+    "is_header": true
+  }
+}

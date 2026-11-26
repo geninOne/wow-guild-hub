@@ -1,0 +1,27 @@
+{
+  "status": 200,
+  "data": {
+    "id": 1848,
+    "name": "Zinn verhütten",
+    "description": "Ermöglicht dem Minenarbeiter, einen Brocken Zinnerz zu einem Zinnbarren zu verhütten. Das Verhütten von Zinn erfordert eine Schmiede.",
+    "media": {
+      "id": 1848
+    },
+    "crafted_item": {
+      "name": "Zinnbarren",
+      "id": 3576
+    },
+    "reagents": [
+      {
+        "reagent": {
+          "name": "Zinnerz",
+          "id": 2771
+        },
+        "quantity": 1
+      }
+    ],
+    "crafted_quantity": {
+      "value": 1
+    }
+  }
+}

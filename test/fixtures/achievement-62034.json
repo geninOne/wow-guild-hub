@@ -1,0 +1,95 @@
+{
+  "status": 200,
+  "data": {
+    "id": 62034,
+    "category": {
+      "name": "Schlachtzüge",
+      "id": 15594
+    },
+    "name": "Eroberer der Wildnis",
+    "description": "Meistert die folgenden Begegnungen auf dem Hyjalgipfel.",
+    "points": 0,
+    "is_account_wide": true,
+    "criteria": {
+      "id": 230811,
+      "description": "Schließt den Hyjalgipfel ab",
+      "amount": 0,
+      "operator": {
+        "type": "AND",
+        "name": "Alle abschließen"
+      },
+      "child_criteria": [
+        {
+          "id": 230812,
+          "description": "Bandalar",
+          "amount": 1
+        },
+        {
+          "id": 230813,
+          "description": "Urtum des Verfalls",
+          "amount": 1
+        },
+        {
+          "id": 230814,
+          "description": "Zeitverlorenes Bataillon",
+          "amount": 1
+        },
+        {
+          "id": 230815,
+          "description": "Sylvestris Dusksong",
+          "amount": 1
+        },
+        {
+          "id": 230816,
+          "description": "Alter Finsterlauerer",
+          "amount": 1
+        },
+        {
+          "id": 230817,
+          "description": "Gharalis der Abgründige",
+          "amount": 1
+        },
+        {
+          "id": 230818,
+          "description": "Kathris die Verwunschene",
+          "amount": 1
+        },
+        {
+          "id": 230819,
+          "description": "Anara Chillwind",
+          "amount": 1
+        },
+        {
+          "id": 230820,
+          "description": "Ältester Minderel",
+          "amount": 1
+        },
+        {
+          "id": 230821,
+          "description": "Fährtenleser Stillwind",
+          "amount": 1
+        },
+        {
+          "id": 230822,
+          "description": "Rat der Dornen",
+          "amount": 1
+        },
+        {
+          "id": 230823,
+          "description": "Nythus der Traumgebundene",
+          "amount": 1
+        },
+        {
+          "id": 230824,
+          "description": "Der Wildniskönig",
+          "amount": 1
+        }
+      ]
+    },
+    "reward_description": "Verdient 1 Vermächtnispunkt.",
+    "media": {
+      "id": 62034
+    },
+    "display_order": 1
+  }
+}

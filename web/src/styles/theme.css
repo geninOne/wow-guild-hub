@@ -1,0 +1,6222 @@
+/*
+ * Theme der Gildenseite, Gestaltung "Wappen": dunkler Stahl, viel Gold, links das Blau der
+ * Allianz, rechts das Rot der Horde. Alle Farben, Rahmen und Schriften kommen aus den Variablen unten;
+ * neue Bausteine nutzen die Rollen-Variablen (--panel, --border, --gold, --text, --muted ...) und die
+ * gemeinsamen Klassen (.panel, .table, .badge, .button, .segmented, .tabs), dann passen sie von selbst.
+ */
+
+:root {
+  /* Palette aus dem Gildenlogo */
+  --steel-deep: #0c0d11;
+  --steel: #14161c;
+  --steel-2: #1c1f27;
+  --steel-3: #262a34;
+  --gold-pale: #ffe08a;
+  --gold-1: #f2c95a;
+  --gold-2: #c9952e;
+  --gold-3: #8a6420;
+  --alliance: #1f4fb8;
+  --alliance-hi: #2f6ae0;
+  --horde: #b3202a;
+  --horde-hi: #e0393f;
+  --frame-outer: #4a3d1c;
+  --frame-gap: #121419;
+  --frame-inner: #6b5220;
+
+  /* Rollen: diese Namen nutzen alle Bausteine */
+  --bg: var(--steel-deep);
+  --panel: var(--steel-2);
+  --panel-hi: var(--steel-3);
+  --border: var(--frame-outer);
+  --border-strong: var(--gold-3);
+  --gold: var(--gold-1);
+  --gold-hi: var(--gold-pale);
+  --text: #ece3cf;
+  --text-bright: #fff4d6;
+  --muted: #a59c8a;
+  --on-gold: #10121a;
+
+  --danger: #e8867a;
+  --success: #9fc27a;
+
+  /* Verläufe */
+  --gold-text: linear-gradient(180deg, #fff1b8, var(--gold-1) 45%, var(--gold-2));
+  --gold-fill: linear-gradient(180deg, var(--gold-pale), var(--gold-2));
+  --alliance-fill: linear-gradient(180deg, var(--alliance-hi), var(--alliance));
+  /* Mit weißem Text: oben etwas dunkler als --horde-hi, damit 4,5:1 erreicht wird */
+  --horde-fill: linear-gradient(180deg, #cc2a31, var(--horde));
+  --faction-line: linear-gradient(90deg, var(--alliance) 0 50%, var(--horde) 50% 100%);
+  --gold-line: linear-gradient(90deg, transparent, var(--gold-2) 20%, var(--gold-1) 50%, var(--gold-2) 80%, transparent);
+  --panel-fill: linear-gradient(180deg, var(--steel-3), var(--steel-2));
+  /* Doppelter Goldrahmen innerhalb einer 1px-Kante in --frame-outer: dunkle Fuge, dann goldene Linie */
+  --frame-lines: inset 0 0 0 2px var(--frame-gap), inset 0 0 0 3px var(--frame-inner);
+  --diamond: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 .5 11.5 6 6 11.5.5 6Z' fill='%23f2c95a' stroke='%238a6420'/%3E%3C/svg%3E");
+
+  /* Schrift */
+  --font-display: "Cinzel Decorative", "Cinzel", "Times New Roman", serif;
+  --font-head: "Cinzel", "Times New Roman", serif;
+  --font-body: "Alegreya Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Maße */
+  --radius: 6px;
+  --radius-lg: 10px;
+  --gap: 1rem;
+  --content-width: 1180px;
+  --shadow: 0 12px 30px rgb(0 0 0 / 0.45);
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(90deg, rgb(31 79 184 / 0.18), transparent 24%, transparent 76%, rgb(179 32 42 / 0.18)),
+    radial-gradient(ellipse 85% 60% at 50% -10%, #2a2e3a, var(--steel) 55%, var(--steel-deep) 100%);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0 0 0.5em;
+  font-family: var(--font-head);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--gold);
+  letter-spacing: 0.03em;
+}
+
+h1 { font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.3rem); }
+h2 { font-size: clamp(1.2rem, 1.05rem + 0.7vw, 1.5rem); }
+h3 { font-size: 1.1rem; }
+
+p {
+  margin: 0 0 0.75em;
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+a {
+  color: var(--gold);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: var(--gold-hi);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+/* Fokus: heller Goldring mit dunklem Rand, sichtbar auf Stahl und auf Gold */
+:focus-visible {
+  outline: 2px solid var(--gold-hi);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+img {
+  max-width: 100%;
+}
+
+::selection {
+  background: rgb(242 201 90 / 0.35);
+  color: var(--text-bright);
+}
+
+/* Seitengerüst */
+
+.site {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Kopf: Navigation links, Logo mittig wie ein Wappen, Discord rechts; darunter halb blau, halb rot. */
+.site-header {
+  position: relative;
+  z-index: 10;
+  background: linear-gradient(180deg, rgb(12 13 17 / 0.94), rgb(20 22 28 / 0.86));
+  box-shadow: 0 6px 24px rgb(0 0 0 / 0.5);
+}
+
+.site-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 3px;
+  background: var(--faction-line);
+  box-shadow: 0 0 18px rgb(242 201 90 / 0.25);
+}
+
+.site-header-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-areas: "nav brand end";
+  align-items: center;
+  gap: 1rem;
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 0.6rem 1rem 0;
+}
+
+.brand {
+  grid-area: brand;
+  position: relative;
+  z-index: 2;
+  display: block;
+  margin-bottom: -46px;
+  line-height: 0;
+  border-radius: 50%;
+}
+
+.brand-crest {
+  display: block;
+  width: 124px;
+  height: 124px;
+  filter: drop-shadow(0 8px 18px rgb(0 0 0 / 0.6));
+  transition: transform 0.2s ease;
+}
+
+.brand:hover .brand-crest {
+  transform: translateY(-2px) scale(1.03);
+}
+
+.site-nav {
+  grid-area: nav;
+  justify-self: start;
+  display: flex;
+  gap: 1.4rem;
+}
+
+.nav-link {
+  padding: 0.55rem 0 0.4rem;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+}
+
+.nav-link:hover {
+  color: var(--gold-hi);
+  text-decoration: none;
+}
+
+.nav-link.active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+}
+
+.site-header-end {
+  grid-area: end;
+  justify-self: end;
+}
+
+.site-main {
+  flex: 1;
+  width: 100%;
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 4.25rem 1rem 3rem;
+}
+
+.site-footer {
+  position: relative;
+  padding: 1.5rem 1rem 1.75rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--muted);
+  background: linear-gradient(180deg, transparent, rgb(12 13 17 / 0.7));
+}
+
+.site-footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--faction-line);
+  opacity: 0.75;
+}
+
+.site-footer-guilds {
+  font-family: var(--font-head);
+  letter-spacing: 0.06em;
+  color: var(--gold-2);
+}
+
+.footer-legal {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem 1.5rem;
+  flex-wrap: wrap;
+  font-family: var(--font-head);
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+}
+
+.footer-legal a {
+  color: var(--gold-2);
+}
+
+.footer-legal a:hover {
+  color: var(--gold-hi);
+}
+
+.footer-version {
+  margin-top: 0.6rem;
+  font-family: var(--font-head);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+/* Handy: Logo kleiner und oben, Discord daneben, Navigation darunter. */
+@media (max-width: 640px) {
+  .site-header-inner {
+    grid-template-areas:
+      ". brand end"
+      "nav nav nav";
+    gap: 0.25rem 0.5rem;
+    padding: 0.5rem 0.75rem 0;
+  }
+
+  .brand {
+    margin-bottom: 0;
+  }
+
+  .brand-crest {
+    width: 76px;
+    height: 76px;
+  }
+
+  .site-nav {
+    justify-self: center;
+    gap: 2rem;
+  }
+
+  .nav-link {
+    font-size: 0.85rem;
+  }
+
+  .site-main {
+    padding: 1.5rem 0.75rem 2rem;
+  }
+}
+
+/* Seitenkopf */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* Seitentitel in Cinzel Decorative mit Goldverlauf */
+.page-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 900;
+  background: var(--gold-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 2px 0 #3a2a08);
+}
+
+.page-subtitle {
+  margin: 0;
+}
+
+@media (forced-colors: active) {
+  .page-title {
+    background: none;
+    color: CanvasText;
+    filter: none;
+  }
+}
+
+/* Impressum und Datenschutz: ruhiger Lesetext in einem Panel */
+
+.legal {
+  max-width: 48rem;
+  padding: 1.5rem 1.75rem 1.75rem;
+}
+
+/* Hinweise in den Vorlagen für Impressum und Datenschutz, die der Betreiber ersetzen muss */
+.legal-platzhalter {
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid var(--danger);
+  color: var(--danger);
+  font-style: italic;
+}
+
+.legal h2 {
+  margin: 1.6rem 0 0.45rem;
+  font-size: 1.15rem;
+  color: var(--gold);
+}
+
+.legal h2:first-child {
+  margin-top: 0;
+}
+
+.legal p,
+.legal-address {
+  max-width: 42rem;
+  margin: 0 0 0.75em;
+  line-height: 1.6;
+}
+
+.legal-address {
+  font-style: normal;
+}
+
+.legal-more {
+  margin-top: 1.6rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgb(242 201 90 / 0.18);
+  color: var(--muted);
+}
+
+@media (max-width: 640px) {
+  .legal {
+    padding: 1.15rem 1rem 1.25rem;
+  }
+}
+
+/* Panels: doppelter Goldrahmen mit Rauten an den oberen Ecken */
+
+.panel {
+  position: relative;
+  background: var(--panel-fill);
+  border: 1px solid var(--frame-outer);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.35rem;
+  box-shadow: var(--shadow);
+}
+
+/* Rahmenlinien liegen über dem Inhalt, damit Tabellenköpfe und Zeilen sie nicht verdecken. */
+.panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: calc(var(--radius-lg) - 1px);
+  box-shadow: var(--frame-lines);
+  pointer-events: none;
+}
+
+.panel::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 12px;
+  right: 12px;
+  z-index: 2;
+  height: 12px;
+  background: var(--diamond) left center / 12px 12px no-repeat, var(--diamond) right center / 12px 12px no-repeat;
+  filter: drop-shadow(0 0 4px rgb(242 201 90 / 0.55));
+  pointer-events: none;
+}
+
+/* Ohne Innenabstand (z.B. mit Tabelle); die Rundung übernehmen das erste und das letzte Kind. */
+.panel-flush {
+  padding: 0;
+}
+
+.panel-flush > :first-child {
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+}
+
+.panel-flush > :last-child {
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
+}
+
+.panel-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.panel-flush > .panel-header {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.panel-kicker {
+  display: block;
+  font-family: var(--font-head);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-2);
+}
+
+.panel-title {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: var(--gap);
+}
+
+/* Text */
+
+.muted {
+  color: var(--muted);
+}
+
+.gold {
+  color: var(--gold);
+}
+
+.small {
+  font-size: 0.875rem;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.divider {
+  height: 1px;
+  border: 0;
+  margin: 1.25rem 0;
+  background: var(--gold-line);
+  opacity: 0.45;
+}
+
+/* Abzeichen */
+
+.badge {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  font-family: var(--font-head);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.5;
+  color: var(--gold);
+  background: rgb(242 201 90 / 0.1);
+  border: 1px solid rgb(242 201 90 / 0.45);
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.badge-muted {
+  color: var(--muted);
+  background: transparent;
+  border-color: var(--border);
+}
+
+/* Goldenes Abzeichen mit Stern, z.B. für "Abgeschlossen" */
+.badge-gold,
+.status-done {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  width: fit-content;
+  padding: 0.12rem 0.6rem;
+  font-family: var(--font-head);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  line-height: 1.5;
+  color: var(--on-gold);
+  background: var(--gold-fill);
+  border: 0;
+  border-radius: 4px;
+  box-shadow: inset 0 -1px 0 var(--gold-3), 0 0 0 1px #5a4314, 0 2px 8px rgb(0 0 0 / 0.45);
+  text-shadow: none;
+  white-space: nowrap;
+}
+
+.badge-gold::before,
+.status-done::before {
+  content: "✦";
+  content: "✦" / "";
+}
+
+/* Banner-Wimpel als Fraktionsmarke mit Text (unten spitz) */
+.pennant {
+  display: inline-block;
+  padding: 0.15rem 0.6rem 0.4rem;
+  font-family: var(--font-head);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #fff;
+  background: var(--steel-3);
+  clip-path: polygon(0 0, 100% 0, 100% 78%, 50% 100%, 0 78%);
+}
+
+.pennant-horde {
+  background: var(--horde-fill);
+}
+
+.pennant-alliance {
+  background: var(--alliance-fill);
+}
+
+/* Tabellen */
+
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+}
+
+.table th,
+.table td {
+  padding: 0.55rem 0.75rem;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--steel-3);
+  font-family: var(--font-head);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold-2);
+  border-bottom: 1px solid var(--frame-outer);
+  white-space: nowrap;
+}
+
+.table .num {
+  text-align: right;
+}
+
+.table tbody tr {
+  border-bottom: 1px solid rgb(255 255 255 / 0.05);
+  transition: background-color 0.12s ease;
+}
+
+.table tbody tr:last-child {
+  border-bottom: 0;
+}
+
+.table tbody tr:nth-child(even) {
+  background: rgb(255 255 255 / 0.015);
+}
+
+.table tbody tr:hover {
+  background: rgb(242 201 90 / 0.06);
+}
+
+@media (max-width: 640px) {
+  .table th,
+  .table td {
+    padding: 0.45rem 0.5rem;
+  }
+}
+
+/* Bedienelemente */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  font: 500 0.95rem var(--font-body);
+  color: var(--text);
+  background: var(--steel-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.button:hover {
+  color: var(--gold-hi);
+  border-color: var(--gold);
+}
+
+/* Goldener Knopf (wie Discord im Kopf) */
+.button-gold,
+.discord-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.9rem;
+  font-family: var(--font-head);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--on-gold);
+  background: var(--gold-fill);
+  border: 0;
+  border-radius: var(--radius);
+  box-shadow: inset 0 -2px 0 var(--gold-3), 0 0 0 1px #5a4314, 0 3px 10px rgb(0 0 0 / 0.4);
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.button-gold:hover,
+.discord-link:hover {
+  color: var(--on-gold);
+  text-decoration: none;
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle input {
+  appearance: none;
+  position: relative;
+  width: 2.2rem;
+  height: 1.2rem;
+  margin: 0;
+  background: var(--steel);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.toggle input::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: calc(1.2rem - 6px);
+  height: calc(1.2rem - 6px);
+  background: var(--muted);
+  border-radius: 50%;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.toggle input:checked {
+  background: rgb(242 201 90 / 0.25);
+  border-color: var(--gold);
+}
+
+.toggle input:checked::after {
+  background: var(--gold-hi);
+  transform: translateX(1rem);
+}
+
+.toggle:hover {
+  color: var(--text);
+}
+
+/* Lade-, Leer- und Fehlerzustand (DataState) */
+
+.state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 8rem;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--muted);
+  background: rgb(20 22 28 / 0.7);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+}
+
+.state-empty {
+  color: var(--text);
+}
+
+.state-error {
+  color: var(--danger);
+  border-color: rgb(232 134 122 / 0.5);
+}
+
+.state-spinner {
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 2px solid var(--border);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Gildenübersicht */
+
+.class-bars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.class-bar {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr 2.5rem;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.class-bar-track {
+  height: 0.7rem;
+  background: var(--steel);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.04);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.class-bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+}
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1.1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.filter-input {
+  min-width: 10rem;
+  padding: 0.4rem 0.6rem;
+  color: var(--text);
+  background: var(--steel);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  font: inherit;
+}
+
+.filter-input::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+
+.filter-input:hover {
+  border-color: var(--gold-2);
+}
+
+.sort-button {
+  padding: 0;
+  color: inherit;
+  background: none;
+  border: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+.sort-button:hover {
+  color: var(--gold-hi);
+}
+
+.hint {
+  color: var(--muted);
+  cursor: help;
+}
+
+.former-badge {
+  margin-left: 0.5rem;
+}
+
+/* ==========================================================================
+   Charakterseite: Kopf, Reiter, Ausrüstung, Charakterbild, Item-Tooltips
+   ========================================================================== */
+
+.character-name {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: clamp(1.9rem, 1.3rem + 2.4vw, 3rem);
+}
+
+.character-surname {
+  font-weight: 500;
+  -webkit-text-fill-color: var(--gold-2);
+}
+
+.character-meta {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.character-facts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.6rem;
+  margin: 0.35rem 0 0;
+}
+
+.character-former {
+  color: var(--danger);
+  background: rgb(232 134 122 / 0.1);
+  border-color: rgb(232 134 122 / 0.5);
+}
+
+/* Reiter */
+
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab {
+  position: relative;
+  padding: 0.55rem 0.9rem;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  border-radius: var(--radius) var(--radius) 0 0;
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: var(--gold-hi);
+  background: rgb(242 201 90 / 0.06);
+}
+
+.tab[aria-selected="true"] {
+  color: var(--gold);
+}
+
+.tab[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  left: 0.6rem;
+  right: 0.6rem;
+  bottom: -1px;
+  height: 2px;
+  background: var(--gold);
+  box-shadow: 0 0 8px rgb(242 201 90 / 0.6);
+}
+
+/* Symbole */
+
+.icon {
+  display: inline-block;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: #0b0907;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  box-shadow: inset 0 0 8px rgb(0 0 0 / 0.8), 0 1px 3px rgb(0 0 0 / 0.5);
+}
+
+.icon img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.icon-empty {
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 0.03), transparent 60%),
+    #0b0907;
+}
+
+/* Ausrüstung */
+
+.equipment {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 1.15fr) minmax(0, 1fr);
+  grid-template-areas:
+    "left portrait right"
+    "weapons weapons weapons";
+  gap: 1rem 1.25rem;
+}
+
+.equipment-left { grid-area: left; }
+.equipment-right { grid-area: right; }
+.equipment-portrait { grid-area: portrait; }
+
+.equipment-column,
+.equipment-weapons {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.equipment-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.equipment-weapons {
+  grid-area: weapons;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.slot,
+.slot-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.slot-trigger {
+  max-width: 100%;
+  padding: 0.15rem 0.35rem 0.15rem 0.15rem;
+  border-radius: var(--radius);
+  cursor: default;
+  transition: background-color 0.12s ease;
+}
+
+.slot-trigger:hover,
+.slot-trigger:focus-visible {
+  background: rgb(242 201 90 / 0.07);
+}
+
+.slot-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.slot-name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.slot-empty .slot-name {
+  font-weight: 400;
+  font-size: 0.9rem;
+}
+
+.slot-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.5rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.slot-enchant {
+  color: #1eff00;
+}
+
+.equipment-right .slot,
+.equipment-right .slot-trigger {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+.equipment-right .slot-trigger {
+  padding: 0.15rem 0.15rem 0.15rem 0.35rem;
+}
+
+.equipment-right .slot-meta {
+  justify-content: flex-end;
+}
+
+/* Charakterbild */
+
+.portrait {
+  position: relative;
+  height: 100%;
+  min-height: 460px;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background:
+    radial-gradient(ellipse 60% 45% at 50% 60%, color-mix(in srgb, var(--portrait-tone) 22%, transparent), transparent 70%),
+    radial-gradient(ellipse 80% 30% at 50% 100%, rgb(0 0 0 / 0.55), transparent 70%);
+}
+
+.portrait img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  /* Die Aufnahme hat viel transparenten Rand, der Charakter steht etwa mittig. */
+  transform: scale(1.55);
+  transform-origin: 50% 48%;
+  filter: drop-shadow(0 8px 18px rgb(0 0 0 / 0.6));
+}
+
+.portrait-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--portrait-tone);
+  border: 1px dashed color-mix(in srgb, var(--portrait-tone) 55%, transparent);
+}
+
+@media (max-width: 640px) {
+  .tabs {
+    justify-content: space-between;
+    gap: 0;
+  }
+
+  .tabs {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+
+  .tab {
+    padding: 0.5rem 0.3rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.02em;
+  }
+
+  .tab[aria-selected="true"]::after {
+    left: 0.25rem;
+    right: 0.25rem;
+  }
+}
+
+@media (max-width: 760px) {
+  .equipment {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "portrait"
+      "left"
+      "right"
+      "weapons";
+  }
+
+  .portrait {
+    min-height: 320px;
+    height: 360px;
+  }
+
+  .equipment-right .slot,
+  .equipment-right .slot-trigger {
+    flex-direction: row;
+    text-align: left;
+  }
+
+  .equipment-right .slot-trigger {
+    padding: 0.15rem 0.35rem 0.15rem 0.15rem;
+  }
+
+  .equipment-right .slot-meta {
+    justify-content: flex-start;
+  }
+
+  .equipment-weapons {
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+}
+
+/* Tooltip */
+
+.tooltip-trigger {
+  outline-offset: 1px;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 100;
+  width: max-content;
+  max-width: min(320px, calc(100vw - 16px));
+  padding: 0.6rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--text);
+  background: rgb(12 13 17 / 0.97);
+  border: 1px solid var(--gold-3);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  pointer-events: none;
+}
+
+.item-tip p {
+  margin: 0;
+}
+
+.item-tip-name {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.item-tip-level {
+  color: #ffd100;
+}
+
+.item-tip-pair {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.item-tip-green {
+  color: #1eff00;
+}
+
+.item-tip-description {
+  color: #ffd100;
+  font-style: italic;
+}
+
+/* Nur für Screenreader sichtbar */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Talentbäume */
+
+.talents-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.talents-summary p {
+  margin: 0;
+}
+
+.talents-total {
+  font-family: var(--font-head);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--gold-hi);
+}
+
+.talent-trees {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gap);
+}
+
+.talent-spec {
+  min-width: 0;
+  padding: 0.9rem 1rem 1.25rem;
+  background:
+    radial-gradient(ellipse 80% 45% at 50% 0%, rgb(242 201 90 / 0.07), transparent 70%),
+    var(--panel-fill);
+  border: 1px solid var(--frame-outer);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--frame-lines), var(--shadow);
+}
+
+.talent-spec-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-bottom: 0.6rem;
+  margin-bottom: 1.1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.talent-spec-name {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.talent-spec-points {
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.talent-board {
+  position: relative;
+  margin: 0 auto;
+}
+
+.talent-arrows {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.talent-arrow {
+  fill: none;
+  stroke: #6b5a43;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.talent-arrow-active {
+  stroke: var(--gold);
+}
+
+.talent-arrowhead {
+  fill: #6b5a43;
+}
+
+.talent-arrowhead-active {
+  fill: var(--gold);
+}
+
+.talent-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+}
+
+.talent-node {
+  position: relative;
+}
+
+.talent-trigger {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  cursor: help;
+}
+
+.talent-node .icon {
+  display: block;
+  border-width: 2px;
+  border-radius: 5px;
+  transition: filter 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.talent-empty .icon {
+  border-color: #3a2f22;
+  filter: grayscale(1) brightness(0.55);
+}
+
+.talent-empty .talent-trigger:hover .icon,
+.talent-empty .talent-trigger:focus-visible .icon {
+  filter: grayscale(0.6) brightness(0.8);
+}
+
+.talent-partial .icon {
+  border-color: var(--gold);
+  box-shadow: inset 0 0 6px rgb(0 0 0 / 0.7), 0 0 0 1px rgb(0 0 0 / 0.6);
+}
+
+.talent-max .icon {
+  border-color: var(--gold-hi);
+  box-shadow:
+    inset 0 0 6px rgb(0 0 0 / 0.5),
+    0 0 10px 1px rgb(241 213 143 / 0.55),
+    0 0 0 1px rgb(0 0 0 / 0.6);
+}
+
+.talent-rank {
+  position: absolute;
+  right: -7px;
+  bottom: -7px;
+  min-width: 1.9rem;
+  padding: 0 0.3rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: center;
+  color: var(--muted);
+  background: #0b0907;
+  border: 1px solid #3a2f22;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+}
+
+.talent-partial .talent-rank {
+  color: var(--gold);
+  border-color: rgb(214 178 106 / 0.7);
+}
+
+.talent-max .talent-rank {
+  color: var(--gold-hi);
+  border-color: var(--gold-hi);
+}
+
+.talent-extra {
+  margin-top: 1.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgb(75 58 39 / 0.6);
+}
+
+.talent-extra-title {
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.talent-extra-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.1rem 1.4rem;
+}
+
+.talent-tip p {
+  margin: 0;
+}
+
+.talent-tip-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--gold-hi);
+}
+
+.talent-tip .talent-tip-rank {
+  margin-bottom: 0.3rem;
+  color: var(--muted);
+}
+
+.talent-tip-desc {
+  color: #ffd100;
+  white-space: pre-line;
+}
+
+.talent-tip .talent-tip-next {
+  margin-top: 0.5rem;
+  color: var(--text);
+  font-weight: 600;
+}
+
+@media (max-width: 1100px) {
+  .talent-trees {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 400px) {
+  .talent-spec {
+    padding: 0.75rem 0.5rem 1rem;
+  }
+}
+
+/* ===== Berufe ===== */
+
+.profession-member {
+  display: grid;
+  grid-template-columns: minmax(6rem, 9rem) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.25rem 0;
+}
+
+.skill-bar {
+  height: 0.6rem;
+  overflow: hidden;
+  background: var(--panel-hi);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.skill-bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--gold-hi);
+}
+
+.character-professions {
+  padding: 0.5rem 1rem 1rem;
+}
+
+.character-profession {
+  padding: 0.5rem 0;
+  scroll-margin-top: 6rem;
+}
+
+/* Sprungziel von der Berufe-Seite (#bergbau) */
+.character-profession-highlight {
+  margin: 0 -0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius);
+  background: rgb(242 201 90 / 0.1);
+  box-shadow: inset 0 0 0 1px var(--gold);
+}
+
+.character-profession .profession-member {
+  grid-template-columns: minmax(6rem, 9rem) minmax(0, 1fr) 4.5rem 5.5rem;
+}
+
+.character-profession .profession-member .num {
+  text-align: right;
+}
+
+.profession-recipe-count {
+  text-align: right;
+}
+
+/* Rezepte am Charakter: Raster aus Icons im Qualitätsrahmen */
+.recipe-grid-wrap {
+  margin-top: 0.45rem;
+}
+
+.recipe-grid-filter {
+  width: min(100%, 22rem);
+  margin-bottom: 0.6rem;
+}
+
+.recipe-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.recipe-grid-trigger {
+  display: block;
+  border-radius: 4px;
+  cursor: help;
+}
+
+.recipe-grid-trigger .icon {
+  border-width: 2px;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.recipe-grid-trigger:hover .icon,
+.recipe-grid-trigger:focus-visible .icon {
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px var(--gold-hi), 0 2px 8px rgb(0 0 0 / 0.6);
+}
+
+.recipe-grid-trigger:focus-visible {
+  outline: 2px solid var(--gold-hi);
+}
+
+/* Rezept-Tooltip */
+.recipe-tip .item-tip + .recipe-tip-quantity,
+.recipe-tip .recipe-tip-reagents {
+  margin-top: 0.45rem;
+}
+
+.recipe-tip-name {
+  color: var(--gold-hi);
+}
+
+.recipe-tip-label {
+  color: #ffd100;
+}
+
+.recipe-tip-reagents ul {
+  list-style: none;
+  margin: 0.2rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.recipe-tip-reagents li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+@media (max-width: 560px) {
+  .character-profession .profession-member {
+    grid-template-columns: auto minmax(3rem, 1fr) 4.5rem;
+  }
+
+  .profession-recipe-count {
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+}
+
+/* Münzen im Verkaufspreis */
+.coin {
+  display: inline-block;
+  width: 0.8em;
+  height: 0.8em;
+  margin-left: 0.2em;
+  border-radius: 50%;
+  vertical-align: -0.08em;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.45), 0 0 1px rgba(0, 0, 0, 0.6);
+}
+
+.coin-gold {
+  background: radial-gradient(circle at 35% 30%, #fff4b8 0%, #f0c63a 40%, #a87a12 100%);
+}
+
+.coin-silver {
+  background: radial-gradient(circle at 35% 30%, #ffffff 0%, #c9cbd2 45%, #74767e 100%);
+}
+
+.coin-copper {
+  background: radial-gradient(circle at 35% 30%, #ffd2ad 0%, #cf7a3a 45%, #6f3612 100%);
+}
+
+/* Zwei Gilden: Wappen, Kopf und Filter */
+.faction-crest {
+  flex: none;
+  vertical-align: -0.2em;
+}
+
+/* Offizielles Fraktionssymbol: Rahmen in Fraktionsfarbe, rund wie das Symbol selbst */
+.faction-icon {
+  border-width: 1px;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.5);
+}
+
+.segmented-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.faction-crest-deko {
+  display: inline-flex;
+}
+
+.guild-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.guild-heads {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin: 0 0 0.25rem;
+}
+
+.guild-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.guild-head-name {
+  font-family: var(--font-head);
+  color: var(--gold);
+}
+
+/* Segmentsteuerung (Gildenfilter): nur so breit wie der Inhalt; aktiv golden (Alle), Horde-Gilde rot, Allianz-Gilde blau (nach Fraktion, nicht nach Name) */
+.segmented {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-self: flex-start;
+  width: fit-content;
+  max-width: 100%;
+  padding: 4px;
+  gap: 2px;
+  background: #0b0c10;
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 0 0 1px #3a3220;
+}
+
+.segmented-option {
+  font-family: var(--font-head);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  padding: 0.35rem 1rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.segmented-option:hover {
+  color: var(--text);
+}
+
+.segmented-option[aria-checked="true"] {
+  color: var(--on-gold);
+  background: var(--gold-fill);
+  box-shadow: inset 0 -1px 0 var(--gold-3);
+}
+
+.segmented-option[data-faction="HORDE"][aria-checked="true"] {
+  color: #fff;
+  background: var(--horde-fill);
+  box-shadow: inset 0 -1px 0 #6e1218;
+}
+
+.segmented-option[data-faction="ALLIANCE"][aria-checked="true"] {
+  color: #fff;
+  background: var(--alliance-fill);
+  box-shadow: inset 0 -1px 0 #12307a;
+}
+
+.segmented-option:focus-visible {
+  outline: 2px solid var(--gold-hi);
+  outline-offset: 2px;
+}
+
+@media (max-width: 560px) {
+  .segmented-option {
+    font-size: 0.74rem;
+    padding: 0.3rem 0.7rem;
+  }
+}
+
+/* Dungeons & Raids: Bildkarten über die volle Inhaltsbreite */
+.instances {
+  display: grid;
+  gap: 2rem;
+}
+
+.instance-section-title {
+  font-family: var(--font-head);
+  font-size: 1.5rem;
+  color: var(--gold-hi);
+  margin: 0 0 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid transparent;
+  border-image: var(--gold-line) 1;
+  text-shadow: 0 2px 12px rgb(242 201 90 / 0.25);
+}
+
+.instance-others {
+  margin: 1.25rem 0 0;
+}
+
+.instance-others-title {
+  font-family: var(--font-head);
+  color: var(--gold);
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.4rem;
+}
+
+.instance-cards {
+  list-style: none;
+  margin: 0.25rem 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.instance-cards-raids {
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+}
+
+.instance-card {
+  position: relative;
+  isolation: isolate;
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  min-height: 210px;
+  overflow: hidden;
+  border: 1px solid var(--frame-outer);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(160deg, var(--steel-3), var(--steel-deep));
+  box-shadow: var(--frame-lines), var(--shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.instance-cards-raids .instance-card {
+  min-height: 250px;
+}
+
+.instance-card:hover {
+  transform: translateY(-2px);
+}
+
+.instance-card-img,
+.instance-card-art {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  transition: filter 0.3s ease;
+}
+
+.instance-card-img {
+  object-fit: cover;
+}
+
+/* Orte ohne Blizzard-Bild: Lichtschein im Grundton des Ortes, feines Rautengitter, großes Rautenwappen */
+.instance-card-art {
+  --art-tint: 242 201 90;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%23f2c95a'%3E%3Cpath d='M50 3 97 50 50 97 3 50Z' stroke-width='1.2'/%3E%3Cpath d='M50 17 83 50 50 83 17 50Z' stroke-width='.8'/%3E%3Cpath d='M50 38 62 50 50 62 38 50Z' fill='%23f2c95a' stroke='none'/%3E%3C/svg%3E")
+      right -28px center / 150px 150px no-repeat,
+    radial-gradient(ellipse 75% 65% at 85% 45%, rgb(var(--art-tint) / 0.3), transparent 70%),
+    radial-gradient(ellipse 60% 55% at 0% 100%, rgb(var(--art-tint) / 0.14), transparent 70%),
+    repeating-linear-gradient(45deg, rgb(242 201 90 / 0.045) 0 1px, transparent 1px 18px),
+    repeating-linear-gradient(-45deg, rgb(242 201 90 / 0.045) 0 1px, transparent 1px 18px),
+    linear-gradient(160deg, #2c303c, var(--steel-deep));
+}
+
+.instance-card-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 60px rgb(0 0 0 / 0.55);
+}
+
+/* Verlauf: oben dunkel für Name und Stufe, Mitte frei fürs Bild, unten dunkel für die Bosse */
+.instance-card-shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    rgb(12 13 17 / 0.88) 0%,
+    rgb(12 13 17 / 0.55) 34%,
+    rgb(12 13 17 / 0.15) 56%,
+    rgb(12 13 17 / 0.8) 82%,
+    rgb(12 13 17 / 0.94) 100%
+  );
+}
+
+/* Abgeschlossen leuchtet golden; begonnen etwas ruhiger; offen dezent gedämpft, beim Zeigen wieder farbig. */
+.instance-card-done {
+  border-color: var(--gold-2);
+  box-shadow: inset 0 0 0 2px var(--frame-gap), inset 0 0 0 3px var(--gold-1), 0 0 24px rgb(242 201 90 / 0.3), var(--shadow);
+}
+
+.instance-card-started .instance-card-img,
+.instance-card-started .instance-card-art {
+  filter: saturate(0.75) brightness(0.9);
+}
+
+.instance-card-open {
+  border-color: #3a3220;
+  box-shadow: inset 0 0 0 2px var(--frame-gap), inset 0 0 0 3px #4a3c1d, var(--shadow);
+}
+
+.instance-card-open .instance-card-img,
+.instance-card-open .instance-card-art {
+  filter: grayscale(0.5) brightness(0.86);
+}
+
+.instance-card-open:hover .instance-card-img,
+.instance-card-open:hover .instance-card-art {
+  filter: grayscale(0.15) brightness(0.92);
+}
+
+.instance-card-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 0.9rem 1rem 1rem;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.9);
+}
+
+/* Kopf: Name und Stufe links in fester Spalte, rechts bleibt Platz für den Status in der Ecke. */
+.instance-card-head {
+  margin-bottom: 0.9rem;
+  padding-right: 6.3rem;
+}
+
+.instance-card-name {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: clamp(1rem, 0.3rem + 4cqi, 1.25rem);
+  line-height: 1.2;
+  color: var(--gold-hi);
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+.instance-card-open .instance-card-name {
+  color: var(--text);
+}
+
+.instance-card-level {
+  margin: 0.15rem 0 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* Goldener Wimpel wie die Fraktionsbanner: hängt an der Oberkante, unten spitz */
+.instance-pennant {
+  position: absolute;
+  top: 0;
+  right: 0.65rem;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  padding: 0.45rem 0.5rem 0.9rem;
+  min-width: 5rem;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-variant: small-caps;
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-shadow: none;
+  color: var(--on-gold);
+  background: var(--gold-fill);
+  clip-path: polygon(0 0, 100% 0, 100% 82%, 50% 100%, 0 82%);
+  filter: drop-shadow(0 3px 6px rgb(0 0 0 / 0.55));
+}
+
+/* Goldstange oben, wie beim Fraktionswimpel */
+.instance-pennant::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold-3), var(--gold-pale), var(--gold-3));
+}
+
+.instance-pennant-star {
+  font-size: 0.85rem;
+  line-height: 1;
+  margin-bottom: 0.2rem;
+}
+
+.instance-pennant-date {
+  font-family: var(--font-head);
+  font-size: 0.8rem;
+  font-variant: normal;
+  font-variant-numeric: tabular-nums;
+}
+
+.instance-pennant-count {
+  margin-top: 0.05rem;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+}
+
+/* "Noch nicht besucht" und "x von y Bossen": klein und ruhig am selben Platz wie der Wimpel */
+.instance-card-note {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.75rem;
+  z-index: 1;
+  max-width: 4.9rem;
+  margin: 0;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1.3;
+  text-align: right;
+  color: var(--muted);
+  border-right: 2px solid rgb(165 156 138 / 0.45);
+}
+
+.instance-card-note-started {
+  color: var(--text);
+  border-right-color: var(--gold-2);
+}
+
+.instance-bosses {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin: auto 0 0;
+  padding: 0;
+}
+
+.instance-card-bosses {
+  margin: auto 0 0;
+  padding: 0.4rem 0.55rem;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--text);
+  background: rgb(12 13 17 / 0.72);
+  border-radius: var(--radius);
+}
+
+.instance-final-boss {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.instance-boss {
+  padding: 0.12rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  background: rgb(12 13 17 / 0.55);
+  border: 1px solid var(--border);
+  text-shadow: none;
+}
+
+.instance-boss-defeated {
+  color: #10170b;
+  background: var(--success);
+  border-color: var(--success);
+  font-weight: 600;
+}
+
+@media (forced-colors: active) {
+  .instance-pennant {
+    clip-path: none;
+    border: 1px solid CanvasText;
+  }
+}
+
+.instance-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.instance-row {
+  padding: 0.2rem 0;
+  color: var(--muted);
+}
+
+@media (max-width: 560px) {
+  .instance-cards,
+  .instance-cards-raids {
+    grid-template-columns: 1fr;
+  }
+
+  .instance-card {
+    min-height: 190px;
+  }
+}
+
+/* Ruf */
+.reputation {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.reputation-group .panel-title {
+  margin-bottom: 0.4rem;
+}
+
+.reputation-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.reputation-row {
+  display: grid;
+  grid-template-columns: minmax(8rem, 1.4fr) 6.5rem minmax(4rem, 2fr) 6.5rem;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.25rem 0;
+}
+
+.reputation-tier {
+  color: var(--muted);
+}
+
+.reputation-value {
+  text-align: right;
+  color: var(--muted);
+}
+
+.reputation-fill.reputation-hostile {
+  background: var(--horde-hi);
+}
+
+.reputation-fill.reputation-neutral {
+  background: var(--gold-1);
+}
+
+.reputation-fill.reputation-friendly {
+  background: #6fae4f;
+}
+
+@media (max-width: 560px) {
+  .reputation-row {
+    grid-template-columns: 1fr auto;
+  }
+
+  .reputation-bar {
+    grid-column: 1 / -1;
+    order: 3;
+  }
+
+  .reputation-value {
+    order: 4;
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+}
+
+/* Discord: goldener Knopf im Kopf (siehe .button-gold), schlichter Link im Fuß */
+.footer-discord {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-head);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--gold);
+}
+
+.footer-discord:hover {
+  color: var(--gold-hi);
+}
+
+.discord-icon {
+  flex: none;
+}
+
+@media (max-width: 640px) {
+  .site-header-inner .discord-link {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.72rem;
+  }
+}
+
+/* Berufe: Werkbank */
+.bench {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.bench-nav {
+  display: grid;
+  gap: 0.15rem;
+  position: sticky;
+  top: 1rem;
+}
+
+.bench-group-title {
+  margin: 0.9rem 0 0.3rem 0.6rem;
+  font-family: var(--font-head);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.bench-group:first-child .bench-group-title {
+  margin-top: 0;
+}
+
+.bench-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.bench-nav-link:hover {
+  background: rgb(214 178 106 / 0.06);
+  text-decoration: none;
+}
+
+.bench-nav-link[aria-current="page"] {
+  background: var(--panel-hi);
+  box-shadow: inset 0 0 0 1px var(--gold);
+  color: var(--gold-hi);
+}
+
+.bench-nav-link:focus-visible {
+  outline: 2px solid var(--gold-hi);
+  outline-offset: 1px;
+}
+
+.bench-nav-count {
+  margin-left: auto;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.bench-emblem {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  border-radius: 6px;
+  font-family: var(--font-head);
+  color: #1a120b;
+  background: linear-gradient(145deg, var(--gold-hi), #9c7b35);
+  box-shadow: inset 0 0 0 2px rgb(0 0 0 / 0.25);
+}
+
+.bench-select {
+  display: none;
+}
+
+.bench-detail {
+  padding: 1.25rem;
+  background: linear-gradient(160deg, var(--panel-hi), var(--panel));
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 4px);
+  box-shadow: var(--frame-lines), var(--shadow);
+}
+
+.bench-detail-head {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.bench-detail-head p {
+  margin: 0.15rem 0 0;
+}
+
+.bench-detail-title {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: 1.6rem;
+  color: var(--gold-hi);
+}
+
+.bench-search {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.bench-people {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 0.6rem;
+}
+
+.bench-person {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.65rem 0.8rem;
+  background: rgb(16 12 9 / 0.55);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.bench-person-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.bench-person-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+  min-width: 0;
+}
+
+.bench-person-link {
+  text-decoration: none;
+}
+
+.bench-person-sub {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+/* Werkbank: Umschalter Personen / Alle Rezepte */
+.bench-modes {
+  display: inline-flex;
+  gap: 0.25rem;
+  margin-bottom: 0.9rem;
+  padding: 0.2rem;
+  background: rgb(16 12 9 / 0.55);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.bench-mode {
+  padding: 0.3rem 0.85rem;
+  font: inherit;
+  font-size: 0.88rem;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.bench-mode[aria-pressed="true"] {
+  color: #1a120b;
+  background: linear-gradient(145deg, var(--gold-hi), var(--gold));
+  font-weight: 600;
+}
+
+.bench-mode:focus-visible {
+  outline: 2px solid var(--gold-hi);
+  outline-offset: 2px;
+}
+
+/* Werkbank: Rezeptkarten */
+.recipe-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.recipe-card {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.7rem 0.8rem;
+  background: rgb(16 12 9 / 0.55);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.recipe-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.recipe-card-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+  border-radius: 4px;
+  cursor: help;
+}
+
+.recipe-card-trigger .icon {
+  border-width: 2px;
+}
+
+.recipe-card-trigger:focus-visible {
+  outline: 2px solid var(--gold-hi);
+}
+
+.recipe-card-text {
+  display: grid;
+  min-width: 0;
+}
+
+.recipe-card-name {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.recipe-card-sub {
+  overflow: hidden;
+  font-size: 0.82rem;
+  color: var(--muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.recipe-card-count {
+  flex: none;
+  padding-top: 0.1rem;
+  font-size: 0.82rem;
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+.recipe-card-reagents {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.9rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.recipe-card-reagents li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.recipe-card-people {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.recipe-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.3rem 0.2rem 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--panel-hi);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+.recipe-chip:hover {
+  border-color: var(--gold);
+  text-decoration: none;
+}
+
+.recipe-chip:focus-visible {
+  outline: 2px solid var(--gold-hi);
+  outline-offset: 1px;
+}
+
+.recipe-chip-skill {
+  min-width: 1.8rem;
+  padding: 0 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  color: var(--muted);
+  background: rgb(0 0 0 / 0.35);
+  border-radius: 999px;
+}
+
+.recipe-card-more {
+  justify-self: start;
+  padding: 0;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--gold);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.recipe-card-more:hover {
+  color: var(--gold-hi);
+  text-decoration: underline;
+}
+
+.bench-empty {
+  margin: 0.5rem 0;
+}
+
+@media (max-width: 760px) {
+  .bench {
+    grid-template-columns: 1fr;
+  }
+
+  .bench-nav {
+    display: none;
+  }
+
+  .bench-select {
+    display: block;
+  }
+
+  .bench-select select {
+    width: 100%;
+  }
+
+  .bench-people {
+    grid-template-columns: 1fr;
+  }
+
+  .bench-detail {
+    padding: 1rem;
+  }
+
+  .recipe-card-head {
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .recipe-card-sub {
+    white-space: normal;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Aktivität, Titel der Woche, Wochenzeitung, Wrapped                 */
+/* ------------------------------------------------------------------ */
+
+.testdaten-hint {
+  margin: 0;
+  padding: 0.45rem 0.8rem;
+  width: fit-content;
+  max-width: 100%;
+  font-size: 0.85rem;
+  color: var(--text-bright);
+  background: repeating-linear-gradient(135deg, rgb(179 32 42 / 0.28) 0 10px, rgb(179 32 42 / 0.16) 10px 20px);
+  border: 1px dashed var(--horde-hi);
+  border-radius: var(--radius);
+}
+
+/* Wann Titel und Zeitung erscheinen: gut sichtbar unter dem Seitentitel und im Leerzustand */
+.erscheint-hint {
+  margin: 0;
+  padding: 0.45rem 0.8rem;
+  width: fit-content;
+  max-width: 100%;
+  color: var(--text-bright);
+  background: rgb(242 201 90 / 0.1);
+  border: 1px solid var(--gold-3);
+  border-left: 3px solid var(--gold);
+  border-radius: var(--radius);
+}
+
+.erscheint-hint strong {
+  color: var(--gold);
+}
+
+.character-link {
+  font-weight: 700;
+}
+
+/* Kennzahlen über der Heatmap */
+.fun-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr));
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fun-fact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.75rem 1rem;
+  background: var(--panel-fill);
+  border: 1px solid var(--frame-outer);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--frame-lines);
+}
+
+.fun-fact-label,
+.wrapped-stat-label {
+  /* Lange Wörter wie "Durchschnittslevel" dürfen auf schmalen Handys nicht über den Rand ragen. */
+  overflow-wrap: anywhere;
+  font-family: var(--font-head);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold-2);
+}
+
+.fun-fact-value {
+  font-size: 1.15rem;
+  color: var(--text-bright);
+  text-align: left;
+}
+
+/* Heatmap: Wochentage als Zeilen, Stunden als Spalten */
+.heatmap {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.heatmap-row {
+  display: grid;
+  grid-template-columns: 2.2rem repeat(24, minmax(0, 1fr));
+  gap: 3px;
+  align-items: center;
+}
+
+.heatmap-hour,
+.heatmap-day {
+  font-family: var(--font-head);
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.heatmap-hour {
+  text-align: left;
+}
+
+.heatmap-cell {
+  display: block;
+  aspect-ratio: 1;
+  min-height: 10px;
+  border-radius: 3px;
+  background: #0f1116;
+  box-shadow: inset 0 0 0 1px rgb(242 201 90 / 0.08);
+}
+
+.heat-1 { background: #3a2f17; }
+.heat-2 { background: #5e4718; }
+.heat-3 { background: #8a6420; }
+.heat-4 { background: #c9952e; }
+.heat-5 { background: var(--gold-fill); box-shadow: 0 0 6px rgb(242 201 90 / 0.55); }
+
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 0.6rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.heatmap-legend .heatmap-cell {
+  width: 14px;
+  min-height: 14px;
+}
+
+@media (max-width: 560px) {
+  .heatmap,
+  .heatmap-row {
+    gap: 2px;
+  }
+
+  .heatmap-row {
+    grid-template-columns: 1.6rem repeat(24, minmax(0, 1fr));
+  }
+
+  .heatmap-cell {
+    min-height: 0;
+    border-radius: 2px;
+  }
+
+  .heatmap-hour {
+    font-size: 0.6rem;
+  }
+}
+
+@media (forced-colors: active) {
+  .heatmap-cell { forced-color-adjust: none; }
+}
+
+/* Titel der Woche: Kacheln */
+.title-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+  gap: 0.9rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.title-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 1rem 0.8rem 0.9rem;
+  text-align: center;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgb(242 201 90 / 0.14), transparent 70%),
+    var(--panel-fill);
+  border: 1px solid var(--frame-outer);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--frame-lines), var(--shadow);
+}
+
+.title-tile::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  translate: -50% 0;
+  background: var(--diamond) center / contain no-repeat;
+  filter: drop-shadow(0 0 4px rgb(242 201 90 / 0.55));
+}
+
+/* Gemalte Titel-Abzeichen (web/public/titel, 192 Pixel): kreisrund freigestellt, höchstens etwa 100 CSS-Pixel */
+.title-medal {
+  display: inline-block;
+  flex: none;
+  border-radius: 50%;
+  filter: drop-shadow(0 3px 6px rgb(0 0 0 / 0.55));
+}
+
+.title-medal-muted {
+  filter: grayscale(0.85) brightness(0.55) drop-shadow(0 2px 4px rgb(0 0 0 / 0.5));
+}
+
+.title-medal-link {
+  display: inline-flex;
+  vertical-align: middle;
+  border-radius: 50%;
+  transition: transform 0.15s ease;
+}
+
+.title-medal-link:hover {
+  transform: scale(1.08);
+}
+
+.title-tile .title-medal {
+  margin-bottom: 0.2rem;
+}
+
+/* Regel einer Kachel: Fragezeichen oben rechts, Text als Einblendung bei Überfahren, Fokus oder Antippen */
+.title-tile-info {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.45rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  padding: 0;
+  font: 700 0.75rem/1 var(--font-body);
+  color: var(--muted);
+  background: rgb(0 0 0 / 0.3);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.title-tile-info:hover,
+.title-tile-info[aria-expanded="true"] {
+  color: var(--on-gold);
+  background: var(--gold-fill);
+  border-color: var(--gold-3);
+}
+
+/* Oben über dem Abzeichen, damit der Knopf für die Rangliste unten frei bleibt */
+.title-tile-rule {
+  position: absolute;
+  inset: 2.1rem 0.4rem auto;
+  z-index: 3;
+  padding: 0.5rem 0.6rem;
+  font-size: 0.85rem;
+  line-height: 1.35;
+  color: var(--text-bright);
+  background: rgb(12 13 17 / 0.95);
+  border: 1px solid var(--gold-3);
+  border-radius: var(--radius);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.title-tile:hover .title-tile-rule,
+.title-tile-rule-open {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .title-tile:hover .title-tile-rule:not(.title-tile-rule-open) {
+    opacity: 0;
+  }
+}
+
+/* Handy: zwei Kacheln je Reihe, Medaillon 88 Pixel */
+@media (max-width: 640px) {
+  .title-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+
+  .title-tile {
+    padding: 0.85rem 0.45rem 0.75rem;
+  }
+
+  .title-tile .title-medal {
+    width: 88px;
+    height: 88px;
+  }
+
+  .title-tile-name {
+    font-size: 1.05rem;
+  }
+
+  .title-tile-winner {
+    font-size: 1.05rem;
+  }
+
+  .title-tile-value {
+    font-size: 0.88rem;
+  }
+}
+
+/* Ehrentafel: Zeile je Titel, Spalte je Woche; feste Spaltenbreiten, nie seitliches Scrollen */
+.honor .panel-header {
+  margin: 0;
+}
+
+.honor-nav {
+  display: inline-flex;
+  gap: 0.4rem;
+}
+
+.honor-nav-button {
+  font: 600 0.8rem var(--font-body);
+  color: var(--gold);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.2rem 0.55rem;
+  cursor: pointer;
+}
+
+.honor-nav-button:disabled {
+  color: var(--muted);
+  opacity: 0.5;
+  cursor: default;
+}
+
+.honor-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.honor-col-title {
+  width: 15rem;
+}
+
+.honor-table th,
+.honor-table td {
+  padding: 0.3rem 0.6rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.honor-week {
+  line-height: 1.15;
+}
+
+.honor-week-date {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--muted);
+}
+
+.honor-title {
+  font-family: var(--font-head);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--gold);
+  text-align: left;
+}
+
+.honor-title .title-medal {
+  vertical-align: middle;
+  margin-right: 0.45rem;
+}
+
+.honor-title-name {
+  vertical-align: middle;
+}
+
+.honor-none {
+  display: inline-block;
+  width: 0.9rem;
+  height: 2px;
+  vertical-align: middle;
+  background: var(--border);
+  border-radius: 1px;
+}
+
+@media (max-width: 640px) {
+  .honor .panel-header {
+    padding: 0.75rem;
+  }
+
+  .honor-col-title {
+    width: 42%;
+  }
+
+  .honor-table th,
+  .honor-table td {
+    padding: 0.3rem 0.35rem;
+    font-size: 0.85rem;
+  }
+
+  .honor-title {
+    font-size: 0.72rem;
+    white-space: normal;
+  }
+
+  .honor-title .title-medal {
+    width: 28px;
+    height: 28px;
+    margin-right: 0.3rem;
+  }
+
+  .honor-title-name {
+    display: inline-block;
+    max-width: calc(100% - 2.2rem);
+    line-height: 1.15;
+    white-space: normal;
+  }
+}
+
+.wrapped-title-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.zeitung-card:has(> .title-medal) {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  column-gap: 0.85rem;
+  align-items: start;
+}
+
+.zeitung-card > .title-medal {
+  grid-row: span 3;
+}
+
+.zeitung-lead-figur {
+  position: relative;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.zeitung-lead-figur .title-medal {
+  position: absolute;
+  right: -10px;
+  bottom: -6px;
+}
+
+.title-tile-name {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.22rem;
+  line-height: 1.15;
+  background: var(--gold-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.title-tile-winner {
+  font-size: 1.15rem;
+}
+
+.title-tile-value {
+  font-size: 0.97rem;
+  color: var(--text-bright);
+}
+
+.title-tile-shared {
+  padding: 0;
+  font: italic 0.85rem/1.3 var(--font-body);
+  color: var(--muted);
+  background: none;
+  border: 0;
+  text-decoration: underline dotted;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.title-tile-shared:hover,
+.title-tile-shared:focus-visible {
+  color: var(--gold-1);
+}
+
+.title-tile-rule-tie {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--muted);
+}
+
+.title-tile-empty {
+  opacity: 0.7;
+}
+
+.title-tile-empty .title-tile-name {
+  background: none;
+  color: var(--muted);
+}
+
+.title-badge:hover {
+  text-decoration: none;
+  color: var(--on-gold);
+  filter: brightness(1.08);
+}
+
+/* Wochenzeitung, Gestaltung "Wappen bei Nacht":
+   dunkler Stahl, Goldrahmen, Fraktionslinie, Rubriken Klatsch in Allianzblau und Friedhof in Hordenrot. */
+.zeitung {
+  position: relative;
+  padding: 1.6rem clamp(0.9rem, 3vw, 2.5rem) 1.9rem;
+  background: var(--panel-fill);
+  border: 1px solid var(--frame-outer);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--frame-lines), var(--shadow);
+}
+
+.zeitung::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: var(--faction-line);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.zeitung-masthead {
+  text-align: center;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgb(242 201 90 / 0.3);
+}
+
+.zeitung-kicker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-2);
+}
+
+.zeitung-title {
+  margin: 0.25rem 0 0.4rem;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(2.1rem, 1.2rem + 4vw, 4rem);
+  line-height: 1;
+  background: var(--gold-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 2px 0 #3a2a08);
+}
+
+.zeitung-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25rem 1.1rem;
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.zeitung-lead {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 1.4rem;
+  align-items: center;
+  margin: 1.4rem 0 0.5rem;
+  padding: 1.1rem;
+  background: rgb(0 0 0 / 0.25);
+  border: 1px solid rgb(242 201 90 / 0.25);
+  border-radius: var(--radius-lg);
+}
+
+.zeitung-lead-ohne-bild {
+  grid-template-columns: 1fr;
+}
+
+.zeitung-lead-bild {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid var(--gold-2);
+  box-shadow: 0 0 0 4px var(--frame-gap), 0 0 18px rgb(242 201 90 / 0.35);
+}
+
+.zeitung-headline {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-head);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-bright);
+}
+
+.zeitung-lead .zeitung-headline {
+  font-size: clamp(1.45rem, 1.1rem + 1.4vw, 2.1rem);
+}
+
+.zeitung-lead .zeitung-text {
+  font-size: 1.12rem;
+}
+
+.zeitung-text {
+  margin: 0;
+  line-height: 1.55;
+  color: #d8cfba;
+  hyphens: auto;
+}
+
+.zeitung-section {
+  margin-top: 1.4rem;
+}
+
+.zeitung-section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 0.75rem;
+  font-family: var(--font-head);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.zeitung-section-title::before,
+.zeitung-section-title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-2) 50%, transparent);
+}
+
+.zeitung-section-title span {
+  padding: 0.1rem 0.6rem;
+  border-radius: 4px;
+}
+
+.zeitung-section[data-farbe="horde"] .zeitung-section-title span {
+  color: #fff;
+  background: var(--horde);
+}
+
+.zeitung-section[data-farbe="allianz"] .zeitung-section-title span {
+  color: #fff;
+  background: var(--alliance);
+}
+
+.zeitung-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 0.75rem;
+}
+
+.zeitung-card {
+  padding: 0.9rem 1rem;
+  background: rgb(0 0 0 / 0.2);
+  border: 1px solid var(--frame-outer);
+  border-radius: var(--radius);
+}
+
+.zeitung-section[data-farbe="horde"] .zeitung-card {
+  border-left: 3px solid var(--horde);
+}
+
+.zeitung-section[data-farbe="allianz"] .zeitung-card {
+  border-left: 3px solid var(--alliance);
+}
+
+.zeitung-card .zeitung-headline {
+  font-size: 1.1rem;
+}
+
+.zeitung-faces {
+  display: flex;
+  margin-top: 0.6rem;
+}
+
+.zeitung-face {
+  width: 34px;
+  height: 34px;
+  margin-right: -8px;
+  border-radius: 50%;
+  border: 2px solid var(--gold-3);
+  background: var(--steel-deep);
+}
+
+.zeitung-bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 1.4rem;
+}
+
+.zeitung-bottom-ohne-zahl {
+  grid-template-columns: 1fr;
+}
+
+.zeitung-zahl {
+  padding: 1rem;
+  text-align: center;
+  border: 1px solid var(--gold-2);
+  border-radius: var(--radius-lg);
+  background: radial-gradient(circle at 50% 30%, rgb(242 201 90 / 0.18), transparent 70%);
+}
+
+.zeitung-zahl .zeitung-section-title {
+  margin-bottom: 0.4rem;
+}
+
+.zeitung-zahl-wert {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 3.4rem;
+  line-height: 1;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.zeitung-motto {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 1rem;
+  text-align: center;
+  color: var(--on-gold);
+  background: var(--gold-fill);
+  border-radius: var(--radius-lg);
+}
+
+.zeitung-motto-label {
+  font-family: var(--font-head);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.zeitung-motto q {
+  font-size: 1.35rem;
+  font-weight: 700;
+  font-style: italic;
+  line-height: 1.3;
+}
+
+.zeitung-zahlen {
+  margin-top: 1.4rem;
+  padding: 1rem;
+  border: 1px solid var(--gold-2);
+  border-radius: var(--radius-lg);
+}
+
+.zeitung-zahlen .segmented {
+  margin: 0 auto 0.8rem;
+}
+
+.zeitung-zahlen-liste {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 125px), 1fr));
+  gap: 0.5rem 0.75rem;
+  margin: 0;
+}
+
+.zeitung-zahlen-zeile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.4rem 0.2rem;
+  text-align: center;
+}
+
+.zeitung-zahlen-zeile dt {
+  font-family: var(--font-head);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.zeitung-zahlen-zeile dd {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin: 0.15rem 0 0;
+}
+
+.zeitung-zahlen-zeile strong {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.zeitung-trend {
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.zeitung-trend[data-richtung="hoch"] {
+  color: var(--gold);
+}
+
+.zeitung-trend[data-richtung="runter"],
+.zeitung-trend[data-richtung="gleich"] {
+  color: var(--muted);
+}
+
+.zeitung-wetter,
+.zeitung-rueckblick {
+  padding: 1rem;
+  border: 1px solid var(--gold-2);
+  border-radius: var(--radius-lg);
+}
+
+.zeitung-wetter .zeitung-section-title,
+.zeitung-rueckblick .zeitung-section-title {
+  margin-bottom: 0.4rem;
+}
+
+.zeitung-wetter-hinweis,
+.zeitung-rueckblick-meta {
+  margin: 0.4rem 0 0;
+  font-size: 0.8rem;
+}
+
+.zeitung-rueckblick {
+  text-align: center;
+}
+
+.zeitung-rueckblick-zitat {
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  font-style: italic;
+  line-height: 1.3;
+}
+
+.zeitung-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .zeitung-lead {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .zeitung-lead-bild {
+    width: 112px;
+    height: 112px;
+    margin: 0 auto;
+  }
+
+  .zeitung-bottom {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (forced-colors: active) {
+  .zeitung-title {
+    background: none;
+    color: CanvasText;
+    filter: none;
+  }
+}
+
+/* Zeitungsarchiv */
+.zeitung-archive {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.zeitung-archive-link {
+  display: grid;
+  grid-template-columns: 5rem 14rem 1fr;
+  align-items: baseline;
+  gap: 0.25rem 1rem;
+  padding: 0.8rem 1rem;
+  color: var(--text);
+  background: var(--panel-fill);
+  border: 1px solid var(--frame-outer);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--frame-lines);
+}
+
+.zeitung-archive-link:hover {
+  text-decoration: none;
+  border-color: var(--gold-3);
+}
+
+.zeitung-archive-issue {
+  font-family: var(--font-head);
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.zeitung-archive-week {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.zeitung-archive-headline {
+  font-weight: 700;
+  color: var(--text-bright);
+}
+
+@media (max-width: 640px) {
+  .zeitung-archive-link {
+    grid-template-columns: auto 1fr;
+  }
+
+  .zeitung-archive-headline {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Wrapped: Karte */
+.wrapped-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.75rem;
+}
+
+.wrapped-month {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.wrapped-card {
+  position: relative;
+  max-width: 560px;
+  margin: 0.75rem auto 0;
+  padding: 1.6rem clamp(1rem, 4vw, 2rem) 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  background:
+    radial-gradient(ellipse 90% 45% at 50% 0%, rgb(242 201 90 / 0.2), transparent 70%),
+    linear-gradient(160deg, rgb(31 79 184 / 0.25), transparent 35%, transparent 65%, rgb(179 32 42 / 0.25)),
+    var(--panel-fill);
+  border: 1px solid var(--frame-outer);
+  border-radius: 16px;
+  box-shadow: var(--frame-lines), var(--shadow);
+}
+
+.wrapped-head {
+  text-align: center;
+}
+
+.wrapped-brand {
+  font-family: var(--font-head);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold-2);
+}
+
+.wrapped-name {
+  margin: 0.15rem 0 0;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(1.8rem, 1.3rem + 2vw, 2.4rem);
+  background: var(--gold-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.wrapped-month-label {
+  margin: 0;
+  color: var(--muted);
+}
+
+.wrapped-hero {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  background: rgb(0 0 0 / 0.25);
+  border: 1px solid rgb(242 201 90 / 0.25);
+  border-radius: var(--radius-lg);
+}
+
+.wrapped-hero-value {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.wrapped-hero-label {
+  color: var(--text-bright);
+}
+
+.wrapped-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wrapped-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.6rem 0.7rem;
+  background: rgb(0 0 0 / 0.2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.wrapped-stat .wrapped-stat-label {
+  hyphens: auto;
+  overflow-wrap: anywhere;
+}
+
+.wrapped-stat-value {
+  font-size: 1.45rem;
+  color: var(--text-bright);
+  font-variant-numeric: tabular-nums;
+}
+
+.wrapped-stat-none {
+  font-size: 0.95rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--muted);
+}
+
+.wrapped-stat-note {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.wrapped-favorite,
+.wrapped-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.wrapped-favorite strong {
+  font-size: 1.15rem;
+  color: var(--text-bright);
+}
+
+.wrapped-title-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wrapped-titles p {
+  margin: 0;
+}
+
+.wrapped-foot {
+  text-align: center;
+  padding-top: 0.6rem;
+  border-top: 1px solid rgb(242 201 90 / 0.15);
+}
+
+/* Desktop: breiter und zweispaltig statt einer langen Handyspalte. Links Levelzuwachs und Lieblingszeit, rechts
+   Kennzahlen und Titel. */
+@media (min-width: 900px) {
+  .wrapped-card {
+    max-width: 920px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+    grid-template-areas:
+      "head head"
+      "hero stats"
+      "favorite titles"
+      "foot foot";
+    column-gap: 1.5rem;
+    row-gap: 1.1rem;
+    align-items: start;
+  }
+
+  .wrapped-head {
+    grid-area: head;
+  }
+
+  .wrapped-hero {
+    grid-area: hero;
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    padding: 1.2rem 1rem;
+  }
+
+  .wrapped-hero-value {
+    font-size: 4.2rem;
+  }
+
+  .wrapped-stats {
+    grid-area: stats;
+  }
+
+  .wrapped-favorite {
+    grid-area: favorite;
+  }
+
+  .wrapped-titles {
+    grid-area: titles;
+  }
+
+  .wrapped-foot {
+    grid-area: foot;
+  }
+}
+
+@media (max-width: 560px) {
+  .wrapped-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .wrapped-hero-value {
+    font-size: 2.4rem;
+  }
+}
+
+/*
+ * Navigation mit fünf Einträgen: Schrift und Abstände wachsen mit der Breite der linken Spalte (Container-
+ * Einheiten), damit auch längere Beschriftungen (Englisch, "Wochenblatt") in eine Zeile passen. Erst wenn das
+ * Minimum erreicht ist, bricht sie um statt überzulaufen.
+ */
+.site-nav {
+  container-type: inline-size;
+  width: 100%;
+  flex-wrap: wrap;
+  row-gap: 0;
+  column-gap: clamp(0.6rem, 2.4cqi, 1.4rem);
+}
+
+.site-nav .nav-link {
+  font-size: clamp(0.72rem, 2.8cqi, 0.95rem);
+  letter-spacing: clamp(0.04em, 0.15cqi, 0.1em);
+}
+
+@media (max-width: 640px) {
+  .site-nav {
+    justify-content: center;
+    column-gap: 1.1rem;
+  }
+
+  .nav-link {
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+  }
+}
+
+/* Statistikseite: Reiterinhalt, Verteilungen nebeneinander, Zeitraumwahl, Statistikkarten mit Rangliste */
+.stats-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.stats-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.level-bar-fill {
+  background: var(--gold-fill);
+}
+
+/* Klassenbalken als Schalter: gewählte Klasse filtert die Levelverteilung */
+.class-bar-pick {
+  width: 100%;
+  margin: 0;
+  padding: 0.15rem 0.35rem;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.class-bar-pick:hover {
+  border-color: var(--border);
+  background: rgb(255 255 255 / 0.03);
+}
+
+.class-bar-pick[aria-pressed="true"] {
+  border-color: var(--gold-2);
+  background: rgb(242 201 90 / 0.08);
+}
+
+.class-bar-pick:focus-visible {
+  outline: 2px solid var(--gold-hi);
+  outline-offset: 1px;
+}
+
+.class-bar-reset {
+  margin-top: 0.25rem;
+  padding: 0;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--gold);
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.stats-period {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.stat-intro {
+  margin: 0;
+  font-style: italic;
+  color: var(--text);
+}
+
+.stat-theme-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+}
+
+.stat-theme-blurb {
+  margin: 0;
+  font-style: italic;
+  color: var(--muted);
+}
+
+
+.stat-rank {
+  display: inline-grid;
+  place-items: center;
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--steel);
+}
+
+.stat-rank-1 {
+  color: var(--on-gold);
+  background: var(--gold-fill);
+}
+
+.stat-rank-2 {
+  color: #15171c;
+  background: linear-gradient(180deg, #f1f3f7, #9aa1ad);
+}
+
+.stat-rank-3 {
+  color: #1a1209;
+  background: linear-gradient(180deg, #f0c28e, #9a5f2c);
+}
+
+.stat-honor {
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+.stat-honor-badge {
+  display: inline-block;
+  padding: 0.05rem 0.5rem;
+  border: 1px solid var(--gold-3);
+  border-radius: 999px;
+  font-family: var(--font-head);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--gold-hi);
+  background: rgb(242 201 90 / 0.08);
+}
+
+/* Gildenstatistik als Kuriositäten-Wand: Karten in drei Spalten, breite Karten über zwei, jede Form mit eigenem Bild */
+.fun-wall {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fun-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 0;
+  padding: 1rem 1.1rem 1.1rem;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgb(242 201 90 / 0.07), transparent 70%),
+    var(--panel-fill);
+  border: 1px solid var(--gold-3);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.fun-card p {
+  margin: 0;
+}
+
+.fun-card-span-2 {
+  grid-column: span 2;
+}
+
+.fun-card-span-3 {
+  grid-column: 1 / -1;
+}
+
+.fun-card-empty {
+  border-style: dashed;
+  opacity: 0.8;
+}
+
+.fun-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.fun-card-title {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--gold);
+}
+
+.fun-card-blurb {
+  font-style: italic;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.fun-big {
+  display: block;
+  font-family: var(--font-head);
+  font-size: 1.9rem;
+  line-height: 1.1;
+  text-align: left;
+  color: var(--gold-hi);
+}
+
+.fun-huge {
+  font-size: 3.2rem;
+  text-align: center;
+}
+
+.fun-unit {
+  text-align: center;
+  font-family: var(--font-head);
+  letter-spacing: 0.08em;
+  color: var(--gold-2);
+}
+
+.fun-mini-leaders {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9rem;
+}
+
+.fun-mini-leaders li {
+  display: grid;
+  grid-template-columns: 1.3rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fun-legend {
+  display: grid;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9rem;
+}
+
+.fun-legend li {
+  display: grid;
+  grid-template-columns: 0.75rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.2rem 0.5rem;
+}
+
+.fun-legend-honor {
+  grid-column: 2 / -1;
+}
+
+.fun-dot {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 999px;
+}
+
+/* Grabsteinfeld: je Todesursache ein Stein, größer je mehr Tode, auf einem Streifen Wiese */
+.fun-graveyard {
+  display: grid;
+  grid-template-columns: minmax(14rem, 1fr) minmax(0, 3fr);
+  align-items: start;
+  gap: 1.5rem;
+}
+
+.fun-graveyard-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  align-self: center;
+}
+
+.fun-graveyard-head .fun-big {
+  font-size: 2.6rem;
+}
+
+.fun-graves-field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1rem 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fun-gravestone-plot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  height: 9.4rem;
+  margin-bottom: 0.2rem;
+  border-bottom: 5px solid #3d5a2a;
+  box-shadow: 0 3px 0 #2a3f1d;
+}
+
+.fun-gravestone {
+  display: flex;
+  flex: 1 1 5.5rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0 0.2rem;
+  text-align: center;
+}
+
+.fun-gravestone-stone {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 4.6rem;
+  border: 1px solid #2c2b28;
+  border-radius: 2.3rem 2.3rem 3px 3px;
+  background: linear-gradient(180deg, #8a867c, #55524b 70%, #45433e);
+  box-shadow: inset 0 2px 0 rgb(255 255 255 / 0.15), 0 4px 10px rgb(0 0 0 / 0.4);
+}
+
+.fun-gravestone-stone strong {
+  margin-top: 0.8rem;
+  font-family: var(--font-head);
+  font-size: 1.15rem;
+  color: #f4efe1;
+  text-shadow: 0 1px 0 rgb(0 0 0 / 0.6);
+}
+
+.fun-gravestone-cross {
+  position: absolute;
+  top: 0.55rem;
+  left: 50%;
+  width: 0.8rem;
+  height: 1rem;
+  transform: translateX(-50%);
+  background:
+    linear-gradient(#2c2b28, #2c2b28) center / 2px 100% no-repeat,
+    linear-gradient(#2c2b28, #2c2b28) 50% 30% / 100% 2px no-repeat;
+  opacity: 0.7;
+}
+
+.fun-gravestone-empty .fun-gravestone-stone {
+  opacity: 0.45;
+}
+
+.fun-gravestone-label {
+  font-family: var(--font-head);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: var(--gold-2);
+}
+
+.fun-gravestone-honor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.fun-pie {
+  width: 100%;
+  justify-self: center;
+  max-width: 7.5rem;
+}
+
+.fun-pie-wrap {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Piktogramme: Fische und Flammen */
+.fun-pictos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.fun-picto {
+  display: inline-flex;
+}
+
+.fun-picto svg {
+  width: 1.6rem;
+  height: 1.1rem;
+}
+
+.fun-pictos-fische .fun-picto {
+  color: var(--alliance-hi);
+}
+
+.fun-pictos-lagerfeuer .fun-picto {
+  color: #ff8a3d;
+}
+
+.fun-pictos-lagerfeuer .fun-picto svg {
+  width: 1rem;
+  height: 1.3rem;
+}
+
+/* Waage */
+.fun-scale {
+  width: 100%;
+  max-width: 14rem;
+  align-self: center;
+  color: var(--gold-2);
+}
+
+.fun-scale-win {
+  fill: #3fb58a;
+}
+
+.fun-scale-lose {
+  fill: var(--horde-hi);
+}
+
+.fun-scale-pivot {
+  fill: var(--gold);
+}
+
+.fun-scale-num {
+  fill: var(--text-bright);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.fun-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.fun-pair-label {
+  font-family: var(--font-head);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  color: var(--gold-2);
+}
+
+/* Wusstest du? */
+.fun-facts-list {
+  display: grid;
+  gap: 0.9rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fun-facts-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+/* Podium */
+.fun-podium {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fun-podium-step {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  min-width: 0;
+  text-align: center;
+}
+
+.fun-podium-step .character-link {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fun-podium-block {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  border-radius: 6px 6px 0 0;
+  font-family: var(--font-head);
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.fun-podium-1 .fun-podium-block {
+  height: 4.5rem;
+}
+
+.fun-podium-2 .fun-podium-block {
+  height: 3.2rem;
+}
+
+.fun-podium-3 .fun-podium-block {
+  height: 2.2rem;
+}
+
+.fun-podium-total {
+  text-align: center;
+}
+
+/* Horde gegen Allianz */
+.fun-duel-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-family: var(--font-head);
+  font-size: 0.85rem;
+  color: var(--gold-2);
+}
+
+.fun-duel-head span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.fun-duel {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fun-duel-row {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr) 7.5rem minmax(0, 1fr) 3rem;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.fun-duel-num:first-child {
+  text-align: right;
+}
+
+.fun-duel-label {
+  text-align: center;
+}
+
+.fun-duel-track {
+  display: flex;
+  height: 0.7rem;
+  background: var(--steel);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.fun-duel-left {
+  justify-content: flex-end;
+}
+
+.fun-duel-bar {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--gold-2);
+}
+
+.fun-duel-bar[data-faction="HORDE"] {
+  background: var(--horde-fill);
+}
+
+.fun-duel-bar[data-faction="ALLIANCE"] {
+  background: var(--alliance-fill);
+}
+
+.fun-duel-verdict {
+  text-align: center;
+  font-style: italic;
+}
+
+/* Hitparade bei nur einer Gilde */
+.fun-hitparade {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fun-hit {
+  display: grid;
+  grid-template-columns: 1.6rem 7.5rem minmax(0, 1fr) 3rem 7rem;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.fun-hit-rank {
+  color: var(--gold-2);
+}
+
+.fun-hit-track {
+  height: 0.7rem;
+  background: var(--steel);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.fun-hit-bar {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--gold-fill);
+}
+
+.fun-hit-who {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Fläschle */
+.fun-bottles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.fun-bottle-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  text-align: center;
+}
+
+.fun-bottle {
+  width: 3.4rem;
+  height: 6.8rem;
+  color: var(--text);
+}
+
+.fun-bottle-col strong {
+  font-size: 1.3rem;
+  color: var(--text-bright);
+}
+
+/* Jede n. Quest */
+.fun-ratio {
+  text-align: center;
+  font-style: italic;
+}
+
+/* EKG der Notaufnahme */
+.fun-ekg {
+  width: 100%;
+  height: auto;
+  background:
+    linear-gradient(rgb(63 181 138 / 0.08) 1px, transparent 1px) 0 0 / 100% 12px,
+    linear-gradient(90deg, rgb(63 181 138 / 0.08) 1px, transparent 1px) 0 0 / 12px 100%;
+  border-radius: 6px;
+}
+
+.fun-ekg-num {
+  fill: var(--text-bright);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.fun-ekg-labels {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: center;
+  font-family: var(--font-head);
+  font-size: 0.85rem;
+}
+
+.fun-ekg-labels li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+/* Stall */
+.fun-stable {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.fun-pictos-boots .fun-picto {
+  color: #b08a5a;
+}
+
+.fun-pictos-horses .fun-picto {
+  color: var(--gold-2);
+}
+
+.fun-pictos-boots .fun-picto svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.fun-pictos-horses .fun-picto svg {
+  width: 1.3rem;
+  height: 1.1rem;
+}
+
+.fun-rarities {
+  display: grid;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9rem;
+}
+
+/* Schredder */
+.fun-shredder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  text-align: center;
+}
+
+.fun-shredder strong {
+  font-size: 1.3rem;
+  color: var(--text-bright);
+}
+
+.fun-shredder-svg {
+  width: 9rem;
+}
+
+.fun-shredder-item {
+  fill: #6a4fb3;
+  stroke: #c77dff;
+}
+
+.fun-shredder-gem {
+  fill: #e6d4ff;
+}
+
+.fun-shredder-body {
+  fill: #3a3e4a;
+  stroke: var(--gold-3);
+  stroke-width: 2;
+}
+
+.fun-shredder-slot {
+  fill: #0d0e12;
+}
+
+.fun-shredder-dust {
+  fill: #c77dff;
+  opacity: 0.85;
+}
+
+/* Verbandsrolle */
+.fun-bandage {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 1.25rem;
+}
+
+.fun-bandage > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.fun-bandage-side {
+  padding-left: 1rem;
+  border-left: 1px solid var(--border);
+}
+
+.fun-pictos-minster .fun-picto {
+  color: #c9c2ae;
+}
+
+.fun-pictos-minster .fun-picto svg {
+  width: 0.7rem;
+  height: 1.8rem;
+}
+
+.fun-bandage-strip {
+  height: 0.9rem;
+  border-radius: 3px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 10px, rgb(0 0 0 / 0.08) 10px 11px),
+    repeating-linear-gradient(0deg, #f2ede0 0 3px, #e3dcc8 3px 4px);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.4);
+}
+
+/* Fahrplan */
+.fun-route {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fun-route::before {
+  content: "";
+  position: absolute;
+  top: 0.45rem;
+  right: 1.5rem;
+  left: 1.5rem;
+  border-top: 3px dotted var(--gold-2);
+}
+
+.fun-stop {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  text-align: center;
+}
+
+.fun-stop-dot {
+  width: 1rem;
+  height: 1rem;
+  margin-bottom: 0.3rem;
+  border: 3px solid var(--gold);
+  border-radius: 999px;
+  background: var(--panel-fill, #15171c);
+}
+
+.fun-stop strong {
+  font-size: 1.35rem;
+  color: var(--text-bright);
+}
+
+@media (max-width: 960px) {
+  .fun-wall {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fun-graveyard {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .fun-bandage {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .fun-bandage-side {
+    padding-left: 0;
+    border-left: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .fun-wall {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .fun-card-span-2 {
+    grid-column: auto;
+  }
+
+  .fun-gravestone-stone {
+    width: 3.8rem;
+  }
+
+  .fun-duel-row {
+    grid-template-columns: 2.4rem minmax(0, 1fr) 5.5rem minmax(0, 1fr) 2.4rem;
+    font-size: 0.82rem;
+  }
+
+  .fun-hit {
+    grid-template-columns: 1.4rem 6rem minmax(0, 1fr) 2.6rem;
+  }
+
+  .fun-hit-who {
+    display: none;
+  }
+}
+
+/* Sprachumschalter im Kopf: Deutsch, Schwäbisch, Bayrisch */
+.site-header-end {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sprachumschalter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-head);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.sprachumschalter select {
+  padding: 0.3rem 0.5rem;
+  font: inherit;
+  letter-spacing: 0.04em;
+  color: var(--gold);
+  background: var(--panel);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.sprachumschalter select:hover,
+.sprachumschalter select:focus-visible {
+  color: var(--gold-hi);
+  border-color: var(--gold);
+}
+
+@media (max-width: 640px) {
+  .site-header-end {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.35rem;
+  }
+
+  .sprachumschalter-beschriftung {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+.fun-picto-part {
+  opacity: var(--o, 0.6);
+}
+
+.class-bar-fill {
+  transition: width 0.5s ease;
+}
+
+/*
+ * Bewegung für die Statistikseite: Karten gleiten nacheinander herein, Balken wachsen, Grabsteine steigen aus
+ * der Wiese, Symbole ploppen auf, das EKG zeichnet sich, die Waage pendelt aus. `--i` staffelt die Einsätze.
+ * Nur ohne "Bewegung reduzieren"; die Animationen laufen einmal und enden im normalen Zustand (backwards).
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .fun-card {
+    animation: fun-rise 0.5s ease-out backwards;
+    animation-delay: calc(var(--i, 0) * 60ms);
+  }
+
+  .fun-gravestone-stone {
+    transform-origin: bottom center;
+    animation: fun-grave 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.25) backwards;
+    animation-delay: calc(200ms + var(--i, 0) * 110ms);
+  }
+
+  .fun-picto {
+    animation: fun-pop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.4) backwards;
+    animation-delay: calc(250ms + var(--i, 0) * 45ms);
+  }
+
+  .fun-duel-bar,
+  .fun-hit-bar,
+  .class-bar-fill {
+    transform-origin: left center;
+    animation: fun-grow-x 0.8s ease-out backwards;
+    animation-delay: calc(250ms + var(--i, 0) * 80ms);
+  }
+
+  .fun-duel-left .fun-duel-bar {
+    transform-origin: right center;
+  }
+
+  .fun-podium-block {
+    transform-origin: bottom center;
+    animation: fun-grow-y 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.2) backwards;
+    animation-delay: calc(200ms + var(--i, 0) * 180ms);
+  }
+
+  .fun-pie {
+    animation: fun-spin-in 0.9s cubic-bezier(0.2, 0.8, 0.3, 1) backwards;
+    animation-delay: 200ms;
+  }
+
+  .fun-ekg-beat path {
+    stroke-dasharray: 1;
+    animation: fun-draw 0.9s ease-in-out backwards;
+    animation-delay: calc(200ms + var(--i, 0) * 350ms);
+  }
+
+  .fun-ekg-beat text {
+    animation: fun-fade 0.4s ease-out backwards;
+    animation-delay: calc(700ms + var(--i, 0) * 350ms);
+  }
+
+  .fun-bottle-liquid {
+    transform-box: fill-box;
+    transform-origin: bottom center;
+    animation: fun-grow-y 1.2s ease-out backwards;
+    animation-delay: 300ms;
+  }
+
+  .fun-scale-swing {
+    transform-box: view-box;
+    transform-origin: 100px 26px;
+    animation: fun-swing 1.8s ease-out backwards;
+    animation-delay: 200ms;
+  }
+
+  .fun-stop {
+    animation: fun-rise 0.45s ease-out backwards;
+    animation-delay: calc(250ms + var(--i, 0) * 150ms);
+  }
+
+  .fun-shredder-dust {
+    animation: fun-dust 1.6s ease-in infinite;
+    animation-delay: calc(var(--i, 0) * 120ms);
+  }
+
+  .fun-shredder-dust:nth-child(odd) {
+    animation-duration: 2.1s;
+  }
+
+  .fun-shredder-item {
+    animation: fun-feed 2.4s ease-in-out infinite;
+  }
+
+  .fun-shredder-gem {
+    animation: fun-feed 2.4s ease-in-out infinite;
+  }
+
+  .fun-pictos-lagerfeuer .fun-picto svg {
+    transform-origin: bottom center;
+    animation: fun-flicker 1.4s ease-in-out infinite alternate;
+  }
+
+  .fun-pictos-lagerfeuer .fun-picto:nth-child(3n + 1) svg {
+    animation-duration: 1.1s;
+  }
+
+  .fun-pictos-lagerfeuer .fun-picto:nth-child(3n + 2) svg {
+    animation-duration: 1.7s;
+  }
+}
+
+@keyframes fun-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes fun-grave {
+  from {
+    opacity: 0;
+    transform: translateY(40%) scaleY(0.2);
+  }
+}
+
+@keyframes fun-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+}
+
+@keyframes fun-grow-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes fun-grow-y {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes fun-spin-in {
+  from {
+    opacity: 0;
+    transform: rotate(-200deg) scale(0.4);
+  }
+}
+
+@keyframes fun-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes fun-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes fun-swing {
+  0% {
+    transform: rotate(-12deg);
+  }
+
+  30% {
+    transform: rotate(8deg);
+  }
+
+  55% {
+    transform: rotate(-4deg);
+  }
+
+  80% {
+    transform: rotate(1.5deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes fun-dust {
+  0% {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+
+  20% {
+    opacity: 0.9;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+@keyframes fun-feed {
+  0%,
+  15% {
+    transform: translateY(-4px);
+  }
+
+  60%,
+  100% {
+    transform: translateY(14px);
+    opacity: 0;
+  }
+}
+
+@keyframes fun-flicker {
+  from {
+    transform: scaleY(0.9) skewX(-3deg);
+  }
+
+  to {
+    transform: scaleY(1.08) skewX(3deg);
+  }
+}
+
+/* Reiter Dungeons und Raids: Abenteuerkarte mit Stationen, Highlights mit Bildern, Raids mit Bossliste */
+.dungeon-panel {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgb(242 201 90 / 0.1), transparent 70%),
+    var(--panel-fill);
+}
+
+.dungeon-map {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+  gap: 1.4rem 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dungeon-stop {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  text-align: center;
+}
+
+/* Gepunkteter Weg zur nächsten Station */
+.dungeon-stop::after {
+  content: "";
+  position: absolute;
+  top: 2.6rem;
+  right: -0.9rem;
+  width: 1.2rem;
+  border-top: 3px dotted var(--gold-2);
+}
+
+.dungeon-stop:last-child::after {
+  display: none;
+}
+
+.dungeon-stop-img,
+.dungeon-castle-img {
+  display: grid;
+  place-items: center;
+  width: 5.2rem;
+  height: 5.2rem;
+  object-fit: cover;
+  border: 3px solid var(--gold);
+  border-radius: 999px;
+  box-shadow: 0 0 calc(4px + var(--glow, 0) * 20px) rgb(242 201 90 / calc(0.15 + var(--glow, 0) * 0.55));
+  filter: brightness(calc(0.6 + var(--glow, 0) * 0.45)) saturate(calc(0.7 + var(--glow, 0) * 0.4));
+}
+
+.dungeon-noimg {
+  font-family: var(--font-head);
+  font-size: 1.8rem;
+  color: var(--gold-2);
+  background: linear-gradient(180deg, #3a3e4a, #23262e);
+}
+
+.dungeon-stop-name {
+  margin-top: 0.35rem;
+  font-size: 0.85rem;
+  line-height: 1.2;
+}
+
+.dungeon-stop-count {
+  color: var(--gold-hi);
+}
+
+.dungeon-fog .dungeon-stop-img {
+  border-color: #4a4a4a;
+  box-shadow: none;
+  filter: grayscale(1) brightness(0.35) blur(1px);
+}
+
+.dungeon-fog .dungeon-stop-name,
+.dungeon-fog .dungeon-stop-count {
+  color: var(--muted);
+}
+
+.dungeon-fog .dungeon-stop-count::before {
+  content: "🔒 ";
+}
+
+.dungeon-castle-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.dungeon-castle-img {
+  width: 6.4rem;
+  border-radius: 10px;
+  border-color: #6b6b6b;
+  filter: grayscale(0.6) brightness(0.6);
+}
+
+.dungeon-highlights {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dungeon-highlight {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding-bottom: 0.9rem;
+  overflow: hidden;
+  background: var(--panel-fill);
+  border: 1px solid var(--gold-2);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.dungeon-highlight > :not(img, .dungeon-highlight-img) {
+  padding: 0 1rem;
+}
+
+.dungeon-highlight-img {
+  display: block;
+  width: 100%;
+  height: 8rem;
+  object-fit: cover;
+}
+
+.dungeon-highlight-fog .dungeon-highlight-img {
+  filter: grayscale(1) brightness(0.4);
+}
+
+.dungeon-highlight-kicker {
+  margin-top: 0.6rem;
+  font-family: var(--font-head);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold-2);
+}
+
+.dungeon-highlight strong {
+  font-family: var(--font-head);
+  font-size: 1.3rem;
+  color: var(--text-bright);
+}
+
+.dungeon-raids {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dungeon-raid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.75rem;
+  background: rgb(0 0 0 / 0.2);
+  border: 1px solid var(--gold-3);
+  border-radius: var(--radius);
+}
+
+.dungeon-raid p {
+  margin: 0;
+}
+
+.dungeon-raid-locked {
+  border-style: dashed;
+}
+
+.dungeon-raid-img {
+  display: block;
+  width: 100%;
+  height: 6.5rem;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.dungeon-raid-locked .dungeon-raid-img {
+  filter: grayscale(0.7) brightness(0.55);
+}
+
+.dungeon-raid-name {
+  margin: 0.2rem 0 0;
+  font-family: var(--font-head);
+  font-size: 1rem;
+  color: var(--gold);
+}
+
+.dungeon-bosses {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.dungeon-bosses li {
+  display: grid;
+  grid-template-columns: 1rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.dungeon-boss-box {
+  display: grid;
+  place-items: center;
+  width: 0.9rem;
+  height: 0.9rem;
+  font-size: 0.7rem;
+  border: 1px solid var(--muted);
+  border-radius: 2px;
+}
+
+.dungeon-boss-down {
+  color: var(--text);
+}
+
+.dungeon-boss-down .dungeon-boss-box {
+  color: var(--on-gold);
+  background: var(--gold-fill);
+  border-color: var(--gold-2);
+}
+
+@media (max-width: 760px) {
+  .dungeon-highlights {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dungeon-stop::after {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .dungeon-stop {
+    animation: fun-pop 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.4) backwards;
+    animation-delay: calc(100ms + var(--i, 0) * 55ms);
+  }
+
+  .dungeon-highlight {
+    animation: fun-rise 0.5s ease-out backwards;
+    animation-delay: 300ms;
+  }
+
+  .dungeon-highlight:nth-child(2) {
+    animation-delay: 420ms;
+  }
+
+  .dungeon-highlight:nth-child(3) {
+    animation-delay: 540ms;
+  }
+
+  .dungeon-raid {
+    animation: fun-rise 0.5s ease-out backwards;
+    animation-delay: 600ms;
+  }
+}
+
+/*
+ * Reiter Allgemein: links Klassen und darunter Level (die Klassenwahl filtert direkt die Level darunter),
+ * rechts die Völkertorte über beide Zeilen. Auf schmalen Schirmen untereinander in derselben Reihenfolge.
+ */
+@media (min-width: 760px) {
+  .dist-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      "klasse volk"
+      "level volk";
+    grid-template-rows: auto 1fr;
+  }
+
+  .dist-class {
+    grid-area: klasse;
+  }
+
+  .dist-level {
+    grid-area: level;
+    align-self: stretch;
+  }
+
+  .dist-grid > .race-panel {
+    grid-area: volk;
+    align-self: stretch;
+  }
+}
+
+/*
+ * Levelverteilung als Säulendiagramm. Das Panel ist eine Flex-Spalte, die Säulenreihe nimmt den Rest der Höhe:
+ * auf dem Desktop streckt das Raster die linke Spalte auf die Höhe der Völkertorte, die Säulen wachsen mit.
+ * Je Säule teilen sich Luft und Säule die Höhe über flex-grow (max minus Anzahl gegen Anzahl), die Zahl sitzt dazwischen.
+ */
+.dist-level {
+  display: flex;
+  flex-direction: column;
+}
+
+.level-top {
+  margin: 0 0 0.6rem;
+  font-style: italic;
+  color: var(--gold);
+}
+
+.level-cols {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.35rem;
+  min-height: 11rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.level-col-item {
+  display: flex;
+  min-width: 0;
+}
+
+.level-col {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin: 0;
+  padding: 0.3rem 0.2rem 0.25rem;
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.level-col:hover {
+  border-color: var(--border);
+  background: rgb(255 255 255 / 0.03);
+}
+
+.level-col[aria-pressed="true"] {
+  border-color: var(--gold-2);
+  background: rgb(242 201 90 / 0.08);
+}
+
+.level-col:focus-visible {
+  outline: 2px solid var(--gold-hi);
+  outline-offset: 1px;
+}
+
+.level-col-well {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-height: 0;
+  border-bottom: 1px solid var(--gold-3);
+}
+
+.level-col-air {
+  flex-basis: 0;
+}
+
+.level-col-count {
+  flex: none;
+  padding-bottom: 0.2rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.1;
+  text-align: center;
+  color: var(--gold-hi);
+}
+
+.level-col-bar {
+  flex-basis: 0;
+  min-height: 3px;
+  margin-inline: 12%;
+  background: var(--gold-fill);
+  border-radius: 4px 4px 0 0;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35), 0 0 10px rgb(242 201 90 / 0.15);
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+.level-col-bar[data-empty] {
+  min-height: 2px;
+  opacity: 0.35;
+}
+
+.level-cols[data-picked] .level-col[aria-pressed="false"] .level-col-bar {
+  opacity: 0.4;
+}
+
+.level-col[aria-pressed="true"] .level-col-bar {
+  filter: brightness(1.15);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.45), 0 0 14px rgb(242 201 90 / 0.4);
+}
+
+.level-col-label {
+  flex: none;
+  padding-top: 0.3rem;
+  font-size: 0.8rem;
+  line-height: 1.15;
+  text-align: center;
+  color: var(--muted);
+}
+
+.level-col[aria-pressed="true"] .level-col-label {
+  color: var(--gold);
+}
+
+.level-col-short {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .level-cols {
+    gap: 0.2rem;
+    min-height: 10rem;
+  }
+
+  .level-col {
+    padding-inline: 0;
+  }
+
+  .level-col-long {
+    display: none;
+  }
+
+  .level-col-short {
+    display: inline;
+    font-size: 0.72rem;
+  }
+
+  .level-col-count {
+    font-size: 0.85rem;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .level-col-bar {
+    transform-origin: bottom center;
+    animation: fun-grow-y 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.1) backwards;
+    animation-delay: calc(150ms + var(--i, 0) * 70ms);
+  }
+
+  .level-col-count {
+    animation: level-count-in 0.4s ease-out backwards;
+    animation-delay: calc(450ms + var(--i, 0) * 70ms);
+  }
+}
+
+@keyframes level-count-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.4rem);
+  }
+}
+
+/* Völkerverteilung: Torte in SVG mit Tabelle als Legende darunter; Stücke und Legendenzeilen wählen ein Volk */
+.race-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.race-top {
+  margin: 0 0 0.75rem;
+  font-style: italic;
+  color: var(--gold);
+}
+
+.race-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.race-pie {
+  display: block;
+  width: 100%;
+  max-width: 17rem;
+  height: auto;
+  overflow: visible;
+}
+
+.race-slice {
+  stroke: var(--steel-2);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  transition: opacity 0.2s ease;
+}
+
+.race-slice[data-dim] {
+  opacity: 0.35;
+}
+
+.race-slice {
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.25s ease;
+}
+
+.race-slice[data-selected] {
+  filter: brightness(1.08);
+}
+
+.race-legend {
+  width: 100%;
+  max-width: 26rem;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.race-legend th,
+.race-legend td {
+  padding: 0.2rem 0.4rem;
+  text-align: left;
+  border-bottom: 1px solid rgb(242 201 90 / 0.12);
+}
+
+.race-legend thead th {
+  font-family: var(--font-head);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--gold-2);
+}
+
+.race-legend tbody th {
+  padding-left: 1.6rem;
+  text-indent: -1.2rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.race-legend .num {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.race-legend tbody tr {
+  cursor: pointer;
+}
+
+.race-legend tbody tr[data-active] {
+  background: rgb(242 201 90 / 0.08);
+}
+
+.race-legend tbody tr[data-selected] {
+  background: rgb(242 201 90 / 0.12);
+  box-shadow: inset 2px 0 0 var(--gold);
+}
+
+.race-legend[data-picked] tbody tr:not([data-selected]) :is(.race-pick, td) {
+  opacity: 0.55;
+}
+
+/* Volk als Schalter in der Legende: sieht aus wie Text, ist per Tastatur erreichbar */
+.race-pick {
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: inherit;
+  text-align: left;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.race-pick[aria-pressed="true"] {
+  color: var(--gold-hi);
+}
+
+.race-pick:focus-visible {
+  outline: 2px solid var(--gold-hi);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.race-swatch {
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  margin-right: 0.45rem;
+  vertical-align: -0.05rem;
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.25);
+}
+
+.race-empty {
+  min-height: 6rem;
+  font-style: italic;
+}
+
+@media (max-width: 640px) {
+  .race-pie {
+    max-width: 13rem;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .race-pie {
+    animation: race-spin 0.6s ease-out backwards;
+  }
+}
+
+@keyframes race-spin {
+  from {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.6);
+  }
+}
+
+/* ==========================================================================
+   Mitgliederliste: klickbare Karten und Kennzahlen, Dialog mit Tabelle
+   ========================================================================== */
+
+/* Auslöser: kleiner goldener Rahmenknopf mit Personen-Symbol */
+.member-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.7rem;
+  font: 600 0.82rem var(--font-body);
+  color: var(--gold);
+  background: rgb(242 201 90 / 0.08);
+  border: 1px solid rgb(242 201 90 / 0.45);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.member-trigger:hover {
+  color: var(--gold-hi);
+  background: rgb(242 201 90 / 0.16);
+  border-color: var(--gold);
+}
+
+.member-trigger:focus-visible,
+.fun-fact-button:focus-visible,
+.dungeon-stop-button:focus-visible,
+.member-dialog-close:focus-visible {
+  outline: 2px solid var(--gold-hi);
+  outline-offset: 2px;
+}
+
+.member-trigger-icon {
+  flex: none;
+  width: 1.15em;
+  height: 0.95em;
+}
+
+/* Karten der Gildenstatistik: ganze Karte klickbar, Knopf unten für die Tastatur */
+.fun-card-clickable {
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.fun-card-clickable:hover {
+  border-color: var(--gold);
+  box-shadow: var(--shadow), 0 0 0 1px rgb(242 201 90 / 0.35);
+}
+
+.fun-card-clickable :is(a, button, select) {
+  cursor: pointer;
+}
+
+.fun-card-trigger {
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+/* Titel-Kacheln: ganze Kachel öffnet die Rangliste der Woche, Knopf unten für die Tastatur */
+.title-tile-clickable {
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.title-tile-clickable:hover {
+  border-color: var(--gold);
+  box-shadow: var(--frame-lines), var(--shadow), 0 0 0 1px rgb(242 201 90 / 0.35);
+}
+
+.title-tile-trigger {
+  margin-top: 0.45rem;
+}
+
+/* Ehrentafel: kleines Personen-Symbol neben dem Gewinner öffnet die Rangliste der Woche; lange Namen kürzen, Knopf bleibt */
+.honor-cell-inner {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.honor-winner {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.honor-ranking {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.35rem;
+  padding: 0.15rem 0.3rem;
+  vertical-align: middle;
+  color: var(--gold);
+  background: rgb(242 201 90 / 0.08);
+  border: 1px solid rgb(242 201 90 / 0.35);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.honor-ranking:hover {
+  color: var(--gold-hi);
+  background: rgb(242 201 90 / 0.16);
+  border-color: var(--gold);
+}
+
+.honor-ranking:focus-visible {
+  outline: 2px solid var(--gold-hi);
+  outline-offset: 2px;
+}
+
+.honor-ranking .member-trigger-icon {
+  width: 0.95em;
+  height: 0.8em;
+}
+
+/* Mitgliederliste: hervorgehobene Zeile (etwa der Gewinner eines Titels) und Werte als Text */
+.member-row-highlight td {
+  background: rgb(242 201 90 / 0.1);
+}
+
+.member-row-highlight td:first-child {
+  box-shadow: inset 3px 0 0 var(--gold);
+}
+
+.member-highlight {
+  font-size: 0.62rem;
+}
+
+.member-value-text {
+  color: var(--text-bright);
+}
+
+/* Kennzahl-Kachel als Knopf */
+.fun-fact-clickable {
+  padding: 0;
+  transition: border-color 0.15s ease;
+}
+
+.fun-fact-clickable:hover {
+  border-color: var(--gold-2);
+}
+
+.fun-fact-button {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  width: 100%;
+  height: 100%;
+  padding: 0.75rem 1rem;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  background: none;
+  border: 0;
+  border-radius: inherit;
+  cursor: pointer;
+}
+
+.member-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.15rem;
+  color: var(--gold-2);
+}
+
+.fun-fact-button:hover .member-hint {
+  color: var(--gold-hi);
+}
+
+/* Dungeon-Station als Knopf */
+.dungeon-stop-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: center;
+  background: none;
+  border: 0;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.dungeon-stop-button .dungeon-stop-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.dungeon-stop-button .member-trigger-icon {
+  color: var(--gold-2);
+}
+
+.dungeon-stop-button:hover .dungeon-stop-img {
+  border-color: var(--gold-hi);
+  filter: brightness(1.05);
+}
+
+.dungeon-stop-button:hover .dungeon-stop-name {
+  color: var(--gold-hi);
+  text-decoration: underline;
+}
+
+.dungeon-raid .member-trigger {
+  margin-top: 0.5rem;
+}
+
+/* Dialog */
+.member-dialog {
+  width: min(46rem, calc(100vw - 2rem));
+  max-width: none;
+  max-height: min(48rem, calc(100dvh - 2rem));
+  padding: 0;
+  color: var(--text);
+  background: transparent;
+  border: 0;
+  overflow: visible;
+}
+
+.member-dialog::backdrop {
+  background: rgb(6 7 10 / 0.72);
+  backdrop-filter: blur(2px);
+}
+
+.member-dialog-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: min(48rem, calc(100dvh - 2rem));
+  overflow: hidden;
+}
+
+.member-dialog-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.member-dialog-title {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.member-dialog-subtitle {
+  margin: 0.2rem 0 0;
+}
+
+.member-dialog-close {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--gold);
+  background: var(--steel);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.member-dialog-close:hover {
+  color: var(--gold-hi);
+  border-color: var(--gold);
+}
+
+.member-dialog-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.member-dialog-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.member-dialog-field .filter-input {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.member-dialog-field-label {
+  font-family: var(--font-head);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold-2);
+}
+
+.member-dialog-count {
+  margin: 0;
+}
+
+.member-dialog-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.member-table td {
+  overflow-wrap: anywhere;
+}
+
+.member-table .sort-button {
+  white-space: nowrap;
+}
+
+.member-name {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.member-former {
+  font-size: 0.62rem;
+}
+
+/* Klasse und Volk auf dem Handy unter dem Namen statt in eigenen Spalten */
+.member-narrow {
+  display: none;
+  color: var(--muted);
+}
+
+@media (max-width: 560px) {
+  .member-dialog {
+    width: calc(100vw - 1rem);
+    max-height: calc(100dvh - 1rem);
+  }
+
+  .member-dialog-inner {
+    max-height: calc(100dvh - 1rem);
+    padding: 1rem 0.85rem;
+  }
+
+  .member-table .member-col-wide {
+    display: none;
+  }
+
+  .member-narrow {
+    display: block;
+  }
+
+  .member-dialog-field,
+  .member-dialog-field .filter-input {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+}
+
+@media (forced-colors: active) {
+  .member-trigger,
+  .member-dialog-close {
+    border-color: ButtonText;
+  }
+}
+
+/* Klassenbalken: mit gewählter Klasse treten die anderen zurück (gedimmt, nicht ausgeblendet) */
+.class-bars[data-picked] .class-bar-pick[aria-pressed="false"] :is(.class-bar-fill, .class-bar-label, .class-bar-count) {
+  opacity: 0.45;
+}
+
+.dist-empty {
+  margin: 0 0 0.6rem;
+  font-style: italic;
+}
+
+/*
+ * Kopf des Reiters Allgemein: links Gildenumschalter und darunter die aktive Auswahl, rechts die Kennzahl-Kachel
+ * über beide Zeilen. Auf schmalen Schirmen untereinander: Umschalter, Kachel, Auswahl.
+ */
+.dist-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "gilde"
+    "kachel"
+    "auswahl";
+  gap: 0.75rem;
+}
+
+.dist-guild {
+  grid-area: gilde;
+  display: flex;
+  min-width: 0;
+}
+
+.dist-selection {
+  grid-area: auswahl;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  /* Zwei Zeilen Platz auf dem Handy, damit beim Wählen nichts darunter springt */
+  min-height: calc(2 * 1.85rem + 0.4rem);
+}
+
+.figures {
+  grid-area: kachel;
+}
+
+@media (min-width: 900px) {
+  .dist-top {
+    grid-template-columns: max-content minmax(0, 1fr);
+    grid-template-areas:
+      "gilde kachel"
+      "auswahl kachel";
+    column-gap: 1.25rem;
+    row-gap: 0.5rem;
+    align-items: center;
+  }
+
+  .dist-selection {
+    min-height: 1.85rem;
+    max-width: 27rem;
+  }
+}
+
+.dist-selection-hint {
+  margin: 0;
+  font-size: 0.88rem;
+  font-style: italic;
+  color: var(--muted);
+}
+
+.dist-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dist-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 1.85rem;
+  padding: 0 0.55rem 0 0.7rem;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  white-space: nowrap;
+  background: rgb(242 201 90 / 0.1);
+  border: 1px solid var(--gold-3);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.dist-chip:hover {
+  border-color: var(--gold);
+  background: rgb(242 201 90 / 0.18);
+}
+
+.dist-chip-x {
+  flex: none;
+  width: 0.7rem;
+  height: 0.7rem;
+  color: var(--gold-2);
+}
+
+.dist-chip:hover .dist-chip-x {
+  color: var(--gold-hi);
+}
+
+.dist-reset {
+  height: 1.85rem;
+  padding: 0 0.3rem;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--gold);
+  white-space: nowrap;
+  background: none;
+  border: 0;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  cursor: pointer;
+}
+
+.dist-reset:hover {
+  color: var(--gold-hi);
+}
+
+:is(.dist-chip, .dist-reset, .figure-button):focus-visible {
+  outline: 2px solid var(--gold-hi);
+  outline-offset: 2px;
+}
+
+/* Kennzahl-Kachel: vier Kennzahlen mit Symbol in einer Kachel, durch feine Linien getrennt */
+.figures {
+  position: relative;
+  min-width: 0;
+  background: var(--panel-fill);
+  border: 1px solid var(--frame-outer);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--frame-lines);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.figures[data-filtered] {
+  border-color: var(--gold-2);
+  box-shadow: var(--frame-lines), 0 0 0 1px rgb(242 201 90 / 0.25), 0 0 16px rgb(242 201 90 / 0.12);
+}
+
+/* Marke "Gefiltert" sitzt auf dem oberen Rand und ist immer da, nur unsichtbar: so springt nichts */
+.figures-badge {
+  position: absolute;
+  top: 0;
+  right: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.05rem 0.5rem;
+  font-family: var(--font-head);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--on-gold);
+  background: var(--gold-fill);
+  border-radius: 999px;
+  transform: translateY(-50%) scale(0.85);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.figures[data-filtered] .figures-badge {
+  opacity: 1;
+  transform: translateY(-50%);
+}
+
+.figures-badge-icon {
+  width: 0.7rem;
+  height: 0.7rem;
+}
+
+.figures-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Ab Tabletbreite eine Zeile: jedes Feld so breit wie sein Inhalt, übriger Platz gleich verteilt */
+@media (min-width: 560px) {
+  .figures-list {
+    display: flex;
+  }
+
+  .figure {
+    flex: 1 1 auto;
+  }
+}
+
+.figure {
+  display: flex;
+  min-width: 0;
+}
+
+/* Trennlinien: auf dem Handy als Kreuz im 2x2-Raster, sonst senkrecht zwischen den Spalten */
+.figure + .figure {
+  border-left: 1px solid rgb(242 201 90 / 0.12);
+}
+
+@media (max-width: 559px) {
+  .figure:nth-child(3) {
+    border-left: 0;
+  }
+
+  .figure:nth-child(n + 3) {
+    border-top: 1px solid rgb(242 201 90 / 0.12);
+  }
+}
+
+.figure-body {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+  padding: 0.65rem 0.8rem;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  background: none;
+  border: 0;
+}
+
+.figure-button {
+  cursor: pointer;
+  border-radius: var(--radius-lg);
+  transition: background-color 0.15s ease;
+}
+
+.figure-button:hover {
+  background: rgb(242 201 90 / 0.06);
+}
+
+.figure-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  color: var(--gold);
+  background: radial-gradient(circle at 50% 35%, rgb(242 201 90 / 0.16), rgb(242 201 90 / 0.04) 70%);
+  border: 1px solid rgb(242 201 90 / 0.28);
+  border-radius: 50%;
+}
+
+.figure-icon svg {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.figure-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.figure-label {
+  font-family: var(--font-head);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: var(--gold-2);
+  /* "Durchschnittslevel" trägt einen weichen Trennstrich an der Wortfuge; nur dort wird umbrochen */
+  hyphens: manual;
+}
+
+.figure-value-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0 0.45rem;
+}
+
+.figure-value {
+  font-size: 1.25rem;
+  line-height: 1.2;
+  color: var(--text-bright);
+}
+
+.figures[data-filtered] .figure-value {
+  color: var(--gold-hi);
+}
+
+.figure-hint {
+  font-size: 0.78rem;
+  color: var(--gold-2);
+  white-space: nowrap;
+}
+
+.figure-button:hover .figure-hint {
+  color: var(--gold-hi);
+}
+
+@media (min-width: 900px) and (max-width: 1100px) {
+  .figure-body {
+    gap: 0.45rem;
+    padding-inline: 0.6rem;
+  }
+
+  .figure-icon {
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+
+  .figure-icon svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}

@@ -1,0 +1,239 @@
+# Veröffentlichung auf Netlify (jeder Produktions-Deploy kostet Credits), auf zwei Wegen:
+#
+# 1. Knopf: Actions, Release, Run workflow (Zweig main), Art wählen.
+#    patch, minor, major: Version erhöhen, "Unveröffentlicht" in CHANGELOG.md wird zum Abschnitt der
+#    neuen Version, Commit "Version X.Y.Z" nach main, Tag vX.Y.Z. aktuell: nur Tag für die Version in
+#    package.json (erster Live-Gang mit 1.0.0). Das Tag pusht der Workflow mit GITHUB_TOKEN; solche Pushes
+#    starten bewusst keinen weiteren Workflow, es gibt also keinen zweiten Deploy.
+# 2. Tag v* von Hand pushen (nach npm run release:patch usw.).
+#
+# Danach jeweils: Netlify-Umgebungsvariablen aus GitHub-Secrets und -Variables setzen, deployen,
+# GitHub-Release mit dem Changelog-Abschnitt.
+# Secrets: NETLIFY_AUTH_TOKEN, NETLIFY_SITE_ID, BNET_CLIENT_ID, BNET_CLIENT_SECRET.
+# Variables: GUILD_SLUGS (Pflicht), optional GUILD_RANKS, TITEL_ABMELDUNGEN, WOW_VERSION, BNET_REGION, BNET_LOCALE,
+# COLLECT_CONCURRENCY, COLLECT_BUDGET_MS (sonst Standardwert, siehe .env.example).
+# Nach einem Fehler "Re-run failed jobs" nutzen, nicht "Re-run all jobs" (das würde erneut eine Version anlegen).
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      art:
+        description: "Version: patch, minor oder major erhöhen, oder aktuell = Version aus package.json ohne Erhöhung (erster Live-Gang mit 1.0.0)"
+        type: choice
+        options: [patch, minor, major, aktuell]
+        default: patch
+
+permissions:
+  contents: read
+
+concurrency:
+  group: netlify-produktion
+  cancel-in-progress: false
+
+jobs:
+  pruefen:
+    name: Prüfung
+    uses: ./.github/workflows/ci.yml
+
+  version:
+    # Nur beim Knopf. Läuft auf genau dem geprüften Commit; ist main inzwischen weiter, scheitert der Push
+    # und es entsteht weder Commit noch Tag.
+    name: Version und Tag
+    if: github.event_name == 'workflow_dispatch'
+    needs: pruefen
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - name: Nur auf main
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "::error::Release per Knopf nur auf main, gewählt war $GITHUB_REF"
+          exit 1
+
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Version, Changelog, Commit und Tag
+        id: version
+        env:
+          ART: ${{ inputs.art }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          node scripts/release.mjs "$ART"
+          echo "tag=v$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Commit nach main und Tag pushen
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+        run: git push --atomic origin HEAD:refs/heads/main "refs/tags/$TAG"
+
+  veroeffentlichen:
+    name: Auf Netlify veröffentlichen
+    needs: [pruefen, version]
+    # Beim Tag-Push ist "version" übersprungen, beim Knopf muss es geklappt haben.
+    if: >-
+      always()
+      && needs.pruefen.result == 'success'
+      && (needs.version.result == 'success'
+          || (needs.version.result == 'skipped' && github.event_name == 'push'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - name: Tag bestimmen
+        id: tag
+        env:
+          TAG: ${{ needs.version.outputs.tag || github.ref_name }}
+        run: echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v7
+        with:
+          ref: refs/tags/${{ steps.tag.outputs.tag }}
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Tag passt zu package.json und CHANGELOG.md
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: node scripts/changelog-abschnitt.mjs --pruefe-tag "$TAG"
+
+      - name: Secrets vorhanden
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          BNET_CLIENT_ID: ${{ secrets.BNET_CLIENT_ID }}
+          BNET_CLIENT_SECRET: ${{ secrets.BNET_CLIENT_SECRET }}
+        run: |
+          fehlt=0
+          for name in NETLIFY_AUTH_TOKEN NETLIFY_SITE_ID BNET_CLIENT_ID BNET_CLIENT_SECRET; do
+            if [ -z "${!name}" ]; then echo "::error::Secret $name fehlt"; fehlt=1; fi
+          done
+          exit "$fehlt"
+
+      # Idempotent: neue Variablen anlegen, abweichende ersetzen, gleiche unverändert lassen. Gibt nur Namen aus.
+      - name: Umgebungsvariablen der Netlify-Site setzen
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          BNET_CLIENT_ID: ${{ secrets.BNET_CLIENT_ID }}
+          BNET_CLIENT_SECRET: ${{ secrets.BNET_CLIENT_SECRET }}
+          GUILD_SLUGS: ${{ vars.GUILD_SLUGS }}
+          GUILD_RANKS: ${{ vars.GUILD_RANKS }}
+          TITEL_ABMELDUNGEN: ${{ vars.TITEL_ABMELDUNGEN }}
+          WOW_VERSION: ${{ vars.WOW_VERSION }}
+          BNET_REGION: ${{ vars.BNET_REGION }}
+          BNET_LOCALE: ${{ vars.BNET_LOCALE }}
+          COLLECT_CONCURRENCY: ${{ vars.COLLECT_CONCURRENCY }}
+          COLLECT_BUDGET_MS: ${{ vars.COLLECT_BUDGET_MS }}
+          # Wochenzeitung über das eigene AI Gateway, alles freiwillig: Fehlt etwas, wird es nicht gesetzt
+          # (auf Netlify bleibt der bisherige Wert), und ohne URL oder Schlüssel schreiben die Satzbausteine.
+          ZEITUNG_KI_SCHLUESSEL: ${{ secrets.ZEITUNG_KI_SCHLUESSEL }}
+          ZEITUNG_KI_URL: ${{ vars.ZEITUNG_KI_URL }}
+          ZEITUNG_MODELL: ${{ vars.ZEITUNG_MODELL }}
+          ZEITUNG_AUFWAND: ${{ vars.ZEITUNG_AUFWAND }}
+          ZEITUNG_KI_OUTPUT_CONFIG: ${{ vars.ZEITUNG_KI_OUTPUT_CONFIG }}
+          # Angaben zur Seite (Name, Logo, Farben, Impressum ...), alle freiwillig, siehe .env.example.
+          SEITE_NAME: ${{ vars.SEITE_NAME }}
+          SEITE_SPRACHEN: ${{ vars.SEITE_SPRACHEN }}
+          SEITE_ZEITUNG: ${{ vars.SEITE_ZEITUNG }}
+          SEITE_BESCHREIBUNG: ${{ vars.SEITE_BESCHREIBUNG }}
+          SEITE_UNTERTITEL: ${{ vars.SEITE_UNTERTITEL }}
+          SEITE_LOGO: ${{ vars.SEITE_LOGO }}
+          SEITE_LOGO_ALT: ${{ vars.SEITE_LOGO_ALT }}
+          SEITE_FAVICON: ${{ vars.SEITE_FAVICON }}
+          SEITE_APPLE_ICON: ${{ vars.SEITE_APPLE_ICON }}
+          SEITE_OG_BILD: ${{ vars.SEITE_OG_BILD }}
+          SEITE_THEME_COLOR: ${{ vars.SEITE_THEME_COLOR }}
+          SEITE_FARBEN: ${{ vars.SEITE_FARBEN }}
+          SEITE_DISCORD: ${{ vars.SEITE_DISCORD }}
+          SEITE_IMPRESSUM_NAME: ${{ vars.SEITE_IMPRESSUM_NAME }}
+          SEITE_IMPRESSUM_ANSCHRIFT: ${{ vars.SEITE_IMPRESSUM_ANSCHRIFT }}
+          SEITE_IMPRESSUM_EMAIL: ${{ vars.SEITE_IMPRESSUM_EMAIL }}
+          SEITE_UMAMI_ID: ${{ vars.SEITE_UMAMI_ID }}
+          SEITE_UMAMI_DOMAINS: ${{ vars.SEITE_UMAMI_DOMAINS }}
+        run: node scripts/netlify-umgebung.mjs --aus-umgebung
+
+      # Die CLI baut selbst (npm run build mit URL der Site), bündelt die Functions samt Zeitplan
+      # (collect-guild stündlich, collect-static täglich) und lädt netlify.toml mit den Redirects hoch.
+      - name: Bauen und auf Netlify veröffentlichen
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_TELEMETRY_DISABLED: "1"
+          TAG: ${{ steps.tag.outputs.tag }}
+          # Die Oberfläche wird hier gebaut; die Angaben zur Seite direkt mitgeben, nicht nur auf Netlify.
+          SEITE_NAME: ${{ vars.SEITE_NAME }}
+          SEITE_SPRACHEN: ${{ vars.SEITE_SPRACHEN }}
+          SEITE_ZEITUNG: ${{ vars.SEITE_ZEITUNG }}
+          SEITE_BESCHREIBUNG: ${{ vars.SEITE_BESCHREIBUNG }}
+          SEITE_UNTERTITEL: ${{ vars.SEITE_UNTERTITEL }}
+          SEITE_LOGO: ${{ vars.SEITE_LOGO }}
+          SEITE_LOGO_ALT: ${{ vars.SEITE_LOGO_ALT }}
+          SEITE_FAVICON: ${{ vars.SEITE_FAVICON }}
+          SEITE_APPLE_ICON: ${{ vars.SEITE_APPLE_ICON }}
+          SEITE_OG_BILD: ${{ vars.SEITE_OG_BILD }}
+          SEITE_THEME_COLOR: ${{ vars.SEITE_THEME_COLOR }}
+          SEITE_FARBEN: ${{ vars.SEITE_FARBEN }}
+          SEITE_DISCORD: ${{ vars.SEITE_DISCORD }}
+          SEITE_IMPRESSUM_NAME: ${{ vars.SEITE_IMPRESSUM_NAME }}
+          SEITE_IMPRESSUM_ANSCHRIFT: ${{ vars.SEITE_IMPRESSUM_ANSCHRIFT }}
+          SEITE_IMPRESSUM_EMAIL: ${{ vars.SEITE_IMPRESSUM_EMAIL }}
+          SEITE_UMAMI_ID: ${{ vars.SEITE_UMAMI_ID }}
+          SEITE_UMAMI_DOMAINS: ${{ vars.SEITE_UMAMI_DOMAINS }}
+        run: >-
+          npx --yes netlify-cli@27.16.2 deploy
+          --prod
+          --context production
+          --message "Version ${TAG#v}"
+
+  github-release:
+    # Eigener Job, damit ein erneuter Versuch nach einem Fehler hier nicht noch einmal deployt.
+    name: GitHub-Release
+    needs: veroeffentlichen
+    if: always() && needs.veroeffentlichen.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: refs/tags/${{ needs.veroeffentlichen.outputs.tag }}
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Release mit dem Abschnitt aus CHANGELOG.md
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.veroeffentlichen.outputs.tag }}
+        run: |
+          version="${TAG#v}"
+          node scripts/changelog-abschnitt.mjs "$version" > "$RUNNER_TEMP/release-notes.md"
+          gh release create "$TAG" \
+            --title "Version $version" \
+            --notes-file "$RUNNER_TEMP/release-notes.md" \
+            --verify-tag

@@ -1,0 +1,1369 @@
+{
+  "status": 200,
+  "data": {
+    "_links": {
+      "self": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/exalor-grelk/equipment?namespace=profile-forever-eu"
+      }
+    },
+    "character": {
+      "key": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/exalor-grelk?namespace=profile-forever-eu"
+      },
+      "name": "Exalor",
+      "id": 514452,
+      "surname": "Grelk",
+      "slug": "exalor-grelk"
+    },
+    "equipped_items": [
+      {
+        "item": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item/3480?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 3480
+        },
+        "slot": {
+          "type": "SHOULDER",
+          "name": "Schultern"
+        },
+        "quantity": 1,
+        "quality": {
+          "type": "UNCOMMON",
+          "name": "Selten"
+        },
+        "name": "Raue bronzene Schultern",
+        "media": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/media/item/3480?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 3480
+        },
+        "item_class": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/4?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Rüstung",
+          "id": 4
+        },
+        "item_subclass": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/4/item-subclass/3?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Schwere Rüstung",
+          "id": 3
+        },
+        "inventory_type": {
+          "type": "SHOULDER",
+          "name": "Schulter"
+        },
+        "binding": {
+          "type": "ON_EQUIP",
+          "name": "Wird beim Anlegen gebunden"
+        },
+        "armor": {
+          "value": 130,
+          "display": {
+            "display_string": "130 Rüstung",
+            "color": {
+              "r": 255,
+              "g": 255,
+              "b": 255,
+              "a": 1.0
+            }
+          }
+        },
+        "stats": [
+          {
+            "type": {
+              "type": "STRENGTH",
+              "name": "Stärke"
+            },
+            "value": 3,
+            "display": {
+              "display_string": "+3 Stärke",
+              "color": {
+                "r": 255,
+                "g": 255,
+                "b": 255,
+                "a": 1.0
+              }
+            }
+          },
+          {
+            "type": {
+              "type": "STAMINA",
+              "name": "Ausdauer"
+            },
+            "value": 4,
+            "display": {
+              "display_string": "+4 Ausdauer",
+              "color": {
+                "r": 255,
+                "g": 255,
+                "b": 255,
+                "a": 1.0
+              }
+            }
+          }
+        ],
+        "sell_price": {
+          "value": 532,
+          "display_strings": {
+            "header": "Verkaufspreis:",
+            "gold": "0",
+            "silver": "5",
+            "copper": "32"
+          }
+        },
+        "requirements": {
+          "level": {
+            "value": 17,
+            "display_string": "Benötigt Stufe 17"
+          }
+        },
+        "level": {
+          "value": 22,
+          "display_string": "Gegenstandsstufe 22"
+        },
+        "durability": {
+          "value": 28,
+          "display_string": "Haltbarkeit 28 / 50"
+        }
+      },
+      {
+        "item": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item/6125?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 6125
+        },
+        "slot": {
+          "type": "SHIRT",
+          "name": "Hemd"
+        },
+        "quantity": 1,
+        "context": 75,
+        "quality": {
+          "type": "COMMON",
+          "name": "Verbreitet"
+        },
+        "name": "Muskelprotzharnisch",
+        "media": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/media/item/6125?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 6125
+        },
+        "item_class": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/4?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Rüstung",
+          "id": 4
+        },
+        "item_subclass": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/4/item-subclass/0?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Verschiedenes",
+          "id": 0
+        },
+        "inventory_type": {
+          "type": "BODY",
+          "name": "Hemd"
+        },
+        "sell_price": {
+          "value": 1,
+          "display_strings": {
+            "header": "Verkaufspreis:",
+            "gold": "0",
+            "silver": "0",
+            "copper": "1"
+          }
+        },
+        "level": {
+          "value": 1,
+          "display_string": "Gegenstandsstufe 1"
+        },
+        "is_subclass_hidden": true
+      },
+      {
+        "item": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item/2866?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 2866
+        },
+        "slot": {
+          "type": "CHEST",
+          "name": "Brust"
+        },
+        "quantity": 1,
+        "quality": {
+          "type": "UNCOMMON",
+          "name": "Selten"
+        },
+        "name": "Rauer bronzener Kürass",
+        "media": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/media/item/2866?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 2866
+        },
+        "item_class": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/4?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Rüstung",
+          "id": 4
+        },
+        "item_subclass": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/4/item-subclass/3?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Schwere Rüstung",
+          "id": 3
+        },
+        "inventory_type": {
+          "type": "CHEST",
+          "name": "Brust"
+        },
+        "binding": {
+          "type": "ON_EQUIP",
+          "name": "Wird beim Anlegen gebunden"
+        },
+        "armor": {
+          "value": 177,
+          "display": {
+            "display_string": "177 Rüstung",
+            "color": {
+              "r": 255,
+              "g": 255,
+              "b": 255,
+              "a": 1.0
+            }
+          }
+        },
+        "stats": [
+          {
+            "type": {
+              "type": "STAMINA",
+              "name": "Ausdauer"
+            },
+            "value": 8,
+            "display": {
+              "display_string": "+8 Ausdauer",
+              "color": {
+                "r": 255,
+                "g": 255,
+                "b": 255,
+                "a": 1.0
+              }
+            }
+          }
+        ],
+        "sell_price": {
+          "value": 601,
+          "display_strings": {
+            "header": "Verkaufspreis:",
+            "gold": "0",
+            "silver": "6",
+            "copper": "1"
+          }
+        },
+        "requirements": {
+          "level": {
+            "value": 18,
+            "display_string": "Benötigt Stufe 18"
+          }
+        },
+        "level": {
+          "value": 23,
+          "display_string": "Gegenstandsstufe 23"
+        },
+        "durability": {
+          "value": 53,
+          "display_string": "Haltbarkeit 53 / 90"
+        }
+      },
+      {
+        "item": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item/2857?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 2857
+        },
+        "slot": {
+          "type": "WAIST",
+          "name": "Taille"
+        },
+        "quantity": 1,
+        "quality": {
+          "type": "UNCOMMON",
+          "name": "Selten"
+        },
+        "name": "Runenverzierter Kupfergürtel",
+        "media": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/media/item/2857?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 2857
+        },
+        "item_class": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/4?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Rüstung",
+          "id": 4
+        },
+        "item_subclass": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/4/item-subclass/3?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Schwere Rüstung",
+          "id": 3
+        },
+        "inventory_type": {
+          "type": "WAIST",
+          "name": "Taille"
+        },
+        "binding": {
+          "type": "ON_EQUIP",
+          "name": "Wird beim Anlegen gebunden"
+        },
+        "armor": {
+          "value": 91,
+          "display": {
+            "display_string": "91 Rüstung",
+            "color": {
+              "r": 255,
+              "g": 255,
+              "b": 255,
+              "a": 1.0
+            }
+          }
+        },
+        "stats": [
+          {
+            "type": {
+              "type": "STRENGTH",
+              "name": "Stärke"
+            },
+            "value": 3,
+            "display": {
+              "display_string": "+3 Stärke",
+              "color": {
+                "r": 255,
+                "g": 255,
+                "b": 255,
+                "a": 1.0
+              }
+            }
+          },
+          {
+            "type": {
+              "type": "STAMINA",
+              "name": "Ausdauer"
+            },
+            "value": 2,
+            "display": {
+              "display_string": "+2 Ausdauer",
+              "color": {
+                "r": 255,
+                "g": 255,
+                "b": 255,
+                "a": 1.0
+              }
+            }
+          }
+        ],
+        "sell_price": {
+          "value": 198,
+          "display_strings": {
+            "header": "Verkaufspreis:",
+            "gold": "0",
+            "silver": "1",
+            "copper": "98"
+          }
+        },
+        "requirements": {
+          "level": {
+            "value": 13,
+            "display_string": "Benötigt Stufe 13"
+          }
+        },
+        "level": {
+          "value": 18,
+          "display_string": "Gegenstandsstufe 18"
+        },
+        "durability": {
+          "value": 17,
+          "display_string": "Haltbarkeit 17 / 25"
+        }
+      },
+      {
+        "item": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item/2865?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 2865
+        },
+        "slot": {
+          "type": "LEGS",
+          "name": "Beine"
+        },
+        "quantity": 1,
+        "quality": {
+          "type": "UNCOMMON",
+          "name": "Selten"
+        },
+        "name": "Raue bronzene Gamaschen",
+        "media": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/media/item/2865?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 2865
+        },
+        "item_class": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/4?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Rüstung",
+          "id": 4
+        },
+        "item_subclass": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/4/item-subclass/3?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Schwere Rüstung",
+          "id": 3
+        },
+        "inventory_type": {
+          "type": "LEGS",
+          "name": "Beine"
+        },
+        "binding": {
+          "type": "ON_EQUIP",
+          "name": "Wird beim Anlegen gebunden"
+        },
+        "armor": {
+          "value": 149,
+          "display": {
+            "display_string": "149 Rüstung",
+            "color": {
+              "r": 255,
+              "g": 255,
+              "b": 255,
+              "a": 1.0
+            }
+          }
+        },
+        "stats": [
+          {
+            "type": {
+              "type": "STAMINA",
+              "name": "Ausdauer"
+            },
+            "value": 5,
+            "display": {
+              "display_string": "+5 Ausdauer",
+              "color": {
+                "r": 255,
+                "g": 255,
+                "b": 255,
+                "a": 1.0
+              }
+            }
+          },
+          {
+            "type": {
+              "type": "SPIRIT",
+              "name": "Willenskraft"
+            },
+            "value": 4,
+            "is_equip_bonus": true,
+            "display": {
+              "display_string": "+4 Willenskraft",
+              "color": {
+                "r": 0,
+                "g": 255,
+                "b": 0,
+                "a": 1.0
+              }
+            }
+          }
+        ],
+        "sell_price": {
+          "value": 577,
+          "display_strings": {
+            "header": "Verkaufspreis:",
+            "gold": "0",
+            "silver": "5",
+            "copper": "77"
+          }
+        },
+        "requirements": {
+          "level": {
+            "value": 16,
+            "display_string": "Benötigt Stufe 16"
+          }
+        },
+        "level": {
+          "value": 21,
+          "display_string": "Gegenstandsstufe 21"
+        },
+        "durability": {
+          "value": 39,
+          "display_string": "Haltbarkeit 39 / 65"
+        }
+      },
+      {
+        "item": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item/6350?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 6350
+        },
+        "slot": {
+          "type": "FEET",
+          "name": "Füße"
+        },
+        "quantity": 1,
+        "quality": {
+          "type": "UNCOMMON",
+          "name": "Selten"
+        },
+        "name": "Raue bronzene Stiefel",
+        "media": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/media/item/6350?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 6350
+        },
+        "item_class": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/4?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Rüstung",
+          "id": 4
+        },
+        "item_subclass": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/4/item-subclass/3?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Schwere Rüstung",
+          "id": 3
+        },
+        "inventory_type": {
+          "type": "FEET",
+          "name": "Füße"
+        },
+        "binding": {
+          "type": "ON_EQUIP",
+          "name": "Wird beim Anlegen gebunden"
+        },
+        "armor": {
+          "value": 111,
+          "display": {
+            "display_string": "111 Rüstung",
+            "color": {
+              "r": 255,
+              "g": 255,
+              "b": 255,
+              "a": 1.0
+            }
+          }
+        },
+        "stats": [
+          {
+            "type": {
+              "type": "STRENGTH",
+              "name": "Stärke"
+            },
+            "value": 2,
+            "display": {
+              "display_string": "+2 Stärke",
+              "color": {
+                "r": 255,
+                "g": 255,
+                "b": 255,
+                "a": 1.0
+              }
+            }
+          },
+          {
+            "type": {
+              "type": "STAMINA",
+              "name": "Ausdauer"
+            },
+            "value": 3,
+            "display": {
+              "display_string": "+3 Ausdauer",
+              "color": {
+                "r": 255,
+                "g": 255,
+                "b": 255,
+                "a": 1.0
+              }
+            }
+          }
+        ],
+        "sell_price": {
+          "value": 295,
+          "display_strings": {
+            "header": "Verkaufspreis:",
+            "gold": "0",
+            "silver": "2",
+            "copper": "95"
+          }
+        },
+        "requirements": {
+          "level": {
+            "value": 13,
+            "display_string": "Benötigt Stufe 13"
+          }
+        },
+        "level": {
+          "value": 18,
+          "display_string": "Gegenstandsstufe 18"
+        },
+        "durability": {
+          "value": 26,
+          "display_string": "Haltbarkeit 26 / 40"
+        }
+      },
+      {
+        "item": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item/2854?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 2854
+        },
+        "slot": {
+          "type": "WRIST",
+          "name": "Handgelenke"
+        },
+        "quantity": 1,
+        "quality": {
+          "type": "UNCOMMON",
+          "name": "Selten"
+        },
+        "name": "Runenverzierte Kupferarmschienen",
+        "media": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/media/item/2854?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 2854
+        },
+        "item_class": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/4?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Rüstung",
+          "id": 4
+        },
+        "item_subclass": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/4/item-subclass/3?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Schwere Rüstung",
+          "id": 3
+        },
+        "inventory_type": {
+          "type": "WRIST",
+          "name": "Handgelenke"
+        },
+        "binding": {
+          "type": "ON_EQUIP",
+          "name": "Wird beim Anlegen gebunden"
+        },
+        "armor": {
+          "value": 72,
+          "display": {
+            "display_string": "72 Rüstung",
+            "color": {
+              "r": 255,
+              "g": 255,
+              "b": 255,
+              "a": 1.0
+            }
+          }
+        },
+        "stats": [
+          {
+            "type": {
+              "type": "STRENGTH",
+              "name": "Stärke"
+            },
+            "value": 2,
+            "display": {
+              "display_string": "+2 Stärke",
+              "color": {
+                "r": 255,
+                "g": 255,
+                "b": 255,
+                "a": 1.0
+              }
+            }
+          },
+          {
+            "type": {
+              "type": "STAMINA",
+              "name": "Ausdauer"
+            },
+            "value": 2,
+            "display": {
+              "display_string": "+2 Ausdauer",
+              "color": {
+                "r": 255,
+                "g": 255,
+                "b": 255,
+                "a": 1.0
+              }
+            }
+          }
+        ],
+        "sell_price": {
+          "value": 225,
+          "display_strings": {
+            "header": "Verkaufspreis:",
+            "gold": "0",
+            "silver": "2",
+            "copper": "25"
+          }
+        },
+        "requirements": {
+          "level": {
+            "value": 14,
+            "display_string": "Benötigt Stufe 14"
+          }
+        },
+        "level": {
+          "value": 19,
+          "display_string": "Gegenstandsstufe 19"
+        },
+        "durability": {
+          "value": 16,
+          "display_string": "Haltbarkeit 16 / 30"
+        }
+      },
+      {
+        "item": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item/3472?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 3472
+        },
+        "slot": {
+          "type": "HANDS",
+          "name": "Hände"
+        },
+        "quantity": 1,
+        "quality": {
+          "type": "UNCOMMON",
+          "name": "Selten"
+        },
+        "name": "Runenverzierte Kupferstulpen",
+        "media": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/media/item/3472?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 3472
+        },
+        "item_class": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/4?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Rüstung",
+          "id": 4
+        },
+        "item_subclass": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/4/item-subclass/3?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Schwere Rüstung",
+          "id": 3
+        },
+        "inventory_type": {
+          "type": "HAND",
+          "name": "Hände"
+        },
+        "binding": {
+          "type": "ON_EQUIP",
+          "name": "Wird beim Anlegen gebunden"
+        },
+        "armor": {
+          "value": 77,
+          "display": {
+            "display_string": "77 Rüstung",
+            "color": {
+              "r": 255,
+              "g": 255,
+              "b": 255,
+              "a": 1.0
+            }
+          }
+        },
+        "stats": [
+          {
+            "type": {
+              "type": "STRENGTH",
+              "name": "Stärke"
+            },
+            "value": 1,
+            "display": {
+              "display_string": "+1 Stärke",
+              "color": {
+                "r": 255,
+                "g": 255,
+                "b": 255,
+                "a": 1.0
+              }
+            }
+          },
+          {
+            "type": {
+              "type": "STAMINA",
+              "name": "Ausdauer"
+            },
+            "value": 1,
+            "display": {
+              "display_string": "+1 Ausdauer",
+              "color": {
+                "r": 255,
+                "g": 255,
+                "b": 255,
+                "a": 1.0
+              }
+            }
+          }
+        ],
+        "sell_price": {
+          "value": 71,
+          "display_strings": {
+            "header": "Verkaufspreis:",
+            "gold": "0",
+            "silver": "0",
+            "copper": "71"
+          }
+        },
+        "requirements": {
+          "level": {
+            "value": 7,
+            "display_string": "Benötigt Stufe 7"
+          }
+        },
+        "level": {
+          "value": 12,
+          "display_string": "Gegenstandsstufe 12"
+        },
+        "durability": {
+          "value": 11,
+          "display_string": "Haltbarkeit 11 / 20"
+        }
+      },
+      {
+        "item": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item/5343?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 5343
+        },
+        "slot": {
+          "type": "BACK",
+          "name": "Rücken"
+        },
+        "quantity": 1,
+        "context": 11,
+        "quality": {
+          "type": "UNCOMMON",
+          "name": "Selten"
+        },
+        "name": "Barkeeper-Umhang",
+        "media": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/media/item/5343?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 5343
+        },
+        "item_class": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/4?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Rüstung",
+          "id": 4
+        },
+        "item_subclass": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/4/item-subclass/1?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Stoff",
+          "id": 1
+        },
+        "inventory_type": {
+          "type": "CLOAK",
+          "name": "Rücken"
+        },
+        "binding": {
+          "type": "ON_ACQUIRE",
+          "name": "Wird beim Aufheben gebunden"
+        },
+        "armor": {
+          "value": 16,
+          "display": {
+            "display_string": "16 Rüstung",
+            "color": {
+              "r": 255,
+              "g": 255,
+              "b": 255,
+              "a": 1.0
+            }
+          }
+        },
+        "stats": [
+          {
+            "type": {
+              "type": "STAMINA",
+              "name": "Ausdauer"
+            },
+            "value": 3,
+            "display": {
+              "display_string": "+3 Ausdauer",
+              "color": {
+                "r": 255,
+                "g": 255,
+                "b": 255,
+                "a": 1.0
+              }
+            }
+          }
+        ],
+        "sell_price": {
+          "value": 462,
+          "display_strings": {
+            "header": "Verkaufspreis:",
+            "gold": "0",
+            "silver": "4",
+            "copper": "62"
+          }
+        },
+        "level": {
+          "value": 18,
+          "display_string": "Gegenstandsstufe 18"
+        },
+        "is_subclass_hidden": true
+      },
+      {
+        "item": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item/15445?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 15445
+        },
+        "enchantments": [
+          {
+            "display_string": "Beschwert +2",
+            "source_item": {
+              "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/item/3239?namespace=static-1.60.1_70399-forever-eu"
+              },
+              "name": "Rauer Gewichtsstein",
+              "id": 3239
+            },
+            "enchantment_id": 19,
+            "enchantment_slot": {
+              "id": 1,
+              "type": "TEMPORARY"
+            }
+          }
+        ],
+        "slot": {
+          "type": "MAIN_HAND",
+          "name": "Waffenhand"
+        },
+        "quantity": 1,
+        "context": 11,
+        "quality": {
+          "type": "RARE",
+          "name": "Rar"
+        },
+        "name": "Hammer von Orgrimmar",
+        "media": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/media/item/15445?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 15445
+        },
+        "item_class": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/2?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Waffe",
+          "id": 2
+        },
+        "item_subclass": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/2/item-subclass/4?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Streitkolben",
+          "id": 4
+        },
+        "inventory_type": {
+          "type": "WEAPONMAINHAND",
+          "name": "Waffenhand"
+        },
+        "binding": {
+          "type": "ON_ACQUIRE",
+          "name": "Wird beim Aufheben gebunden"
+        },
+        "weapon": {
+          "damage": {
+            "min_value": 25,
+            "max_value": 47,
+            "display_string": "25 - 47 Schaden",
+            "damage_class": {
+              "type": "PHYSICAL",
+              "name": "Körperlich"
+            }
+          },
+          "attack_speed": {
+            "value": 2900,
+            "display_string": "Tempo 2,90"
+          },
+          "dps": {
+            "value": 12.413793,
+            "display_string": "(12,4 Schaden pro Sekunde)"
+          }
+        },
+        "stats": [
+          {
+            "type": {
+              "type": "STRENGTH",
+              "name": "Stärke"
+            },
+            "value": 3,
+            "display": {
+              "display_string": "+3 Stärke",
+              "color": {
+                "r": 255,
+                "g": 255,
+                "b": 255,
+                "a": 1.0
+              }
+            }
+          },
+          {
+            "type": {
+              "type": "SPIRIT",
+              "name": "Willenskraft"
+            },
+            "value": 3,
+            "is_equip_bonus": true,
+            "display": {
+              "display_string": "+3 Willenskraft",
+              "color": {
+                "r": 0,
+                "g": 255,
+                "b": 0,
+                "a": 1.0
+              }
+            }
+          }
+        ],
+        "sell_price": {
+          "value": 1291,
+          "display_strings": {
+            "header": "Verkaufspreis:",
+            "gold": "0",
+            "silver": "12",
+            "copper": "91"
+          }
+        },
+        "level": {
+          "value": 18,
+          "display_string": "Gegenstandsstufe 18"
+        },
+        "durability": {
+          "value": 43,
+          "display_string": "Haltbarkeit 43 / 65"
+        }
+      },
+      {
+        "item": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item/5325?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 5325
+        },
+        "slot": {
+          "type": "OFF_HAND",
+          "name": "Schildhand"
+        },
+        "quantity": 1,
+        "context": 11,
+        "quality": {
+          "type": "UNCOMMON",
+          "name": "Selten"
+        },
+        "name": "Schweißerschild",
+        "media": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/media/item/5325?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 5325
+        },
+        "item_class": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/4?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Rüstung",
+          "id": 4
+        },
+        "item_subclass": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/4/item-subclass/6?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Schild",
+          "id": 6
+        },
+        "inventory_type": {
+          "type": "SHIELD",
+          "name": "Schildhand"
+        },
+        "binding": {
+          "type": "ON_ACQUIRE",
+          "name": "Wird beim Aufheben gebunden"
+        },
+        "armor": {
+          "value": 345,
+          "display": {
+            "display_string": "345 Rüstung",
+            "color": {
+              "r": 255,
+              "g": 255,
+              "b": 255,
+              "a": 1.0
+            }
+          }
+        },
+        "shield_block": {
+          "value": 862,
+          "display": {
+            "display_string": "862 Blocken",
+            "color": {
+              "r": 255,
+              "g": 255,
+              "b": 255,
+              "a": 1.0
+            }
+          }
+        },
+        "stats": [
+          {
+            "type": {
+              "type": "STAMINA",
+              "name": "Ausdauer"
+            },
+            "value": 2,
+            "display": {
+              "display_string": "+2 Ausdauer",
+              "color": {
+                "r": 255,
+                "g": 255,
+                "b": 255,
+                "a": 1.0
+              }
+            }
+          }
+        ],
+        "sell_price": {
+          "value": 498,
+          "display_strings": {
+            "header": "Verkaufspreis:",
+            "gold": "0",
+            "silver": "4",
+            "copper": "98"
+          }
+        },
+        "level": {
+          "value": 16,
+          "display_string": "Gegenstandsstufe 16"
+        },
+        "durability": {
+          "value": 37,
+          "display_string": "Haltbarkeit 37 / 55"
+        }
+      },
+      {
+        "item": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item/8180?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 8180
+        },
+        "slot": {
+          "type": "RANGED",
+          "name": "Distanzwaffe"
+        },
+        "quantity": 1,
+        "quality": {
+          "type": "UNCOMMON",
+          "name": "Selten"
+        },
+        "name": "Jagdbogen",
+        "media": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/media/item/8180?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 8180
+        },
+        "item_class": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/2?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Waffe",
+          "id": 2
+        },
+        "item_subclass": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/2/item-subclass/2?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Bogen",
+          "id": 2
+        },
+        "inventory_type": {
+          "type": "RANGED",
+          "name": "Distanz"
+        },
+        "binding": {
+          "type": "ON_EQUIP",
+          "name": "Wird beim Anlegen gebunden"
+        },
+        "weapon": {
+          "damage": {
+            "min_value": 8,
+            "max_value": 16,
+            "display_string": "8 - 16 Schaden",
+            "damage_class": {
+              "type": "PHYSICAL",
+              "name": "Körperlich"
+            }
+          },
+          "attack_speed": {
+            "value": 2600,
+            "display_string": "Tempo 2,60"
+          },
+          "dps": {
+            "value": 4.6153846,
+            "display_string": "(4,6 Schaden pro Sekunde)"
+          }
+        },
+        "stats": [
+          {
+            "type": {
+              "type": "BONUS_STAT_ATTACK_POWER_VS_BEAST,",
+              "name": "Angriffskraft gegen Wildtiere"
+            },
+            "value": 3,
+            "is_equip_bonus": true,
+            "display": {
+              "display_string": "+3 Angriffskraft gegen Wildtiere",
+              "color": {
+                "r": 0,
+                "g": 255,
+                "b": 0,
+                "a": 1.0
+              }
+            }
+          }
+        ],
+        "sell_price": {
+          "value": 240,
+          "display_strings": {
+            "header": "Verkaufspreis:",
+            "gold": "0",
+            "silver": "2",
+            "copper": "40"
+          }
+        },
+        "requirements": {
+          "level": {
+            "value": 6,
+            "display_string": "Benötigt Stufe 6"
+          }
+        },
+        "level": {
+          "value": 11,
+          "display_string": "Gegenstandsstufe 11"
+        },
+        "durability": {
+          "value": 26,
+          "display_string": "Haltbarkeit 26 / 35"
+        }
+      },
+      {
+        "item": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item/2515?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 2515
+        },
+        "slot": {
+          "type": "AMMO",
+          "name": "Munition"
+        },
+        "quality": {
+          "type": "COMMON",
+          "name": "Verbreitet"
+        },
+        "name": "Scharfer Pfeil",
+        "media": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/media/item/2515?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "id": 2515
+        },
+        "item_class": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/6?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Projektil",
+          "id": 6
+        },
+        "item_subclass": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/item-class/6/item-subclass/2?namespace=static-1.60.1_70399-forever-eu"
+          },
+          "name": "Pfeil",
+          "id": 2
+        },
+        "inventory_type": {
+          "type": "AMMO",
+          "name": "Munition"
+        },
+        "weapon": {
+          "damage": {
+            "min_value": 3,
+            "max_value": 4,
+            "display_string": "Verursacht 3,5 zusätzlichen Schaden pro Sekunde.",
+            "damage_class": {
+              "type": "PHYSICAL",
+              "name": "Körperlich"
+            }
+          }
+        },
+        "requirements": {
+          "level": {
+            "value": 10,
+            "display_string": "Benötigt Stufe 10"
+          }
+        },
+        "level": {
+          "value": 15,
+          "display_string": "Gegenstandsstufe 15"
+        }
+      }
+    ]
+  }
+}

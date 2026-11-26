@@ -1,0 +1,4 @@
+{
+  "_hinweis": "Tag, an dem das Spiel gestartet ist (JJJJ-MM-TT). Vorher gab es keinen Charakter: Im Monat und in der Kalenderwoche des Serverstarts zählen Wrapped und Wochenauswertung für alle ab Level 1 und Zählerstand 0, und Tagesstände mit früherem Datum werden nie als Vergleich herangezogen. Ohne Datum (null) gilt überall der Vergleich zweier Tagesstände.",
+  "datum": "2026-11-05"
+}

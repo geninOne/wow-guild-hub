@@ -1,0 +1,373 @@
+{
+  "status": 200,
+  "data": {
+    "factions": [
+      {
+        "name": "Streitkräfte der Horde",
+        "id": 892
+      },
+      {
+        "name": "Dunkelmond-Jahrmarkt",
+        "id": 909
+      },
+      {
+        "name": "Ironforge",
+        "id": 47
+      },
+      {
+        "name": "Everlook",
+        "id": 577
+      },
+      {
+        "name": "Moro'gai",
+        "id": 789
+      },
+      {
+        "name": "Die Entweihten",
+        "id": 510
+      },
+      {
+        "name": "Thunder Bluff",
+        "id": 81
+      },
+      {
+        "name": "Gelkisklan",
+        "id": 92
+      },
+      {
+        "name": "Ravenholdt",
+        "id": 349
+      },
+      {
+        "name": "Streitkräfte der Allianz",
+        "id": 891
+      },
+      {
+        "name": "Horde",
+        "id": 67
+      },
+      {
+        "name": "Blutsegelbukaniere",
+        "id": 87
+      },
+      {
+        "name": "Zirkel des Cenarius",
+        "id": 609
+      },
+      {
+        "name": "Shatterspear",
+        "id": 629
+      },
+      {
+        "name": "Steamwheedle-Kartell",
+        "id": 169
+      },
+      {
+        "name": "Ratchet",
+        "id": 470
+      },
+      {
+        "name": "Orgrimmar",
+        "id": 76
+      },
+      {
+        "name": "Darnassus",
+        "id": 69
+      },
+      {
+        "name": "Wintersäblerausbilder",
+        "id": 589
+      },
+      {
+        "name": "Darkspear",
+        "id": 530
+      },
+      {
+        "name": "Stormwind",
+        "id": 72
+      },
+      {
+        "name": "Booty Bay",
+        "id": 21
+      },
+      {
+        "name": "Gnomeregangnome",
+        "id": 54
+      },
+      {
+        "name": "Shen'dralar",
+        "id": 809
+      },
+      {
+        "name": "Warsongvorhut",
+        "id": 889
+      },
+      {
+        "name": "Syndikat",
+        "id": 70
+      },
+      {
+        "name": "Thoriumbruderschaft",
+        "id": 59
+      },
+      {
+        "name": "Frostwolfklan",
+        "id": 729
+      },
+      {
+        "name": null,
+        "id": 2807
+      },
+      {
+        "name": "Handelskommission von Azeroth",
+        "id": 2586
+      },
+      {
+        "name": "Versorgung und Logistik Durotar",
+        "id": 2587
+      },
+      {
+        "name": "Argentumdämmerung",
+        "id": 529
+      },
+      {
+        "name": "Gadgetzan",
+        "id": 369
+      },
+      {
+        "name": "Wildhammerklan",
+        "id": 471
+      },
+      {
+        "name": "Stormpikegarde",
+        "id": 730
+      },
+      {
+        "name": "Magramklan",
+        "id": 93
+      },
+      {
+        "name": "Holzschlundfeste",
+        "id": 576
+      },
+      {
+        "name": "Allianz",
+        "id": 469
+      },
+      {
+        "name": "Der Bund von Arathor",
+        "id": 509
+      },
+      {
+        "name": "Undercity",
+        "id": 68
+      },
+      {
+        "name": "Ravasaurusausbilder",
+        "id": 630
+      },
+      {
+        "name": "Cenarische Späher",
+        "id": 2719
+      },
+      {
+        "name": "Klan der Bolder'ok",
+        "id": 2782
+      },
+      {
+        "name": "Der Irdene Ring",
+        "id": 2787
+      },
+      {
+        "name": "Wächter des Hyjal",
+        "id": 2765
+      },
+      {
+        "name": "Bau der Baumrindenfurbolgs",
+        "id": 2747
+      },
+      {
+        "name": "Schildwachen der Silverwing",
+        "id": 890
+      },
+      {
+        "name": "Bruderschaft des Pferds",
+        "id": 2826
+      },
+      {
+        "name": "Kirin Tor",
+        "id": 2740
+      },
+      {
+        "name": "Windformer",
+        "id": 2778
+      },
+      {
+        "name": "Der Hohe Orden",
+        "id": 2779
+      },
+      {
+        "name": "Die Behüter",
+        "id": 2819
+      },
+      {
+        "name": "Darkspear-Räuber",
+        "id": 2798
+      },
+      {
+        "name": "Expeditionskorps von Theramore",
+        "id": 2799
+      },
+      {
+        "name": "Powderfuse",
+        "id": 2827
+      },
+      {
+        "name": "Druiden der Nachtklaue",
+        "id": 2758
+      }
+    ],
+    "root_factions": [
+      {
+        "name": "Streitkräfte der Horde",
+        "id": 892
+      },
+      {
+        "name": "Streitkräfte der Allianz",
+        "id": 891
+      },
+      {
+        "name": "Horde",
+        "id": 67
+      },
+      {
+        "name": "Steamwheedle-Kartell",
+        "id": 169
+      },
+      {
+        "name": "Allianz",
+        "id": 469
+      },
+      {
+        "name": "Dunkelmond-Jahrmarkt",
+        "id": 909
+      },
+      {
+        "name": "Moro'gai",
+        "id": 789
+      },
+      {
+        "name": "Gelkisklan",
+        "id": 92
+      },
+      {
+        "name": "Ravenholdt",
+        "id": 349
+      },
+      {
+        "name": "Blutsegelbukaniere",
+        "id": 87
+      },
+      {
+        "name": "Zirkel des Cenarius",
+        "id": 609
+      },
+      {
+        "name": "Shatterspear",
+        "id": 629
+      },
+      {
+        "name": "Wintersäblerausbilder",
+        "id": 589
+      },
+      {
+        "name": "Shen'dralar",
+        "id": 809
+      },
+      {
+        "name": "Syndikat",
+        "id": 70
+      },
+      {
+        "name": "Thoriumbruderschaft",
+        "id": 59
+      },
+      {
+        "name": null,
+        "id": 2807
+      },
+      {
+        "name": "Handelskommission von Azeroth",
+        "id": 2586
+      },
+      {
+        "name": "Versorgung und Logistik Durotar",
+        "id": 2587
+      },
+      {
+        "name": "Argentumdämmerung",
+        "id": 529
+      },
+      {
+        "name": "Wildhammerklan",
+        "id": 471
+      },
+      {
+        "name": "Magramklan",
+        "id": 93
+      },
+      {
+        "name": "Holzschlundfeste",
+        "id": 576
+      },
+      {
+        "name": "Ravasaurusausbilder",
+        "id": 630
+      },
+      {
+        "name": "Cenarische Späher",
+        "id": 2719
+      },
+      {
+        "name": "Klan der Bolder'ok",
+        "id": 2782
+      },
+      {
+        "name": "Der Irdene Ring",
+        "id": 2787
+      },
+      {
+        "name": "Wächter des Hyjal",
+        "id": 2765
+      },
+      {
+        "name": "Bau der Baumrindenfurbolgs",
+        "id": 2747
+      },
+      {
+        "name": "Bruderschaft des Pferds",
+        "id": 2826
+      },
+      {
+        "name": "Kirin Tor",
+        "id": 2740
+      },
+      {
+        "name": "Windformer",
+        "id": 2778
+      },
+      {
+        "name": "Der Hohe Orden",
+        "id": 2779
+      },
+      {
+        "name": "Die Behüter",
+        "id": 2819
+      },
+      {
+        "name": "Druiden der Nachtklaue",
+        "id": 2758
+      }
+    ]
+  }
+}

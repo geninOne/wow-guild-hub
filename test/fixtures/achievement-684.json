@@ -1,0 +1,24 @@
+{
+  "status": 200,
+  "data": {
+    "id": 684,
+    "category": {
+      "name": "Schlachtzüge",
+      "id": 15594
+    },
+    "name": "Eroberer des Horts",
+    "description": "Bezwingt die klassische Stufe-60-Version von Onyxia.",
+    "points": 1,
+    "is_account_wide": true,
+    "criteria": {
+      "id": 230797,
+      "description": "Tötet Onyxia",
+      "amount": 0
+    },
+    "reward_description": "Verdient 1 Vermächtnispunkt.",
+    "media": {
+      "id": 684
+    },
+    "display_order": 6
+  }
+}

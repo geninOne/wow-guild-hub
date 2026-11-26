@@ -1,0 +1,18 @@
+services:
+  app:
+    build: .
+    env_file:
+      - path: .env
+        required: false
+    ports:
+      # Nur auf diesem Rechner erreichbar: netlify dev löst die Sammler per Adresse ohne Schutz aus.
+      - "127.0.0.1:8888:8888"
+    volumes:
+      - .:/app
+      - node-modules:/app/node_modules
+      - netlify-daten:/app/.netlify
+    restart: unless-stopped
+
+volumes:
+  netlify-daten:
+  node-modules:

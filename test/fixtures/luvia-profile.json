@@ -1,0 +1,107 @@
+{
+  "status": 200,
+  "data": {
+    "_links": {
+      "self": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/luvia-stav?namespace=profile-forever-eu"
+      }
+    },
+    "id": 382219,
+    "name": "Luvia",
+    "gender": {
+      "type": "FEMALE",
+      "name": "Weiblich"
+    },
+    "faction": {
+      "type": "HORDE",
+      "name": "Horde"
+    },
+    "race": {
+      "key": {
+        "href": "https://eu.api.blizzard.com/data/wow/playable-race/96?namespace=static-1.60.1_70399-forever-eu"
+      },
+      "name": "Himmelsgeborener der Windformer",
+      "id": 96
+    },
+    "character_class": {
+      "key": {
+        "href": "https://eu.api.blizzard.com/data/wow/playable-class/1?namespace=static-1.60.1_70399-forever-eu"
+      },
+      "name": "Krieger",
+      "id": 1
+    },
+    "guild": {
+      "key": {
+        "href": "https://eu.api.blizzard.com/data/wow/guild/b%C3%A4renklaue?namespace=profile-forever-eu"
+      },
+      "name": "Bärenklaue",
+      "id": 194131,
+      "faction": {
+        "type": "HORDE",
+        "name": "Horde"
+      },
+      "slug": "bärenklaue"
+    },
+    "level": 21,
+    "experience": 8246,
+    "achievement_points": 0,
+    "achievements": {
+      "href": "https://eu.api.blizzard.com/profile/wow/character/luvia-stav/achievements?namespace=profile-forever-eu"
+    },
+    "titles": {
+      "href": "https://eu.api.blizzard.com/profile/wow/character/luvia-stav/titles?namespace=profile-forever-eu"
+    },
+    "pvp_summary": {
+      "href": "https://eu.api.blizzard.com/profile/wow/character/luvia-stav/pvp-summary?namespace=profile-forever-eu"
+    },
+    "encounters": {
+      "href": "https://eu.api.blizzard.com/profile/wow/character/luvia-stav/encounters?namespace=profile-forever-eu"
+    },
+    "media": {
+      "href": "https://eu.api.blizzard.com/profile/wow/character/luvia-stav/character-media?namespace=profile-forever-eu"
+    },
+    "last_login_timestamp": 1793922719000,
+    "average_item_level": 11,
+    "equipped_item_level": 11,
+    "specializations": {
+      "href": "https://eu.api.blizzard.com/profile/wow/character/luvia-stav/specializations?namespace=profile-forever-eu"
+    },
+    "statistics": {
+      "href": "https://eu.api.blizzard.com/profile/wow/character/luvia-stav/statistics?namespace=profile-forever-eu"
+    },
+    "mythic_keystone_profile": {
+      "href": "https://eu.api.blizzard.com/profile/wow/character/luvia-stav/mythic-keystone-profile?namespace=profile-forever-eu"
+    },
+    "equipment": {
+      "href": "https://eu.api.blizzard.com/profile/wow/character/luvia-stav/equipment?namespace=profile-forever-eu"
+    },
+    "appearance": {
+      "href": "https://eu.api.blizzard.com/profile/wow/character/luvia-stav/appearance?namespace=profile-forever-eu"
+    },
+    "collections": {
+      "href": "https://eu.api.blizzard.com/profile/wow/character/luvia-stav/collections?namespace=profile-forever-eu"
+    },
+    "reputations": {
+      "href": "https://eu.api.blizzard.com/profile/wow/character/luvia-stav/reputations?namespace=profile-forever-eu"
+    },
+    "quests": {
+      "href": "https://eu.api.blizzard.com/profile/wow/character/luvia-stav/quests?namespace=profile-forever-eu"
+    },
+    "achievements_statistics": {
+      "href": "https://eu.api.blizzard.com/profile/wow/character/luvia-stav/achievements/statistics?namespace=profile-forever-eu"
+    },
+    "professions": {
+      "href": "https://eu.api.blizzard.com/profile/wow/character/luvia-stav/professions?namespace=profile-forever-eu"
+    },
+    "is_remix": false,
+    "surname": "Stav",
+    "ruleset": {
+      "key": {
+        "href": "https://eu.api.blizzard.com/data/wow/ruleset/2?namespace=dynamic-forever-eu"
+      },
+      "name": "Normal",
+      "id": 2
+    },
+    "name_search": "Luvia Stav"
+  }
+}

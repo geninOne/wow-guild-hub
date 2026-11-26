@@ -1,0 +1,45 @@
+{
+  "status": 200,
+  "data": {
+    "id": 15593,
+    "name": "Dungeons",
+    "achievements": [
+      {
+        "name": "Novize: Dungeonerforscher",
+        "id": 62031
+      },
+      {
+        "name": "Erfahren: Dungeonerforscher",
+        "id": 62032
+      },
+      {
+        "name": "Meister: Dungeonerforscher",
+        "id": 62033
+      },
+      {
+        "name": "Novize: Dungeonerforscher",
+        "id": 64016
+      },
+      {
+        "name": "Erfahren: Dungeonerforscher",
+        "id": 64017
+      },
+      {
+        "name": "Meister: Dungeonerforscher",
+        "id": 64018
+      }
+    ],
+    "is_guild_category": false,
+    "aggregates_by_faction": {
+      "alliance": {
+        "quantity": 6,
+        "points": 0
+      },
+      "horde": {
+        "quantity": 6,
+        "points": 0
+      }
+    },
+    "display_order": 5
+  }
+}

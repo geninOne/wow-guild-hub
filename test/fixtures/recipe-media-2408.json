@@ -1,0 +1,13 @@
+{
+  "status": 200,
+  "data": {
+    "assets": [
+      {
+        "key": "icon",
+        "value": "https://render.worldofwarcraft.com/forever-eu/icons/56/134586.jpg",
+        "file_data_id": 134586
+      }
+    ],
+    "id": 2408
+  }
+}

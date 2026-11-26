@@ -1,0 +1,4230 @@
+{
+  "status": 200,
+  "data": {
+    "_links": {
+      "self": {
+        "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1117?namespace=static-1.60.1_70399-forever-eu"
+      }
+    },
+    "id": 1117,
+    "spec_talent_trees": [
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1117/playable-specialization/26?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Waffen"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1117/playable-specialization/256?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Furor"
+      },
+      {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/talent-tree/1117/playable-specialization/257?namespace=static-1.60.1_70399-forever-eu"
+        },
+        "name": "Schutz"
+      }
+    ],
+    "talent_nodes": [
+      {
+        "id": 105926,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135457?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbessertes Abfangen",
+                "id": 135457
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/20504?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbessertes Abfangen",
+                  "id": 20504
+                },
+                "description": "Verringert die Abklingzeit Eurer Fähigkeit 'Abfangen' um 5 Sek.",
+                "cast_time": "Passiv"
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135457?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbessertes Abfangen",
+                "id": 135457
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/20504?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbessertes Abfangen",
+                  "id": 20504
+                },
+                "description": "Verringert die Abklingzeit Eurer Fähigkeit 'Abfangen' um 10 Sek.",
+                "cast_time": "Passiv"
+              }
+            }
+          }
+        ],
+        "display_row": 5,
+        "display_col": 10,
+        "raw_position_x": 6820,
+        "raw_position_y": 4530
+      },
+      {
+        "id": 105927,
+        "unlocks": [
+          105930
+        ],
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135458?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Todeswunsch",
+                "id": 135458
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12328?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Todeswunsch",
+                  "id": 12328
+                },
+                "description": "Bei Aktivierung wird Euer verursachter körperlicher Schaden um 20% erhöht und Ihr werdet immun gegen Furchteffekte, erleidet aber 5% mehr Schaden. Hält 30 Sek. lang an.",
+                "cast_time": "Sofort",
+                "power_cost": "10 Wut",
+                "cooldown": "3 Min. Abklingzeit"
+              }
+            }
+          }
+        ],
+        "display_row": 5,
+        "display_col": 8,
+        "raw_position_x": 5620,
+        "raw_position_y": 4530
+      },
+      {
+        "id": 105928,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135459?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Schlaghagel",
+                "id": 135459
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12319?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Schlaghagel",
+                  "id": 12319
+                },
+                "description": "Erhöht Euer Nahkampfangriffstempo für die nächsten 3 Hiebe nach einem kritischen Treffer um 10%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135459?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Schlaghagel",
+                "id": 135459
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12319?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Schlaghagel",
+                  "id": 12319
+                },
+                "description": "Erhöht Euer Nahkampfangriffstempo für die nächsten 3 Hiebe nach einem kritischen Treffer um 20%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135459?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Schlaghagel",
+                "id": 135459
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12319?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Schlaghagel",
+                  "id": 12319
+                },
+                "description": "Erhöht Euer Nahkampfangriffstempo für die nächsten 3 Hiebe nach einem kritischen Treffer um 30%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 6,
+        "display_col": 9,
+        "raw_position_x": 6220,
+        "raw_position_y": 5130
+      },
+      {
+        "id": 105930,
+        "locked_by": [
+          105927
+        ],
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135461?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Blutdurst",
+                "id": 135461
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/23881?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Blutdurst",
+                  "id": 23881
+                },
+                "description": "Greift das Ziel sofort an und verursacht Schaden, der 45% Eurer Angriffskraft plus 30 entspricht. Erhöht außerdem Eure Bewegungsgeschwindigkeit 10 Sek. lang um 10%.",
+                "cast_time": "Sofort",
+                "power_cost": "30 Wut",
+                "range": "Nahkampfreichweite",
+                "cooldown": "6 Sek. Abklingzeit"
+              }
+            }
+          }
+        ],
+        "display_row": 7,
+        "display_col": 8,
+        "raw_position_x": 5620,
+        "raw_position_y": 5730
+      },
+      {
+        "id": 105931,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135462?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Wutanfall",
+                "id": 135462
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12317?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Wutanfall",
+                  "id": 12317
+                },
+                "description": "Verleiht Euch eine Chance von 30%, dass Euer verursachter körperlicher Schaden 12 Sek. lang um 2% erhöht wird, nachdem Euch Schaden jeglicher Art zugefügt wurde.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135462?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Wutanfall",
+                "id": 135462
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12317?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Wutanfall",
+                  "id": 12317
+                },
+                "description": "Verleiht Euch eine Chance von 30%, dass Euer verursachter körperlicher Schaden 12 Sek. lang um 4% erhöht wird, nachdem Euch Schaden jeglicher Art zugefügt wurde.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135462?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Wutanfall",
+                "id": 135462
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12317?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Wutanfall",
+                  "id": 12317
+                },
+                "description": "Verleiht Euch eine Chance von 30%, dass Euer verursachter körperlicher Schaden 12 Sek. lang um 6% erhöht wird, nachdem Euch Schaden jeglicher Art zugefügt wurde.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 4,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135462?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Wutanfall",
+                "id": 135462
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12317?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Wutanfall",
+                  "id": 12317
+                },
+                "description": "Verleiht Euch eine Chance von 30%, dass Euer verursachter körperlicher Schaden 12 Sek. lang um 8% erhöht wird, nachdem Euch Schaden jeglicher Art zugefügt wurde.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 5,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135462?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Wutanfall",
+                "id": 135462
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12317?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Wutanfall",
+                  "id": 12317
+                },
+                "description": "Verleiht Euch eine Chance von 30%, dass Euer verursachter körperlicher Schaden 12 Sek. lang um 10% erhöht wird, nachdem Euch Schaden jeglicher Art zugefügt wurde.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 3,
+        "display_col": 10,
+        "raw_position_x": 6820,
+        "raw_position_y": 3330
+      },
+      {
+        "id": 105932,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135463?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbessertes Hinrichten",
+                "id": 135463
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/20502?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbessertes Hinrichten",
+                  "id": 20502
+                },
+                "description": "Verringert die Wutkosten Eurer Fähigkeit 'Hinrichten' um 3.",
+                "cast_time": "Passiv"
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135463?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbessertes Hinrichten",
+                "id": 135463
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/20502?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbessertes Hinrichten",
+                  "id": 20502
+                },
+                "description": "Verringert die Wutkosten Eurer Fähigkeit 'Hinrichten' um 5.",
+                "cast_time": "Passiv"
+              }
+            }
+          }
+        ],
+        "display_row": 4,
+        "display_col": 10,
+        "raw_position_x": 6820,
+        "raw_position_y": 3930
+      },
+      {
+        "id": 105933,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135464?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Beidhändigkeits-Spezialisierung",
+                "id": 135464
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/23584?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Beidhändigkeits-Spezialisierung",
+                  "id": 23584
+                },
+                "description": "Erhöht den von Eurer Schildhand angerichteten Schaden um 5% und die durch Angriffe mit Eurer Schildhand erzeugte Wut um 10%.",
+                "cast_time": "Passiv"
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135464?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Beidhändigkeits-Spezialisierung",
+                "id": 135464
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/23584?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Beidhändigkeits-Spezialisierung",
+                  "id": 23584
+                },
+                "description": "Erhöht den von Eurer Schildhand angerichteten Schaden um 10% und die durch Angriffe mit Eurer Schildhand erzeugte Wut um 20%.",
+                "cast_time": "Passiv"
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135464?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Beidhändigkeits-Spezialisierung",
+                "id": 135464
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/23584?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Beidhändigkeits-Spezialisierung",
+                  "id": 23584
+                },
+                "description": "Erhöht den von Eurer Schildhand angerichteten Schaden um 15% und die durch Angriffe mit Eurer Schildhand erzeugte Wut um 30%.",
+                "cast_time": "Passiv"
+              }
+            }
+          },
+          {
+            "rank": 4,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135464?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Beidhändigkeits-Spezialisierung",
+                "id": 135464
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/23584?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Beidhändigkeits-Spezialisierung",
+                  "id": 23584
+                },
+                "description": "Erhöht den von Eurer Schildhand angerichteten Schaden um 20% und die durch Angriffe mit Eurer Schildhand erzeugte Wut um 40%.",
+                "cast_time": "Passiv"
+              }
+            }
+          },
+          {
+            "rank": 5,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135464?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Beidhändigkeits-Spezialisierung",
+                "id": 135464
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/23584?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Beidhändigkeits-Spezialisierung",
+                  "id": 23584
+                },
+                "description": "Erhöht den von Eurer Schildhand angerichteten Schaden um 25% und die durch Angriffe mit Eurer Schildhand erzeugte Wut um 50%.",
+                "cast_time": "Passiv"
+              }
+            }
+          }
+        ],
+        "display_row": 4,
+        "display_col": 7,
+        "raw_position_x": 5020,
+        "raw_position_y": 3930
+      },
+      {
+        "id": 105934,
+        "unlocks": [
+          113569
+        ],
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135465?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Blutwahnsinn",
+                "id": 135465
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/16487?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Blutwahnsinn",
+                  "id": 16487
+                },
+                "description": "Stellt im Verlauf von 6 Sek. 1% Eurer Gesundheit wieder her, nachdem Ihr Opfer eines kritischen Treffers wurdet oder mehr als 20% Eurer maximalen Gesundheit durch einen Angriff verloren habt.",
+                "cast_time": "Passiv"
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135465?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Blutwahnsinn",
+                "id": 135465
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/16487?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Blutwahnsinn",
+                  "id": 16487
+                },
+                "description": "Stellt im Verlauf von 6 Sek. 2% Eurer Gesundheit wieder her, nachdem Ihr Opfer eines kritischen Treffers wurdet oder mehr als 20% Eurer maximalen Gesundheit durch einen Angriff verloren habt.",
+                "cast_time": "Passiv"
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135465?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Blutwahnsinn",
+                "id": 135465
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/16487?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Blutwahnsinn",
+                  "id": 16487
+                },
+                "description": "Stellt im Verlauf von 6 Sek. 3% Eurer Gesundheit wieder her, nachdem Ihr Opfer eines kritischen Treffers wurdet oder mehr als 20% Eurer maximalen Gesundheit durch einen Angriff verloren habt.",
+                "cast_time": "Passiv"
+              }
+            }
+          }
+        ],
+        "display_row": 3,
+        "display_col": 9,
+        "raw_position_x": 6220,
+        "raw_position_y": 3330
+      },
+      {
+        "id": 105935,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135466?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Durchdringendes Heulen",
+                "id": 135466
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12323?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Durchdringendes Heulen",
+                  "id": 12323
+                },
+                "description": "Macht 6 Sek. lang alle Gegner innerhalb von 10 Metern benommen und verlangsamt ihr Bewegungstempo um 50%.",
+                "cast_time": "Sofort",
+                "power_cost": "10 Wut"
+              }
+            }
+          }
+        ],
+        "display_row": 3,
+        "display_col": 8,
+        "raw_position_x": 5620,
+        "raw_position_y": 3330
+      },
+      {
+        "id": 105937,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135468?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Entfesselter Zorn",
+                "id": 135468
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12322?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Entfesselter Zorn",
+                  "id": 12322
+                },
+                "description": "Gewährt Euch eine Chance von 12%, 1 zusätzliche Wut zu generieren, wenn Ihr Nahkampfschaden zufügt.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135468?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Entfesselter Zorn",
+                "id": 135468
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12322?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Entfesselter Zorn",
+                  "id": 12322
+                },
+                "description": "Gewährt Euch eine Chance von 24%, 1 zusätzliche Wut zu generieren, wenn Ihr Nahkampfschaden zufügt.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135468?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Entfesselter Zorn",
+                "id": 135468
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12322?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Entfesselter Zorn",
+                  "id": 12322
+                },
+                "description": "Gewährt Euch eine Chance von 36%, 1 zusätzliche Wut zu generieren, wenn Ihr Nahkampfschaden zufügt.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 4,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135468?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Entfesselter Zorn",
+                "id": 135468
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12322?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Entfesselter Zorn",
+                  "id": 12322
+                },
+                "description": "Gewährt Euch eine Chance von 48%, 1 zusätzliche Wut zu generieren, wenn Ihr Nahkampfschaden zufügt.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 5,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135468?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Entfesselter Zorn",
+                "id": 135468
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12322?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Entfesselter Zorn",
+                  "id": 12322
+                },
+                "description": "Gewährt Euch eine Chance von 60%, 1 zusätzliche Wut zu generieren, wenn Ihr Nahkampfschaden zufügt.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 2,
+        "display_col": 9,
+        "raw_position_x": 6220,
+        "raw_position_y": 2730
+      },
+      {
+        "id": 105938,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135469?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Donnernde Stimme",
+                "id": 135469
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12321?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Donnernde Stimme",
+                  "id": 12321
+                },
+                "description": "Erhöht den Effektbereich Eurer Rufe um 10% und verringert die Wutkosten Eurer Rufe und Heuler um 5%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135469?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Donnernde Stimme",
+                "id": 135469
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12321?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Donnernde Stimme",
+                  "id": 12321
+                },
+                "description": "Erhöht den Effektbereich Eurer Rufe um 20% und verringert die Wutkosten Eurer Rufe und Heuler um 10%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135469?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Donnernde Stimme",
+                "id": 135469
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12321?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Donnernde Stimme",
+                  "id": 12321
+                },
+                "description": "Erhöht den Effektbereich Eurer Rufe um 30% und verringert die Wutkosten Eurer Rufe und Heuler um 15%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 4,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135469?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Donnernde Stimme",
+                "id": 135469
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12321?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Donnernde Stimme",
+                  "id": 12321
+                },
+                "description": "Erhöht den Effektbereich Eurer Rufe um 40% und verringert die Wutkosten Eurer Rufe und Heuler um 20%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 5,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135469?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Donnernde Stimme",
+                "id": 135469
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12321?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Donnernde Stimme",
+                  "id": 12321
+                },
+                "description": "Erhöht den Effektbereich Eurer Rufe um 50% und verringert die Wutkosten Eurer Rufe und Heuler um 25%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 1,
+        "display_col": 8,
+        "raw_position_x": 5620,
+        "raw_position_y": 2130
+      },
+      {
+        "id": 105939,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135470?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Grausamkeit",
+                "id": 135470
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12320?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Grausamkeit",
+                  "id": 12320
+                },
+                "description": "Erhöht Eure kritische Trefferchance mit Nahkampfangriffen um 1%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135470?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Grausamkeit",
+                "id": 135470
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12320?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Grausamkeit",
+                  "id": 12320
+                },
+                "description": "Erhöht Eure kritische Trefferchance mit Nahkampfangriffen um 2%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135470?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Grausamkeit",
+                "id": 135470
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12320?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Grausamkeit",
+                  "id": 12320
+                },
+                "description": "Erhöht Eure kritische Trefferchance mit Nahkampfangriffen um 3%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 4,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135470?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Grausamkeit",
+                "id": 135470
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12320?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Grausamkeit",
+                  "id": 12320
+                },
+                "description": "Erhöht Eure kritische Trefferchance mit Nahkampfangriffen um 4%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 5,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135470?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Grausamkeit",
+                "id": 135470
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12320?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Grausamkeit",
+                  "id": 12320
+                },
+                "description": "Erhöht Eure kritische Trefferchance mit Nahkampfangriffen um 5%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 1,
+        "display_col": 9,
+        "raw_position_x": 6220,
+        "raw_position_y": 2130
+      },
+      {
+        "id": 105941,
+        "locked_by": [
+          105945
+        ],
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135472?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Tödlicher Stoß",
+                "id": 135472
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12294?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Tödlicher Stoß",
+                  "id": 12294
+                },
+                "description": "Ein heimtückischer Stoß, der Waffenschaden plus 85 verursacht und das Ziel verwundet sowie die Wirksamkeit jeglicher Heilung 10 Sek. lang um 50% verringert.",
+                "cast_time": "Sofort",
+                "power_cost": "30 Wut",
+                "range": "Nahkampfreichweite",
+                "cooldown": "6 Sek. Abklingzeit"
+              }
+            }
+          }
+        ],
+        "display_row": 7,
+        "display_col": 2,
+        "raw_position_x": 1620,
+        "raw_position_y": 5730
+      },
+      {
+        "id": 105942,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135473?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserte Kniesehne",
+                "id": 135473
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12289?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserte Kniesehne",
+                  "id": 12289
+                },
+                "description": "Gewährt Eurer Fähigkeit 'Kniesehne' eine Chance von 5%, das Ziel 5 Sek. lang bewegungsunfähig zu machen.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135473?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserte Kniesehne",
+                "id": 135473
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12289?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserte Kniesehne",
+                  "id": 12289
+                },
+                "description": "Gewährt Eurer Fähigkeit 'Kniesehne' eine Chance von 10%, das Ziel 5 Sek. lang bewegungsunfähig zu machen.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135473?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserte Kniesehne",
+                "id": 135473
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12289?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserte Kniesehne",
+                  "id": 12289
+                },
+                "description": "Gewährt Eurer Fähigkeit 'Kniesehne' eine Chance von 15%, das Ziel 5 Sek. lang bewegungsunfähig zu machen.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 6,
+        "display_col": 3,
+        "raw_position_x": 2220,
+        "raw_position_y": 5130
+      },
+      {
+        "id": 105944,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135475?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Waffenmeister",
+                "id": 135475
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/1290261?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Waffenmeister",
+                  "id": 1290261
+                },
+                "description": "Gewährt Euren Nahkampfangriffen einen von der Waffe abhängigen Vorteil.\r\n\r\n    Axt/Stangenwaffe: Erhöht Eure\r\n    kritische Trefferchance um 1%.\r\n\r\n    Streitkolben/Stab: Eure Angriffe ignorieren\r\n    3% der Rüstung des Ziels.\r\n\r\n    Schwert: Eure erfolgreichen Nahkampfangriffe \r\n    haben eine Chance von 1%, \r\n    einen zusätzlichen Angriff auf \r\n    das Ziel auszulösen.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135475?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Waffenmeister",
+                "id": 135475
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/1290261?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Waffenmeister",
+                  "id": 1290261
+                },
+                "description": "Gewährt Euren Nahkampfangriffen einen von der Waffe abhängigen Vorteil.\r\n\r\n    Axt/Stangenwaffe: Erhöht Eure\r\n    kritische Trefferchance um 2%.\r\n\r\n    Streitkolben/Stab: Eure Angriffe ignorieren\r\n    6% der Rüstung des Ziels.\r\n\r\n    Schwert: Eure erfolgreichen Nahkampfangriffe \r\n    haben eine Chance von 2%, \r\n    einen zusätzlichen Angriff auf \r\n    das Ziel auszulösen.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135475?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Waffenmeister",
+                "id": 135475
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/1290261?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Waffenmeister",
+                  "id": 1290261
+                },
+                "description": "Gewährt Euren Nahkampfangriffen einen von der Waffe abhängigen Vorteil.\r\n\r\n    Axt/Stangenwaffe: Erhöht Eure\r\n    kritische Trefferchance um 3%.\r\n\r\n    Streitkolben/Stab: Eure Angriffe ignorieren\r\n    9% der Rüstung des Ziels.\r\n\r\n    Schwert: Eure erfolgreichen Nahkampfangriffe \r\n    haben eine Chance von 3%, \r\n    einen zusätzlichen Angriff auf \r\n    das Ziel auszulösen.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 4,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135475?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Waffenmeister",
+                "id": 135475
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/1290261?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Waffenmeister",
+                  "id": 1290261
+                },
+                "description": "Gewährt Euren Nahkampfangriffen einen von der Waffe abhängigen Vorteil.\r\n\r\n    Axt/Stangenwaffe: Erhöht Eure\r\n    kritische Trefferchance um 4%.\r\n\r\n    Streitkolben/Stab: Eure Angriffe ignorieren\r\n    12% der Rüstung des Ziels.\r\n\r\n    Schwert: Eure erfolgreichen Nahkampfangriffe \r\n    haben eine Chance von 4%, \r\n    einen zusätzlichen Angriff auf \r\n    das Ziel auszulösen.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 5,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135475?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Waffenmeister",
+                "id": 135475
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/1290261?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Waffenmeister",
+                  "id": 1290261
+                },
+                "description": "Gewährt Euren Nahkampfangriffen einen von der Waffe abhängigen Vorteil.\r\n\r\n    Axt/Stangenwaffe: Erhöht Eure\r\n    kritische Trefferchance um 5%.\r\n\r\n    Streitkolben/Stab: Eure Angriffe ignorieren\r\n    15% der Rüstung des Ziels.\r\n\r\n    Schwert: Eure erfolgreichen Nahkampfangriffe \r\n    haben eine Chance von 5%, \r\n    einen zusätzlichen Angriff auf \r\n    das Ziel auszulösen.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 5,
+        "display_col": 3,
+        "raw_position_x": 2220,
+        "raw_position_y": 4530
+      },
+      {
+        "id": 105945,
+        "unlocks": [
+          105941
+        ],
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135476?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Weitreichende Stöße",
+                "id": 135476
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12292?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Weitreichende Stöße",
+                  "id": 12292
+                },
+                "description": "Eure nächsten 5 Nahkampfangriffe treffen einen weiteren in der Nähe befindlichen Gegner.",
+                "cast_time": "Sofort",
+                "power_cost": "30 Wut",
+                "cooldown": "30 Sek. Abklingzeit"
+              }
+            }
+          }
+        ],
+        "display_row": 5,
+        "display_col": 2,
+        "raw_position_x": 1620,
+        "raw_position_y": 4530
+      },
+      {
+        "id": 105947,
+        "locked_by": [
+          105950
+        ],
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135478?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Durchbohren",
+                "id": 135478
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/16493?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Durchbohren",
+                  "id": 16493
+                },
+                "description": "Erhöht den kritischen Schadensbonus Eurer Fähigkeiten um 10%.",
+                "cast_time": "Passiv"
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135478?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Durchbohren",
+                "id": 135478
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/16493?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Durchbohren",
+                  "id": 16493
+                },
+                "description": "Erhöht den kritischen Schadensbonus Eurer Fähigkeiten um 20%.",
+                "cast_time": "Passiv"
+              }
+            }
+          }
+        ],
+        "display_row": 4,
+        "display_col": 3,
+        "raw_position_x": 2220,
+        "raw_position_y": 3930
+      },
+      {
+        "id": 105948,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135479?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Zweihandwaffen-Spezialisierung",
+                "id": 135479
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12163?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Zweihandwaffen-Spezialisierung",
+                  "id": 12163
+                },
+                "description": "Erhöht den Schaden, den Ihr mit Zweihand-Nahkampfwaffen zufügt, um 2%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135479?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Zweihandwaffen-Spezialisierung",
+                "id": 135479
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12163?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Zweihandwaffen-Spezialisierung",
+                  "id": 12163
+                },
+                "description": "Erhöht den Schaden, den Ihr mit Zweihand-Nahkampfwaffen zufügt, um 4%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135479?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Zweihandwaffen-Spezialisierung",
+                "id": 135479
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12163?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Zweihandwaffen-Spezialisierung",
+                  "id": 12163
+                },
+                "description": "Erhöht den Schaden, den Ihr mit Zweihand-Nahkampfwaffen zufügt, um 6%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 4,
+        "display_col": 2,
+        "raw_position_x": 1620,
+        "raw_position_y": 3930
+      },
+      {
+        "id": 105949,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135480?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Aufspießender Stoß",
+                "id": 135480
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/1310222?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Aufspießender Stoß",
+                  "id": 1310222
+                },
+                "description": "Ein brutaler Angriff, der 75% Waffenschaden verursacht. Fügt Riesen, Drachkin und berittenen Zielen zusätzlich 75% Waffenschaden zu. Berittene Ziele werden vom Reittier geholt.",
+                "cast_time": "Sofort",
+                "power_cost": "15 Wut",
+                "range": "Nahkampfreichweite",
+                "cooldown": "20 Sek. Abklingzeit"
+              }
+            }
+          }
+        ],
+        "display_row": 4,
+        "display_col": 1,
+        "raw_position_x": 1020,
+        "raw_position_y": 3930
+      },
+      {
+        "id": 105950,
+        "locked_by": [
+          105956
+        ],
+        "unlocks": [
+          105947
+        ],
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135481?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Tiefe Wunden",
+                "id": 135481
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12834?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Tiefe Wunden",
+                  "id": 12834
+                },
+                "description": "Eure kritischen Treffer lassen Euren Gegner bluten und verursachen im Verlauf von 12 Sek. 20% des durchschnittlichen Schadens Eurer Nahkampfwaffe.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135481?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Tiefe Wunden",
+                "id": 135481
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12834?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Tiefe Wunden",
+                  "id": 12834
+                },
+                "description": "Eure kritischen Treffer lassen Euren Gegner bluten und verursachen im Verlauf von 12 Sek. 40% des durchschnittlichen Schadens Eurer Nahkampfwaffe.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135481?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Tiefe Wunden",
+                "id": 135481
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12834?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Tiefe Wunden",
+                  "id": 12834
+                },
+                "description": "Eure kritischen Treffer lassen Euren Gegner bluten und verursachen im Verlauf von 12 Sek. 60% des durchschnittlichen Schadens Eurer Nahkampfwaffe.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 3,
+        "display_col": 3,
+        "raw_position_x": 2220,
+        "raw_position_y": 3330
+      },
+      {
+        "id": 105951,
+        "locked_by": [
+          105954
+        ],
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135482?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Aggressionskontrolle",
+                "id": 135482
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12296?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Aggressionskontrolle",
+                  "id": 12296
+                },
+                "description": "Erzeugt während des Kampfes alle 3 Sek. 1 Wut und verringert den Wutverlust außerhalb des Kampfes um 30%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 3,
+        "display_col": 2,
+        "raw_position_x": 1620,
+        "raw_position_y": 3330
+      },
+      {
+        "id": 105952,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135483?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbessertes Überwältigen",
+                "id": 135483
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12290?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbessertes Überwältigen",
+                  "id": 12290
+                },
+                "description": "Erhöht die Chance auf einen kritischen Treffer mit Eurer Fähigkeit 'Überwältigen' um 25%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135483?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbessertes Überwältigen",
+                "id": 135483
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12290?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbessertes Überwältigen",
+                  "id": 12290
+                },
+                "description": "Erhöht die Chance auf einen kritischen Treffer mit Eurer Fähigkeit 'Überwältigen' um 50%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 2,
+        "display_col": 4,
+        "raw_position_x": 2820,
+        "raw_position_y": 2730
+      },
+      {
+        "id": 105953,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135484?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Zornige Präzision",
+                "id": 135484
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/1323963?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Zornige Präzision",
+                  "id": 1323963
+                },
+                "description": "Erhöht Eure Chance auf Treffer bei Angriffen mit Eurer Schildhand um 4%.",
+                "cast_time": "Passiv"
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135484?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Zornige Präzision",
+                "id": 135484
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/1323963?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Zornige Präzision",
+                  "id": 1323963
+                },
+                "description": "Erhöht Eure Chance auf Treffer bei Angriffen mit Eurer Schildhand um 7%.",
+                "cast_time": "Passiv"
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135484?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Zornige Präzision",
+                "id": 135484
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/1323963?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Zornige Präzision",
+                  "id": 1323963
+                },
+                "description": "Erhöht Eure Chance auf Treffer bei Angriffen mit Eurer Schildhand um 10%.",
+                "cast_time": "Passiv"
+              }
+            }
+          }
+        ],
+        "display_row": 3,
+        "display_col": 7,
+        "raw_position_x": 5020,
+        "raw_position_y": 3330
+      },
+      {
+        "id": 105954,
+        "unlocks": [
+          105951
+        ],
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135485?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserter Taktiker",
+                "id": 135485
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12295?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserter Taktiker",
+                  "id": 12295
+                },
+                "description": "'Taktiker' lässt Euch bis zu 5 mehr Wut behalten, wenn Ihr die Haltung ändert.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135485?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserter Taktiker",
+                "id": 135485
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12295?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserter Taktiker",
+                  "id": 12295
+                },
+                "description": "'Taktiker' lässt Euch bis zu 10 mehr Wut behalten, wenn Ihr die Haltung ändert.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135485?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserter Taktiker",
+                "id": 135485
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12295?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserter Taktiker",
+                  "id": 12295
+                },
+                "description": "'Taktiker' lässt Euch bis zu 15 mehr Wut behalten, wenn Ihr die Haltung ändert.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 2,
+        "display_col": 2,
+        "raw_position_x": 1620,
+        "raw_position_y": 2730
+      },
+      {
+        "id": 105955,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135486?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserter Sturmangriff",
+                "id": 135486
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12285?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserter Sturmangriff",
+                  "id": 12285
+                },
+                "description": "Erhöht die durch Eure Fähigkeit 'Sturmangriff' erzeugte Wut um 3.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135486?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserter Sturmangriff",
+                "id": 135486
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12285?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserter Sturmangriff",
+                  "id": 12285
+                },
+                "description": "Erhöht die durch Eure Fähigkeit 'Sturmangriff' erzeugte Wut um 6.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 2,
+        "display_col": 1,
+        "raw_position_x": 1020,
+        "raw_position_y": 2730
+      },
+      {
+        "id": 105956,
+        "unlocks": [
+          105950
+        ],
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135487?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbessertes Verwunden",
+                "id": 135487
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12286?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbessertes Verwunden",
+                  "id": 12286
+                },
+                "description": "Erhöht den verursachten Blutungsschaden Eurer Fähigkeit 'Verwunden' um 12%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135487?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbessertes Verwunden",
+                "id": 135487
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12286?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbessertes Verwunden",
+                  "id": 12286
+                },
+                "description": "Erhöht den verursachten Blutungsschaden Eurer Fähigkeit 'Verwunden' um 23%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135487?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbessertes Verwunden",
+                "id": 135487
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12286?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbessertes Verwunden",
+                  "id": 12286
+                },
+                "description": "Erhöht den verursachten Blutungsschaden Eurer Fähigkeit 'Verwunden' um 35%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 1,
+        "display_col": 3,
+        "raw_position_x": 2220,
+        "raw_position_y": 2130
+      },
+      {
+        "id": 105957,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135488?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Abwehr",
+                "id": 135488
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/16462?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Abwehr",
+                  "id": 16462
+                },
+                "description": "Erhöht Eure Parierchance um 1%.",
+                "cast_time": "Passiv"
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135488?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Abwehr",
+                "id": 135488
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/16462?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Abwehr",
+                  "id": 16462
+                },
+                "description": "Erhöht Eure Parierchance um 2%.",
+                "cast_time": "Passiv"
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135488?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Abwehr",
+                "id": 135488
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/16462?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Abwehr",
+                  "id": 16462
+                },
+                "description": "Erhöht Eure Parierchance um 3%.",
+                "cast_time": "Passiv"
+              }
+            }
+          },
+          {
+            "rank": 4,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135488?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Abwehr",
+                "id": 135488
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/16462?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Abwehr",
+                  "id": 16462
+                },
+                "description": "Erhöht Eure Parierchance um 4%.",
+                "cast_time": "Passiv"
+              }
+            }
+          },
+          {
+            "rank": 5,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135488?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Abwehr",
+                "id": 135488
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/16462?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Abwehr",
+                  "id": 16462
+                },
+                "description": "Erhöht Eure Parierchance um 5%.",
+                "cast_time": "Passiv"
+              }
+            }
+          }
+        ],
+        "display_row": 1,
+        "display_col": 2,
+        "raw_position_x": 1620,
+        "raw_position_y": 2130
+      },
+      {
+        "id": 105958,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135489?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserter heldenhafter Stoß",
+                "id": 135489
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12282?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserter heldenhafter Stoß",
+                  "id": 12282
+                },
+                "description": "Verringert die Kosten Eurer Fähigkeit 'Heldenhafter Stoß' um 1 Wut.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135489?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserter heldenhafter Stoß",
+                "id": 135489
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12282?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserter heldenhafter Stoß",
+                  "id": 12282
+                },
+                "description": "Verringert die Kosten Eurer Fähigkeit 'Heldenhafter Stoß' um 2 Wut.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135489?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserter heldenhafter Stoß",
+                "id": 135489
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12282?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserter heldenhafter Stoß",
+                  "id": 12282
+                },
+                "description": "Verringert die Kosten Eurer Fähigkeit 'Heldenhafter Stoß' um 3 Wut.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 1,
+        "display_col": 1,
+        "raw_position_x": 1020,
+        "raw_position_y": 2130
+      },
+      {
+        "id": 105959,
+        "locked_by": [
+          105965
+        ],
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135490?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Schildschlag",
+                "id": 135490
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/23922?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Schildschlag",
+                  "id": 23922
+                },
+                "description": "Verpasst dem Ziel einen heftigen Schlag mit Eurem Schild und verursacht 421 bis 439 Schaden, der durch Euren Blockwert erhöht wird. Zusätzlich besteht eine Chance von 50%, 1 magischen Effekt des Ziels zu bannen. Erzeugt ein sehr hohes Maß an Bedrohung.",
+                "cast_time": "Sofort",
+                "power_cost": "20 Wut",
+                "range": "Nahkampfreichweite",
+                "cooldown": "6 Sek. Abklingzeit"
+              }
+            }
+          }
+        ],
+        "display_row": 7,
+        "display_col": 15,
+        "raw_position_x": 9680,
+        "raw_position_y": 5730
+      },
+      {
+        "id": 105961,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135492?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Fokussierte Wut",
+                "id": 135492
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/29787?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Fokussierte Wut",
+                  "id": 29787
+                },
+                "description": "Verringert die Wutkosten aller Angriffsfähigkeiten um 1.",
+                "cast_time": "Passiv"
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135492?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Fokussierte Wut",
+                "id": 135492
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/29787?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Fokussierte Wut",
+                  "id": 29787
+                },
+                "description": "Verringert die Wutkosten aller Angriffsfähigkeiten um 2.",
+                "cast_time": "Passiv"
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135492?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Fokussierte Wut",
+                "id": 135492
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/29787?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Fokussierte Wut",
+                  "id": 29787
+                },
+                "description": "Verringert die Wutkosten aller Angriffsfähigkeiten um 3.",
+                "cast_time": "Passiv"
+              }
+            }
+          }
+        ],
+        "display_row": 5,
+        "display_col": 16,
+        "raw_position_x": 10280,
+        "raw_position_y": 4530
+      },
+      {
+        "id": 105962,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135493?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Bastion",
+                "id": 135493
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/16538?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Bastion",
+                  "id": 16538
+                },
+                "description": "Erhöht Euren gesamten verursachten Schaden um 2%, während ein Schild ausgerüstet ist.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135493?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Bastion",
+                "id": 135493
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/16538?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Bastion",
+                  "id": 16538
+                },
+                "description": "Erhöht Euren gesamten verursachten Schaden um 4%, während ein Schild ausgerüstet ist.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135493?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Bastion",
+                "id": 135493
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/16538?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Bastion",
+                  "id": 16538
+                },
+                "description": "Erhöht Euren gesamten verursachten Schaden um 6%, während ein Schild ausgerüstet ist.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 4,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135493?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Bastion",
+                "id": 135493
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/16538?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Bastion",
+                  "id": 16538
+                },
+                "description": "Erhöht Euren gesamten verursachten Schaden um 8%, während ein Schild ausgerüstet ist.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 5,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135493?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Bastion",
+                "id": 135493
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/16538?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Bastion",
+                  "id": 16538
+                },
+                "description": "Erhöht Euren gesamten verursachten Schaden um 10%, während ein Schild ausgerüstet ist.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 6,
+        "display_col": 16,
+        "raw_position_x": 10280,
+        "raw_position_y": 5130
+      },
+      {
+        "id": 105963,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135494?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserter Schildhieb",
+                "id": 135494
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12311?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserter Schildhieb",
+                  "id": 12311
+                },
+                "description": "Gewährt Eurer Fähigkeit 'Schildhieb' eine Chance von 50%, das Ziel 3 Sek. lang zum Schweigen zu bringen.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135494?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserter Schildhieb",
+                "id": 135494
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12311?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserter Schildhieb",
+                  "id": 12311
+                },
+                "description": "Gewährt Eurer Fähigkeit 'Schildhieb' eine Chance von 100%, das Ziel 3 Sek. lang zum Schweigen zu bringen.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 4,
+        "display_col": 16,
+        "raw_position_x": 10280,
+        "raw_position_y": 3930
+      },
+      {
+        "id": 105964,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135495?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserter Schildwall",
+                "id": 135495
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12312?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserter Schildwall",
+                  "id": 12312
+                },
+                "description": "Verringert die Abklingzeit Eurer Fähigkeit 'Schildwall' um 5,5 Min.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135495?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserter Schildwall",
+                "id": 135495
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12312?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserter Schildwall",
+                  "id": 12312
+                },
+                "description": "Verringert die Abklingzeit Eurer Fähigkeit 'Schildwall' um 11,0 Min.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 5,
+        "display_col": 14,
+        "raw_position_x": 9080,
+        "raw_position_y": 4530
+      },
+      {
+        "id": 105965,
+        "unlocks": [
+          105959
+        ],
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135496?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Erschütternder Schlag",
+                "id": 135496
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12809?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Erschütternder Schlag",
+                  "id": 12809
+                },
+                "description": "Betäubt das Ziel 5 Sek. lang.",
+                "cast_time": "Sofort",
+                "power_cost": "10 Wut",
+                "range": "Nahkampfreichweite",
+                "cooldown": "45 Sek. Abklingzeit"
+              }
+            }
+          }
+        ],
+        "display_row": 5,
+        "display_col": 15,
+        "raw_position_x": 9680,
+        "raw_position_y": 4530
+      },
+      {
+        "id": 105966,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135497?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Frontkämpfer",
+                "id": 135497
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/1310317?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Frontkämpfer",
+                  "id": 1310317
+                },
+                "description": "Eure Fähigkeit 'Sturmangriff' kann jetzt aus der Verteidigungshaltung eingesetzt werden.",
+                "cast_time": "Passiv"
+              }
+            }
+          }
+        ],
+        "display_row": 4,
+        "display_col": 15,
+        "raw_position_x": 9680,
+        "raw_position_y": 3930
+      },
+      {
+        "id": 105967,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135498?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbessertes Entwaffnen",
+                "id": 135498
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12313?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbessertes Entwaffnen",
+                  "id": 12313
+                },
+                "description": "Verringert die Abklingzeit Eurer Fähigkeit 'Entwaffnen' um 7 Sek.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135498?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbessertes Entwaffnen",
+                "id": 135498
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12313?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbessertes Entwaffnen",
+                  "id": 12313
+                },
+                "description": "Verringert die Abklingzeit Eurer Fähigkeit 'Entwaffnen' um 13 Sek.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135498?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbessertes Entwaffnen",
+                "id": 135498
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12313?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbessertes Entwaffnen",
+                  "id": 12313
+                },
+                "description": "Verringert die Abklingzeit Eurer Fähigkeit 'Entwaffnen' um 20 Sek.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 3,
+        "display_col": 16,
+        "raw_position_x": 10280,
+        "raw_position_y": 3330
+      },
+      {
+        "id": 105968,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135499?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbessertes Rüstung zerreißen",
+                "id": 135499
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12308?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbessertes Rüstung zerreißen",
+                  "id": 12308
+                },
+                "description": "Verringert die Wutkosten Eurer Fähigkeit 'Rüstung zerreißen' um 1.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135499?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbessertes Rüstung zerreißen",
+                "id": 135499
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12308?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbessertes Rüstung zerreißen",
+                  "id": 12308
+                },
+                "description": "Verringert die Wutkosten Eurer Fähigkeit 'Rüstung zerreißen' um 2.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135499?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbessertes Rüstung zerreißen",
+                "id": 135499
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12308?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbessertes Rüstung zerreißen",
+                  "id": 12308
+                },
+                "description": "Verringert die Wutkosten Eurer Fähigkeit 'Rüstung zerreißen' um 3.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 4,
+        "display_col": 14,
+        "raw_position_x": 9080,
+        "raw_position_y": 3930
+      },
+      {
+        "id": 105969,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135500?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserte Rache",
+                "id": 135500
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12797?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserte Rache",
+                  "id": 12797
+                },
+                "description": "Erhöht den verursachten Schaden Eurer Fähigkeit 'Rache' um 20%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135500?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserte Rache",
+                "id": 135500
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12797?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserte Rache",
+                  "id": 12797
+                },
+                "description": "Erhöht den verursachten Schaden Eurer Fähigkeit 'Rache' um 40%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135500?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserte Rache",
+                "id": 135500
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12797?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserte Rache",
+                  "id": 12797
+                },
+                "description": "Erhöht den verursachten Schaden Eurer Fähigkeit 'Rache' um 60%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 2,
+        "display_col": 16,
+        "raw_position_x": 10280,
+        "raw_position_y": 2730
+      },
+      {
+        "id": 105970,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135501?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Letztes Gefecht",
+                "id": 135501
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12975?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Letztes Gefecht",
+                  "id": 12975
+                },
+                "description": "Bei Aktivierung gewährt diese Fähigkeit Euch 20 Sek. lang 30% Eurer maximalen Gesundheit. Nachdem der Effekt endet, geht die Gesundheit verloren.",
+                "cast_time": "Sofort",
+                "power_cost": null,
+                "cooldown": "3 Min. Abklingzeit"
+              }
+            }
+          }
+        ],
+        "display_row": 3,
+        "display_col": 14,
+        "raw_position_x": 9080,
+        "raw_position_y": 3330
+      },
+      {
+        "id": 105971,
+        "locked_by": [
+          105976
+        ],
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135502?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Meister der Verteidigung",
+                "id": 135502
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/1310316?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Meister der Verteidigung",
+                  "id": 1310316
+                },
+                "description": "Gewährt Euch eine Chance von 50%, 5 Wut zu erzeugen, wenn Ihr ausweicht oder pariert, während Ihr einen Schild ausgerüstet habt.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135502?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Meister der Verteidigung",
+                "id": 135502
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/1310316?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Meister der Verteidigung",
+                  "id": 1310316
+                },
+                "description": "Gewährt Euch eine Chance von 100%, 5 Wut zu erzeugen, wenn Ihr ausweicht oder pariert, während Ihr einen Schild ausgerüstet habt.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 3,
+        "display_col": 15,
+        "raw_position_x": 9680,
+        "raw_position_y": 3330
+      },
+      {
+        "id": 105972,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135503?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserter Donnerknall",
+                "id": 135503
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12287?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserter Donnerknall",
+                  "id": 12287
+                },
+                "description": "Verringert die Wutkosten Eurer Fähigkeit 'Donnerknall' um 2.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135503?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserter Donnerknall",
+                "id": 135503
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12287?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserter Donnerknall",
+                  "id": 12287
+                },
+                "description": "Verringert die Wutkosten Eurer Fähigkeit 'Donnerknall' um 4.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135503?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserter Donnerknall",
+                "id": 135503
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12287?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserter Donnerknall",
+                  "id": 12287
+                },
+                "description": "Verringert die Wutkosten Eurer Fähigkeit 'Donnerknall' um 6.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 2,
+        "display_col": 17,
+        "raw_position_x": 10880,
+        "raw_position_y": 2730
+      },
+      {
+        "id": 105974,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135505?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserter Blutrausch",
+                "id": 135505
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12301?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserter Blutrausch",
+                  "id": 12301
+                },
+                "description": "Erhöht die gesamte durch Eure Fähigkeit 'Blutrausch' erzeugte Wut um 25%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135505?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserter Blutrausch",
+                "id": 135505
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12301?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserter Blutrausch",
+                  "id": 12301
+                },
+                "description": "Erhöht die gesamte durch Eure Fähigkeit 'Blutrausch' erzeugte Wut um 50%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 1,
+        "display_col": 14,
+        "raw_position_x": 9080,
+        "raw_position_y": 2130
+      },
+      {
+        "id": 105975,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135506?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Vorahnung",
+                "id": 135506
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12297?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Vorahnung",
+                  "id": 12297
+                },
+                "description": "Erhöht Eure Verteidigungsfertigkeit um 4.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135506?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Vorahnung",
+                "id": 135506
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12297?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Vorahnung",
+                  "id": 12297
+                },
+                "description": "Erhöht Eure Verteidigungsfertigkeit um 8.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135506?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Vorahnung",
+                "id": 135506
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12297?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Vorahnung",
+                  "id": 12297
+                },
+                "description": "Erhöht Eure Verteidigungsfertigkeit um 12.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 4,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135506?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Vorahnung",
+                "id": 135506
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12297?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Vorahnung",
+                  "id": 12297
+                },
+                "description": "Erhöht Eure Verteidigungsfertigkeit um 16.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 5,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135506?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Vorahnung",
+                "id": 135506
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12297?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Vorahnung",
+                  "id": 12297
+                },
+                "description": "Erhöht Eure Verteidigungsfertigkeit um 20.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 2,
+        "display_col": 14,
+        "raw_position_x": 9080,
+        "raw_position_y": 2730
+      },
+      {
+        "id": 105976,
+        "unlocks": [
+          105971
+        ],
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135507?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Schild-Spezialisierung",
+                "id": 135507
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12298?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Schild-Spezialisierung",
+                  "id": 12298
+                },
+                "description": "Erhöht Eure Chance, Angriffe mit Eurem Schild zu blocken, um 1%, und gewährt Euch eine Chance von 20%, 5 Wut zu erzeugen, wenn Ihr blockt.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135507?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Schild-Spezialisierung",
+                "id": 135507
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12298?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Schild-Spezialisierung",
+                  "id": 12298
+                },
+                "description": "Erhöht Eure Chance, Angriffe mit Eurem Schild zu blocken, um 2%, und gewährt Euch eine Chance von 40%, 5 Wut zu erzeugen, wenn Ihr blockt.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135507?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Schild-Spezialisierung",
+                "id": 135507
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12298?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Schild-Spezialisierung",
+                  "id": 12298
+                },
+                "description": "Erhöht Eure Chance, Angriffe mit Eurem Schild zu blocken, um 3%, und gewährt Euch eine Chance von 60%, 5 Wut zu erzeugen, wenn Ihr blockt.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 4,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135507?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Schild-Spezialisierung",
+                "id": 135507
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12298?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Schild-Spezialisierung",
+                  "id": 12298
+                },
+                "description": "Erhöht Eure Chance, Angriffe mit Eurem Schild zu blocken, um 4%, und gewährt Euch eine Chance von 80%, 5 Wut zu erzeugen, wenn Ihr blockt.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 5,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135507?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Schild-Spezialisierung",
+                "id": 135507
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12298?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Schild-Spezialisierung",
+                  "id": 12298
+                },
+                "description": "Erhöht Eure Chance, Angriffe mit Eurem Schild zu blocken, um 5%, und gewährt Euch eine Chance von 100%, 5 Wut zu erzeugen, wenn Ihr blockt.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 1,
+        "display_col": 15,
+        "raw_position_x": 9680,
+        "raw_position_y": 2130
+      },
+      {
+        "id": 105977,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135508?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserter Wirbelwind",
+                "id": 135508
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/1310315?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserter Wirbelwind",
+                  "id": 1310315
+                },
+                "description": "Verringert die Abklingzeit Eurer Fähigkeit 'Wirbelwind' um 1 Sek. und erhöht den Schaden, den sie dem nächststehenden Gegner zufügt, um 15%.",
+                "cast_time": "Passiv"
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135508?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserter Wirbelwind",
+                "id": 135508
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/1310315?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserter Wirbelwind",
+                  "id": 1310315
+                },
+                "description": "Verringert die Abklingzeit Eurer Fähigkeit 'Wirbelwind' um 2 Sek. und erhöht den Schaden, den sie dem nächststehenden Gegner zufügt, um 30%.",
+                "cast_time": "Passiv"
+              }
+            }
+          }
+        ],
+        "display_row": 6,
+        "display_col": 7,
+        "raw_position_x": 5020,
+        "raw_position_y": 5130
+      },
+      {
+        "id": 105978,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135509?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserte Berserkerwut",
+                "id": 135509
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/20500?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserte Berserkerwut",
+                  "id": 20500
+                },
+                "description": "Eure Fähigkeit 'Berserkerwut' erzeugt sofort 5 Wut und hat eine Chance von 50%, bei Aktivierung alle bewegungseinschränkenden Effekte zu entfernen.",
+                "cast_time": "Passiv"
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/135509?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbesserte Berserkerwut",
+                "id": 135509
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/20500?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbesserte Berserkerwut",
+                  "id": 20500
+                },
+                "description": "Eure Fähigkeit 'Berserkerwut' erzeugt sofort 10 Wut und hat eine Chance von 100%, bei Aktivierung alle bewegungseinschränkenden Effekte zu entfernen.",
+                "cast_time": "Passiv"
+              }
+            }
+          }
+        ],
+        "display_row": 5,
+        "display_col": 7,
+        "raw_position_x": 5020,
+        "raw_position_y": 4530
+      },
+      {
+        "id": 110524,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/141974?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Rausch des Blutes",
+                "id": 141974
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/1289682?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Rausch des Blutes",
+                  "id": 1289682
+                },
+                "description": "Gewährt Euren Nahkampfangriffen mit der Waffenhand gegen Gegner, die von Eurer Fähigkeit 'Verwunden' betroffen sind, eine Chance von 10%, eine Anwendung Eurer Fähigkeit 'Überwältigen' gegen das Ziel zu ermöglichen.",
+                "cast_time": "Passiv"
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/141974?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Rausch des Blutes",
+                "id": 141974
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/1289682?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Rausch des Blutes",
+                  "id": 1289682
+                },
+                "description": "Gewährt Euren Nahkampfangriffen mit der Waffenhand gegen Gegner, die von Eurer Fähigkeit 'Verwunden' betroffen sind, eine Chance von 20%, eine Anwendung Eurer Fähigkeit 'Überwältigen' gegen das Ziel zu ermöglichen.",
+                "cast_time": "Passiv"
+              }
+            }
+          }
+        ],
+        "display_row": 5,
+        "display_col": 1,
+        "raw_position_x": 1020,
+        "raw_position_y": 4530
+      },
+      {
+        "id": 110856,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/142602?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Trotz",
+                "id": 142602
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12792?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Trotz",
+                  "id": 12792
+                },
+                "description": "Erhöht die in der Verteidigungshaltung erzeugte Bedrohung um zusätzlich 7%, während ein Schild ausgerüstet ist.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/142602?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Trotz",
+                "id": 142602
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12792?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Trotz",
+                  "id": 12792
+                },
+                "description": "Erhöht die in der Verteidigungshaltung erzeugte Bedrohung um zusätzlich 13%, während ein Schild ausgerüstet ist.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/142602?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Trotz",
+                "id": 142602
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12792?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Trotz",
+                  "id": 12792
+                },
+                "description": "Erhöht die in der Verteidigungshaltung erzeugte Bedrohung um zusätzlich 20%, während ein Schild ausgerüstet ist.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 3,
+        "display_col": 17,
+        "raw_position_x": 10880,
+        "raw_position_y": 3330
+      },
+      {
+        "id": 110857,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/142603?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Schwelende Wut",
+                "id": 142603
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/1323964?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Schwelende Wut",
+                  "id": 1323964
+                },
+                "description": "Erhöht den Zeitraum, für den Wut nach Kampfende erhalten bleibt, um 2 Sek.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/142603?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Schwelende Wut",
+                "id": 142603
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/1323964?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Schwelende Wut",
+                  "id": 1323964
+                },
+                "description": "Erhöht den Zeitraum, für den Wut nach Kampfende erhalten bleibt, um 4 Sek.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/142603?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Schwelende Wut",
+                "id": 142603
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/1323964?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Schwelende Wut",
+                  "id": 1323964
+                },
+                "description": "Erhöht den Zeitraum, für den Wut nach Kampfende erhalten bleibt, um 6 Sek.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 4,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/142603?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Schwelende Wut",
+                "id": 142603
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/1323964?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Schwelende Wut",
+                  "id": 1323964
+                },
+                "description": "Erhöht den Zeitraum, für den Wut nach Kampfende erhalten bleibt, um 8 Sek.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 5,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/142603?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Schwelende Wut",
+                "id": 142603
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/1323964?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Schwelende Wut",
+                  "id": 1323964
+                },
+                "description": "Erhöht den Zeitraum, für den Wut nach Kampfende erhalten bleibt, um 10 Sek.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 2,
+        "display_col": 8,
+        "raw_position_x": 5620,
+        "raw_position_y": 2730
+      },
+      {
+        "id": 110858,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/142604?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbessertes Zerschmettern",
+                "id": 142604
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12862?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbessertes Zerschmettern",
+                  "id": 12862
+                },
+                "description": "Verringert die Abklingzeit Eurer Fähigkeit 'Zerschmettern' um 2,5 Sek. und die globale Abklingzeit und Zauberzeit um 0,25 Sek. Außerdem unterbricht 'Zerschmettern' nicht länger Eure Schwungzeit im Nahkampf.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/142604?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Verbessertes Zerschmettern",
+                "id": 142604
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12862?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Verbessertes Zerschmettern",
+                  "id": 12862
+                },
+                "description": "Verringert die Abklingzeit Eurer Fähigkeit 'Zerschmettern' um 5,0 Sek. und die globale Abklingzeit und Zauberzeit um 0,50 Sek. Außerdem unterbricht 'Zerschmettern' nicht länger Eure Schwungzeit im Nahkampf.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 6,
+        "display_col": 1,
+        "raw_position_x": 1020,
+        "raw_position_y": 5130
+      },
+      {
+        "id": 113569,
+        "locked_by": [
+          105934
+        ],
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/145863?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Blutgier",
+                "id": 145863
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/1323967?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Blutgier",
+                  "id": 1323967
+                },
+                "description": "Eure Fähigkeiten 'Wutanfall', 'Berserkerwut', 'Blutrausch', 'Todeswunsch' und 'Blutdurst' lassen Eure nächsten 3 Nahkampfangriffe 0,5% Eurer maximalen Gesundheit wiederherstellen.",
+                "cast_time": "Passiv"
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/145863?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Blutgier",
+                "id": 145863
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/1323967?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Blutgier",
+                  "id": 1323967
+                },
+                "description": "Eure Fähigkeiten 'Wutanfall', 'Berserkerwut', 'Blutrausch', 'Todeswunsch' und 'Blutdurst' lassen Eure nächsten 3 Nahkampfangriffe 1,0% Eurer maximalen Gesundheit wiederherstellen.",
+                "cast_time": "Passiv"
+              }
+            }
+          }
+        ],
+        "display_row": 5,
+        "display_col": 9,
+        "raw_position_x": 6220,
+        "raw_position_y": 4530
+      },
+      {
+        "id": 113570,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/145864?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Eiserner Wille",
+                "id": 145864
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12962?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Eiserner Wille",
+                  "id": 12962
+                },
+                "description": "Verringert die Dauer von Betäubungs- und Furchteffekten, die auf Euch wirken, um 3%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 2,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/145864?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Eiserner Wille",
+                "id": 145864
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12962?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Eiserner Wille",
+                  "id": 12962
+                },
+                "description": "Verringert die Dauer von Betäubungs- und Furchteffekten, die auf Euch wirken, um 6%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 3,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/145864?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Eiserner Wille",
+                "id": 145864
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12962?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Eiserner Wille",
+                  "id": 12962
+                },
+                "description": "Verringert die Dauer von Betäubungs- und Furchteffekten, die auf Euch wirken, um 9%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 4,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/145864?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Eiserner Wille",
+                "id": 145864
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12962?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Eiserner Wille",
+                  "id": 12962
+                },
+                "description": "Verringert die Dauer von Betäubungs- und Furchteffekten, die auf Euch wirken, um 12%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          },
+          {
+            "rank": 5,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/145864?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Eiserner Wille",
+                "id": 145864
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/12962?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Eiserner Wille",
+                  "id": 12962
+                },
+                "description": "Verringert die Dauer von Betäubungs- und Furchteffekten, die auf Euch wirken, um 15%.",
+                "cast_time": "Passiv",
+                "power_cost": null
+              }
+            }
+          }
+        ],
+        "display_row": 1,
+        "display_col": 16,
+        "raw_position_x": 10280,
+        "raw_position_y": 2130
+      },
+      {
+        "id": 113636,
+        "node_type": {
+          "id": 0,
+          "type": "ACTIVE"
+        },
+        "ranks": [
+          {
+            "rank": 1,
+            "tooltip": {
+              "talent": {
+                "key": {
+                  "href": "https://eu.api.blizzard.com/data/wow/talent/145966?namespace=static-1.60.1_70399-forever-eu"
+                },
+                "name": "Tollkühne Schwünge",
+                "id": 145966
+              },
+              "spell_tooltip": {
+                "spell": {
+                  "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/spell/1329555?namespace=static-1.60.1_70399-forever-eu"
+                  },
+                  "name": "Tollkühne Schwünge",
+                  "id": 1329555
+                },
+                "description": "Eure nächsten 4 Nahkampfangriffe erzeugen 5 mehr Wut. Hält 8 Sek. lang an.",
+                "cast_time": "Sofort",
+                "power_cost": null,
+                "cooldown": "15 Sek. Abklingzeit"
+              }
+            }
+          }
+        ],
+        "display_row": 4,
+        "display_col": 8,
+        "raw_position_x": 5620,
+        "raw_position_y": 3930
+      }
+    ]
+  }
+}

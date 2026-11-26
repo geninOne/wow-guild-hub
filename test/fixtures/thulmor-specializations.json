@@ -1,0 +1,24 @@
+{
+  "status": 200,
+  "data": {
+    "_links": {
+      "self": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/thulmor-kaffeet%C3%A4ssle/specializations?namespace=profile-forever-eu"
+      }
+    },
+    "character": {
+      "key": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/thulmor-kaffeet%C3%A4ssle?namespace=profile-forever-eu"
+      },
+      "name": "Thulmor",
+      "id": 618700,
+      "surname": "Kaffeetässle",
+      "slug": "thulmor-kaffeetässle"
+    },
+    "specialization_groups": [
+      {
+        "is_active": true
+      }
+    ]
+  }
+}

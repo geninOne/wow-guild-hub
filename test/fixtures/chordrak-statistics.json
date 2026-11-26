@@ -1,0 +1,359 @@
+{
+  "status": 200,
+  "data": {
+    "character": {
+      "name": "Chordrak",
+      "id": 2277487,
+      "surname": "Chorm",
+      "slug": "chordrak-chorm"
+    },
+    "categories": [
+      {
+        "id": 130,
+        "name": "Charakter",
+        "sub_categories": [
+          {
+            "id": 145,
+            "name": "Verbrauchsgüter",
+            "statistics": [
+              {
+                "id": 345,
+                "name": "Heiltränke verbraucht",
+                "last_updated_timestamp": 1793907483000,
+                "quantity": 13
+              },
+              {
+                "id": 923,
+                "name": "Elixiere verbraucht",
+                "last_updated_timestamp": 1793881265000,
+                "quantity": 3
+              },
+              {
+                "id": 346,
+                "name": "Getränke verbraucht",
+                "last_updated_timestamp": 1793902586000,
+                "quantity": 17
+              },
+              {
+                "id": 347,
+                "name": "Nahrung konsumiert",
+                "last_updated_timestamp": 1793904329000,
+                "quantity": 3
+              }
+            ]
+          },
+          {
+            "id": 147,
+            "name": "Ruf",
+            "statistics": [
+              {
+                "id": 529,
+                "name": "Höchste Anzahl Fraktionen auf Wohlwollend oder höher",
+                "last_updated_timestamp": 1793894704000,
+                "quantity": 1
+              },
+              {
+                "id": 926,
+                "name": "Meiste Hordefraktionen auf Ehrfürchtig",
+                "last_updated_timestamp": 1793919608000,
+                "quantity": 4
+              },
+              {
+                "id": 931,
+                "name": "Fraktionen begegnet insgesamt",
+                "last_updated_timestamp": 1793919191000,
+                "quantity": 13
+              }
+            ]
+          },
+          {
+            "id": 191,
+            "name": "Ausrüstung",
+            "statistics": [
+              {
+                "id": 339,
+                "name": "Reittiere besessen",
+                "last_updated_timestamp": 1793894704000,
+                "quantity": 2
+              },
+              {
+                "id": 1043,
+                "name": "Würfe für Gier bei Plünderungen",
+                "last_updated_timestamp": 1793915461000,
+                "quantity": 46
+              },
+              {
+                "id": 1044,
+                "name": "Würfe für Bedarf bei Plünderungen",
+                "last_updated_timestamp": 1793910227000,
+                "quantity": 3
+              }
+            ]
+          }
+        ],
+        "statistics": [
+          {
+            "id": 64222,
+            "name": "Ruhezeiten im Lager",
+            "last_updated_timestamp": 1793911186000,
+            "quantity": 7
+          }
+        ]
+      },
+      {
+        "id": 14807,
+        "name": "Dungeons & Schlachtzüge",
+        "sub_categories": [
+          {
+            "id": 14821,
+            "name": "Boss-Kills",
+            "statistics": [
+              {
+                "id": 63571,
+                "name": "Siege über Rath'mael (Ruinen von Lordaeron)",
+                "last_updated_timestamp": 1793910634000,
+                "quantity": 1
+              },
+              {
+                "id": 15027,
+                "name": "Siege über Bazzalan (Flammenschlund)",
+                "last_updated_timestamp": 1793887032000,
+                "quantity": 1
+              }
+            ]
+          }
+        ],
+        "statistics": [
+          {
+            "id": 932,
+            "name": "5-Spieler-Dungeons betreten",
+            "last_updated_timestamp": 1793908588000,
+            "quantity": 2
+          }
+        ]
+      },
+      {
+        "id": 128,
+        "name": "Siege",
+        "sub_categories": [
+          {
+            "id": 135,
+            "name": "Kreaturen",
+            "statistics": [
+              {
+                "id": 107,
+                "name": "Kreaturen getötet",
+                "last_updated_timestamp": 1793918690000,
+                "quantity": 1589
+              },
+              {
+                "id": 1337,
+                "name": "Unterschiedliche Arten von Kreaturen getötet",
+                "last_updated_timestamp": 1793918690000,
+                "quantity": 6
+              },
+              {
+                "id": 1336,
+                "name": "Am häufigsten getöteter Kreaturtyp",
+                "last_updated_timestamp": 1793918690000,
+                "description": "Humanoid",
+                "quantity": 755
+              },
+              {
+                "id": 108,
+                "name": "Kleintiere getötet",
+                "last_updated_timestamp": 1793916165000,
+                "quantity": 1
+              }
+            ]
+          },
+          {
+            "id": 137,
+            "name": "Todesstöße",
+            "statistics": [
+              {
+                "id": 1487,
+                "name": "Todesstöße insgesamt",
+                "last_updated_timestamp": 1793918690000,
+                "quantity": 1025
+              },
+              {
+                "id": 1488,
+                "name": "Todesstöße weltweit",
+                "last_updated_timestamp": 1793918690000,
+                "quantity": 949
+              },
+              {
+                "id": 1489,
+                "name": "Kontinent mit den meisten Todesstößen",
+                "last_updated_timestamp": 1793918690000,
+                "description": "Östliche Königreiche",
+                "quantity": 752
+              }
+            ]
+          }
+        ],
+        "statistics": [
+          {
+            "id": 1197,
+            "name": "Siege insgesamt",
+            "last_updated_timestamp": 1793918690000,
+            "quantity": 1590
+          },
+          {
+            "id": 1198,
+            "name": "Siege insgesamt, die Erfahrung oder Ehrenpunkte verleihen",
+            "last_updated_timestamp": 1793918690000,
+            "quantity": 1500
+          }
+        ]
+      },
+      {
+        "id": 122,
+        "name": "Tode",
+        "statistics": [
+          {
+            "id": 60,
+            "name": "Tode insgesamt",
+            "last_updated_timestamp": 1793846653000,
+            "quantity": 4
+          }
+        ]
+      },
+      {
+        "id": 133,
+        "name": "Quests",
+        "statistics": [
+          {
+            "id": 98,
+            "name": "Quests abgeschlossen",
+            "last_updated_timestamp": 1793919608000,
+            "quantity": 171
+          },
+          {
+            "id": 95,
+            "name": "Durchschnittlich abgeschlossene Quests pro Tag",
+            "last_updated_timestamp": 1793919608000,
+            "quantity": 0
+          }
+        ]
+      },
+      {
+        "id": 132,
+        "name": "Fertigkeiten",
+        "sub_categories": [
+          {
+            "id": 178,
+            "name": "Sekundäre Fertigkeiten",
+            "statistics": [
+              {
+                "id": 1524,
+                "name": "Kochfertigkeit",
+                "last_updated_timestamp": 1793911288000,
+                "quantity": 35
+              },
+              {
+                "id": 1745,
+                "name": "Bekannte Kochrezepte",
+                "last_updated_timestamp": 1793898819000,
+                "quantity": 12
+              },
+              {
+                "id": 281,
+                "name": "Erste-Hilfe-Fertigkeit",
+                "last_updated_timestamp": 1793894704000,
+                "quantity": 45
+              },
+              {
+                "id": 1748,
+                "name": "Erlernte Erste Hilfe-Anleitungen",
+                "last_updated_timestamp": 1793913029000,
+                "quantity": 10
+              },
+              {
+                "id": 1519,
+                "name": "Angelfertigkeit",
+                "last_updated_timestamp": 1793894704000,
+                "quantity": 1
+              }
+            ]
+          },
+          {
+            "id": 173,
+            "name": "Berufe",
+            "statistics": [
+              {
+                "id": 1532,
+                "name": "Höchste Schmiedefertigkeit",
+                "last_updated_timestamp": 1793905575000,
+                "quantity": 90
+              },
+              {
+                "id": 1730,
+                "name": "Erlernte Schmiedepläne",
+                "last_updated_timestamp": 1793900119000,
+                "quantity": 64
+              },
+              {
+                "id": 1537,
+                "name": "Höchste Bergbaufertigkeit",
+                "last_updated_timestamp": 1793919407000,
+                "quantity": 112
+              },
+              {
+                "id": 3216,
+                "name": "Erlernte Verhüttungsmethoden",
+                "last_updated_timestamp": 1793894704000,
+                "quantity": 15
+              }
+            ]
+          }
+        ],
+        "statistics": [
+          {
+            "id": 1199,
+            "name": "Erlernte Berufe",
+            "last_updated_timestamp": 1793894704000,
+            "quantity": 2
+          },
+          {
+            "id": 1201,
+            "name": "Berufe auf maximaler Stufe",
+            "last_updated_timestamp": 1793919407000,
+            "quantity": 2
+          },
+          {
+            "id": 1200,
+            "name": "Sekundäre Fertigkeiten auf maximaler Stufe",
+            "last_updated_timestamp": 1793911288000,
+            "quantity": 3
+          },
+          {
+            "id": 1202,
+            "name": "Waffenfertigkeiten auf maximaler Fertigkeit",
+            "last_updated_timestamp": 1793917631000,
+            "quantity": 7
+          }
+        ]
+      },
+      {
+        "id": 134,
+        "name": "Reise",
+        "statistics": [
+          {
+            "id": 349,
+            "name": "Bereiste Flugrouten",
+            "last_updated_timestamp": 1793919437000,
+            "quantity": 12
+          },
+          {
+            "id": 353,
+            "name": "Anzahl der Nutzungen des Ruhesteins",
+            "last_updated_timestamp": 1793919707000,
+            "quantity": 4
+          }
+        ]
+      }
+    ]
+  }
+}

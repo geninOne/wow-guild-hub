@@ -1,0 +1,37 @@
+{
+  "status": 200,
+  "data": {
+    "_links": {
+      "self": {
+        "href": "https://eu.api.blizzard.com/data/wow/guild/b%C3%A4renklaue?namespace=profile-forever-eu"
+      }
+    },
+    "id": 194131,
+    "name": "Bärenklaue",
+    "faction": {
+      "type": "HORDE",
+      "name": "Horde"
+    },
+    "achievement_points": 0,
+    "member_count": 76,
+    "roster": {
+      "href": "https://eu.api.blizzard.com/data/wow/guild/b%C3%A4renklaue/roster?namespace=profile-forever-eu"
+    },
+    "achievements": {
+      "href": "https://eu.api.blizzard.com/data/wow/guild/b%C3%A4renklaue/achievements?namespace=profile-forever-eu"
+    },
+    "created_timestamp": 1793904466000,
+    "activity": {
+      "href": "https://eu.api.blizzard.com/data/wow/guild/b%C3%A4renklaue/activity?namespace=profile-forever-eu"
+    },
+    "slug": "bärenklaue",
+    "ruleset": {
+      "key": {
+        "href": "https://eu.api.blizzard.com/data/wow/ruleset/2?namespace=dynamic-forever-eu"
+      },
+      "name": "Normal",
+      "id": 2
+    },
+    "name_search": "Bärenklaue"
+  }
+}

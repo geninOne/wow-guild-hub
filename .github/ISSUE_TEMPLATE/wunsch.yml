@@ -1,0 +1,29 @@
+name: Funktion wünschen
+description: Eine Idee für eine neue Funktion oder eine Verbesserung.
+labels: ["wunsch"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Worum geht es?
+      description: Welches Problem löst die Idee, oder was würde deine Gilde damit anfangen?
+    validations:
+      required: true
+  - type: textarea
+    id: vorschlag
+    attributes:
+      label: Vorschlag
+      description: Wie könnte es aussehen? Skizzen und Beispiele helfen.
+    validations:
+      required: true
+  - type: textarea
+    id: alternativen
+    attributes:
+      label: Alternativen
+      description: Hast du andere Wege erwogen?
+  - type: checkboxes
+    id: mithelfen
+    attributes:
+      label: Mithelfen
+      options:
+        - label: Ich würde das selbst umsetzen und einen Pull Request schicken.

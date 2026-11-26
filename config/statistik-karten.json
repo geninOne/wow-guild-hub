@@ -1,0 +1,1321 @@
+{
+  "_hinweis": "Karten der Gildenstatistik auf /statistik/gilde, in Anzeigereihenfolge. Je Karte: form (grabsteinfeld, piktogramm, waage, wusstest-du, podium, fraktionsduell, torte, zahl, flaeschle, fahrplan, ekg, stall, schredder, verband), titel, spruch, breite (1 bis 3 Spalten, Standard 1) und die Statistik-IDs aus config/statistiken.json. Nur Zähler (Zuwachs im Zeitraum) und Stände sind erlaubt. Beim grabsteinfeld ist die erste Statistik die Summe, die übrigen bekommen je einen Grabstein. Unter texte je Statistik-ID optional kurz (Beschriftung im Diagramm), einheit [Einzahl, Mehrzahl], ehrung (Auszeichnung für Platz 1) umrechnung (je, einheit, satz) für Wusstest-du- und Verbandskarte und klasse (Klassen-ID für die Farbe, etwa im EKG). Bei der zahl-Karte ergibt eine zweite Statistik den Satz \"Jede n. Quest\", beim stall zählt die erste Statistik, wie viele Charaktere ein Reittier haben. Jeder Text darf ein String sein (gilt für alle Sprachen) oder ein Objekt mit de und optional en, schwaebisch und bayrisch (fehlende Sprachen fallen auf de zurück); einheit ebenso als Paar oder je Sprache ein Paar. Hochdeutsch ohne Dialekt.",
+  "karten": [
+    {
+      "slug": "tode",
+      "form": "grabsteinfeld",
+      "titel": {
+        "de": "Wer hat am häufigsten ins Gras gebissen?",
+        "en": "Who bit the dust most often?",
+        "schwaebisch": "Wer hat am öftesten ins Gras bissa?",
+        "bayrisch": "Wer hod am öftan ins Gras bissn?"
+      },
+      "spruch": {
+        "de": "Sterben gehört dazu. Manche übertreiben es eben ein wenig.",
+        "en": "Dying is part of the game. Some just overdo it a little.",
+        "schwaebisch": "Sterbe ghört dazu. Manche übertreibet's halt a bissle.",
+        "bayrisch": "Sterbn ghört dazua. Manche übertreibn's hoid a bisserl."
+      },
+      "statistiken": [
+        60,
+        321,
+        1501,
+        114,
+        112,
+        115,
+        113
+      ],
+      "breite": 3
+    },
+    {
+      "slug": "fische",
+      "form": "piktogramm",
+      "titel": {
+        "de": "Petri Heil!",
+        "en": "Tight lines!",
+        "schwaebisch": "Petri Heil!",
+        "bayrisch": "Petri Heil!"
+      },
+      "spruch": {
+        "de": "Hier wird nicht gefischt, hier wird geerntet.",
+        "en": "We don't fish here, we harvest.",
+        "schwaebisch": "Hier wird net gfischt, hier wird gerntet.",
+        "bayrisch": "Do wird ned gfischt, do wird gerntet."
+      },
+      "statistiken": [
+        1518
+      ]
+    },
+    {
+      "slug": "duelle",
+      "form": "waage",
+      "titel": {
+        "de": "Mittagsduell vor dem Gasthaus",
+        "en": "High-noon duel outside the inn",
+        "schwaebisch": "Mittagsduell vorm Gasthaus",
+        "bayrisch": "Mittagsduell vorm Wirtshaus"
+      },
+      "spruch": {
+        "de": "Mutig verloren ist auch gewonnen.",
+        "en": "A brave loss is still a win.",
+        "schwaebisch": "Mutig verlore isch au gwonne.",
+        "bayrisch": "Mutig valorn is aa gwunna."
+      },
+      "statistiken": [
+        319,
+        320
+      ]
+    },
+    {
+      "slug": "vesper",
+      "form": "wusstest-du",
+      "titel": {
+        "de": "Wusstest du?",
+        "en": "Did you know?",
+        "schwaebisch": "Hosch gwusst?",
+        "bayrisch": "Hosd des gwusst?"
+      },
+      "spruch": {
+        "de": "Durst ist schlimmer als Heimweh.",
+        "en": "Thirst is worse than homesickness.",
+        "schwaebisch": "Durscht isch schlimmer als Hoimweh.",
+        "bayrisch": "Duascht is schlimmer ois Hoamweh."
+      },
+      "statistiken": [
+        346,
+        347
+      ]
+    },
+    {
+      "slug": "kleintiere",
+      "form": "podium",
+      "titel": {
+        "de": "Kein Häschen ist sicher",
+        "en": "No bunny is safe",
+        "schwaebisch": "Koi Häsle isch sicher",
+        "bayrisch": "Koa Haserl is sicher"
+      },
+      "spruch": {
+        "de": "Hasen, Frösche, Eichhörnchen: Hier wird nicht lange gefackelt.",
+        "en": "Rabbits, frogs, squirrels: nobody hesitates here.",
+        "schwaebisch": "Hasen, Frösche, Eichhörnle: Hier wird net lang gfackelt.",
+        "bayrisch": "Hasn, Fröschl, Oachkatzl: Do wird ned lang gfackelt."
+      },
+      "statistiken": [
+        108
+      ]
+    },
+    {
+      "slug": "emotes",
+      "form": "fraktionsduell",
+      "titel": {
+        "de": "Wir reden, wir winken, wir jubeln",
+        "en": "We talk, we wave, we cheer",
+        "schwaebisch": "Mir schwätzet, mir winket, mir jubelet",
+        "bayrisch": "Mia redn, mia winkn, mia jubeln"
+      },
+      "spruch": {
+        "de": "Wer ist freundlicher, die Horde oder die Allianz?",
+        "en": "Who is friendlier, the Horde or the Alliance?",
+        "schwaebisch": "Wer isch freundlicher, d'Horde oder d'Allianz?",
+        "bayrisch": "Wer is freindlicher, d'Horde oder d'Allianz?"
+      },
+      "statistiken": [
+        1065,
+        1045,
+        1066,
+        1042,
+        1067,
+        1047
+      ],
+      "breite": 2
+    },
+    {
+      "slug": "wuerfel",
+      "form": "torte",
+      "titel": {
+        "de": "Gier ist auch eine Haltung",
+        "en": "Greed is a lifestyle too",
+        "schwaebisch": "Gier isch au a Haltung",
+        "bayrisch": "Gier is aa a Haltung"
+      },
+      "spruch": {
+        "de": "Bedarf! Bedarf! Bedarf! Oder eben doch Gier.",
+        "en": "Need! Need! Need! Or Greed after all.",
+        "schwaebisch": "Bedarf! Bedarf! Bedarf! Oder halt doch Gier.",
+        "bayrisch": "Bedarf! Bedarf! Bedarf! Oder hoid doch Gier."
+      },
+      "statistiken": [
+        1043,
+        1044
+      ]
+    },
+    {
+      "slug": "ausreden",
+      "form": "zahl",
+      "titel": {
+        "de": "Ach, das mache ich morgen",
+        "en": "Eh, I'll do it tomorrow",
+        "schwaebisch": "Ach, des mach i morge",
+        "bayrisch": "Ach, des mach i morgn"
+      },
+      "spruch": {
+        "de": "Quest angenommen, Quest vergessen, Quest abgebrochen.",
+        "en": "Quest accepted, quest forgotten, quest abandoned.",
+        "schwaebisch": "Quest angnomme, Quest vergesse, Quest abbroche.",
+        "bayrisch": "Quest ognomma, Quest vagessn, Quest obbrocha."
+      },
+      "statistiken": [
+        94,
+        98
+      ]
+    },
+    {
+      "slug": "flaeschle",
+      "form": "flaeschle",
+      "titel": {
+        "de": "Rotes oder blaues Fläschchen?",
+        "en": "Red or blue potion?",
+        "schwaebisch": "Rotes oder blaues Fläschle?",
+        "bayrisch": "Rots oder blaus Flascherl?"
+      },
+      "spruch": {
+        "de": "Schnell noch einen Trank, dann geht es weiter.",
+        "en": "One more quick potion, then onward.",
+        "schwaebisch": "Schnell no en Trank, dann goht's weiter.",
+        "bayrisch": "Schnell no an Trank, nacha geht's weida."
+      },
+      "statistiken": [
+        345,
+        922
+      ]
+    },
+    {
+      "slug": "notarzt",
+      "form": "ekg",
+      "titel": {
+        "de": "Notaufnahme Azeroth",
+        "en": "Azeroth Emergency Room",
+        "schwaebisch": "Notaufnahme Azeroth",
+        "bayrisch": "Notaufnahme Azeroth"
+      },
+      "spruch": {
+        "de": "Wer holt die Toten wieder zurück? Piep. Piep. Piiiep.",
+        "en": "Who brings the dead back? Beep. Beep. Beeeep.",
+        "schwaebisch": "Wer holt die Toten wieder zruck? Piep. Piep. Piiiep.",
+        "bayrisch": "Wer hoid de Totn wieda zruck? Piep. Piep. Piiiep."
+      },
+      "breite": 2,
+      "statistiken": [
+        800,
+        799,
+        796,
+        801,
+        798
+      ]
+    },
+    {
+      "slug": "stall",
+      "form": "stall",
+      "titel": {
+        "de": "Wer läuft noch zu Fuß?",
+        "en": "Who's still walking?",
+        "schwaebisch": "Wer lauft no z'Fuß?",
+        "bayrisch": "Wer geht no z'Fuaß?"
+      },
+      "spruch": {
+        "de": "Ein Pferd ist teuer, Schuhsohlen sind billig.",
+        "en": "A horse is expensive, shoe leather is cheap.",
+        "schwaebisch": "A Gaul isch teuer, Schuhsohle billig.",
+        "bayrisch": "A Gaul is teia, Schuasoin san billig."
+      },
+      "statistiken": [
+        339,
+        338,
+        341
+      ]
+    },
+    {
+      "slug": "schredder",
+      "form": "schredder",
+      "titel": {
+        "de": "Kaputtgezaubert",
+        "en": "Disenchanted to Dust",
+        "schwaebisch": "Kaputtgezaubert",
+        "bayrisch": "Hinzaubert"
+      },
+      "spruch": {
+        "de": "Was nicht passt, wird zu Staub verzaubert.",
+        "en": "If it doesn't fit, it turns to dust.",
+        "schwaebisch": "Was net passt, wird zu Staub verzaubert.",
+        "bayrisch": "Wos ned passt, wird zu Staub vazaubert."
+      },
+      "statistiken": [
+        181,
+        183
+      ]
+    },
+    {
+      "slug": "verband",
+      "form": "verband",
+      "titel": {
+        "de": "Verbandsrolle",
+        "en": "Roll of Bandages",
+        "schwaebisch": "Verbandsroll",
+        "bayrisch": "Verbandsrolln"
+      },
+      "spruch": {
+        "de": "Pflaster drauf, weiter geht es.",
+        "en": "Slap a bandage on and keep going.",
+        "schwaebisch": "Pflaster drauf, weiter goht's.",
+        "bayrisch": "Pflaster drauf, weida geht's."
+      },
+      "breite": 2,
+      "statistiken": [
+        344,
+        812
+      ]
+    },
+    {
+      "slug": "lagerfeuer",
+      "form": "piktogramm",
+      "titel": {
+        "de": "Lagerfeuerromantik",
+        "en": "Campfire Romance",
+        "schwaebisch": "Lagerfeuerromantik",
+        "bayrisch": "Lagerfeuerromantik"
+      },
+      "spruch": {
+        "de": "Füße hoch, Feuer an, kurz verschnaufen.",
+        "en": "Feet up, fire lit, catch your breath.",
+        "schwaebisch": "Füß hoch, Feuer an, a bissle verschnaufe.",
+        "bayrisch": "Haxn hoch, Feia o, a bisserl schnaufn."
+      },
+      "statistiken": [
+        64222
+      ]
+    },
+    {
+      "slug": "unterwegs",
+      "form": "fahrplan",
+      "titel": {
+        "de": "Wer viel reist, kann viel erzählen",
+        "en": "Travel far, tell tales",
+        "schwaebisch": "Wer viel reist, kann viel verzähle",
+        "bayrisch": "Wer vui reist, ko vui dazähln"
+      },
+      "spruch": {
+        "de": "Heimweh? Ruhestein! Fernweh? Greif!",
+        "en": "Homesick? Hearthstone! Wanderlust? Gryphon!",
+        "schwaebisch": "Hoimweh? Ruhestein! Fernweh? Greif!",
+        "bayrisch": "Hoamweh? Ruhestoa! Fernweh? Greif!"
+      },
+      "statistiken": [
+        349,
+        353,
+        350,
+        2277
+      ],
+      "breite": 2
+    }
+  ],
+  "texte": {
+    "60": {
+      "kurz": {
+        "de": "Tode",
+        "en": "Deaths"
+      },
+      "einheit": {
+        "de": [
+          "Tod",
+          "Tode"
+        ],
+        "en": [
+          "death",
+          "deaths"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldener Grabstein",
+        "en": "Golden Gravestone",
+        "schwaebisch": "Goldener Grabstoi",
+        "bayrisch": "Goldener Grabstoa"
+      }
+    },
+    "321": {
+      "kurz": {
+        "de": "Dungeon und Raid",
+        "en": "Dungeons and raids"
+      },
+      "einheit": {
+        "de": [
+          "Tod",
+          "Tode"
+        ],
+        "en": [
+          "death",
+          "deaths"
+        ]
+      }
+    },
+    "1501": {
+      "kurz": {
+        "de": "Andere Spieler",
+        "en": "Other players"
+      },
+      "einheit": {
+        "de": [
+          "Tod",
+          "Tode"
+        ],
+        "en": [
+          "death",
+          "deaths"
+        ]
+      }
+    },
+    "114": {
+      "kurz": {
+        "de": "Stürze",
+        "en": "Falls",
+        "schwaebisch": "Stürz",
+        "bayrisch": "Stürz"
+      },
+      "einheit": {
+        "de": [
+          "Sturz",
+          "Stürze"
+        ],
+        "en": [
+          "fall",
+          "falls"
+        ]
+      },
+      "ehrung": {
+        "de": "Bleierne Feder",
+        "en": "Lead Feather",
+        "schwaebisch": "Bleierne Feder",
+        "bayrisch": "Bleiane Feda"
+      }
+    },
+    "112": {
+      "kurz": {
+        "de": "Ertrinken",
+        "en": "Drowning",
+        "schwaebisch": "Versaufa",
+        "bayrisch": "Dasaufa"
+      },
+      "einheit": {
+        "de": [
+          "Tod",
+          "Tode"
+        ],
+        "en": [
+          "death",
+          "deaths"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldene Schwimmflügel",
+        "en": "Golden Water Wings",
+        "schwaebisch": "Goldene Schwimmflügele",
+        "bayrisch": "Goldene Schwimmflügerl"
+      }
+    },
+    "115": {
+      "kurz": {
+        "de": "Feuer und Lava",
+        "en": "Fire and lava"
+      },
+      "einheit": {
+        "de": [
+          "Tod",
+          "Tode"
+        ],
+        "en": [
+          "death",
+          "deaths"
+        ]
+      },
+      "ehrung": {
+        "de": "Angekokelte Socke",
+        "en": "Singed Sock",
+        "schwaebisch": "Agkokelte Socke",
+        "bayrisch": "Ogsengte Sockn"
+      }
+    },
+    "113": {
+      "kurz": {
+        "de": "Erschöpfung",
+        "en": "Fatigue",
+        "schwaebisch": "Kaputt",
+        "bayrisch": "Hinüber"
+      },
+      "einheit": {
+        "de": [
+          "Tod",
+          "Tode"
+        ],
+        "en": [
+          "death",
+          "deaths"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldener Rettungsring",
+        "en": "Golden Life Preserver",
+        "schwaebisch": "Goldener Rettungsring",
+        "bayrisch": "Goldener Rettungsring"
+      }
+    },
+    "1518": {
+      "kurz": {
+        "de": "Fische",
+        "en": "Fish"
+      },
+      "einheit": {
+        "de": [
+          "Fisch",
+          "Fische"
+        ],
+        "en": [
+          "fish",
+          "fish"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldene Angel",
+        "en": "Golden Fishing Pole"
+      }
+    },
+    "319": {
+      "kurz": {
+        "de": "Gewonnen",
+        "en": "Won",
+        "schwaebisch": "Gwonne",
+        "bayrisch": "Gwunna"
+      },
+      "einheit": {
+        "de": [
+          "Sieg",
+          "Siege"
+        ],
+        "en": [
+          "win",
+          "wins"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldener Fehdehandschuh",
+        "en": "Golden Gauntlet",
+        "schwaebisch": "Goldener Fehdehandschuh",
+        "bayrisch": "Goldener Fehdehandschuach"
+      }
+    },
+    "320": {
+      "kurz": {
+        "de": "Verloren",
+        "en": "Lost",
+        "schwaebisch": "Verlore",
+        "bayrisch": "Valorn"
+      },
+      "einheit": {
+        "de": [
+          "Niederlage",
+          "Niederlagen"
+        ],
+        "en": [
+          "loss",
+          "losses"
+        ]
+      },
+      "ehrung": {
+        "de": "Silberner Trostpreis",
+        "en": "Silver Consolation Prize",
+        "schwaebisch": "Silberner Troschtpreis",
+        "bayrisch": "Silberner Trostpreis"
+      }
+    },
+    "346": {
+      "kurz": {
+        "de": "Getränke",
+        "en": "Drinks"
+      },
+      "einheit": {
+        "de": [
+          "Getränk",
+          "Getränke"
+        ],
+        "en": [
+          "drink",
+          "drinks"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldener Bierkrug",
+        "en": "Golden Tankard",
+        "schwaebisch": "Goldener Bierkrug",
+        "bayrisch": "Goldene Maß"
+      },
+      "umrechnung": {
+        "je": 100,
+        "einheit": {
+          "de": [
+            "Fass",
+            "Fässer"
+          ],
+          "en": [
+            "barrel",
+            "barrels"
+          ],
+          "schwaebisch": [
+            "Fass",
+            "Fässer"
+          ],
+          "bayrisch": [
+            "Fassl",
+            "Fassl"
+          ]
+        },
+        "satz": {
+          "de": "wenn ein Fass hundert Krüge hergibt",
+          "en": "if one barrel fills a hundred tankards",
+          "schwaebisch": "wenn a Fass hundert Krüg hergibt",
+          "bayrisch": "wenn a Fassl hundert Maß hergibt"
+        }
+      }
+    },
+    "347": {
+      "kurz": {
+        "de": "Mahlzeiten",
+        "en": "Meals"
+      },
+      "einheit": {
+        "de": [
+          "Mahlzeit",
+          "Mahlzeiten"
+        ],
+        "en": [
+          "meal",
+          "meals"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldene Brotdose",
+        "en": "Golden Lunchbox",
+        "schwaebisch": "Goldene Vesperdose",
+        "bayrisch": "Goldene Brotzeitbox"
+      },
+      "umrechnung": {
+        "je": 1095,
+        "einheit": {
+          "de": [
+            "Jahr",
+            "Jahre"
+          ],
+          "en": [
+            "year",
+            "years"
+          ]
+        },
+        "satz": {
+          "de": "drei Mahlzeiten am Tag, jeden Tag",
+          "en": "three meals a day, every day",
+          "schwaebisch": "drei Mahlzeite am Tag, jeden Tag",
+          "bayrisch": "drei Brotzeitn am Dog, jeden Dog"
+        }
+      }
+    },
+    "108": {
+      "kurz": {
+        "de": "Kleintiere",
+        "en": "Critters"
+      },
+      "einheit": {
+        "de": [
+          "Kleintier",
+          "Kleintiere"
+        ],
+        "en": [
+          "critter",
+          "critters"
+        ]
+      },
+      "ehrung": {
+        "de": "Schrecken der Wiesen",
+        "en": "Terror of the Meadows",
+        "schwaebisch": "Schrecke vo de Wiese",
+        "bayrisch": "Schreckn vo de Wiesn"
+      }
+    },
+    "1065": {
+      "kurz": {
+        "de": "Winken",
+        "en": "Wave",
+        "schwaebisch": "Winke",
+        "bayrisch": "Winkn"
+      },
+      "einheit": {
+        "de": [
+          "Mal",
+          "Mal"
+        ],
+        "en": [
+          "time",
+          "times"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldenes Taschentuch",
+        "en": "Golden Handkerchief",
+        "schwaebisch": "Goldenes Sacktuch",
+        "bayrisch": "Goldenes Schneiztiachl"
+      }
+    },
+    "1045": {
+      "kurz": {
+        "de": "Jubeln",
+        "en": "Cheer",
+        "schwaebisch": "Jubele",
+        "bayrisch": "Jubeln"
+      },
+      "einheit": {
+        "de": [
+          "Jubel",
+          "Jubel"
+        ],
+        "en": [
+          "cheer",
+          "cheers"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldene Tröte",
+        "en": "Golden Party Horn",
+        "schwaebisch": "Goldene Tröte",
+        "bayrisch": "Goldene Tröt'n"
+      }
+    },
+    "1066": {
+      "kurz": {
+        "de": "Lachen",
+        "en": "Laugh",
+        "schwaebisch": "Lache",
+        "bayrisch": "Lacha"
+      },
+      "einheit": {
+        "de": [
+          "Lacher",
+          "Lacher"
+        ],
+        "en": [
+          "laugh",
+          "laughs"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldene Lachfalte",
+        "en": "Golden Laugh Line",
+        "schwaebisch": "Goldene Lachfalt",
+        "bayrisch": "Goldene Lachfoitn"
+      }
+    },
+    "1042": {
+      "kurz": {
+        "de": "Umarmen",
+        "en": "Hug",
+        "schwaebisch": "Drücke",
+        "bayrisch": "Drucka"
+      },
+      "einheit": {
+        "de": [
+          "Umarmung",
+          "Umarmungen"
+        ],
+        "en": [
+          "hug",
+          "hugs"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldenes Kuschelkissen",
+        "en": "Golden Cuddle Pillow",
+        "schwaebisch": "Goldenes Kuschelkisse",
+        "bayrisch": "Goldenes Kuschlkissn"
+      }
+    },
+    "1067": {
+      "kurz": {
+        "de": "Kleinste Geige",
+        "en": "Smallest violin",
+        "schwaebisch": "Kloinschte Geig",
+        "bayrisch": "Kloanste Geign"
+      },
+      "einheit": {
+        "de": [
+          "Ständchen",
+          "Ständchen"
+        ],
+        "en": [
+          "serenade",
+          "serenades"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldener Geigenbogen",
+        "en": "Golden Violin Bow"
+      }
+    },
+    "1047": {
+      "kurz": {
+        "de": "Oh Gott",
+        "en": "Facepalm"
+      },
+      "einheit": {
+        "de": [
+          "Stoßgebet",
+          "Stoßgebete"
+        ],
+        "en": [
+          "facepalm",
+          "facepalms"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldenes Stoßgebet",
+        "en": "Golden Facepalm"
+      }
+    },
+    "1043": {
+      "kurz": {
+        "de": "Gier",
+        "en": "Greed"
+      },
+      "einheit": {
+        "de": [
+          "Wurf",
+          "Würfe"
+        ],
+        "en": [
+          "roll",
+          "rolls"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldener Würfel",
+        "en": "Golden Die"
+      }
+    },
+    "1044": {
+      "kurz": {
+        "de": "Bedarf",
+        "en": "Need"
+      },
+      "einheit": {
+        "de": [
+          "Wurf",
+          "Würfe"
+        ],
+        "en": [
+          "roll",
+          "rolls"
+        ]
+      },
+      "ehrung": {
+        "de": "Silberner Würfel",
+        "en": "Silver Die"
+      }
+    },
+    "94": {
+      "kurz": {
+        "de": "Quests abgebrochen",
+        "en": "Quests abandoned",
+        "schwaebisch": "Quests abbroche",
+        "bayrisch": "Quests obbrocha"
+      },
+      "einheit": {
+        "de": [
+          "Quest",
+          "Quests"
+        ],
+        "en": [
+          "quest",
+          "quests"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldene Ausrede",
+        "en": "Golden Excuse",
+        "schwaebisch": "Goldene Ausred",
+        "bayrisch": "Goldene Ausred"
+      }
+    },
+    "345": {
+      "kurz": {
+        "de": "Heiltränke",
+        "en": "Healing potions"
+      },
+      "einheit": {
+        "de": [
+          "Trank",
+          "Tränke"
+        ],
+        "en": [
+          "potion",
+          "potions"
+        ]
+      },
+      "ehrung": {
+        "de": "Rotes Fläschchen",
+        "en": "Little Red Vial",
+        "schwaebisch": "Rotes Fläschle",
+        "bayrisch": "Rots Flascherl"
+      }
+    },
+    "922": {
+      "kurz": {
+        "de": "Manatränke",
+        "en": "Mana potions"
+      },
+      "einheit": {
+        "de": [
+          "Trank",
+          "Tränke"
+        ],
+        "en": [
+          "potion",
+          "potions"
+        ]
+      },
+      "ehrung": {
+        "de": "Blaues Fläschchen",
+        "en": "Little Blue Vial",
+        "schwaebisch": "Blaues Fläschle",
+        "bayrisch": "Blaus Flascherl"
+      }
+    },
+    "64222": {
+      "kurz": {
+        "de": "Rasten im Lager",
+        "en": "Rests at camp",
+        "schwaebisch": "Raschte im Lager",
+        "bayrisch": "Rastn im Lager"
+      },
+      "einheit": {
+        "de": [
+          "Rast",
+          "Rasten"
+        ],
+        "en": [
+          "rest",
+          "rests"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldenes Zelt",
+        "en": "Golden Tent"
+      }
+    },
+    "349": {
+      "kurz": {
+        "de": "Flugrouten",
+        "en": "Flight paths"
+      },
+      "einheit": {
+        "de": [
+          "Flug",
+          "Flüge"
+        ],
+        "en": [
+          "flight",
+          "flights"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldene Bordkarte",
+        "en": "Golden Boarding Pass",
+        "schwaebisch": "Goldene Bordkart",
+        "bayrisch": "Goldene Bordkartn"
+      }
+    },
+    "353": {
+      "kurz": {
+        "de": "Ruhestein",
+        "en": "Hearthstone"
+      },
+      "einheit": {
+        "de": [
+          "Mal",
+          "Mal"
+        ],
+        "en": [
+          "time",
+          "times"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldener Ruhestein",
+        "en": "Golden Hearthstone",
+        "schwaebisch": "Goldener Ruhestoi",
+        "bayrisch": "Goldener Ruhestoa"
+      }
+    },
+    "350": {
+      "kurz": {
+        "de": "Magierportale",
+        "en": "Mage portals"
+      },
+      "einheit": {
+        "de": [
+          "Portal",
+          "Portale"
+        ],
+        "en": [
+          "portal",
+          "portals"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldener Zauberhut",
+        "en": "Golden Wizard Hat",
+        "schwaebisch": "Goldener Zauberhut",
+        "bayrisch": "Goldener Zauberhuat"
+      }
+    },
+    "2277": {
+      "kurz": {
+        "de": "Beschwörungen",
+        "en": "Summons"
+      },
+      "einheit": {
+        "de": [
+          "Beschwörung",
+          "Beschwörungen"
+        ],
+        "en": [
+          "summon",
+          "summons"
+        ]
+      },
+      "ehrung": {
+        "de": "Bequemster Reisegast",
+        "en": "Comfiest Passenger",
+        "schwaebisch": "Bequemschter Reisegascht",
+        "bayrisch": "Bequemster Reisegast"
+      }
+    },
+    "98": {
+      "kurz": {
+        "de": "Quests erledigt",
+        "en": "Quests completed",
+        "schwaebisch": "Quests erledigt",
+        "bayrisch": "Quests erledigt"
+      },
+      "einheit": {
+        "de": [
+          "Quest",
+          "Quests"
+        ],
+        "en": [
+          "quest",
+          "quests"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldenes Fleißkärtchen",
+        "en": "Gold Star",
+        "schwaebisch": "Goldenes Fleißkärtle",
+        "bayrisch": "Goldenes Fleißkartl"
+      }
+    },
+    "800": {
+      "kurz": "Paladin",
+      "einheit": {
+        "de": [
+          "Erlösung",
+          "Erlösungen"
+        ],
+        "en": [
+          "redemption",
+          "redemptions"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldener Heiligenschein",
+        "en": "Golden Halo"
+      },
+      "klasse": 2
+    },
+    "799": {
+      "kurz": {
+        "de": "Schamane",
+        "en": "Shaman"
+      },
+      "einheit": {
+        "de": [
+          "Wiederbelebung",
+          "Wiederbelebungen"
+        ],
+        "en": [
+          "resurrection",
+          "resurrections"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldene Rassel",
+        "en": "Golden Rattle"
+      },
+      "klasse": 7
+    },
+    "796": {
+      "kurz": {
+        "de": "Priester",
+        "en": "Priest"
+      },
+      "einheit": {
+        "de": [
+          "Wiederbelebung",
+          "Wiederbelebungen"
+        ],
+        "en": [
+          "resurrection",
+          "resurrections"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldene Wärmflasche",
+        "en": "Golden Hot-Water Bottle",
+        "schwaebisch": "Goldene Wärmflasch",
+        "bayrisch": "Goldene Wärmflaschn"
+      },
+      "klasse": 5
+    },
+    "801": {
+      "kurz": {
+        "de": "Seelenstein",
+        "en": "Soulstone"
+      },
+      "einheit": {
+        "de": [
+          "Wiederbelebung",
+          "Wiederbelebungen"
+        ],
+        "en": [
+          "resurrection",
+          "resurrections"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldener Seelenstein",
+        "en": "Golden Soulstone"
+      },
+      "klasse": 9
+    },
+    "798": {
+      "kurz": {
+        "de": "Druide",
+        "en": "Druid"
+      },
+      "einheit": {
+        "de": [
+          "Wiedergeburt",
+          "Wiedergeburten"
+        ],
+        "en": [
+          "rebirth",
+          "rebirths"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldenes Kleeblatt",
+        "en": "Golden Four-Leaf Clover",
+        "schwaebisch": "Goldener Glücksklee",
+        "bayrisch": "Goldana Glücksklee"
+      },
+      "klasse": 11
+    },
+    "339": {
+      "kurz": {
+        "de": "Reittiere",
+        "en": "Mounts"
+      },
+      "einheit": {
+        "de": [
+          "Reittier",
+          "Reittiere"
+        ],
+        "en": [
+          "mount",
+          "mounts"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldener Sattel",
+        "en": "Golden Saddle",
+        "schwaebisch": "Goldener Sattel",
+        "bayrisch": "Goldener Sattl"
+      }
+    },
+    "338": {
+      "kurz": {
+        "de": "Haustiere",
+        "en": "Pets"
+      },
+      "einheit": {
+        "de": [
+          "Haustier",
+          "Haustiere"
+        ],
+        "en": [
+          "pet",
+          "pets"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldenes Körbchen",
+        "en": "Golden Pet Basket",
+        "schwaebisch": "Goldenes Körble",
+        "bayrisch": "Goldenes Körberl"
+      }
+    },
+    "341": {
+      "kurz": {
+        "de": "Lila Teile",
+        "en": "Epics",
+        "schwaebisch": "Lila Teil",
+        "bayrisch": "Lila Doal"
+      },
+      "einheit": {
+        "de": [
+          "lila Teil",
+          "lila Teile"
+        ],
+        "en": [
+          "epic item",
+          "epic items"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldene Elster",
+        "en": "Golden Magpie"
+      }
+    },
+    "181": {
+      "kurz": {
+        "de": "Entzaubert",
+        "en": "Disenchanted",
+        "schwaebisch": "Entzaubert",
+        "bayrisch": "Entzaubert"
+      },
+      "einheit": {
+        "de": [
+          "Gegenstand",
+          "Gegenstände"
+        ],
+        "en": [
+          "item",
+          "items"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldener Zauberstab",
+        "en": "Golden Runed Rod"
+      }
+    },
+    "183": {
+      "kurz": {
+        "de": "Materialien",
+        "en": "Materials"
+      },
+      "einheit": {
+        "de": [
+          "Material",
+          "Materialien"
+        ],
+        "en": [
+          "material",
+          "materials"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldener Staubsauger",
+        "en": "Golden Vacuum Cleaner",
+        "schwaebisch": "Goldener Staubsauger",
+        "bayrisch": "Goldener Staubsauga"
+      }
+    },
+    "344": {
+      "kurz": {
+        "de": "Verbände",
+        "en": "Bandages",
+        "schwaebisch": "Verbänd",
+        "bayrisch": "Verbänd"
+      },
+      "einheit": {
+        "de": [
+          "Verband",
+          "Verbände"
+        ],
+        "en": [
+          "bandage",
+          "bandages"
+        ]
+      },
+      "ehrung": {
+        "de": "Goldenes Pflaster",
+        "en": "Golden Plaster",
+        "schwaebisch": "Goldenes Pflaschter",
+        "bayrisch": "Goldenes Pflasta"
+      },
+      "umrechnung": {
+        "je": 80.75,
+        "einheit": {
+          "de": [
+            "Kirchturm",
+            "Kirchtürme"
+          ],
+          "en": [
+            "church spire",
+            "church spires"
+          ],
+          "schwaebisch": [
+            "Ulmer Münster",
+            "Ulmer Münster"
+          ],
+          "bayrisch": [
+            "Ulmer Münster",
+            "Ulmer Münster"
+          ]
+        },
+        "satz": {
+          "de": "zwei Meter Mull pro Verband, gestapelt bis zur Spitze eines gut 160 Meter hohen Kirchturms",
+          "en": "two meters of gauze per bandage, stacked to the tip of a church spire over 160 meters tall",
+          "schwaebisch": "zwei Meter Mull pro Verband, aufgstapelt bis zur Turmspitz",
+          "bayrisch": "zwoa Meter Mull pro Verband, aufgstaplt bis zur Turmspitzn"
+        }
+      }
+    },
+    "812": {
+      "kurz": {
+        "de": "Gesundheitssteine",
+        "en": "Healthstones"
+      },
+      "einheit": {
+        "de": [
+          "Stein",
+          "Steine"
+        ],
+        "en": [
+          "healthstone",
+          "healthstones"
+        ]
+      },
+      "ehrung": {
+        "de": "Hexenmeisters Plätzchen",
+        "en": "Warlock's Cookies",
+        "schwaebisch": "Hexenmeisters Gutsle",
+        "bayrisch": "Hexenmeisters Platzerl"
+      }
+    }
+  }
+}

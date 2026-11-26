@@ -1,0 +1,25 @@
+# Wöchentliche Updates für npm und GitHub Actions. Kleine Updates kommen gebündelt, große einzeln.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      klein:
+        update-types: [minor, patch]
+    commit-message:
+      prefix: "Abhängigkeiten"
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: "Actions"

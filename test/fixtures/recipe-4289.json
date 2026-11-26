@@ -1,0 +1,23 @@
+{
+  "status": 200,
+  "data": {
+    "id": 4289,
+    "name": "Armschiene - Minderwertige Ausdauer",
+    "description": "Armschienen dauerhaft so verzaubern, dass sie die Ausdauer des Trägers um 2 erhöhen.",
+    "media": {
+      "id": 4289
+    },
+    "reagents": [
+      {
+        "reagent": {
+          "name": "Magiepartikel",
+          "id": 247786
+        },
+        "quantity": 1
+      }
+    ],
+    "crafted_quantity": {
+      "value": 1
+    }
+  }
+}

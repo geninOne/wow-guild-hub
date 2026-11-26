@@ -1,0 +1,37 @@
+{
+  "status": 200,
+  "data": {
+    "_links": {
+      "self": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/luvia-stav/character-media?namespace=profile-forever-eu"
+      }
+    },
+    "character": {
+      "key": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/luvia-stav?namespace=profile-forever-eu"
+      },
+      "name": "Luvia",
+      "id": 382219,
+      "surname": "Stav",
+      "slug": "luvia-stav"
+    },
+    "assets": [
+      {
+        "key": "main-raw",
+        "value": "https://render.worldofwarcraft.com/forever-eu/character/11/382219-main-raw.png"
+      },
+      {
+        "key": "main-sd-raw",
+        "value": "https://render.worldofwarcraft.com/forever-eu/character/11/382219-main-sd-raw.png"
+      },
+      {
+        "key": "avatar",
+        "value": "https://render.worldofwarcraft.com/forever-eu/character/11/382219-avatar.jpg"
+      },
+      {
+        "key": "avatar-sd",
+        "value": "https://render.worldofwarcraft.com/forever-eu/character/11/382219-avatar-sd.jpg"
+      }
+    ]
+  }
+}

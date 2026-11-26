@@ -1,0 +1,18 @@
+{
+  "status": 200,
+  "data": {
+    "_links": {
+      "self": {
+        "href": "https://eu.api.blizzard.com/data/wow/media/spell/16462?namespace=static-1.60.1_70399-forever-eu"
+      }
+    },
+    "assets": [
+      {
+        "key": "icon",
+        "value": "https://render.worldofwarcraft.com/forever-eu/icons/56/132269.jpg",
+        "file_data_id": 132269
+      }
+    ],
+    "id": 16462
+  }
+}

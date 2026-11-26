@@ -1,0 +1,88 @@
+{
+  "status": 200,
+  "data": {
+    "id": 1251,
+    "name": "Leinenverband",
+    "quality": {
+      "type": "COMMON",
+      "name": "Verbreitet"
+    },
+    "level": 1,
+    "required_level": 0,
+    "media": {
+      "id": 1251
+    },
+    "item_class": {
+      "name": "Verbrauchbar",
+      "id": 0
+    },
+    "item_subclass": {
+      "name": "Verbände",
+      "id": 7
+    },
+    "inventory_type": {
+      "type": "NON_EQUIP",
+      "name": "Nicht anlegbar"
+    },
+    "purchase_price": 40,
+    "sell_price": 10,
+    "max_count": 0,
+    "is_equippable": false,
+    "is_stackable": true,
+    "preview_item": {
+      "item": {
+        "id": 1251
+      },
+      "quality": {
+        "type": "COMMON",
+        "name": "Verbreitet"
+      },
+      "name": "Leinenverband",
+      "media": {
+        "id": 1251
+      },
+      "item_class": {
+        "name": "Verbrauchbar",
+        "id": 0
+      },
+      "item_subclass": {
+        "name": "Verbände",
+        "id": 7
+      },
+      "inventory_type": {
+        "type": "NON_EQUIP",
+        "name": "Nicht anlegbar"
+      },
+      "spells": [
+        {
+          "spell": {
+            "name": "Erste Hilfe",
+            "id": 746
+          },
+          "description": "Benutzen: Heilt 6 Sek. lang 66 Punkt(e) Schaden."
+        }
+      ],
+      "sell_price": {
+        "value": 10,
+        "display_strings": {
+          "header": "Verkaufspreis:",
+          "gold": "0",
+          "silver": "0",
+          "copper": "10"
+        }
+      },
+      "requirements": {
+        "skill": {
+          "profession": {
+            "name": "Erste Hilfe",
+            "id": 2942
+          },
+          "level": 1,
+          "display_string": "Benötigt Erste Hilfe (1)"
+        }
+      },
+      "is_subclass_hidden": true
+    },
+    "purchase_quantity": 1
+  }
+}

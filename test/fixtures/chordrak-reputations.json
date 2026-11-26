@@ -1,0 +1,156 @@
+{
+  "status": 200,
+  "data": {
+    "character": {
+      "name": "Chordrak",
+      "id": 2277487,
+      "surname": "Chorm",
+      "slug": "chordrak-chorm"
+    },
+    "reputations": [
+      {
+        "faction": {
+          "name": "Everlook",
+          "id": 577
+        },
+        "standing": {
+          "raw": 1222,
+          "value": 1222,
+          "max": 3000,
+          "tier": 3,
+          "name": "Neutral"
+        }
+      },
+      {
+        "faction": {
+          "name": "Thunder Bluff",
+          "id": 81
+        },
+        "standing": {
+          "raw": 2116,
+          "value": 2116,
+          "max": 3000,
+          "tier": 3,
+          "name": "Neutral"
+        }
+      },
+      {
+        "faction": {
+          "name": "Ratchet",
+          "id": 470
+        },
+        "standing": {
+          "raw": 2045,
+          "value": 2045,
+          "max": 3000,
+          "tier": 3,
+          "name": "Neutral"
+        }
+      },
+      {
+        "faction": {
+          "name": "Orgrimmar",
+          "id": 76
+        },
+        "standing": {
+          "raw": 4485,
+          "value": 1485,
+          "max": 6000,
+          "tier": 4,
+          "name": "Freundlich"
+        }
+      },
+      {
+        "faction": {
+          "name": "Darkspear",
+          "id": 530
+        },
+        "standing": {
+          "raw": 3753,
+          "value": 753,
+          "max": 6000,
+          "tier": 4,
+          "name": "Freundlich"
+        }
+      },
+      {
+        "faction": {
+          "name": "Booty Bay",
+          "id": 21
+        },
+        "standing": {
+          "raw": 1222,
+          "value": 1222,
+          "max": 3000,
+          "tier": 3,
+          "name": "Neutral"
+        }
+      },
+      {
+        "faction": {
+          "name": "Versorgung und Logistik Durotar",
+          "id": 2587
+        },
+        "standing": {
+          "raw": 2000,
+          "value": 2000,
+          "max": 3000,
+          "tier": 3,
+          "name": "Neutral"
+        }
+      },
+      {
+        "faction": {
+          "name": "Argentumdämmerung",
+          "id": 529
+        },
+        "standing": {
+          "raw": 1050,
+          "value": 1050,
+          "max": 3000,
+          "tier": 3,
+          "name": "Neutral"
+        }
+      },
+      {
+        "faction": {
+          "name": "Gadgetzan",
+          "id": 369
+        },
+        "standing": {
+          "raw": 1222,
+          "value": 1222,
+          "max": 3000,
+          "tier": 3,
+          "name": "Neutral"
+        }
+      },
+      {
+        "faction": {
+          "name": "Undercity",
+          "id": 68
+        },
+        "standing": {
+          "raw": 13631,
+          "value": 4631,
+          "max": 12000,
+          "tier": 5,
+          "name": "Wohlwollend"
+        }
+      },
+      {
+        "faction": {
+          "name": "Powderfuse",
+          "id": 2827
+        },
+        "standing": {
+          "raw": 1222,
+          "value": 1222,
+          "max": 3000,
+          "tier": 3,
+          "name": "Neutral"
+        }
+      }
+    ]
+  }
+}

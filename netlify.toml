@@ -1,0 +1,77 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Abfrage beim "Deploy to Netlify"-Knopf. Alle weiteren Einstellungen stehen in .env.example und lassen sich
+# später unter Site configuration, Environment variables ergänzen.
+[template.environment]
+  BNET_CLIENT_ID = "Client-ID aus dem Battle.net Developer Portal (develop.battle.net)"
+  BNET_CLIENT_SECRET = "Client-Secret aus dem Battle.net Developer Portal"
+  GUILD_SLUGS = "Slug deiner Gilde wie in der Blizzard-API, z. B. meine-gilde"
+  SEITE_NAME = "Name, der oben auf der Seite steht, z. B. Meine Gilde"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[dev]
+  framework = "#custom"
+  command = "npm run dev:web"
+  targetPort = 5173
+  port = 8888
+
+# Seiten der Oberfläche liefern die App aus. Bewusst kein "/*", damit /api/* nie verdeckt wird.
+[[redirects]]
+  from = "/charakter/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/berufe"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/berufe/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/impressum"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/datenschutz"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/aktivitaet"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/statistik"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/statistik/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/titel"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/zeitung"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/zeitung/*"
+  to = "/index.html"
+  status = 200

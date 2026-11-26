@@ -1,0 +1,2152 @@
+{
+  "status": 200,
+  "data": {
+    "_links": {
+      "self": {
+        "href": "https://eu.api.blizzard.com/data/wow/guild/b%C3%A4renklaue/roster?namespace=profile-forever-eu"
+      }
+    },
+    "guild": {
+      "key": {
+        "href": "https://eu.api.blizzard.com/data/wow/guild/b%C3%A4renklaue?namespace=profile-forever-eu"
+      },
+      "name": "Bärenklaue",
+      "id": 194131,
+      "faction": {
+        "type": "HORDE",
+        "name": "Horde"
+      },
+      "slug": "bärenklaue"
+    },
+    "members": [
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/seeroth-totenglanz?namespace=profile-forever-eu"
+          },
+          "name": "Seeroth",
+          "id": 374723,
+          "level": 6,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/2?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 2
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Totenglanz",
+          "slug": "seeroth-totenglanz"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/luvia-stav?namespace=profile-forever-eu"
+          },
+          "name": "Luvia",
+          "id": 382219,
+          "level": 21,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/1?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 1
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/96?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 96
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Stav",
+          "slug": "luvia-stav"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/brelda-graskl%C3%A4nge?namespace=profile-forever-eu"
+          },
+          "name": "Brelda",
+          "id": 401669,
+          "level": 11,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/11?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 11
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/6?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 6
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Grasklänge",
+          "slug": "brelda-grasklänge"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/berlok-wurzelgrimm?namespace=profile-forever-eu"
+          },
+          "name": "Berlok",
+          "id": 462101,
+          "level": 16,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/11?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 11
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/6?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 6
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Wurzelgrimm",
+          "slug": "berlok-wurzelgrimm"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/revrak-soulgarde?namespace=profile-forever-eu"
+          },
+          "name": "Revrak",
+          "id": 510599,
+          "level": 8,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/11?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 11
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/6?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 6
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Soulgarde",
+          "slug": "revrak-soulgarde"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/exalor-grelk?namespace=profile-forever-eu"
+          },
+          "name": "Exalor",
+          "id": 514452,
+          "level": 19,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/1?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 1
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/6?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 6
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Grelk",
+          "slug": "exalor-grelk"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/azgoran-lichtgarn?namespace=profile-forever-eu"
+          },
+          "name": "Azgoran",
+          "id": 587090,
+          "level": 9,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/2?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 2
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Lichtgarn",
+          "slug": "azgoran-lichtgarn"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/thulmor-kaffeet%C3%A4ssle?namespace=profile-forever-eu"
+          },
+          "name": "Thulmor",
+          "id": 618700,
+          "level": 10,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/8?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 8
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Kaffeetässle",
+          "slug": "thulmor-kaffeetässle"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/swelk-hesk?namespace=profile-forever-eu"
+          },
+          "name": "Swelk",
+          "id": 638366,
+          "level": 15,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/7?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 7
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/96?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 96
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Hesk",
+          "slug": "swelk-hesk"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/flyvar-shadowkrall?namespace=profile-forever-eu"
+          },
+          "name": "Flyvar",
+          "id": 649504,
+          "level": 14,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/4?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 4
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/8?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 8
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Shadowkrall",
+          "slug": "flyvar-shadowkrall"
+        },
+        "rank": 1
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/flyvar-doomwick?namespace=profile-forever-eu"
+          },
+          "name": "Flyvar",
+          "id": 694533,
+          "level": 11,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Doomwick",
+          "slug": "flyvar-doomwick"
+        },
+        "rank": 2
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/kunvald-seuchendorn?namespace=profile-forever-eu"
+          },
+          "name": "Kunvald",
+          "id": 716951,
+          "level": 18,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/4?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 4
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Seuchendorn",
+          "slug": "kunvald-seuchendorn"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/fleorin-k%C3%BCbsle?namespace=profile-forever-eu"
+          },
+          "name": "Fleorin",
+          "id": 737455,
+          "level": 17,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/11?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 11
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/6?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 6
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Kübsle",
+          "slug": "fleorin-kübsle"
+        },
+        "rank": 1
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/osgarth-svandrik?namespace=profile-forever-eu"
+          },
+          "name": "Osgarth",
+          "id": 1298858,
+          "level": 10,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/3?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 3
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/2?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 2
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Svandrik",
+          "slug": "osgarth-svandrik"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/novrik-blutk%C3%BCnder?namespace=profile-forever-eu"
+          },
+          "name": "Novrik",
+          "id": 1360543,
+          "level": 13,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/4?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 4
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Blutkünder",
+          "slug": "novrik-blutkünder"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/thevaran-lichtglut?namespace=profile-forever-eu"
+          },
+          "name": "Thevaran",
+          "id": 1591151,
+          "level": 18,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/2?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 2
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Lichtglut",
+          "slug": "thevaran-lichtglut"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/ravella-moorel?namespace=profile-forever-eu"
+          },
+          "name": "Ravella",
+          "id": 1601107,
+          "level": 8,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/7?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 7
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/96?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 96
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Moorel",
+          "slug": "ravella-moorel"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/gelmar-soulvenn?namespace=profile-forever-eu"
+          },
+          "name": "Gelmar",
+          "id": 1647409,
+          "level": 10,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Soulvenn",
+          "slug": "gelmar-soulvenn"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/kurlo-kurda%C3%ADn?namespace=profile-forever-eu"
+          },
+          "name": "Kurlo",
+          "id": 1668432,
+          "level": 10,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/1?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 1
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/6?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 6
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Kurdaín",
+          "slug": "kurlo-kurdaín"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/teshvar-chalv?namespace=profile-forever-eu"
+          },
+          "name": "Teshvar",
+          "id": 1835386,
+          "level": 13,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/7?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 7
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/2?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 2
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Chalv",
+          "slug": "teshvar-chalv"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/skarra-moorel?namespace=profile-forever-eu"
+          },
+          "name": "Skarra",
+          "id": 1850467,
+          "level": 8,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/3?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 3
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/96?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 96
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Moorel",
+          "slug": "skarra-moorel"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/k%C3%BCdra-leyvarin?namespace=profile-forever-eu"
+          },
+          "name": "Küdra",
+          "id": 2119525,
+          "level": 15,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/4?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 4
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/96?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 96
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Leyvarin",
+          "slug": "küdra-leyvarin"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/carvendril-sturmkeiler?namespace=profile-forever-eu"
+          },
+          "name": "Carvendril",
+          "id": 2173240,
+          "level": 14,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/7?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 7
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/96?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 96
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Sturmkeiler",
+          "slug": "carvendril-sturmkeiler"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/asrel-sorvane?namespace=profile-forever-eu"
+          },
+          "name": "Asrel",
+          "id": 2208283,
+          "level": 15,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/8?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 8
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Sorvane",
+          "slug": "asrel-sorvane"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/strovak-onk?namespace=profile-forever-eu"
+          },
+          "name": "Strovak",
+          "id": 2271024,
+          "level": 14,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/3?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 3
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/8?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 8
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Onk",
+          "slug": "strovak-onk"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/chordrak-chorm?namespace=profile-forever-eu"
+          },
+          "name": "Chordrak",
+          "id": 2277487,
+          "level": 22,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/2?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 2
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Chorm",
+          "slug": "chordrak-chorm"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/aylethra-windtr%C3%A4mer?namespace=profile-forever-eu"
+          },
+          "name": "Aylethra",
+          "id": 2288357,
+          "level": 8,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/3?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 3
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/96?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 96
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Windträmer",
+          "slug": "aylethra-windträmer"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/heirun-nyzra?namespace=profile-forever-eu"
+          },
+          "name": "Heirun",
+          "id": 2325424,
+          "level": 16,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/2?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 2
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Nyzra",
+          "slug": "heirun-nyzra"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/bei%C3%9Fra-nyzra?namespace=profile-forever-eu"
+          },
+          "name": "Beißra",
+          "id": 2325542,
+          "level": 1,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/11?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 11
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/6?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 6
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Nyzra",
+          "slug": "beißra-nyzra"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/helvra-b%C3%A4renzunft?namespace=profile-forever-eu"
+          },
+          "name": "Helvra",
+          "id": 2342751,
+          "level": 10,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/9?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 9
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/8?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 8
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Bärenzunft",
+          "slug": "helvra-bärenzunft"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/orlin-ilw%C3%AC%C3%AD?namespace=profile-forever-eu"
+          },
+          "name": "Orlin",
+          "id": 2416115,
+          "level": 16,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/1?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 1
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Ilwìí",
+          "slug": "orlin-ilwìí"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/enra-shattenmoor?namespace=profile-forever-eu"
+          },
+          "name": "Enra",
+          "id": 2586876,
+          "level": 17,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/4?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 4
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Shattenmoor",
+          "slug": "enra-shattenmoor"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/nevaris-aschmorn?namespace=profile-forever-eu"
+          },
+          "name": "Nevaris",
+          "id": 2605119,
+          "level": 12,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Aschmorn",
+          "slug": "nevaris-aschmorn"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/kelgar-flerg?namespace=profile-forever-eu"
+          },
+          "name": "Kelgar",
+          "id": 2612722,
+          "level": 11,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/2?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 2
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Flerg",
+          "slug": "kelgar-flerg"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/astrin-frostgebein?namespace=profile-forever-eu"
+          },
+          "name": "Astrin",
+          "id": 2612833,
+          "level": 17,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/8?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 8
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Frostgebein",
+          "slug": "astrin-frostgebein"
+        },
+        "rank": 1
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/lurion-abrakos?namespace=profile-forever-eu"
+          },
+          "name": "Lurion",
+          "id": 2679730,
+          "level": 10,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/9?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 9
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Abrakos",
+          "slug": "lurion-abrakos"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/bowrael-brindel?namespace=profile-forever-eu"
+          },
+          "name": "Bowrael",
+          "id": 2973729,
+          "level": 19,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/3?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 3
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/6?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 6
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Brindel",
+          "slug": "bowrael-brindel"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/murvasa-kurm%C3%B6gor?namespace=profile-forever-eu"
+          },
+          "name": "Murvasa",
+          "id": 3526802,
+          "level": 19,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/7?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 7
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/6?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 6
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Kurmögor",
+          "slug": "murvasa-kurmögor"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/crask-fornvale?namespace=profile-forever-eu"
+          },
+          "name": "Crask",
+          "id": 4401688,
+          "level": 15,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/7?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 7
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/2?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 2
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Fornvale",
+          "slug": "crask-fornvale"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/norbrek-b%C3%BCschelwind?namespace=profile-forever-eu"
+          },
+          "name": "Norbrek",
+          "id": 4716882,
+          "level": 7,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/11?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 11
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/6?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 6
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Büschelwind",
+          "slug": "norbrek-büschelwind"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/soivenna-lightmantle?namespace=profile-forever-eu"
+          },
+          "name": "Soivenna",
+          "id": 5177486,
+          "level": 10,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/8?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 8
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Lightmantle",
+          "slug": "soivenna-lightmantle"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/baldrin-fornvale?namespace=profile-forever-eu"
+          },
+          "name": "Baldrin",
+          "id": 5203292,
+          "level": 15,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/8?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 8
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/2?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 2
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Fornvale",
+          "slug": "baldrin-fornvale"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/tawen-ranvoreh?namespace=profile-forever-eu"
+          },
+          "name": "Tawen",
+          "id": 5385332,
+          "level": 8,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/3?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 3
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/6?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 6
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Ranvoreh",
+          "slug": "tawen-ranvoreh"
+        },
+        "rank": 1
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/jorel-quarn?namespace=profile-forever-eu"
+          },
+          "name": "Jorel",
+          "id": 5401147,
+          "level": 14,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/2?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 2
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Quarn",
+          "slug": "jorel-quarn"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/meldric-ashvaril?namespace=profile-forever-eu"
+          },
+          "name": "Meldric",
+          "id": 5517110,
+          "level": 10,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Ashvaril",
+          "slug": "meldric-ashvaril"
+        },
+        "rank": 5
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/sarvo-wuzlmoggl?namespace=profile-forever-eu"
+          },
+          "name": "Sarvo",
+          "id": 5582934,
+          "level": 14,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/11?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 11
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/96?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 96
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Wuzlmoggl",
+          "slug": "sarvo-wuzlmoggl"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/arwyna-astrevin?namespace=profile-forever-eu"
+          },
+          "name": "Arwyna",
+          "id": 5712961,
+          "level": 13,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/8?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 8
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Astrevin",
+          "slug": "arwyna-astrevin"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/elra-norri?namespace=profile-forever-eu"
+          },
+          "name": "Elra",
+          "id": 5908137,
+          "level": 7,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/2?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 2
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Norri",
+          "slug": "elra-norri"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/tarvoth-hask?namespace=profile-forever-eu"
+          },
+          "name": "Tarvoth",
+          "id": 6365221,
+          "level": 16,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/11?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 11
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/6?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 6
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Hask",
+          "slug": "tarvoth-hask"
+        },
+        "rank": 5
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/erthan-kn%C3%B6rzel?namespace=profile-forever-eu"
+          },
+          "name": "Erthan",
+          "id": 6438543,
+          "level": 15,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/11?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 11
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/6?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 6
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Knörzel",
+          "slug": "erthan-knörzel"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/mavok-lichtgru%C3%9F?namespace=profile-forever-eu"
+          },
+          "name": "Mavok",
+          "id": 6597994,
+          "level": 18,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Lichtgruß",
+          "slug": "mavok-lichtgruß"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/hurgo-coldmarrow?namespace=profile-forever-eu"
+          },
+          "name": "Hurgo",
+          "id": 6663437,
+          "level": 14,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Coldmarrow",
+          "slug": "hurgo-coldmarrow"
+        },
+        "rank": 5
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/azthel-shadowgrim?namespace=profile-forever-eu"
+          },
+          "name": "Azthel",
+          "id": 6676737,
+          "level": 15,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/11?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 11
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/6?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 6
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Shadowgrim",
+          "slug": "azthel-shadowgrim"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/kaelith-erdbrecher?namespace=profile-forever-eu"
+          },
+          "name": "Kaelith",
+          "id": 6750908,
+          "level": 14,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/7?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 7
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/2?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 2
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Erdbrecher",
+          "slug": "kaelith-erdbrecher"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/nyvaleth-nyvaleth?namespace=profile-forever-eu"
+          },
+          "name": "Nyvaleth",
+          "id": 6853928,
+          "level": 12,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Nyvaleth",
+          "slug": "nyvaleth-nyvaleth"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/bonlo-fehlzauber?namespace=profile-forever-eu"
+          },
+          "name": "Bonlo",
+          "id": 6913529,
+          "level": 17,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/3?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 3
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/8?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 8
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Fehlzauber",
+          "slug": "bonlo-fehlzauber"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/rulgar-rostgrimm?namespace=profile-forever-eu"
+          },
+          "name": "Rulgar",
+          "id": 6935453,
+          "level": 14,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/2?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 2
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Rostgrimm",
+          "slug": "rulgar-rostgrimm"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/gothmund-modwen?namespace=profile-forever-eu"
+          },
+          "name": "Gothmund",
+          "id": 6947606,
+          "level": 14,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Modwen",
+          "slug": "gothmund-modwen"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/blaskorrin-xx?namespace=profile-forever-eu"
+          },
+          "name": "Blaskorrin",
+          "id": 7030326,
+          "level": 15,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/3?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 3
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/2?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 2
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Xx",
+          "slug": "blaskorrin-xx"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/anduvar-mogrell?namespace=profile-forever-eu"
+          },
+          "name": "Anduvar",
+          "id": 7150797,
+          "level": 6,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/2?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 2
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Mogrell",
+          "slug": "anduvar-mogrell"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/juko-vooltah?namespace=profile-forever-eu"
+          },
+          "name": "Juko",
+          "id": 8678157,
+          "level": 13,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/8?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 8
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/8?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 8
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Vooltah",
+          "slug": "juko-vooltah"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/obrandil-palendrus?namespace=profile-forever-eu"
+          },
+          "name": "Obrandil",
+          "id": 9067628,
+          "level": 12,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/2?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 2
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Palendrus",
+          "slug": "obrandil-palendrus"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/utmar-donnerwall?namespace=profile-forever-eu"
+          },
+          "name": "Utmar",
+          "id": 9234898,
+          "level": 6,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/1?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 1
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/6?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 6
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Donnerwall",
+          "slug": "utmar-donnerwall"
+        },
+        "rank": 4
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/thuvenna-dravok?namespace=profile-forever-eu"
+          },
+          "name": "Thuvenna",
+          "id": 9293623,
+          "level": 10,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/2?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 2
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Dravok",
+          "slug": "thuvenna-dravok"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/deorwin-blutsporn?namespace=profile-forever-eu"
+          },
+          "name": "Deorwin",
+          "id": 10080682,
+          "level": 10,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/1?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 1
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/6?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 6
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Blutsporn",
+          "slug": "deorwin-blutsporn"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/vyx-gildarion?namespace=profile-forever-eu"
+          },
+          "name": "Vyx",
+          "id": 10988474,
+          "level": 11,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/7?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 7
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/6?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 6
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Gildarion",
+          "slug": "vyx-gildarion"
+        },
+        "rank": 0
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/sonrah-blackvenn?namespace=profile-forever-eu"
+          },
+          "name": "Sonrah",
+          "id": 11606104,
+          "level": 14,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/9?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 9
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Blackvenn",
+          "slug": "sonrah-blackvenn"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/klavo-mondgrau?namespace=profile-forever-eu"
+          },
+          "name": "Klavo",
+          "id": 12049593,
+          "level": 9,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/11?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 11
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/6?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 6
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Mondgrau",
+          "slug": "klavo-mondgrau"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/tharvel-seelenhauch?namespace=profile-forever-eu"
+          },
+          "name": "Tharvel",
+          "id": 12204782,
+          "level": 7,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/2?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 2
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Seelenhauch",
+          "slug": "tharvel-seelenhauch"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/tatrik-schlummerdorn?namespace=profile-forever-eu"
+          },
+          "name": "Tatrik",
+          "id": 12475161,
+          "level": 10,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/4?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 4
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/2?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 2
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Schlummerdorn",
+          "slug": "tatrik-schlummerdorn"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/tharzun-ragvold?namespace=profile-forever-eu"
+          },
+          "name": "Tharzun",
+          "id": 12578589,
+          "level": 13,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/7?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 7
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/2?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 2
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Ragvold",
+          "slug": "tharzun-ragvold"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/selvaris-skyveil?namespace=profile-forever-eu"
+          },
+          "name": "Selvaris",
+          "id": 13366928,
+          "level": 7,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/11?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 11
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/96?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 96
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Skyveil",
+          "slug": "selvaris-skyveil"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/gorvenna-wolfsbrinn?namespace=profile-forever-eu"
+          },
+          "name": "Gorvenna",
+          "id": 13458229,
+          "level": 5,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/8?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 8
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/5?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 5
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Wolfsbrinn",
+          "slug": "gorvenna-wolfsbrinn"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/turgash-geistermoor?namespace=profile-forever-eu"
+          },
+          "name": "Turgash",
+          "id": 13519317,
+          "level": 7,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/9?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 9
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/2?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 2
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Geistermoor",
+          "slug": "turgash-geistermoor"
+        },
+        "rank": 3
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/senvaria-morgenwacht?namespace=profile-forever-eu"
+          },
+          "name": "Senvaria",
+          "id": 2313614,
+          "level": 14,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/3?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 3
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/96?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 96
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Morgenwacht",
+          "slug": "senvaria-morgenwacht"
+        },
+        "rank": 5
+      },
+      {
+        "character": {
+          "key": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/ferk-arv?namespace=profile-forever-eu"
+          },
+          "name": "Ferk",
+          "id": 2360162,
+          "level": 1,
+          "playable_class": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-class/1?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 1
+          },
+          "playable_race": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-race/6?namespace=static-1.60.1_70399-forever-eu"
+            },
+            "id": 6
+          },
+          "faction": {
+            "type": "HORDE"
+          },
+          "surname": "Arv",
+          "slug": "ferk-arv"
+        },
+        "rank": 3
+      }
+    ]
+  }
+}

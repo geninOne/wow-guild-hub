@@ -1,0 +1,122 @@
+{
+  "status": 200,
+  "data": {
+    "id": 4343,
+    "name": "Braune Leinenhose",
+    "quality": {
+      "type": "UNCOMMON",
+      "name": "Selten"
+    },
+    "level": 10,
+    "required_level": 5,
+    "media": {
+      "id": 4343
+    },
+    "item_class": {
+      "name": "Rüstung",
+      "id": 4
+    },
+    "item_subclass": {
+      "name": "Stoff",
+      "id": 1
+    },
+    "inventory_type": {
+      "type": "LEGS",
+      "name": "Beine"
+    },
+    "purchase_price": 301,
+    "sell_price": 60,
+    "max_count": 0,
+    "is_equippable": true,
+    "is_stackable": false,
+    "preview_item": {
+      "item": {
+        "id": 4343
+      },
+      "quality": {
+        "type": "UNCOMMON",
+        "name": "Selten"
+      },
+      "name": "Braune Leinenhose",
+      "media": {
+        "id": 4343
+      },
+      "item_class": {
+        "name": "Rüstung",
+        "id": 4
+      },
+      "item_subclass": {
+        "name": "Stoff",
+        "id": 1
+      },
+      "inventory_type": {
+        "type": "LEGS",
+        "name": "Beine"
+      },
+      "binding": {
+        "type": "ON_EQUIP",
+        "name": "Wird beim Anlegen gebunden"
+      },
+      "armor": {
+        "value": 17,
+        "display": {
+          "display_string": "17 Rüstung",
+          "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255,
+            "a": 1
+          }
+        }
+      },
+      "stats": [
+        {
+          "type": {
+            "type": "SPELL_POWER",
+            "name": "Zaubermacht"
+          },
+          "value": 1,
+          "is_equip_bonus": true,
+          "display": {
+            "display_string": "+1 Zaubermacht",
+            "color": {
+              "r": 0,
+              "g": 255,
+              "b": 0,
+              "a": 1
+            }
+          }
+        }
+      ],
+      "sell_price": {
+        "value": 60,
+        "display_strings": {
+          "header": "Verkaufspreis:",
+          "gold": "0",
+          "silver": "0",
+          "copper": "60"
+        }
+      },
+      "requirements": {
+        "level": {
+          "value": 5,
+          "display_string": "Benötigt Stufe 5"
+        }
+      },
+      "level": {
+        "value": 10,
+        "display_string": "Gegenstandsstufe 10"
+      },
+      "durability": {
+        "value": 35,
+        "display_string": "Haltbarkeit 35 / 35"
+      }
+    },
+    "purchase_quantity": 1,
+    "appearances": [
+      {
+        "id": 64697
+      }
+    ]
+  }
+}

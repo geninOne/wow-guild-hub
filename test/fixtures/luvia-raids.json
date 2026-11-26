@@ -1,0 +1,19 @@
+{
+  "status": 200,
+  "data": {
+    "_links": {
+      "self": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/luvia-stav/encounters/raids?namespace=profile-forever-eu"
+      }
+    },
+    "character": {
+      "key": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/luvia-stav?namespace=profile-forever-eu"
+      },
+      "name": "Luvia",
+      "id": 382219,
+      "surname": "Stav",
+      "slug": "luvia-stav"
+    }
+  }
+}
