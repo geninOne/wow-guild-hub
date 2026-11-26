@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import type { ApiResult } from "../../src/blizzard/client";
 import type { Config } from "../../src/config";
-import { attributesDue, runStaticCollection } from "../../src/collect/static";
+import { MAX_RETRIES_PER_RUN, attributesDue, retriesDue, runStaticCollection } from "../../src/collect/static";
 import type {
   CharacterAttributesRecord,
   IconMap,
@@ -358,4 +358,107 @@ test("attributesDue: fehlende zuerst, dann die ältesten, nur nach neuem Login",
     { "1": "2026-11-04T00:00:00.000Z", "2": "2026-11-06T00:00:00.000Z", "4": "2026-11-03T00:00:00.000Z" },
   );
   expect(due.map((c) => c.id)).toEqual([3, 4, 1]);
+});
+
+describe("Leereinträge erneut abfragen", () => {
+  const runAt = (iso: string) => runStaticCollection({ client: fake, store, config, now: () => new Date(iso) });
+  const NOW = "2026-11-06T03:00:00.000Z";
+  const spellCalls = () => fake.calls.filter((c) => c.startsWith("/data/wow/media/spell/"));
+
+  test("alter Blob mit bloßem null wird sofort erneut abgefragt und gefüllt", async () => {
+    await run();
+    const icons = (await store.get<IconMap>("static/spell-icons"))!;
+    icons["16462"] = null;
+    await store.set("static/spell-icons", icons);
+    await store.delete("static/spell-icons-checked");
+    fake.calls.length = 0;
+    const rep = await run();
+    expect((await store.get<IconMap>("static/spell-icons"))?.["16462"]).toBe(ICON);
+    // Alle 16 übrigen Leereinträge hatten nach dem Löschen des Nebenblobs keinen Zeitstempel mehr.
+    expect(rep.spellIconsAdded).toBe(17);
+    expect((await store.get<Record<string, string>>("static/spell-icons-checked"))?.["16462"]).toBeUndefined();
+  });
+
+  test("null mit Zeitstempel wartet sieben Tage, dann wird erneut gefragt", async () => {
+    routes["/data/wow/media/spell/16462"] = { status: 404, data: null };
+    await runAt(NOW);
+    expect((await store.get<Record<string, string>>("static/spell-icons-checked"))?.["16462"]).toBe(NOW);
+    routes["/data/wow/media/spell/16462"] = loadFixture("spell-media-16462");
+
+    fake.calls.length = 0;
+    await runAt("2026-11-12T03:00:00.000Z");
+    expect(spellCalls()).toEqual([]);
+
+    await runAt("2026-11-13T03:00:00.000Z");
+    expect(spellCalls()).toContain("/data/wow/media/spell/16462");
+    expect((await store.get<IconMap>("static/spell-icons"))?.["16462"]).toBe(ICON);
+  });
+
+  test("Serverfehler bei der Neuprüfung lässt Eintrag und Zeitstempel stehen", async () => {
+    routes["/data/wow/media/spell/16462"] = { status: 404, data: null };
+    await runAt(NOW);
+    routes["/data/wow/media/spell/16462"] = { status: 503, data: null };
+    await runAt("2026-11-20T03:00:00.000Z");
+    expect((await store.get<IconMap>("static/spell-icons"))?.["16462"]).toBeNull();
+    expect((await store.get<Record<string, string>>("static/spell-icons-checked"))?.["16462"]).toBe(NOW);
+  });
+
+  test("Neuprüfungen je Lauf begrenzt, älteste zuerst", async () => {
+    expect(retriesDue([3, 1, 2, 4], (id) => id !== "4", { "1": "2026-11-01T00:00:00.000Z", "3": "2026-10-01T00:00:00.000Z" }, Date.parse(NOW), 2)).toEqual([2, 3]);
+    const many = Array.from({ length: MAX_RETRIES_PER_RUN + 20 }, (_, i) => i + 1);
+    expect(retriesDue(many, () => true, {}, Date.parse(NOW))).toHaveLength(MAX_RETRIES_PER_RUN);
+    expect(retriesDue([1], () => true, { "1": "2026-11-05T00:00:00.000Z" }, Date.parse(NOW))).toEqual([]);
+  });
+
+  test("Rezept ohne Icon wird später ergänzt, ein inzwischen fehlendes Rezept bleibt stehen", async () => {
+    await withRecipeCharacter([2408]);
+    routes["/data/wow/recipe/2408"] = loadFixture("recipe-2408");
+    routes["/data/wow/item/4343"] = loadFixture("item-4343");
+    await runAt(NOW);
+    expect((await store.get<RecipeDetails>("static/recipes"))?.["2408"]?.icon).toBeNull();
+
+    routes["/data/wow/media/recipe/2408"] = loadFixture("recipe-media-2408");
+    await runAt("2026-11-14T03:00:00.000Z");
+    expect((await store.get<RecipeDetails>("static/recipes"))?.["2408"]?.icon).toBe("https://render.worldofwarcraft.com/forever-eu/icons/56/134586.jpg");
+    expect((await store.get<Record<string, string>>("static/recipes-checked"))?.["2408"]).toBeUndefined();
+
+    // Vollständige Rezepte werden nicht mehr abgefragt.
+    fake.calls.length = 0;
+    await runAt("2026-12-30T03:00:00.000Z");
+    expect(fake.calls.filter((c) => c.startsWith("/data/wow/recipe/"))).toEqual([]);
+  });
+});
+
+describe("Gegenstandsstufen", () => {
+  async function withEquipment(levels: (number | null)[]) {
+    const f = (n: string) => loadFixture(n).data;
+    const rec = buildCharacterRecord(
+      { id: 382219, name: "Luvia", surname: "Stav", slug: "luvia-stav", level: 21, classId: 1, raceId: 96, rank: 3 },
+      { profile: f("luvia-profile"), specializations: null, equipment: f("luvia-equipment"), media: null, professions: null, raids: null, achievements: null, statistics: null, reputations: null },
+      "t",
+    );
+    rec.equipment = rec.equipment.slice(0, levels.length).map((e, i) => ({ ...e, itemLevel: levels[i] }));
+    await store.set("characters/382219", rec);
+    return rec.equipment.map((e) => e.itemId);
+  }
+
+  test("fehlende Stufe aus /data/wow/item, bekannte Stufe ohne Anfrage übernommen", async () => {
+    const [a, b, c] = await withEquipment([12, null, null]);
+    routes[`/data/wow/item/${b}`] = { status: 200, data: { id: b, level: 17 } };
+    const rep = await run();
+    expect(rep.itemLevelsAdded).toBe(2);
+    expect(await store.get("static/item-levels")).toEqual({ [a]: 12, [b]: 17, [c]: null });
+    expect(fake.calls).not.toContain(`/data/wow/item/${a}`);
+    expect((await store.get<Record<string, string>>("static/item-levels-checked"))?.[String(c)]).toBe("2026-11-06T03:00:00.000Z");
+  });
+
+  test("später mitgelieferte Stufe ersetzt einen Leereintrag", async () => {
+    const [a] = await withEquipment([null]);
+    await run();
+    expect((await store.get<Record<string, number | null>>("static/item-levels"))?.[String(a)]).toBeNull();
+    await withEquipment([33]);
+    await run();
+    expect((await store.get<Record<string, number | null>>("static/item-levels"))?.[String(a)]).toBe(33);
+    expect((await store.get<Record<string, string>>("static/item-levels-checked"))?.[String(a)]).toBeUndefined();
+  });
 });

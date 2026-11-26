@@ -119,6 +119,15 @@ describe("Charakteransicht", () => {
     expect(v.character).not.toHaveProperty("statTexts");
   });
 
+  test("fehlende Gegenstandsstufe aus static/item-levels, mitgelieferte Stufe hat Vorrang", () => {
+    const [a, b, c] = gelmar.equipment;
+    const record = { ...gelmar, equipment: [{ ...a, itemLevel: null }, { ...b, itemLevel: 20 }, { ...c, itemLevel: null }] };
+    const itemLevels = { [a.itemId]: 31, [b.itemId]: 99, [c.itemId]: null };
+    const v = buildCharacterView({ ...base, record, itemLevels })!;
+    expect(v.character.equipment.map((e) => e.itemLevel)).toEqual([31, 20, null]);
+    expect(buildCharacterView({ ...base, record })!.character.equipment[0].itemLevel).toBeNull();
+  });
+
   test("Gelmar: Kopf, Rang und nur eigene Icons", () => {
     const v = buildCharacterView({
       ...base,

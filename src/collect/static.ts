@@ -7,10 +7,10 @@ import type {
   AttributesIndex,
   CharacterRecord,
   GuildRecord,
-  IconMap,
   InstanceAchievement,
   InstanceAchievementsRecord,
   NamedList,
+  RecipeDetail,
   RecipeDetails,
   ReputationFactionsRecord,
   TalentTreeRecord,
@@ -26,6 +26,8 @@ export interface StaticRunReport {
   treesAdded: number;
   spellIconsAdded: number;
   itemIconsAdded: number;
+  /** Gegenstandsstufen aus `/data/wow/item/{id}`, Ersatz für die fehlende Stufe in der Ausrüstung. */
+  itemLevelsAdded: number;
   instanceAchievementsAdded: number;
   recipesAdded: number;
   reputationGroupsChecked: number;
@@ -53,54 +55,128 @@ export const INSTANCE_CATEGORIES: Record<number, InstanceAchievement["kind"]> = 
 const iconOf = (data: any): string | null => (data?.assets ?? []).find((a: any) => a.key === "icon")?.value ?? null;
 const tileOf = (data: any): string | null => (data?.assets ?? []).find((a: any) => a.key === "tile")?.value ?? null;
 
-/** Holt fehlende Einträge einer ID-Tabelle; 404 wird als null gespeichert, andere Fehler beim nächsten Lauf erneut versucht. */
-async function fillMap(
+/** Neue Gegenstandsstufen je Lauf; beim ersten Lauf sind es fast tausend, das Budget gehört auch den übrigen Tabellen. */
+const MAX_NEW_ITEM_LEVELS_PER_RUN = 300;
+
+/** Leereinträge werden frühestens nach dieser Zeit erneut abgefragt. */
+export const RETRY_AFTER_MS = 7 * 24 * 60 * 60 * 1000;
+/** Höchstens so viele Leereinträge je Tabelle und Lauf neu prüfen, damit neue Einträge und spätere Tabellen Budget behalten. */
+export const MAX_RETRIES_PER_RUN = 100;
+
+/**
+ * Leereinträge, die wieder an der Reihe sind: ohne Zeitstempel (ältere Blobs) zuerst, dann die am längsten nicht geprüften.
+ * `checked` ist der Nebenblob `<key>-checked` mit dem Zeitpunkt der letzten erfolglosen Abfrage je ID.
+ */
+export function retriesDue(
+  ids: number[],
+  isEmpty: (id: string) => boolean,
+  checked: Record<string, string>,
+  nowMs: number,
+  limit = MAX_RETRIES_PER_RUN,
+): number[] {
+  const at = (id: number) => checked[String(id)] ?? "";
+  return [...new Set(ids)]
+    .filter((id) => {
+      if (id <= 0 || !isEmpty(String(id))) return false;
+      const last = Date.parse(at(id));
+      return Number.isNaN(last) || nowMs - last >= RETRY_AFTER_MS;
+    })
+    .sort((a, b) => at(a).localeCompare(at(b)) || a - b)
+    .slice(0, limit);
+}
+
+/**
+ * Holt fehlende Einträge einer ID-Tabelle und prüft Leereinträge nach einiger Zeit erneut.
+ * 404 oder eine Antwort ohne Wert wird als null gespeichert, mit Zeitstempel im Nebenblob `<key>-checked`;
+ * andere Fehler lassen den Eintrag unverändert und werden beim nächsten Lauf erneut versucht.
+ * `seed` sind schon bekannte Werte, die ohne Anfrage übernommen werden.
+ */
+async function fillMap<T>(
   deps: CollectDeps,
   key: string,
   ids: number[],
   pathFor: (id: number) => string,
-  pick: (data: any) => string | null,
+  pick: (data: any) => T | null,
   deadline: number,
-  ns: Namespace = "static",
+  opts: { ns?: Namespace; at: string; seed?: Record<string, T>; maxNew?: number },
 ): Promise<{ added: number; skipped: number }> {
-  const map = (await deps.store.get<IconMap>(key)) ?? {};
-  const missing = [...new Set(ids)].filter((id) => id > 0 && !Object.hasOwn(map, String(id)));
+  const map = (await deps.store.get<Record<string, T | null>>(key)) ?? {};
+  const checkedKey = `${key}-checked`;
+  const checked = (await deps.store.get<Record<string, string>>(checkedKey)) ?? {};
+  let checkedChanged = false;
+  for (const [id, value] of Object.entries(opts.seed ?? {})) {
+    if (map[id] !== undefined && map[id] !== null) continue;
+    map[id] = value;
+    if (Object.hasOwn(checked, id)) {
+      delete checked[id];
+      checkedChanged = true;
+    }
+  }
+  const missing = [...new Set(ids)].filter((id) => id > 0 && !Object.hasOwn(map, String(id))).slice(0, opts.maxNew);
+  const retries = retriesDue(ids, (id) => Object.hasOwn(map, id) && map[id] === null, checked, Date.parse(opts.at));
   let added = 0;
   const pool = await runPool(
-    missing,
+    [...missing, ...retries],
     async (id) => {
-      const res = await deps.client.get(pathFor(id), ns);
-      if (res.status === 200) {
-        map[String(id)] = pick(res.data);
-      } else if (res.status === 404) {
-        map[String(id)] = null;
-      } else {
-        throw new Error(`HTTP ${res.status}`);
-      }
+      const res = await deps.client.get(pathFor(id), opts.ns ?? "static");
+      if (res.status !== 200 && res.status !== 404) throw new Error(`HTTP ${res.status}`);
+      const value = res.status === 200 ? pick(res.data) : null;
+      map[String(id)] = value;
+      if (value === null) checked[String(id)] = opts.at;
+      else delete checked[String(id)];
+      checkedChanged = true;
       added++;
     },
     { concurrency: deps.config.concurrency, deadline },
   );
   await deps.store.set(key, map);
+  if (checkedChanged) await deps.store.set(checkedKey, checked);
   return { added, skipped: pool.skipped.length };
 }
 
-/** Rezeptdetails: je Rezept Rezept, Icon und hergestellter Gegenstand. Ein Fehler lässt das ganze Rezept offen. */
-async function fillRecipes(deps: CollectDeps, ids: number[], deadline: number): Promise<{ map: RecipeDetails; added: number; skipped: number }> {
+/** Rezepte mit Lücken: nicht abrufbar, ohne Icon oder mit hergestelltem Gegenstand ohne Details. */
+function recipeIncomplete(detail: RecipeDetail | null | undefined): boolean {
+  return detail === null || detail === undefined || detail.icon === null || (detail.item !== null && detail.item.tooltip === null);
+}
+
+/** Je Rezept bis zu drei Anfragen; weniger Neuprüfungen je Lauf als bei den einfachen Tabellen. */
+const MAX_RECIPE_RETRIES_PER_RUN = 30;
+
+/**
+ * Rezeptdetails: je Rezept Rezept, Icon und hergestellter Gegenstand. Ein Fehler lässt das ganze Rezept offen.
+ * Rezepte mit Lücken werden wie die Icons nach einiger Zeit erneut abgefragt (Nebenblob `static/recipes-checked`).
+ */
+async function fillRecipes(
+  deps: CollectDeps,
+  ids: number[],
+  deadline: number,
+  at: string,
+): Promise<{ map: RecipeDetails; added: number; skipped: number }> {
   const key = "static/recipes";
+  const checkedKey = `${key}-checked`;
   const map = (await deps.store.get<RecipeDetails>(key)) ?? {};
+  const checked = (await deps.store.get<Record<string, string>>(checkedKey)) ?? {};
   const missing = [...new Set(ids)].filter((id) => id > 0 && !Object.hasOwn(map, String(id)));
+  const retries = retriesDue(
+    ids,
+    (id) => Object.hasOwn(map, id) && recipeIncomplete(map[id]),
+    checked,
+    Date.parse(at),
+    MAX_RECIPE_RETRIES_PER_RUN,
+  );
   const ok = (status: number) => {
     if (status !== 200 && status !== 404) throw new Error(`HTTP ${status}`);
     return status === 200;
   };
   let added = 0;
   const pool = await runPool(
-    missing,
+    [...missing, ...retries],
     async (id) => {
       const recipe = await deps.client.get(`/data/wow/recipe/${id}`, "static");
+      let detail: RecipeDetail | null;
       if (!ok(recipe.status)) {
-        map[String(id)] = null;
+        // Ein früher gespeichertes Rezept bleibt stehen, wenn es jetzt nicht abrufbar ist.
+        detail = map[String(id)] ?? null;
       } else {
         const itemId = recipe.data?.crafted_item?.id;
         const [media, item] = await Promise.all([
@@ -109,13 +185,19 @@ async function fillRecipes(deps: CollectDeps, ids: number[], deadline: number): 
         ]);
         const icon = ok(media.status) ? iconOf(media.data) : null;
         const itemData = item && ok(item.status) ? item.data : null;
-        map[String(id)] = toRecipeDetail(recipe.data, icon, itemData);
+        detail = toRecipeDetail(recipe.data, icon, itemData);
       }
+      map[String(id)] = detail;
+      if (recipeIncomplete(detail)) checked[String(id)] = at;
+      else delete checked[String(id)];
       added++;
     },
     { concurrency: deps.config.concurrency, deadline },
   );
-  if (added > 0) await deps.store.set(key, map);
+  if (added > 0) {
+    await deps.store.set(key, map);
+    await deps.store.set(checkedKey, checked);
+  }
   return { map, added, skipped: pool.skipped.length };
 }
 
@@ -297,23 +379,41 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
     const tree = await store.get<TalentTreeRecord>(`static/talent-trees/${treeId}`);
     for (const spec of tree?.specs ?? []) for (const n of spec.nodes) if (n.spellId) spellIds.push(n.spellId);
   }
-  const spells = await fillMap(deps, "static/spell-icons", spellIds, (id) => `/data/wow/media/spell/${id}`, iconOf, deadline);
+  const spells = await fillMap(deps, "static/spell-icons", spellIds, (id) => `/data/wow/media/spell/${id}`, iconOf, deadline, { at });
 
   // Rezeptdetails und Gegenstands-Icons für alles, was Gildenmitglieder tragen, kennen und verarbeiten.
   const itemIds: number[] = [];
+  const equippedIds: number[] = [];
+  /** Gegenstandsstufen, die Blizzard noch in der Ausrüstung mitliefert; sie hängen nur an der Gegenstands-ID. */
+  const knownLevels: Record<string, number> = {};
   const recipeIds: number[] = [];
   // Im selben Durchgang die aktiven Charaktere mit Profil als Kandidaten für die Werte.
   const active = new Set(((await store.get<GuildRecord>("guild"))?.members ?? []).filter((m) => !m.former).map((m) => m.id));
   const attributeCandidates: AttributeCandidate[] = [];
   for (const key of await store.list("characters/")) {
     const rec = await store.get<CharacterRecord>(key);
-    for (const item of rec?.equipment ?? []) if (item.itemId) itemIds.push(item.itemId);
+    for (const item of rec?.equipment ?? []) {
+      if (!item.itemId) continue;
+      itemIds.push(item.itemId);
+      equippedIds.push(item.itemId);
+      if (typeof item.itemLevel === "number") knownLevels[String(item.itemId)] = item.itemLevel;
+    }
     for (const p of rec?.professions ?? []) recipeIds.push(...(p.recipeIds ?? []));
     if (rec?.hasProfile && active.has(rec.id)) attributeCandidates.push({ id: rec.id, slug: rec.slug, lastLoginAt: rec.lastLoginAt });
   }
-  const recipes = await fillRecipes(deps, recipeIds, deadline);
+  const recipes = await fillRecipes(deps, recipeIds, deadline, at);
   for (const r of Object.values(recipes.map)) for (const reagent of r?.reagents ?? []) itemIds.push(reagent.id);
-  const items = await fillMap(deps, "static/item-icons", itemIds, (id) => `/data/wow/media/item/${id}`, iconOf, deadline);
+  const items = await fillMap(deps, "static/item-icons", itemIds, (id) => `/data/wow/media/item/${id}`, iconOf, deadline, { at });
+  // Seit dem 25.11.2026 fehlt die Stufe in der Ausrüstung frisch eingeloggter Charaktere; Ersatz aus dem Gegenstand selbst.
+  const levels = await fillMap(
+    deps,
+    "static/item-levels",
+    equippedIds.filter((id) => !Object.hasOwn(knownLevels, String(id))),
+    (id) => `/data/wow/item/${id}`,
+    (data) => (typeof data?.level === "number" ? data.level : null),
+    deadline,
+    { at, seed: knownLevels, maxNew: MAX_NEW_ITEM_LEVELS_PER_RUN },
+  );
   const instances = await fillInstanceAchievements(deps, deadline);
   const reputation = await fillReputationFactions(deps, deadline);
   const professionIcons = await fillMap(
@@ -323,6 +423,7 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
     (id) => `/data/wow/media/profession/${id}`,
     iconOf,
     deadline,
+    { at },
   );
   const images = await fillMap(
     deps,
@@ -331,7 +432,7 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
     (id) => `/data/wow/media/journal-instance/${id}`,
     tileOf,
     deadline,
-    "static-retail",
+    { at, ns: "static-retail" },
   );
   // Zuletzt, damit die Werte nie Icons und Rezepte aus dem Budget drängen.
   const attributes = await fillAttributes(deps, attributeCandidates, deadline, at);
@@ -341,6 +442,7 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
     treesAdded,
     spellIconsAdded: spells.added,
     itemIconsAdded: items.added,
+    itemLevelsAdded: levels.added,
     instanceAchievementsAdded: instances.added,
     recipesAdded: recipes.added,
     reputationGroupsChecked: reputation.checked,
@@ -352,6 +454,7 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
       skipped +
       spells.skipped +
       items.skipped +
+      levels.skipped +
       recipes.skipped +
       instances.skipped +
       reputation.skipped +
