@@ -4,6 +4,7 @@ import { retryUntilOk, waitUntilReachable } from "./takt-lib.mjs";
 const base = process.env.TRIGGER_BASE_URL ?? "http://localhost:8888";
 const guildMinutes = Number(process.env.LOCAL_SCHEDULER_GUILD_MINUTES ?? 60);
 const DAY_MS = 24 * 60 * 60 * 1000;
+const STATIC_MS = 4 * 60 * 60 * 1000;
 
 function log(text) {
   console.log(`[takt ${new Date().toISOString()}] ${text}`);
@@ -24,7 +25,7 @@ async function trigger(name) {
 if ((process.env.LOCAL_SCHEDULER ?? "on") === "off") {
   log("ausgeschaltet (LOCAL_SCHEDULER=off)");
 } else {
-  log(`an: collect-guild alle ${guildMinutes} Minuten, collect-static und collect-weekly täglich`);
+  log(`an: collect-guild alle ${guildMinutes} Minuten, collect-static alle 4 Stunden, collect-weekly täglich`);
   (async () => {
     if (await waitUntilReachable(`${base}/`)) {
       log("netlify dev erreichbar");
@@ -35,7 +36,7 @@ if ((process.env.LOCAL_SCHEDULER ?? "on") === "off") {
       log("netlify dev nicht erreichbar, erster Lauf entfällt");
     }
     setInterval(() => trigger("collect-guild"), guildMinutes * 60 * 1000);
-    setInterval(() => trigger("collect-static"), DAY_MS);
+    setInterval(() => trigger("collect-static"), STATIC_MS);
     setInterval(() => trigger("collect-weekly"), DAY_MS);
   })();
 }

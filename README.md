@@ -68,8 +68,10 @@ Currently supported is **WoW Forever** (`WOW_VERSION=forever`). Retail and Class
 5. **Style your guild and rebuild:** More settings such as logo, colors, rank names, languages, Discord and
    imprint are documented in [.env.example](.env.example). Then in Netlify go to "Deploys", "Trigger deploy".
 
-Done. The collector runs hourly (`collect-guild`), static game data daily (`collect-static`), the weekly
-evaluation early on Sunday (`collect-weekly`). After the first run, within an hour at the latest, there is data.
+Done. The collector runs hourly (`collect-guild`), static game data and the character stats every four hours
+(`collect-static`, at half past, offset from the other runs), the weekly evaluation early on Sunday
+(`collect-weekly`). After the first run, within an hour at the latest, there is data; the stats tab fills up over
+the next few static runs.
 If you don't want to wait, trigger the runs once by hand in Netlify under "Functions".
 
 **Costs:** Netlify rebuilds on every push to `main`. To save credits, turn off automatic builds under

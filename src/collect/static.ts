@@ -300,18 +300,26 @@ export function attributesDue(candidates: AttributeCandidate[], index: Attribute
 }
 
 /**
- * Werte (`/statistics`) je Charakter in eigene Blobs `attributes/<id>`, gestaffelt über die täglichen Läufe.
+ * Anteil des Zeitbudgets, der den Charakterwerten vorbehalten ist, solange Werte fällig sind.
+ * Die Nachholaufgaben davor (Icons, Rezepte, Gegenstandsstufen, Leereinträge) enden entsprechend früher;
+ * was die Werte nicht brauchen, bleibt ungenutzt, die Werte selbst dürfen aber jede übrige Zeit nutzen.
+ */
+export const ATTRIBUTES_BUDGET_SHARE = 0.4;
+
+const ATTRIBUTES_INDEX_KEY = "attributes/index";
+
+/**
+ * Werte (`/statistics`) je Charakter in eigene Blobs `attributes/<id>`, gestaffelt über die Läufe alle vier Stunden.
  * 404 wird als Datensatz ohne Felder gespeichert, damit der Charakter erst nach dem nächsten Login wieder dran ist.
+ * `due` kommt aus `attributesDue`: Charaktere ohne Werte zuerst, dann die ältesten fälligen Aktualisierungen.
  */
 async function fillAttributes(
   deps: CollectDeps,
-  candidates: AttributeCandidate[],
+  due: AttributeCandidate[],
+  index: AttributesIndex,
   deadline: number,
   at: string,
 ): Promise<{ fetched: number; pending: number }> {
-  const key = "attributes/index";
-  const index = (await deps.store.get<AttributesIndex>(key)) ?? {};
-  const due = attributesDue(candidates, index);
   let fetched = 0;
   await runPool(
     due,
@@ -333,7 +341,7 @@ async function fillAttributes(
     },
     { concurrency: deps.config.concurrency, deadline },
   );
-  if (fetched > 0) await deps.store.set(key, index);
+  if (fetched > 0) await deps.store.set(ATTRIBUTES_INDEX_KEY, index);
   return { fetched, pending: due.length - fetched };
 }
 
@@ -343,6 +351,31 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
   const deadline = started + config.budgetMs;
   const at = deps.now().toISOString();
   let skipped = 0;
+
+  // Gespeicherte Charaktere durchgehen (nur Blobs, keine Anfragen): Gegenstände, Rezepte und Kandidaten für die Werte.
+  const itemIds: number[] = [];
+  const equippedIds: number[] = [];
+  /** Gegenstandsstufen, die Blizzard noch in der Ausrüstung mitliefert; sie hängen nur an der Gegenstands-ID. */
+  const knownLevels: Record<string, number> = {};
+  const recipeIds: number[] = [];
+  const active = new Set(((await store.get<GuildRecord>("guild"))?.members ?? []).filter((m) => !m.former).map((m) => m.id));
+  const attributeCandidates: AttributeCandidate[] = [];
+  for (const key of await store.list("characters/")) {
+    const rec = await store.get<CharacterRecord>(key);
+    for (const item of rec?.equipment ?? []) {
+      if (!item.itemId) continue;
+      itemIds.push(item.itemId);
+      equippedIds.push(item.itemId);
+      if (typeof item.itemLevel === "number") knownLevels[String(item.itemId)] = item.itemLevel;
+    }
+    for (const p of rec?.professions ?? []) recipeIds.push(...(p.recipeIds ?? []));
+    if (rec?.hasProfile && active.has(rec.id)) attributeCandidates.push({ id: rec.id, slug: rec.slug, lastLoginAt: rec.lastLoginAt });
+  }
+  const attributesIndex = (await store.get<AttributesIndex>(ATTRIBUTES_INDEX_KEY)) ?? {};
+  const attributesToFetch = attributesDue(attributeCandidates, attributesIndex);
+  // Sind Werte fällig, enden die übrigen Aufgaben früher; der Rest des Budgets gehört den Werten.
+  const catchUpDeadline =
+    attributesToFetch.length > 0 ? started + Math.floor(config.budgetMs * (1 - ATTRIBUTES_BUDGET_SHARE)) : deadline;
 
   await ensureList(client, store, "static/classes", "/data/wow/playable-class/index", "classes");
   await ensureList(client, store, "static/races", "/data/wow/playable-race/index", "races");
@@ -356,7 +389,7 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
     for (const t of indexRes.data?.class_talent_trees ?? []) {
       const treeId = treeIdFromHref(t.key?.href ?? "");
       if (await store.get(`static/talent-trees/${treeId}`)) continue;
-      if (Date.now() >= deadline) {
+      if (Date.now() >= catchUpDeadline) {
         skipped++;
         continue;
       }
@@ -379,31 +412,12 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
     const tree = await store.get<TalentTreeRecord>(`static/talent-trees/${treeId}`);
     for (const spec of tree?.specs ?? []) for (const n of spec.nodes) if (n.spellId) spellIds.push(n.spellId);
   }
-  const spells = await fillMap(deps, "static/spell-icons", spellIds, (id) => `/data/wow/media/spell/${id}`, iconOf, deadline, { at });
+  const spells = await fillMap(deps, "static/spell-icons", spellIds, (id) => `/data/wow/media/spell/${id}`, iconOf, catchUpDeadline, { at });
 
   // Rezeptdetails und Gegenstands-Icons für alles, was Gildenmitglieder tragen, kennen und verarbeiten.
-  const itemIds: number[] = [];
-  const equippedIds: number[] = [];
-  /** Gegenstandsstufen, die Blizzard noch in der Ausrüstung mitliefert; sie hängen nur an der Gegenstands-ID. */
-  const knownLevels: Record<string, number> = {};
-  const recipeIds: number[] = [];
-  // Im selben Durchgang die aktiven Charaktere mit Profil als Kandidaten für die Werte.
-  const active = new Set(((await store.get<GuildRecord>("guild"))?.members ?? []).filter((m) => !m.former).map((m) => m.id));
-  const attributeCandidates: AttributeCandidate[] = [];
-  for (const key of await store.list("characters/")) {
-    const rec = await store.get<CharacterRecord>(key);
-    for (const item of rec?.equipment ?? []) {
-      if (!item.itemId) continue;
-      itemIds.push(item.itemId);
-      equippedIds.push(item.itemId);
-      if (typeof item.itemLevel === "number") knownLevels[String(item.itemId)] = item.itemLevel;
-    }
-    for (const p of rec?.professions ?? []) recipeIds.push(...(p.recipeIds ?? []));
-    if (rec?.hasProfile && active.has(rec.id)) attributeCandidates.push({ id: rec.id, slug: rec.slug, lastLoginAt: rec.lastLoginAt });
-  }
-  const recipes = await fillRecipes(deps, recipeIds, deadline, at);
+  const recipes = await fillRecipes(deps, recipeIds, catchUpDeadline, at);
   for (const r of Object.values(recipes.map)) for (const reagent of r?.reagents ?? []) itemIds.push(reagent.id);
-  const items = await fillMap(deps, "static/item-icons", itemIds, (id) => `/data/wow/media/item/${id}`, iconOf, deadline, { at });
+  const items = await fillMap(deps, "static/item-icons", itemIds, (id) => `/data/wow/media/item/${id}`, iconOf, catchUpDeadline, { at });
   // Seit dem 25.11.2026 fehlt die Stufe in der Ausrüstung frisch eingeloggter Charaktere; Ersatz aus dem Gegenstand selbst.
   const levels = await fillMap(
     deps,
@@ -411,18 +425,18 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
     equippedIds.filter((id) => !Object.hasOwn(knownLevels, String(id))),
     (id) => `/data/wow/item/${id}`,
     (data) => (typeof data?.level === "number" ? data.level : null),
-    deadline,
+    catchUpDeadline,
     { at, seed: knownLevels, maxNew: MAX_NEW_ITEM_LEVELS_PER_RUN },
   );
-  const instances = await fillInstanceAchievements(deps, deadline);
-  const reputation = await fillReputationFactions(deps, deadline);
+  const instances = await fillInstanceAchievements(deps, catchUpDeadline);
+  const reputation = await fillReputationFactions(deps, catchUpDeadline);
   const professionIcons = await fillMap(
     deps,
     "static/profession-icons",
     Object.keys(PROFESSION_NAMES_DE).map(Number),
     (id) => `/data/wow/media/profession/${id}`,
     iconOf,
-    deadline,
+    catchUpDeadline,
     { at },
   );
   const images = await fillMap(
@@ -431,11 +445,11 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
     INSTANCE_IMAGE_IDS,
     (id) => `/data/wow/media/journal-instance/${id}`,
     tileOf,
-    deadline,
+    catchUpDeadline,
     { at, ns: "static-retail" },
   );
-  // Zuletzt, damit die Werte nie Icons und Rezepte aus dem Budget drängen.
-  const attributes = await fillAttributes(deps, attributeCandidates, deadline, at);
+  // Zuletzt, mit dem vorbehaltenen Rest des Budgets und allem, was die Aufgaben davor übrig lassen.
+  const attributes = await fillAttributes(deps, attributesToFetch, attributesIndex, deadline, at);
 
   return {
     at,
