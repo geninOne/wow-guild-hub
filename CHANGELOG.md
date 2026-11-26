@@ -8,6 +8,13 @@ This file is maintained by [release-please](https://github.com/googleapis/releas
 [Conventional Commits](https://www.conventionalcommits.org/) on `main`. Please do not edit it by hand; see
 [CONTRIBUTING.md](CONTRIBUTING.md#commits-and-versions).
 
+## [2.1.0](https://github.com/geninOne/wow-guild-hub/compare/v2.0.0...v2.1.0) (2026-11-26)
+
+
+### Features
+
+* stats tab on the character page ([#4](https://github.com/geninOne/wow-guild-hub/issues/4)) ([f92853d](https://github.com/geninOne/wow-guild-hub/commit/f92853dbc0323b68ae0becf13cad9824e2b91df2))
+
 ## 2.0.0 (2026-11-26)
 
 First public version. The site was built for a community of two guilds in WoW Forever and can now
