@@ -2,7 +2,7 @@
 // Die Auswahl merkt sich, was in den letzten Ausgaben stand, damit sich die Texte von Woche zu Woche ändern.
 // Jeder Topf hat vier gleich lange Listen: Hochdeutsch (ohne Dialekt), Englisch, Schwäbisch und Bayrisch. Der Baustein
 // mit derselben Nummer sagt in allen Listen sinngemäß dasselbe; gewählt wird die Nummer, geschrieben alle Sprachen.
-// Welche Dialekte in einer Ausgabe landen, entscheidet der Texter (SITE_LANGUAGES).
+// Welche Dialekte in einer Ausgabe landen, entscheidet der Texter (WEBSITE_LANGUAGES).
 
 import { SPRACHEN, type Sprache } from "../sprache";
 

@@ -1,5 +1,5 @@
 /**
- * Angaben zur Seite aus Umgebungsvariablen mit dem Präfix `SITE_`, beim Bauen in `index.html` eingesetzt.
+ * Angaben zur Seite aus Umgebungsvariablen mit dem Präfix `WEBSITE_`, beim Bauen in `index.html` eingesetzt.
  * Dieselben Variablen liest die Oberfläche über `import.meta.env` (siehe `web/src/lib/seite.ts`).
  */
 
@@ -25,7 +25,7 @@ const wert = (env: Env, name: string): string | null => {
 };
 
 /**
- * `SITE_COLORS`: Paare `name=wert`, durch Semikolon getrennt, z. B. `gold-1=#7fb3ff;steel-deep=#0b1020`.
+ * `WEBSITE_COLORS`: Paare `name=wert`, durch Semikolon getrennt, z. B. `gold-1=#7fb3ff;steel-deep=#0b1020`.
  * Der Name ist eine Variable aus `web/src/styles/theme.css` ohne `--`. Unpassende Einträge fallen weg, damit
  * nichts anderes als Farben in das Stylesheet gelangt.
  */
@@ -38,22 +38,22 @@ export function parseFarben(raw: string | undefined): [string, string][] {
 }
 
 export function seitenKopf(env: Env): SeitenKopf {
-  const name = wert(env, "SITE_NAME") ?? "Gildenseite";
-  const logo = wert(env, "SITE_LOGO") ?? "/logo.svg";
+  const name = wert(env, "WEBSITE_NAME") ?? "Gildenseite";
+  const logo = wert(env, "WEBSITE_LOGO") ?? "/logo.svg";
   return {
     name,
-    beschreibung: wert(env, "SITE_DESCRIPTION") ?? "Mitglieder, Charaktere, Berufe, Dungeons und Raids der Gilde.",
+    beschreibung: wert(env, "WEBSITE_DESCRIPTION") ?? "Mitglieder, Charaktere, Berufe, Dungeons und Raids der Gilde.",
     logo,
-    logoAlt: wert(env, "SITE_LOGO_ALT") ?? `Wappen der Gilde ${name}`,
-    favicon: wert(env, "SITE_FAVICON") ?? logo,
+    logoAlt: wert(env, "WEBSITE_LOGO_ALT") ?? `Wappen der Gilde ${name}`,
+    favicon: wert(env, "WEBSITE_FAVICON") ?? logo,
     // Ohne eigenes Logo die PNG-Fassungen des Platzhalter-Wappens: iPhones und Teilen-Vorschauen (Discord,
-    // Facebook) zeigen kein SVG. Mit eigenem Logo dieses, bis SITE_APPLE_ICON und SITE_OG_IMAGE gesetzt sind.
-    appleIcon: wert(env, "SITE_APPLE_ICON") ?? (wert(env, "SITE_LOGO") ? logo : "/apple-touch-icon.png"),
-    ogBild: wert(env, "SITE_OG_IMAGE") ?? (wert(env, "SITE_LOGO") ? logo : "/og.png"),
-    themeColor: wert(env, "SITE_THEME_COLOR") ?? "#14161c",
-    umamiId: wert(env, "SITE_UMAMI_ID"),
-    umamiDomains: wert(env, "SITE_UMAMI_DOMAINS"),
-    farben: parseFarben(env.SITE_COLORS),
+    // Facebook) zeigen kein SVG. Mit eigenem Logo dieses, bis WEBSITE_APPLE_ICON und WEBSITE_OG_IMAGE gesetzt sind.
+    appleIcon: wert(env, "WEBSITE_APPLE_ICON") ?? (wert(env, "WEBSITE_LOGO") ? logo : "/apple-touch-icon.png"),
+    ogBild: wert(env, "WEBSITE_OG_IMAGE") ?? (wert(env, "WEBSITE_LOGO") ? logo : "/og.png"),
+    themeColor: wert(env, "WEBSITE_THEME_COLOR") ?? "#14161c",
+    umamiId: wert(env, "WEBSITE_UMAMI_ID"),
+    umamiDomains: wert(env, "WEBSITE_UMAMI_DOMAINS"),
+    farben: parseFarben(env.WEBSITE_COLORS),
   };
 }
 
@@ -64,18 +64,18 @@ const esc = (s: string) =>
 const absolut = (pfad: string) => (pfad.startsWith("/") ? `{{SITE_URL}}${pfad}` : pfad);
 
 /**
- * Setzt die Platzhalter `{{SITE_…}}` ein (bewusst nicht `%SITE_…%`: das ersetzt Vite selbst, sobald die Variable
+ * Setzt die Platzhalter `{{WEBSITE_…}}` ein (bewusst nicht `%WEBSITE_…%`: das ersetzt Vite selbst, sobald die Variable
  * existiert, auch leer und ohne Standardwert) und ergänzt Umami und Farben an der Marke `<!--seite-kopf-->`.
  */
 export function withSeite(html: string, kopf: SeitenKopf): string {
   const ersatz: Record<string, string> = {
-    "{{SITE_NAME}}": esc(kopf.name),
-    "{{SITE_DESCRIPTION}}": esc(kopf.beschreibung),
-    "{{SITE_FAVICON}}": esc(kopf.favicon),
-    "{{SITE_APPLE_ICON}}": esc(kopf.appleIcon),
-    "{{SITE_OG_IMAGE}}": esc(absolut(kopf.ogBild)),
-    "{{SITE_LOGO_ALT}}": esc(kopf.logoAlt),
-    "{{SITE_THEME_COLOR}}": esc(kopf.themeColor),
+    "{{WEBSITE_NAME}}": esc(kopf.name),
+    "{{WEBSITE_DESCRIPTION}}": esc(kopf.beschreibung),
+    "{{WEBSITE_FAVICON}}": esc(kopf.favicon),
+    "{{WEBSITE_APPLE_ICON}}": esc(kopf.appleIcon),
+    "{{WEBSITE_OG_IMAGE}}": esc(absolut(kopf.ogBild)),
+    "{{WEBSITE_LOGO_ALT}}": esc(kopf.logoAlt),
+    "{{WEBSITE_THEME_COLOR}}": esc(kopf.themeColor),
   };
   let out = html;
   for (const [platzhalter, text] of Object.entries(ersatz)) out = out.replaceAll(platzhalter, text);

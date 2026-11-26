@@ -9,25 +9,25 @@ import { parseEnv } from "node:util";
 export const KI_VARIABLEN = ["NEWSPAPER_AI_URL", "NEWSPAPER_AI_KEY", "NEWSPAPER_AI_MODEL", "NEWSPAPER_AI_EFFORT", "NEWSPAPER_AI_OUTPUT_CONFIG"];
 
 /** Angaben zur Seite, freiwillig, werden beim Bauen in Oberfläche und index.html eingesetzt (siehe .env.example). */
-export const SITE_VARIABLEN = [
-  "SITE_NAME",
-  "SITE_LANGUAGES",
-  "SITE_NEWSPAPER",
-  "SITE_DESCRIPTION",
-  "SITE_TAGLINE",
-  "SITE_LOGO",
-  "SITE_LOGO_ALT",
-  "SITE_FAVICON",
-  "SITE_APPLE_ICON",
-  "SITE_OG_IMAGE",
-  "SITE_THEME_COLOR",
-  "SITE_COLORS",
-  "SITE_DISCORD",
-  "SITE_IMPRINT_NAME",
-  "SITE_IMPRINT_ADDRESS",
-  "SITE_IMPRINT_EMAIL",
-  "SITE_UMAMI_ID",
-  "SITE_UMAMI_DOMAINS",
+export const WEBSITE_VARIABLEN = [
+  "WEBSITE_NAME",
+  "WEBSITE_LANGUAGES",
+  "WEBSITE_NEWSPAPER",
+  "WEBSITE_DESCRIPTION",
+  "WEBSITE_TAGLINE",
+  "WEBSITE_LOGO",
+  "WEBSITE_LOGO_ALT",
+  "WEBSITE_FAVICON",
+  "WEBSITE_APPLE_ICON",
+  "WEBSITE_OG_IMAGE",
+  "WEBSITE_THEME_COLOR",
+  "WEBSITE_COLORS",
+  "WEBSITE_DISCORD",
+  "WEBSITE_IMPRINT_NAME",
+  "WEBSITE_IMPRINT_ADDRESS",
+  "WEBSITE_IMPRINT_EMAIL",
+  "WEBSITE_UMAMI_ID",
+  "WEBSITE_UMAMI_DOMAINS",
 ];
 
 /** Variablen, die die Functions auf Netlify brauchen. Der lokale Taktgeber (LOCAL_SCHEDULER*) gehört nicht dazu. */
@@ -43,7 +43,7 @@ export const NETLIFY_VARIABLEN = [
   "COLLECT_CONCURRENCY",
   "COLLECT_BUDGET_MS",
   ...KI_VARIABLEN,
-  ...SITE_VARIABLEN,
+  ...WEBSITE_VARIABLEN,
 ];
 
 /** Pflichtangaben ohne Standardwert. */

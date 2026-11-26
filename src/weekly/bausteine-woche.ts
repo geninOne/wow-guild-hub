@@ -7,10 +7,10 @@ import type { Sprache } from "../sprache";
 import type { Alle } from "./bausteine";
 import type { WetterArt } from "./wetter";
 
-/** Name der Zeitung ohne SITE_NEWSPAPER, je Sprache. */
+/** Name der Zeitung ohne WEBSITE_NEWSPAPER, je Sprache. */
 export const ZEITUNG_STANDARD: Alle<string> = { de: "Gildenblatt", en: "Guild Gazette", schwaebisch: "Gildeblatt", bayrisch: "Gildnblatt" };
 
-/** Name der Zeitung: SITE_NEWSPAPER (ein Name für alle Sprachen) oder der Standardname der Sprache. */
+/** Name der Zeitung: WEBSITE_NEWSPAPER (ein Name für alle Sprachen) oder der Standardname der Sprache. */
 export function zeitungsName(sprache: Sprache, seiteZeitung?: string | null): string {
   const name = seiteZeitung?.trim();
   return name ? name : ZEITUNG_STANDARD[sprache];

@@ -1,6 +1,6 @@
 import { seite } from "../lib/seite";
 
-/** Link zum Discord der Gemeinschaft aus `SITE_DISCORD`; ohne Adresse erscheint nichts. Eigenes, schlichtes Symbol. */
+/** Link zum Discord der Gemeinschaft aus `WEBSITE_DISCORD`; ohne Adresse erscheint nichts. Eigenes, schlichtes Symbol. */
 export function DiscordLink({ className }: { className?: string }) {
   const href = seite().discord;
   if (!href) return null;

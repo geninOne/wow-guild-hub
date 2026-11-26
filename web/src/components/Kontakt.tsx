@@ -16,7 +16,7 @@ export function RechtstextHinweis() {
   return text ? <p className="muted small">{text}</p> : null;
 }
 
-/** Angaben aus `SITE_IMPRINT_…`; die Rechtsseiten erscheinen nur, wenn ein Name gesetzt ist. */
+/** Angaben aus `WEBSITE_IMPRINT_…`; die Rechtsseiten erscheinen nur, wenn ein Name gesetzt ist. */
 export function impressum(): Impressum {
   return seite().impressum ?? { name: "", anschrift: [], email: null };
 }

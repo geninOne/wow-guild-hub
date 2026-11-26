@@ -154,24 +154,24 @@ jobs:
           NEWSPAPER_AI_EFFORT: ${{ vars.NEWSPAPER_AI_EFFORT }}
           NEWSPAPER_AI_OUTPUT_CONFIG: ${{ vars.NEWSPAPER_AI_OUTPUT_CONFIG }}
           # Angaben zur Seite (Name, Logo, Farben, Impressum ...), alle freiwillig, siehe .env.example.
-          SITE_NAME: ${{ vars.SITE_NAME }}
-          SITE_LANGUAGES: ${{ vars.SITE_LANGUAGES }}
-          SITE_NEWSPAPER: ${{ vars.SITE_NEWSPAPER }}
-          SITE_DESCRIPTION: ${{ vars.SITE_DESCRIPTION }}
-          SITE_TAGLINE: ${{ vars.SITE_TAGLINE }}
-          SITE_LOGO: ${{ vars.SITE_LOGO }}
-          SITE_LOGO_ALT: ${{ vars.SITE_LOGO_ALT }}
-          SITE_FAVICON: ${{ vars.SITE_FAVICON }}
-          SITE_APPLE_ICON: ${{ vars.SITE_APPLE_ICON }}
-          SITE_OG_IMAGE: ${{ vars.SITE_OG_IMAGE }}
-          SITE_THEME_COLOR: ${{ vars.SITE_THEME_COLOR }}
-          SITE_COLORS: ${{ vars.SITE_COLORS }}
-          SITE_DISCORD: ${{ vars.SITE_DISCORD }}
-          SITE_IMPRINT_NAME: ${{ vars.SITE_IMPRINT_NAME }}
-          SITE_IMPRINT_ADDRESS: ${{ vars.SITE_IMPRINT_ADDRESS }}
-          SITE_IMPRINT_EMAIL: ${{ vars.SITE_IMPRINT_EMAIL }}
-          SITE_UMAMI_ID: ${{ vars.SITE_UMAMI_ID }}
-          SITE_UMAMI_DOMAINS: ${{ vars.SITE_UMAMI_DOMAINS }}
+          WEBSITE_NAME: ${{ vars.WEBSITE_NAME }}
+          WEBSITE_LANGUAGES: ${{ vars.WEBSITE_LANGUAGES }}
+          WEBSITE_NEWSPAPER: ${{ vars.WEBSITE_NEWSPAPER }}
+          WEBSITE_DESCRIPTION: ${{ vars.WEBSITE_DESCRIPTION }}
+          WEBSITE_TAGLINE: ${{ vars.WEBSITE_TAGLINE }}
+          WEBSITE_LOGO: ${{ vars.WEBSITE_LOGO }}
+          WEBSITE_LOGO_ALT: ${{ vars.WEBSITE_LOGO_ALT }}
+          WEBSITE_FAVICON: ${{ vars.WEBSITE_FAVICON }}
+          WEBSITE_APPLE_ICON: ${{ vars.WEBSITE_APPLE_ICON }}
+          WEBSITE_OG_IMAGE: ${{ vars.WEBSITE_OG_IMAGE }}
+          WEBSITE_THEME_COLOR: ${{ vars.WEBSITE_THEME_COLOR }}
+          WEBSITE_COLORS: ${{ vars.WEBSITE_COLORS }}
+          WEBSITE_DISCORD: ${{ vars.WEBSITE_DISCORD }}
+          WEBSITE_IMPRINT_NAME: ${{ vars.WEBSITE_IMPRINT_NAME }}
+          WEBSITE_IMPRINT_ADDRESS: ${{ vars.WEBSITE_IMPRINT_ADDRESS }}
+          WEBSITE_IMPRINT_EMAIL: ${{ vars.WEBSITE_IMPRINT_EMAIL }}
+          WEBSITE_UMAMI_ID: ${{ vars.WEBSITE_UMAMI_ID }}
+          WEBSITE_UMAMI_DOMAINS: ${{ vars.WEBSITE_UMAMI_DOMAINS }}
         run: node scripts/netlify-umgebung.mjs --aus-umgebung
 
       # Die CLI baut selbst (npm run build mit URL der Site), bündelt die Functions samt Zeitplan
@@ -183,24 +183,24 @@ jobs:
           NETLIFY_TELEMETRY_DISABLED: "1"
           TAG: ${{ steps.tag.outputs.tag }}
           # Die Oberfläche wird hier gebaut; die Angaben zur Seite direkt mitgeben, nicht nur auf Netlify.
-          SITE_NAME: ${{ vars.SITE_NAME }}
-          SITE_LANGUAGES: ${{ vars.SITE_LANGUAGES }}
-          SITE_NEWSPAPER: ${{ vars.SITE_NEWSPAPER }}
-          SITE_DESCRIPTION: ${{ vars.SITE_DESCRIPTION }}
-          SITE_TAGLINE: ${{ vars.SITE_TAGLINE }}
-          SITE_LOGO: ${{ vars.SITE_LOGO }}
-          SITE_LOGO_ALT: ${{ vars.SITE_LOGO_ALT }}
-          SITE_FAVICON: ${{ vars.SITE_FAVICON }}
-          SITE_APPLE_ICON: ${{ vars.SITE_APPLE_ICON }}
-          SITE_OG_IMAGE: ${{ vars.SITE_OG_IMAGE }}
-          SITE_THEME_COLOR: ${{ vars.SITE_THEME_COLOR }}
-          SITE_COLORS: ${{ vars.SITE_COLORS }}
-          SITE_DISCORD: ${{ vars.SITE_DISCORD }}
-          SITE_IMPRINT_NAME: ${{ vars.SITE_IMPRINT_NAME }}
-          SITE_IMPRINT_ADDRESS: ${{ vars.SITE_IMPRINT_ADDRESS }}
-          SITE_IMPRINT_EMAIL: ${{ vars.SITE_IMPRINT_EMAIL }}
-          SITE_UMAMI_ID: ${{ vars.SITE_UMAMI_ID }}
-          SITE_UMAMI_DOMAINS: ${{ vars.SITE_UMAMI_DOMAINS }}
+          WEBSITE_NAME: ${{ vars.WEBSITE_NAME }}
+          WEBSITE_LANGUAGES: ${{ vars.WEBSITE_LANGUAGES }}
+          WEBSITE_NEWSPAPER: ${{ vars.WEBSITE_NEWSPAPER }}
+          WEBSITE_DESCRIPTION: ${{ vars.WEBSITE_DESCRIPTION }}
+          WEBSITE_TAGLINE: ${{ vars.WEBSITE_TAGLINE }}
+          WEBSITE_LOGO: ${{ vars.WEBSITE_LOGO }}
+          WEBSITE_LOGO_ALT: ${{ vars.WEBSITE_LOGO_ALT }}
+          WEBSITE_FAVICON: ${{ vars.WEBSITE_FAVICON }}
+          WEBSITE_APPLE_ICON: ${{ vars.WEBSITE_APPLE_ICON }}
+          WEBSITE_OG_IMAGE: ${{ vars.WEBSITE_OG_IMAGE }}
+          WEBSITE_THEME_COLOR: ${{ vars.WEBSITE_THEME_COLOR }}
+          WEBSITE_COLORS: ${{ vars.WEBSITE_COLORS }}
+          WEBSITE_DISCORD: ${{ vars.WEBSITE_DISCORD }}
+          WEBSITE_IMPRINT_NAME: ${{ vars.WEBSITE_IMPRINT_NAME }}
+          WEBSITE_IMPRINT_ADDRESS: ${{ vars.WEBSITE_IMPRINT_ADDRESS }}
+          WEBSITE_IMPRINT_EMAIL: ${{ vars.WEBSITE_IMPRINT_EMAIL }}
+          WEBSITE_UMAMI_ID: ${{ vars.WEBSITE_UMAMI_ID }}
+          WEBSITE_UMAMI_DOMAINS: ${{ vars.WEBSITE_UMAMI_DOMAINS }}
         run: >-
           npx --yes netlify-cli@27.16.2 deploy
           --prod

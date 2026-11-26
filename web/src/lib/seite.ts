@@ -1,5 +1,5 @@
 /**
- * Angaben zur Seite aus den Umgebungsvariablen `SITE_…`, beim Bauen eingesetzt (siehe `.env.example`).
+ * Angaben zur Seite aus den Umgebungsvariablen `WEBSITE_…`, beim Bauen eingesetzt (siehe `.env.example`).
  * Als Funktion, damit Tests die Werte mit `vi.stubEnv` ändern können.
  */
 
@@ -17,7 +17,7 @@ export interface Impressum {
 export interface Seite {
   name: string;
   logo: string;
-  /** Alternativtext aus SITE_LOGO_ALT; ohne Angabe baut die Oberfläche ihn je Sprache aus dem Namen. */
+  /** Alternativtext aus WEBSITE_LOGO_ALT; ohne Angabe baut die Oberfläche ihn je Sprache aus dem Namen. */
   logoAlt: string | null;
   untertitel: string | null;
   discord: string | null;
@@ -28,22 +28,22 @@ export interface Seite {
 }
 
 export function seite(): Seite {
-  const name = wert("SITE_NAME") ?? "Gildenseite";
-  const impressumName = wert("SITE_IMPRINT_NAME");
-  const discord = wert("SITE_DISCORD");
+  const name = wert("WEBSITE_NAME") ?? "Gildenseite";
+  const impressumName = wert("WEBSITE_IMPRINT_NAME");
+  const discord = wert("WEBSITE_DISCORD");
   return {
     name,
-    logo: wert("SITE_LOGO") ?? "/logo.svg",
-    logoAlt: wert("SITE_LOGO_ALT"),
-    untertitel: wert("SITE_TAGLINE"),
+    logo: wert("WEBSITE_LOGO") ?? "/logo.svg",
+    logoAlt: wert("WEBSITE_LOGO_ALT"),
+    untertitel: wert("WEBSITE_TAGLINE"),
     discord: discord && /^https:\/\//.test(discord) ? discord : null,
     impressum: impressumName
       ? {
           name: impressumName,
-          anschrift: (wert("SITE_IMPRINT_ADDRESS") ?? "").split("|").map((z) => z.trim()).filter(Boolean),
-          email: wert("SITE_IMPRINT_EMAIL"),
+          anschrift: (wert("WEBSITE_IMPRINT_ADDRESS") ?? "").split("|").map((z) => z.trim()).filter(Boolean),
+          email: wert("WEBSITE_IMPRINT_EMAIL"),
         }
       : null,
-    umami: wert("SITE_UMAMI_ID") !== null,
+    umami: wert("WEBSITE_UMAMI_ID") !== null,
   };
 }

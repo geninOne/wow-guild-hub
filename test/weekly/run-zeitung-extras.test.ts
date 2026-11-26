@@ -40,7 +40,7 @@ beforeEach(async () => {
 });
 
 test("Ausgabe enthält Woche in Zahlen mit Vorwoche, Wetterbericht und ohne alte Ausgabe keinen Rückblick", async () => {
-  vi.stubEnv("SITE_LANGUAGES", "");
+  vi.stubEnv("WEBSITE_LANGUAGES", "");
   onTestFinished(() => {
     vi.unstubAllEnvs();
   });
@@ -51,7 +51,7 @@ test("Ausgabe enthält Woche in Zahlen mit Vorwoche, Wetterbericht und ohne alte
   expect(record?.zahlen?.spitze).toMatchObject({ level: [1, 5], tode: [1, 3] });
   expect(record?.zahlen?.vorwoche?.gesamt).toMatchObject({ level: 0, tode: 0 });
   expect(record?.zeitung.wetter).toBeTruthy();
-  // Ohne SITE_LANGUAGES: Englisch dazu, keine Dialekte
+  // Ohne WEBSITE_LANGUAGES: Englisch dazu, keine Dialekte
   expect((record?.zeitung.wetterDialekte as { en?: string } | undefined)?.en).toBeTruthy();
   expect(record?.zeitung.wetterDialekte?.schwaebisch).toBeUndefined();
   expect(record?.zeitung).not.toHaveProperty("rueckblick");

@@ -66,9 +66,9 @@ export const ERSCHEINT_FASSUNGEN: Fassungen = {
 };
 export const ERSCHEINT = ERSCHEINT_FASSUNGEN.de;
 
-/** Name der Wochenzeitung: SITE_NEWSPAPER für alle Sprachen, sonst der Standardname der Sprache. */
+/** Name der Wochenzeitung: WEBSITE_NEWSPAPER für alle Sprachen, sonst der Standardname der Sprache. */
 export function zeitungsName(sprache: Sprache = "de"): string {
-  return zeitungsNameFuer(sprache, import.meta.env.SITE_NEWSPAPER);
+  return zeitungsNameFuer(sprache, import.meta.env.WEBSITE_NEWSPAPER);
 }
 
 /** `2026-11` als `November 2026`. */

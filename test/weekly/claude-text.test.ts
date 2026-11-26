@@ -14,7 +14,7 @@ const FACTS: ZeitungFact[] = [
 ];
 const names: Record<number, string> = { 1: "Anna", 2: "Bodo", 3: "Cleo" };
 const ctx = { week: "2026-W46", name: (id: number) => names[id], allNames: ["Anna", "Bodo", "Cleo"] };
-/** Wie eine Installation mit allen Sprachen (SITE_LANGUAGES=de,schwaebisch,bayrisch,en). */
+/** Wie eine Installation mit allen Sprachen (WEBSITE_LANGUAGES=de,schwaebisch,bayrisch,en). */
 const ctxAlle = { ...ctx, sprachen: SPRACHEN };
 
 const good = {
@@ -155,7 +155,7 @@ test("generatorFromEnv: ANTHROPIC_API_KEY und ANTHROPIC_BASE_URL allein führen 
 });
 
 test("generatorFromEnv: mit eigenen Variablen gehen Basis-URL, x-api-key und Modell an das Gateway, nie an Netlify", async () => {
-  vi.stubEnv("SITE_LANGUAGES", "");
+  vi.stubEnv("WEBSITE_LANGUAGES", "");
   onTestFinished(() => {
     vi.unstubAllEnvs();
   });
@@ -171,7 +171,7 @@ test("generatorFromEnv: mit eigenen Variablen gehen Basis-URL, x-api-key und Mod
   const result = await generatorFromEnv(env, { fetch: fetchFn })(FACTS, ctx);
   expect(result).toMatchObject({ generator: "claude", model: "router-antwort" });
   expect(result.fallback).toBeUndefined();
-  // Ohne SITE_LANGUAGES nur Deutsch und Englisch: keine bezahlten Dialekt-Aufrufe
+  // Ohne WEBSITE_LANGUAGES nur Deutsch und Englisch: keine bezahlten Dialekt-Aufrufe
   expect(anfragen).toHaveLength(2);
   for (const a of anfragen) {
     expect(a.url).toBe("https://gateway.example/claude/v1/messages");
@@ -258,11 +258,11 @@ test("Systemprompt: Name der Zeitung und Gilden aus dem Rahmen, ohne festen Gild
   expect(systemPrompt("de", false, { gilden: ["Eisenfaust"] })).toContain("der World-of-Warcraft-Gilde Eisenfaust.");
 });
 
-test("KI: Englisch kommt immer dazu, Dialekte nur mit SITE_LANGUAGES; SITE_NEWSPAPER und Gilden landen im Prompt", async () => {
-  const vorher = { sprachen: process.env.SITE_LANGUAGES, zeitung: process.env.SITE_NEWSPAPER };
+test("KI: Englisch kommt immer dazu, Dialekte nur mit WEBSITE_LANGUAGES; WEBSITE_NEWSPAPER und Gilden landen im Prompt", async () => {
+  const vorher = { sprachen: process.env.WEBSITE_LANGUAGES, zeitung: process.env.WEBSITE_NEWSPAPER };
   try {
-    process.env.SITE_LANGUAGES = "de,schwaebisch";
-    process.env.SITE_NEWSPAPER = "Bärenklaue-Blatt";
+    process.env.WEBSITE_LANGUAGES = "de,schwaebisch";
+    process.env.WEBSITE_NEWSPAPER = "Bärenklaue-Blatt";
     const { client, create } = fakeClient(good);
     const result = await createClaudeGenerator({ client, log: () => {} })(FACTS, { ...ctx, gilden: ["Eisenfaust"] });
     const systeme = create.mock.calls.map((c) => (c[0] as { system: string }).system);
@@ -273,7 +273,7 @@ test("KI: Englisch kommt immer dazu, Dialekte nur mit SITE_LANGUAGES; SITE_NEWSP
     expect(Object.keys(result.articles[0].dialekte ?? {})).toEqual(["en", "schwaebisch"]);
     expect(Object.keys(result.mottoDialekte ?? {})).toEqual(["en", "schwaebisch"]);
   } finally {
-    for (const [k, v] of [["SITE_LANGUAGES", vorher.sprachen], ["SITE_NEWSPAPER", vorher.zeitung]] as const) {
+    for (const [k, v] of [["WEBSITE_LANGUAGES", vorher.sprachen], ["WEBSITE_NEWSPAPER", vorher.zeitung]] as const) {
       if (v === undefined) delete process.env[k];
       else process.env[k] = v;
     }

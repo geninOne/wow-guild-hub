@@ -46,7 +46,7 @@ const WETTER_SPRACHE: Alle<string> = {
   bayrisch: "auf Bayrisch",
 };
 
-/** Was der Systemprompt über die Installation wissen muss: Name der Zeitung (SITE_NEWSPAPER) und Gildennamen. */
+/** Was der Systemprompt über die Installation wissen muss: Name der Zeitung (WEBSITE_NEWSPAPER) und Gildennamen. */
 export interface PromptRahmen {
   zeitung?: string;
   gilden?: string[];
@@ -341,7 +341,7 @@ export function createClaudeGenerator(options: ClaudeGeneratorOptions): TextGene
       ...(options.outputConfig
         ? { output_config: { effort: options.effort ?? "low", format: { type: "json_schema" as const, schema: ctx.wetter ? SCHEMA_MIT_WETTER : SCHEMA } } }
         : {}),
-      system: systemPrompt(sprache, Boolean(ctx.wetter), { zeitung: ctx.zeitung ?? process.env.SITE_NEWSPAPER, gilden: ctx.gilden }),
+      system: systemPrompt(sprache, Boolean(ctx.wetter), { zeitung: ctx.zeitung ?? process.env.WEBSITE_NEWSPAPER, gilden: ctx.gilden }),
       messages: [
         {
           role: "user",
@@ -369,7 +369,7 @@ export function createClaudeGenerator(options: ClaudeGeneratorOptions): TextGene
   }
 
   // Alle Fassungen gleichzeitig, damit es nicht länger dauert als eine: Hochdeutsch, Englisch und die angebotenen
-  // Dialekte (SITE_LANGUAGES), damit fremde Installationen keine Dialekt-Aufrufe bezahlen. Scheitert Hochdeutsch,
+  // Dialekte (WEBSITE_LANGUAGES), damit fremde Installationen keine Dialekt-Aufrufe bezahlen. Scheitert Hochdeutsch,
   // schreiben die Satzbausteine alles; scheitert eine andere Sprache, springen die Satzbausteine für sie ein.
   return async (facts, context): Promise<TextResult> => {
     const sprachen = sprachenFuer(context);

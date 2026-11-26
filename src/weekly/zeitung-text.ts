@@ -34,9 +34,9 @@ export function uebersetzungen<T>(f: Alle<T>, sprachen: readonly Sprache[]): Ueb
   return out;
 }
 
-/** Angebotene Sprachen eines Texters: aus dem Kontext oder aus SITE_LANGUAGES (zur Laufzeit gelesen). */
+/** Angebotene Sprachen eines Texters: aus dem Kontext oder aus WEBSITE_LANGUAGES (zur Laufzeit gelesen). */
 export function sprachenFuer(context: Pick<TextContext, "sprachen">): Sprache[] {
-  return context.sprachen ? [...context.sprachen] : aktiveSprachen(process.env.SITE_LANGUAGES);
+  return context.sprachen ? [...context.sprachen] : aktiveSprachen(process.env.WEBSITE_LANGUAGES);
 }
 
 /** Eine frühere Ausgabe, soweit ein Texter sie kennen muss, um sich nicht zu wiederholen. */
@@ -64,11 +64,11 @@ export interface TextContext {
   recent?: RecentIssue[];
   /** Wetterlage der Woche; ohne sie gibt es keinen Wetterbericht. */
   wetter?: WetterLage;
-  /** Angebotene Sprachen; ohne Angabe gilt SITE_LANGUAGES. Dialekte werden nur geschrieben, wenn sie hier stehen. */
+  /** Angebotene Sprachen; ohne Angabe gilt WEBSITE_LANGUAGES. Dialekte werden nur geschrieben, wenn sie hier stehen. */
   sprachen?: readonly Sprache[];
   /** Namen der Gilden, Hauptgilde zuerst, damit ein Sprachmodell sie nennen kann. */
   gilden?: string[];
-  /** Name der Zeitung aus SITE_NEWSPAPER; ohne Angabe der Standardname je Sprache. */
+  /** Name der Zeitung aus WEBSITE_NEWSPAPER; ohne Angabe der Standardname je Sprache. */
   zeitung?: string;
 }
 
@@ -276,7 +276,7 @@ export function schreibeWetter(lage: WetterLage, p: Picker): Alle<string> {
 
 /**
  * Artikel mit hochdeutscher Fassung oben, Englisch und den angebotenen Dialekten unter `dialekte`.
- * Ohne `sprachen` gilt SITE_LANGUAGES.
+ * Ohne `sprachen` gilt WEBSITE_LANGUAGES.
  */
 export function articleOf(
   base: Omit<ZeitungArticle, "headline" | "text" | "dialekte">,

@@ -8,7 +8,7 @@
   BNET_CLIENT_ID = "Client-ID aus dem Battle.net Developer Portal (develop.battle.net)"
   BNET_CLIENT_SECRET = "Client-Secret aus dem Battle.net Developer Portal"
   GUILD_SLUGS = "Slug deiner Gilde wie in der Blizzard-API, z. B. meine-gilde"
-  SITE_NAME = "Name, der oben auf der Seite steht, z. B. Meine Gilde"
+  WEBSITE_NAME = "Name, der oben auf der Seite steht, z. B. Meine Gilde"
 
 [functions]
   directory = "netlify/functions"

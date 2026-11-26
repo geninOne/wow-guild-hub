@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import {
   NETLIFY_VARIABLEN,
-  SITE_VARIABLEN,
+  WEBSITE_VARIABLEN,
   setzeVariablen,
   variablenAusEnv,
   variablenAusUmgebung,
@@ -47,9 +47,9 @@ describe("variablenAusEnv", () => {
       "NEWSPAPER_AI_MODEL",
       "NEWSPAPER_AI_EFFORT",
       "NEWSPAPER_AI_OUTPUT_CONFIG",
-      ...SITE_VARIABLEN,
+      ...WEBSITE_VARIABLEN,
     ]);
-    expect(SITE_VARIABLEN.every((v) => v.startsWith("SITE_"))).toBe(true);
+    expect(WEBSITE_VARIABLEN.every((v) => v.startsWith("WEBSITE_"))).toBe(true);
     expect(NETLIFY_VARIABLEN).not.toContain("ANTHROPIC_API_KEY");
   });
 
