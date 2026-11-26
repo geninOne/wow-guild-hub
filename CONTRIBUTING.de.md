@@ -24,8 +24,8 @@ Mit deiner Teilnahme stimmst du dem [Verhaltenskodex](CODE_OF_CONDUCT.de.md) zu.
    merge", der Titel wird also zum Commit auf `main`.
 
 Workflows auf Pull Requests aus Forks laufen mit `pull_request`: nur lesend, ohne Secrets. Was Zugangsdaten braucht,
-lässt sich deshalb nur lokal testen. Bei deinen ersten Beiträgen gibt der Maintainer die Läufe von Hand frei,
-bevor sie starten.
+lässt sich deshalb nur lokal testen. Läufe auf Pull Requests aus Forks gibt der Maintainer von Hand frei, bevor
+sie starten.
 
 ## Lokal entwickeln
 

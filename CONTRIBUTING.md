@@ -24,8 +24,8 @@ By taking part, you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
    with "Squash and merge", so its title becomes the commit on `main`.
 
 Workflows on pull requests from forks run with `pull_request`: read-only, without secrets. Anything that needs
-credentials can therefore only be tested locally. For your first contributions, the maintainer approves the
-workflow runs by hand before they start.
+credentials can therefore only be tested locally. The maintainer approves workflow runs on pull requests from
+forks by hand before they start.
 
 ## Developing locally
 
