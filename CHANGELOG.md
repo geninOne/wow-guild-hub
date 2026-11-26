@@ -8,6 +8,13 @@ This file is maintained by [release-please](https://github.com/googleapis/releas
 [Conventional Commits](https://www.conventionalcommits.org/) on `main`. Please do not edit it by hand; see
 [CONTRIBUTING.md](CONTRIBUTING.md#commits-and-versions).
 
+## [2.1.1](https://github.com/geninOne/wow-guild-hub/compare/v2.1.0...v2.1.1) (2026-11-26)
+
+
+### Bug Fixes
+
+* retry missing icons and fill item levels from the item endpoint ([#6](https://github.com/geninOne/wow-guild-hub/issues/6)) ([f7a8f3e](https://github.com/geninOne/wow-guild-hub/commit/f7a8f3e9eb538b78bf7ed5612c236f9c7d03dca2))
+
 ## [2.1.0](https://github.com/geninOne/wow-guild-hub/compare/v2.0.0...v2.1.0) (2026-11-26)
 
 
