@@ -1,0 +1,47 @@
+name: Report a bug
+description: Something doesn't work as expected.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Please don't put any secrets (client secret, upload code, tokens) in the issue.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happens?
+      description: Briefly describe what goes wrong. A screenshot is welcome.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open the page /statistik
+        2. ...
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Shown at the bottom of the page, in the footer.
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where does the site run?
+      options:
+        - Netlify
+        - Locally with Docker
+        - Other
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error messages or logs
+      description: From the browser console or the Netlify function logs. Remove secrets first.
+      render: text

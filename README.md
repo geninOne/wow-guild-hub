@@ -1,122 +1,121 @@
 # WoW Guild Hub
 
-Eine Webseite für deine World-of-Warcraft-Gilde: Mitglieder, Charaktere, Berufe, Dungeons und Raids, Statistiken,
-Spaßtitel der Woche und eine eigene Wochenzeitung. Die Daten kommen stündlich aus der Blizzard-API, gespeichert
-wird in Netlify Blobs, eine Datenbank braucht es nicht. Fork, Schlüssel eintragen, fertig.
+🇩🇪 [Deutsch](README.de.md)
 
-> **English:** A website for your World of Warcraft guild (members, characters, professions, dungeons and raids,
-> statistics, weekly fun titles and a weekly guild newspaper), fed hourly from the Blizzard API and hosted on
-> Netlify without a database. The site itself speaks German and English; the docs are in German.
+A website for your World of Warcraft guild: members, characters, professions, dungeons and raids, statistics,
+weekly fun titles and a weekly guild newspaper of its own. The data comes hourly from the Blizzard API and is
+stored in Netlify Blobs, no database needed. Fork, add your keys, done.
 
-Entstanden für eine Gemeinschaft aus zwei Gilden in WoW Forever, jetzt offen für alle Gilden.
+Built for a community of two guilds in WoW Forever, now open to every guild.
 
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/geninOne/wow-guild-hub)
-[![Prüfung](https://github.com/geninOne/wow-guild-hub/actions/workflows/ci.yml/badge.svg)](https://github.com/geninOne/wow-guild-hub/actions/workflows/ci.yml)
-[![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-blue.svg)](LICENSE)
+[![CI](https://github.com/geninOne/wow-guild-hub/actions/workflows/ci.yml/badge.svg)](https://github.com/geninOne/wow-guild-hub/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ## Screenshots
 
-<!-- Platzhalter: Screenshots unter docs/bilder/ ablegen und hier einbinden, z. B.
-     ![Gildenübersicht](docs/bilder/gilde.png) -->
+<!-- Placeholder: put screenshots under docs/bilder/ and embed them here, e.g.
+     ![Guild overview](docs/bilder/gilde.png) -->
 
-| Gildenübersicht | Charakterseite | Wochenzeitung |
+| Guild overview | Character page | Weekly newspaper |
 |---|---|---|
-| *Screenshot folgt* | *Screenshot folgt* | *Screenshot folgt* |
+| *Screenshot coming soon* | *Screenshot coming soon* | *Screenshot coming soon* |
 
-## Funktionen
+## Features
 
-- **Gilde:** alle Mitglieder mit Klasse, Volk, Stufe, Rang und Gegenstandsstufe, Filter und Sortierung. Mehrere
-  Gilden (etwa eine Horde- und eine Allianzgilde) lassen sich zu einer Gemeinschaft zusammenfassen.
-- **Charakterseite:** Ausrüstung mit Tooltips, Talentbäume, Berufe, Ruf, Fortschritt in Dungeons und Raids und
-  ein monatlicher Rückblick.
-- **Berufe:** Verzeichnis aller Rezepte der Gilde, wer was herstellen kann, mit Materialien.
-- **Statistik:** Klassen- und Levelverteilung, Heatmap der Aktivität, Gildenstatistik als Kuriositäten-Wand
-  (Woche, Monat, gesamt), Dungeons und Raids der ganzen Gilde.
-- **Spaßtitel der Woche:** zwölf Titel wie Nachteule, Früher Vogel oder Tausendsassa, mit Ehrentafel.
-- **Wochenzeitung:** erscheint jeden Sonntag mit Levelaufstiegen, Rekorden, Neuzugängen, Wetter und Rückblick.
-  Die Texte kommen aus Satzbausteinen oder, mit eigenem KI-Gateway, von Claude.
-- **Sprachen:** Deutsch und Englisch, auf Wunsch zusätzlich Schwäbisch und Bayrisch.
-- **Erweiterbar:** Module für eigene Reiter, Routen und Zeitungsartikel, zum Beispiel für Daten aus einem
-  eigenen Addon (siehe [docs/erweiterungen.md](docs/erweiterungen.md)).
-- **Datensparsam:** keine Cookies, keine Anmeldung, optional Umami für eine einfache Besucherstatistik.
+- **Guild:** all members with class, race, level, rank and item level, with filters and sorting. Several guilds
+  (say, a Horde and an Alliance guild) can be combined into one community.
+- **Character page:** gear with tooltips, talent trees, professions, reputation, progress in dungeons and raids,
+  and a monthly review.
+- **Professions:** a directory of all the guild's recipes, who can craft what, with materials.
+- **Statistics:** class and level distribution, an activity heatmap, guild statistics as a wall of curiosities
+  (week, month, all time), dungeons and raids of the whole guild.
+- **Fun titles of the week:** twelve titles such as Night Owl, Early Bird or Jack of All Trades, with a hall of
+  fame.
+- **Weekly newspaper** (by default the "Guild Gazette", at `/zeitung`): published every Sunday with level-ups,
+  records, new members, weather and a look back. The texts come from sentence templates or, with your own AI
+  gateway, from Claude.
+- **Languages:** German and English, optionally also Swabian and Bavarian.
+- **Extensible:** modules for your own tabs, routes and newspaper articles, for example for data from your own
+  addon (see [docs/extensions.md](docs/extensions.md)).
+- **Privacy-friendly:** no cookies, no login, optionally Umami for simple visitor statistics.
 
-Unterstützt wird derzeit **WoW Forever** (`WOW_VERSION=forever`). Retail und Classic mit Realms sind geplant.
+Currently supported is **WoW Forever** (`WOW_VERSION=forever`). Retail and Classic with realms are planned.
 
-## Installation in fünf Schritten
+## Installation in five steps
 
-1. **Fork anlegen:** Oben rechts auf GitHub "Fork". Oder direkt den Knopf "Deploy to Netlify" oben nutzen, der
-   den Fork und die Netlify-Seite in einem Rutsch anlegt (dann weiter bei Schritt 3).
-2. **Netlify-Seite anlegen:** Bei [Netlify](https://app.netlify.com) "Add new site", "Import an existing project",
-   den Fork wählen. Build-Befehl und Ordner stehen schon in `netlify.toml`.
-3. **API-Schlüssel bei Blizzard holen:** Im [Battle.net Developer Portal](https://develop.battle.net/access/clients)
-   anmelden, "Create Client", einen Namen eingeben (Redirect-URL ist nicht nötig). Client-ID und Client-Secret
-   notieren. Das Secret niemandem zeigen und nie ins Repository schreiben.
-4. **Umgebungsvariablen setzen:** In Netlify unter "Site configuration", "Environment variables" mindestens
-   eintragen:
+1. **Create a fork:** "Fork" at the top right on GitHub. Or use the "Deploy to Netlify" button above, which
+   creates the fork and the Netlify site in one go (then continue with step 3).
+2. **Create a Netlify site:** At [Netlify](https://app.netlify.com) choose "Add new site", "Import an existing
+   project" and select your fork. Build command and folder are already set in `netlify.toml`.
+3. **Get an API key from Blizzard:** Sign in to the
+   [Battle.net Developer Portal](https://develop.battle.net/access/clients), click "Create Client" and enter a
+   name (no redirect URL needed). Note down the client ID and client secret. Never show the secret to anyone and
+   never commit it to the repository.
+4. **Set environment variables:** In Netlify under "Site configuration", "Environment variables", set at least:
 
-   | Variable | Wert |
+   | Variable | Value |
    |---|---|
-   | `BNET_CLIENT_ID` | Client-ID aus Schritt 3 |
-   | `BNET_CLIENT_SECRET` | Client-Secret aus Schritt 3 |
-   | `GUILD_SLUGS` | Slug deiner Gilde, z. B. `meine-gilde` (Kleinbuchstaben, Leerzeichen als Bindestrich) |
-   | `SEITE_NAME` | Name, der auf der Seite steht |
+   | `BNET_CLIENT_ID` | Client ID from step 3 |
+   | `BNET_CLIENT_SECRET` | Client secret from step 3 |
+   | `GUILD_SLUGS` | Slug of your guild, e.g. `my-guild` (lowercase, spaces as hyphens) |
+   | `WEBSITE_NAME` | Name shown on the site |
 
-5. **Gilde gestalten und neu bauen:** Weitere Angaben wie Logo, Farben, Rangnamen, Sprachen, Discord und
-   Impressum stehen kommentiert in [.env.example](.env.example). Danach in Netlify "Deploys", "Trigger deploy".
+5. **Style your guild and rebuild:** More settings such as logo, colors, rank names, languages, Discord and
+   imprint are documented in [.env.example](.env.example). Then in Netlify go to "Deploys", "Trigger deploy".
 
-Fertig. Der Sammler läuft stündlich (`collect-guild`), statische Spieldaten täglich (`collect-static`), die
-Wochenauswertung sonntags früh (`collect-weekly`). Nach dem ersten Lauf, spätestens nach einer Stunde, sind
-Daten da. Wer nicht warten will, löst die Läufe in Netlify unter "Functions" einmal von Hand aus.
+Done. The collector runs hourly (`collect-guild`), static game data daily (`collect-static`), the weekly
+evaluation early on Sunday (`collect-weekly`). After the first run, within an hour at the latest, there is data.
+If you don't want to wait, trigger the runs once by hand in Netlify under "Functions".
 
-**Kosten:** Netlify baut bei jedem Push auf `main` neu. Wer Credits sparen will, schaltet unter "Build & deploy"
-die automatischen Builds ab und veröffentlicht nur über den Release-Workflow (siehe unten).
+**Costs:** Netlify rebuilds on every push to `main`. To save credits, turn off automatic builds under
+"Build & deploy" and publish only through the release workflow (see below).
 
-## Konfiguration
+## Configuration
 
-Alles läuft über Umgebungsvariablen, eine Konfigurationsdatei braucht es nicht. Die vollständige, kommentierte
-Liste steht in [.env.example](.env.example). Die wichtigsten:
+Everything is configured through environment variables, no configuration file needed. The full, commented list
+is in [.env.example](.env.example). The most important ones:
 
-| Bereich | Variablen |
+| Area | Variables |
 |---|---|
-| Pflicht | `BNET_CLIENT_ID`, `BNET_CLIENT_SECRET`, `GUILD_SLUGS` |
-| Spiel und API | `WOW_VERSION`, `BNET_REGION`, `BNET_LOCALE` |
-| Gilde | `GUILD_RANKS` (Rangnamen als JSON), `TITEL_ABMELDUNGEN` |
-| Aussehen | `SEITE_NAME`, `SEITE_BESCHREIBUNG`, `SEITE_UNTERTITEL`, `SEITE_LOGO`, `SEITE_FAVICON`, `SEITE_OG_BILD`, `SEITE_FARBEN` |
-| Sprachen | `SEITE_SPRACHEN` (`de,en` oder mit `schwaebisch`, `bayrisch`), `SEITE_ZEITUNG` |
-| Rechtliches | `SEITE_IMPRESSUM_NAME`, `SEITE_IMPRESSUM_ANSCHRIFT`, `SEITE_IMPRESSUM_EMAIL` |
-| Extras | `SEITE_DISCORD`, `SEITE_UMAMI_ID`, `SEITE_UMAMI_DOMAINS`, `ZEITUNG_KI_URL`, `ZEITUNG_KI_SCHLUESSEL` |
+| Required | `BNET_CLIENT_ID`, `BNET_CLIENT_SECRET`, `GUILD_SLUGS` |
+| Game and API | `WOW_VERSION`, `BNET_REGION`, `BNET_LOCALE` |
+| Guild | `GUILD_RANKS` (rank names as JSON), `TITLE_OPT_OUTS` |
+| Appearance | `WEBSITE_NAME`, `WEBSITE_DESCRIPTION`, `WEBSITE_TAGLINE`, `WEBSITE_LOGO`, `WEBSITE_FAVICON`, `WEBSITE_OG_IMAGE`, `WEBSITE_COLORS` |
+| Languages | `WEBSITE_LANGUAGES` (`de,en` or with `schwaebisch`, `bayrisch`), `WEBSITE_NEWSPAPER` |
+| Legal | `WEBSITE_IMPRINT_NAME`, `WEBSITE_IMPRINT_ADDRESS`, `WEBSITE_IMPRINT_EMAIL` |
+| Extras | `WEBSITE_DISCORD`, `WEBSITE_UMAMI_ID`, `WEBSITE_UMAMI_DOMAINS`, `NEWSPAPER_AI_URL`, `NEWSPAPER_AI_KEY` |
 
-Hinweise:
+Notes:
 
-- `SEITE_…`-Variablen werden beim Bauen eingesetzt. Nach einer Änderung neu deployen.
-- Eigene Bilder (Logo, Teilen-Bild) in einen eigenen Ordner unter `web/public/` legen, z. B.
-  `web/public/meine-gilde/logo.png`, und als `/meine-gilde/logo.png` eintragen. So gibt es beim Aktualisieren
-  keine Konflikte.
-- Impressum und Datenschutzerklärung erscheinen nur mit `SEITE_IMPRESSUM_NAME`. Mitgeliefert werden nur
-  **Vorlagen mit Platzhaltern**: Name, Anschrift und E-Mail kommen aus den Variablen, die Texte musst du selbst
-  verfassen und prüfen. Eigene Rechtstexte setzt du am besten als Modul ein (`impressumSeite`, `datenschutzSeite`,
-  siehe [docs/erweiterungen.md](docs/erweiterungen.md)), dann bleiben sie beim Aktualisieren unberührt. Wer in
-  Deutschland eine solche Seite betreibt, braucht beides. Das ist keine Rechtsberatung.
-- Netlify gibt den Functions zusammen nur rund 4 KB an Umgebungsvariablen mit. `GUILD_RANKS` deshalb knapp halten.
-- Die Wochenzeitung schreibt mit Claude, wenn `ZEITUNG_KI_URL` und `ZEITUNG_KI_SCHLUESSEL` auf ein
-  Anthropic-kompatibles Gateway zeigen. Ohne beides schreiben die Satzbausteine, kostenlos.
+- `WEBSITE_…` variables are applied at build time. Redeploy after changing them.
+- Put your own images (logo, share image) in a folder of your own under `web/public/`, e.g.
+  `web/public/my-guild/logo.png`, and enter them as `/my-guild/logo.png`. That way updates cause no conflicts.
+- The imprint (Impressum, required in Germany) and the privacy policy only appear with `WEBSITE_IMPRINT_NAME`. Only
+  **templates with placeholders** are included: name, address and email come from the variables, the texts you
+  have to write and check yourself. Your own legal texts are best added as a module (`impressumSeite`,
+  `datenschutzSeite`, see [docs/extensions.md](docs/extensions.md)), so they stay untouched when you update.
+  Anyone running such a site in Germany needs both. This is not legal advice.
+- Netlify passes only about 4 KB of environment variables to the functions in total. Keep `GUILD_RANKS` short.
+- The weekly newspaper is written by Claude when `NEWSPAPER_AI_URL` and `NEWSPAPER_AI_KEY` point to an
+  Anthropic-compatible gateway. Without both, the sentence templates write it, free of charge.
 
-## Lokale Entwicklung
+## Local development
 
-Voraussetzung: Docker (oder Node.js 22).
+Requirement: Docker (or Node.js 22).
 
 ```bash
 cp .env.example .env
 ```
 
-In `.env` Zugangsdaten und Gilde eintragen, dann:
+Enter credentials and guild in `.env`, then:
 
 ```bash
 docker compose up -d --build
 ```
 
-Die Seite läuft unter http://localhost:8888, nur auf diesem Rechner erreichbar. Ein Taktgeber im Container
-startet die Sammler wie auf Netlify (abschalten mit `TAKT=aus`). Von Hand:
+The site runs at http://localhost:8888, reachable only from this machine. A scheduler in the container starts
+the collectors as on Netlify (turn it off with `LOCAL_SCHEDULER=off`). By hand:
 
 ```bash
 docker compose exec app npm run collect:guild
@@ -130,26 +129,26 @@ docker compose exec app npm run collect:static
 docker compose exec app npm run collect:weekly
 ```
 
-Nach Änderungen an `package.json` den Container mit frischen Paketen neu bauen:
+After changes to `package.json`, rebuild the container with fresh packages:
 
 ```bash
 docker compose up -d --build --renew-anon-volumes
 ```
 
-Zum Ausprobieren ohne lange Wartezeit füllt ein Skript den lokalen Bestand mit erfundener Aktivität (die Seiten
-zeigen dann einen roten Hinweis), mit `-- --entfernen` ist alles wieder weg:
+To try things out without a long wait, a script fills the local store with made-up activity (the pages then
+show a red notice); `-- --entfernen` removes it all again:
 
 ```bash
 docker compose exec app npm run daten:beispiel
 ```
 
-Nur die Oberfläche mit Hot Reload (ohne `/api`) unter http://127.0.0.1:5173:
+Only the interface with hot reload (without `/api`) at http://127.0.0.1:5173:
 
 ```bash
 npm run dev:web
 ```
 
-Prüfen wie in der GitHub Action:
+Check like the GitHub Action does:
 
 ```bash
 npm run lint
@@ -167,9 +166,9 @@ npm run typecheck
 npm run build
 ```
 
-## Aktualisieren
+## Updating
 
-Neue Versionen holst du in deinen Fork mit "Sync fork" auf GitHub oder lokal:
+Pull new versions into your fork with "Sync fork" on GitHub, or locally:
 
 ```bash
 git remote add upstream https://github.com/geninOne/wow-guild-hub.git
@@ -179,48 +178,48 @@ git remote add upstream https://github.com/geninOne/wow-guild-hub.git
 git pull upstream main
 ```
 
-Was sich geändert hat, steht in [CHANGELOG.md](CHANGELOG.md). Bei einer neuen Hauptversion (z. B. 2.0.0) dort
-nachlesen, ob neue Variablen nötig sind.
+What changed is listed in [CHANGELOG.md](CHANGELOG.md). For a new major version (e.g. 2.0.0), check there
+whether new variables are needed.
 
-## Veröffentlichen per Release-Workflow (optional)
+## Publishing via the release workflow (optional)
 
-Statt bei jedem Push kann die Seite nur bei einer neuen Version live gehen. Dafür in GitHub unter "Settings",
-"Secrets and variables", "Actions" eintragen:
+Instead of on every push, the site can go live only with a new version. To do so, add in GitHub under
+"Settings", "Secrets and variables", "Actions":
 
-- **Secrets:** `NETLIFY_AUTH_TOKEN`, `NETLIFY_SITE_ID`, `BNET_CLIENT_ID`, `BNET_CLIENT_SECRET`, optional
-  `ZEITUNG_KI_SCHLUESSEL`
-- **Variables:** `GUILD_SLUGS` und nach Bedarf alle übrigen Einstellungen aus `.env.example`
+- **Secrets:** `NETLIFY_AUTH_TOKEN`, `NETLIFY_SITE_ID`, `BNET_CLIENT_ID`, `BNET_CLIENT_SECRET`, optionally
+  `NEWSPAPER_AI_KEY`
+- **Variables:** `GUILD_SLUGS` and, as needed, all other settings from `.env.example`
 
-Dann "Actions", "Release", "Run workflow" mit `patch`, `minor` oder `major`. Der Workflow prüft, erhöht die
-Version, schreibt den Changelog-Abschnitt, setzt die Netlify-Variablen, deployt und legt ein GitHub-Release an.
-Schlägt ein Lauf fehl, "Re-run failed jobs" nutzen, nicht "Re-run all jobs".
+Then "Actions", "Release", "Run workflow" with `patch`, `minor` or `major`. The workflow checks, bumps the
+version, writes the changelog section, sets the Netlify variables, deploys and creates a GitHub release. If a run
+fails, use "Re-run failed jobs", not "Re-run all jobs".
 
-## Aufbau
+## Structure
 
-| Ordner | Inhalt |
+| Folder | Contents |
 |---|---|
-| `netlify/functions/` | Lese-API (`/api/*`) und die geplanten Sammler |
-| `src/` | Sammeln, Aufbereiten, API, Wochenauswertung, Wochenzeitung |
-| `web/` | Oberfläche (Vite, React, React Router) |
-| `config/` | Spieldaten, die die API nicht liefert (Dungeons, Statistiken, Talentkorrekturen, Statistikkarten) |
-| `scripts/` | Werkzeuge für Release, Beispieldaten und Datenübernahme |
-| `test/` | Tests (vitest) mit gespeicherten API-Antworten |
+| `netlify/functions/` | Read API (`/api/*`) and the scheduled collectors |
+| `src/` | Collecting, processing, API, weekly evaluation, weekly newspaper |
+| `web/` | Interface (Vite, React, React Router) |
+| `config/` | Game data the API does not provide (dungeons, statistics, talent corrections, statistics cards) |
+| `scripts/` | Tools for releases, sample data and data migration |
+| `test/` | Tests (vitest) with recorded API responses |
 
-## Mitmachen
+## Contributing
 
-Fehler melden, Ideen einbringen, Code beitragen: siehe [CONTRIBUTING.md](CONTRIBUTING.md) und den
-[Verhaltenskodex](CODE_OF_CONDUCT.md). Sicherheitslücken bitte privat melden, siehe [SECURITY.md](SECURITY.md).
+Report bugs, share ideas, contribute code: see [CONTRIBUTING.md](CONTRIBUTING.md) and the
+[Code of Conduct](CODE_OF_CONDUCT.md). Please report security vulnerabilities privately, see
+[SECURITY.md](SECURITY.md).
 
-## Lizenz und Blizzard
+## License and Blizzard
 
-Der Code steht unter der [MIT-Lizenz](LICENSE).
+The code is licensed under the [MIT License](LICENSE).
 
-Dies ist ein Fanprojekt. Es ist nicht mit Blizzard Entertainment verbunden und wird von Blizzard weder
-unterstützt noch geprüft. World of Warcraft und Blizzard Entertainment sind Marken oder eingetragene Marken von
-Blizzard Entertainment, Inc. Spieldaten und Bilder stammen aus der Blizzard-API und gehören Blizzard.
+This is a fan project. It is not affiliated with Blizzard Entertainment and is neither endorsed nor reviewed by
+Blizzard. World of Warcraft and Blizzard Entertainment are trademarks or registered trademarks of Blizzard
+Entertainment, Inc. Game data and images come from the Blizzard API and belong to Blizzard.
 
-Wer die Seite betreibt, nutzt die Blizzard-API mit eigenen Zugangsdaten und ist selbst dafür verantwortlich,
-deren Nutzungsbedingungen einzuhalten. Nach unserem Verständnis gehört dazu etwa, Blizzard als Quelle zu nennen,
-für Funktionen mit API-Daten kein Geld zu verlangen und gespeicherte Daten nicht unbegrenzt ungeprüft
-aufzubewahren. Das ist keine Rechtsberatung; maßgeblich sind allein die aktuellen Bedingungen im
-[Battle.net Developer Portal](https://develop.battle.net).
+Whoever runs the site uses the Blizzard API with their own credentials and is responsible for complying with its
+terms of use. As we understand it, this includes, for example, crediting Blizzard as the source, not charging
+money for features that use API data, and not keeping stored data indefinitely without review. This is not legal
+advice; only the current terms in the [Battle.net Developer Portal](https://develop.battle.net) apply.

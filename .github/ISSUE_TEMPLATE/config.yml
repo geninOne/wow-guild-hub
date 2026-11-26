@@ -1,5 +1,5 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Sicherheitslücke melden
+  - name: Report a security vulnerability
     url: https://github.com/geninOne/wow-guild-hub/security/advisories/new
-    about: Bitte Sicherheitslücken nie öffentlich als Issue melden, sondern privat (siehe SECURITY.md).
+    about: Please never report security vulnerabilities as a public issue, report them privately instead (see SECURITY.md).

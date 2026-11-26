@@ -1,5 +1,7 @@
 # Erweiterungen
 
+🇬🇧 [English](extensions.md)
+
 Eine Erweiterung (ein Modul) bringt eigene Funktionen auf die Gildenseite, ohne Dateien des Kerns zu ändern. Sie
 liegt in eigenen Ordnern und meldet sich mit je einer Zeile in zwei Registry-Dateien an. So lässt sich ein Modul in
 einem eigenen (auch privaten) Fork pflegen, während der Fork weiter Änderungen aus diesem Repo zieht
@@ -206,7 +208,7 @@ interface OberflaechenErweiterung {
   speichert (auch IP-Hashes), beschreibt hier, was, wozu und wie lange.
 - `impressumSeite`, `datenschutzSeite`: eigene, vollständige Rechtstexte statt der Platzhalter-Vorlagen des Kerns.
   Es gilt das erste Modul, das eine solche Seite mitbringt. So bleiben die eigenen Texte beim Aktualisieren aus dem
-  öffentlichen Repo unberührt. Wie die Vorlagen erscheinen sie nur mit `SEITE_IMPRESSUM_NAME`.
+  öffentlichen Repo unberührt. Wie die Vorlagen erscheinen sie nur mit `WEBSITE_IMPRINT_NAME`.
 
 Eigenes CSS importiert das Modul selbst (`import "./umfragen.css";` in seiner `index.tsx`), mit Klassennamen, die mit
 der Kennung beginnen. Farben und Schriften kommen aus den Variablen von `web/src/styles/theme.css`.

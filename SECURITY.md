@@ -1,35 +1,38 @@
-# Sicherheit
+# Security
 
-## Unterstützte Versionen
+🇩🇪 [Deutsch](SECURITY.de.md)
 
-Sicherheitskorrekturen gibt es für die jeweils neueste Version auf `main`. Wer die Seite geforkt hat, übernimmt
-Korrekturen, indem er die Änderungen von hier zieht (siehe README, Abschnitt "Aktualisieren").
+## Supported versions
 
-## Sicherheitslücke melden
+Security fixes are provided for the latest version on `main`. If you forked the site, you get fixes by pulling
+the changes from here (see the [README](README.md), section "Updating").
 
-Bitte Sicherheitslücken **nicht** als öffentliches Issue, Pull Request oder im Discord melden.
+## Reporting a vulnerability
 
-Stattdessen privat über GitHub:
+Please do **not** report security vulnerabilities as a public issue, pull request or on Discord.
+
+Instead, report them privately through GitHub:
 [Security, Report a vulnerability](https://github.com/geninOne/wow-guild-hub/security/advisories/new).
 
-Hilfreich sind:
+Helpful details:
 
-- was betroffen ist (Datei, Endpunkt, Seite),
-- wie sich die Lücke ausnutzen lässt, gern mit einem kleinen Beispiel,
-- welche Folgen du siehst.
+- what is affected (file, endpoint, page),
+- how the vulnerability can be exploited, ideally with a small example,
+- what impact you see.
 
-Ich bestätige den Eingang meist innerhalb weniger Tage, melde mich mit einer Einschätzung und sage Bescheid, wenn
-die Korrektur veröffentlicht ist. Auf Wunsch wirst du in den Release-Notes genannt.
+I usually confirm receipt within a few days, get back to you with an assessment and let you know when the fix
+is released. If you like, you will be credited in the release notes.
 
-## Bitte nicht
+## Please don't
 
-- Keine Tests gegen fremde Installationen oder gegen die Blizzard-API, die über normale Nutzung hinausgehen.
-- Keine Daten anderer abrufen, ändern oder löschen.
-- Keine Angriffe auf Verfügbarkeit (Lasttests, Fluten).
+- No tests against other people's installations or against the Blizzard API beyond normal use.
+- Don't access, change or delete other people's data.
+- No attacks on availability (load tests, flooding).
 
-## Für Betreiber einer eigenen Installation
+## For operators of your own installation
 
-- Geheimnisse (`BNET_CLIENT_SECRET`, Upload-Codes, Tokens) gehören nur in Umgebungsvariablen, nie ins Repository.
-- Lokale Docker-Installationen sind nur auf `127.0.0.1` erreichbar. Das bitte so lassen, denn `netlify dev` löst
-  die Sammler per Adresse ohne Schutz aus.
-- Dependabot-Updates zeitnah übernehmen.
+- Secrets (`BNET_CLIENT_SECRET`, upload codes, tokens) belong only in environment variables, never in the
+  repository.
+- Local Docker installations are reachable only on `127.0.0.1`. Please keep it that way, because `netlify dev`
+  triggers the collectors via a URL without protection.
+- Apply Dependabot updates promptly.

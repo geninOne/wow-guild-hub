@@ -1,53 +1,54 @@
-# Mitmachen
+# Contributing
 
-Schön, dass du helfen willst! Fehlerberichte, Ideen, Übersetzungen und Code sind gleichermaßen willkommen.
-Mit deiner Teilnahme stimmst du dem [Verhaltenskodex](CODE_OF_CONDUCT.md) zu.
+🇩🇪 [Deutsch](CONTRIBUTING.de.md)
+
+Great that you want to help! Bug reports, ideas, translations and code are all equally welcome.
+By taking part, you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Issues
 
-- **Fehler:** Vorlage "Fehler melden" nutzen. Bitte Version (Fuß der Seite), Schritte zum Nachstellen und, wenn
-  möglich, Logs angeben. Nie Geheimnisse (Client-Secret, Codes, Tokens) posten.
-- **Ideen:** Vorlage "Funktion wünschen". Bei größeren Vorhaben bitte zuerst ein Issue öffnen und abstimmen, bevor
-  du viel Code schreibst.
-- **Sicherheitslücken:** nie öffentlich, sondern wie in [SECURITY.md](SECURITY.md) beschrieben.
+- **Bugs:** use the "Report a bug" template. Please include the version (in the site footer), steps to reproduce
+  and, if possible, logs. Never post secrets (client secret, codes, tokens).
+- **Ideas:** use the "Request a feature" template. For larger plans, please open an issue first and agree on the
+  approach before writing a lot of code.
+- **Security vulnerabilities:** never in public, but as described in [SECURITY.md](SECURITY.md).
 
-## Pull Requests
+## Pull requests
 
-1. Repository forken und einen Branch von `main` anlegen, z. B. `berufe-filter` oder `fix-talentbaum`.
-2. Klein bleiben: ein Thema je Pull Request, gern in mehreren kleinen Commits.
-3. Lokal prüfen (siehe unten). Die GitHub Action führt dieselben Schritte bei jedem Pull Request aus.
-4. Eintrag unter "Unveröffentlicht" in [CHANGELOG.md](CHANGELOG.md).
-5. Pull Request mit der Vorlage öffnen. Mindestens ein Review ist nötig, alle Prüfungen müssen grün sein.
+1. Fork the repository and create a branch from `main`, e.g. `berufe-filter` or `fix-talentbaum`.
+2. Keep it small: one topic per pull request, ideally in several small commits.
+3. Check locally (see below). The GitHub Action runs the same steps on every pull request.
+4. Add an entry under "Unreleased" in [CHANGELOG.md](CHANGELOG.md).
+5. Open the pull request using the template. At least one review is required, and all checks must be green.
 
-Pull Requests aus Forks bekommen keinen Zugriff auf Secrets. Was Zugangsdaten braucht, lässt sich deshalb nur
-lokal testen.
+Pull requests from forks get no access to secrets. Anything that needs credentials can therefore only be tested
+locally.
 
-## Lokal entwickeln
+## Developing locally
 
-Voraussetzungen: Docker oder Node.js 22.
+Requirements: Docker or Node.js 22.
 
 ```bash
 cp .env.example .env
 ```
 
-Für echte Daten in `.env` die Zugangsdaten aus dem [Battle.net Developer Portal](https://develop.battle.net/access/clients)
-und den Slug einer Gilde eintragen. Dann:
+For real data, enter credentials from the
+[Battle.net Developer Portal](https://develop.battle.net/access/clients) and the slug of a guild in `.env`. Then:
 
 ```bash
 docker compose up -d --build
 ```
 
-Die Seite läuft unter http://localhost:8888, die Sammler laufen im Takt. Ohne Docker:
+The site runs at http://localhost:8888, and the collectors run on schedule. Without Docker:
 
 ```bash
 npm ci
 npx netlify dev
 ```
 
-Ohne eigene Zugangsdaten lassen sich die Tests trotzdem ausführen; sie nutzen gespeicherte Antworten der API
-(`test/fixtures`).
+The tests run even without your own credentials; they use recorded API responses (`test/fixtures`).
 
-## Prüfen
+## Checks
 
 ```bash
 npm run lint
@@ -65,27 +66,27 @@ npm run typecheck
 npm run build
 ```
 
-## Code-Stil
+## Code style
 
-- TypeScript, React mit Funktionskomponenten, keine neuen Abhängigkeiten ohne guten Grund.
-- Bezeichner, Kommentare und Texte sind meist Deutsch; Felder der Blizzard-API bleiben, wie sie sind.
-- Jeder sichtbare Text hat eine deutsche und eine englische Fassung (`Fassungen` aus `src/sprache.ts`).
-  Schwäbisch und Bayrisch sind freiwillig.
-- Keine Gedankenstriche (—) in Texten.
-- Keine Werte fest im Code, die je Gilde verschieden sind: neue Einstellungen als Umgebungsvariable mit
-  Standardwert und Kommentar in `.env.example`.
-- Geheimnisse nie loggen und nie in Fehlermeldungen ausgeben.
-- `npm run lint` (oxlint) muss ohne Befund durchlaufen.
-- Neue Logik bekommt Tests (vitest), Oberflächen-Bausteine Tests mit Testing Library.
+- TypeScript, React with function components, no new dependencies without a good reason.
+- Identifiers, comments and texts are mostly German; fields from the Blizzard API stay as they are.
+- Every visible text has a German and an English version (`Fassungen` from `src/sprache.ts`). Swabian and
+  Bavarian are optional.
+- No em dashes (U+2014) in texts.
+- No values hard-coded that differ per guild: add new settings as an environment variable with a default value
+  and a comment in `.env.example`.
+- Never log secrets and never include them in error messages.
+- `npm run lint` (oxlint) must pass without findings.
+- New logic gets tests (vitest), interface components get tests with Testing Library.
 
 ## Commits
 
-Kurze Betreffzeile auf Deutsch nach dem Muster `Bereich: was sich ändert`, z. B.
-`Berufe: Filter nach Rezeptstufe`. Im Text darunter, falls nötig, warum. Ein Commit soll für sich bauen und die
-Tests bestehen.
+A short subject line in German following the pattern `Area: what changes`, e.g.
+`Berufe: Filter nach Rezeptstufe`. In the body below, if needed, explain why. Each commit should build on its own
+and pass the tests.
 
-## Versionen
+## Versions
 
-Versionen folgen [Semantic Versioning](https://semver.org/lang/de/): Patch für Korrekturen, Minor für neue
-Funktionen, Major für Änderungen, nach denen Betreiber etwas umstellen müssen (z. B. neue Pflichtvariablen).
-Releases macht der Maintainer.
+Versions follow [Semantic Versioning](https://semver.org/): patch for fixes, minor for new features, major for
+changes after which operators have to adjust something (e.g. new required variables).
+Releases are made by the maintainer.

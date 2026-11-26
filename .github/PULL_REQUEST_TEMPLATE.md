@@ -1,18 +1,18 @@
-## Was ändert sich?
+## What changes?
 
-<!-- Kurz beschreiben, was der Pull Request macht und warum. Zugehöriges Issue verlinken, z. B. "Schließt #12". -->
+<!-- Briefly describe what the pull request does and why. Link the related issue, e.g. "Closes #12". -->
 
-## Wie getestet?
+## How was it tested?
 
 - [ ] `npm run lint`
 - [ ] `npm test`
 - [ ] `npm run typecheck`
 - [ ] `npm run build`
-- [ ] Lokal in Docker angeschaut (bei Änderungen an der Oberfläche, gern mit Screenshot)
+- [ ] Checked locally in Docker (for interface changes, ideally with a screenshot)
 
-## Checkliste
+## Checklist
 
-- [ ] Texte gibt es auf Deutsch und Englisch (Dialekte sind freiwillig).
-- [ ] Neue Einstellungen stehen kommentiert in `.env.example`.
-- [ ] Eintrag unter "Unveröffentlicht" in `CHANGELOG.md`.
-- [ ] Keine Geheimnisse, keine echten Zugangsdaten, keine persönlichen Daten im Diff.
+- [ ] Texts exist in German and English (dialects are optional).
+- [ ] New settings are documented with a comment in `.env.example`.
+- [ ] Entry under "Unreleased" in `CHANGELOG.md`.
+- [ ] No secrets, no real credentials, no personal data in the diff.
