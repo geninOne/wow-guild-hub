@@ -8,6 +8,13 @@ This file is maintained by [release-please](https://github.com/googleapis/releas
 [Conventional Commits](https://www.conventionalcommits.org/) on `main`. Please do not edit it by hand; see
 [CONTRIBUTING.md](CONTRIBUTING.md#commits-and-versions).
 
+## [2.1.2](https://github.com/geninOne/wow-guild-hub/compare/v2.1.1...v2.1.2) (2026-11-26)
+
+
+### Bug Fixes
+
+* dedicated budget for character stats, static collector every 4 hours ([#8](https://github.com/geninOne/wow-guild-hub/issues/8)) ([4b1d3e4](https://github.com/geninOne/wow-guild-hub/commit/4b1d3e4a1e131230adb843679af99fd721fe7a12))
+
 ## [2.1.1](https://github.com/geninOne/wow-guild-hub/compare/v2.1.0...v2.1.1) (2026-11-26)
 
 
