@@ -14,12 +14,15 @@ Entstanden für eine Gemeinschaft aus zwei Gilden in WoW Forever, jetzt offen f�
 
 ## Screenshots
 
-<!-- Platzhalter: Screenshots unter docs/bilder/ ablegen und hier einbinden, z. B.
-     ![Gildenübersicht](docs/bilder/gilde.png) -->
+Alle Screenshots zeigen eine erfundene Demo-Gilde mit Beispieldaten (Oberfläche auf Englisch).
 
-| Gildenübersicht | Charakterseite | Wochenzeitung |
-|---|---|---|
-| *Screenshot folgt* | *Screenshot folgt* | *Screenshot folgt* |
+| Gildenübersicht | Charakterseite |
+|---|---|
+| ![Gildenübersicht: Mitgliederliste mit Klasse, Stufe, Gegenstandsstufe, Hauptspezialisierung und Rang, mit Suche und Filtern](docs/bilder/gilde.webp) | ![Charakterseite: Ausrüstung mit Symbolen und Gegenstandsstufen, Titelabzeichen und Reiter für Talente, Berufe, Dungeons und Ruf](docs/bilder/charakter.webp) |
+| **Statistik** | **Titel der Woche** |
+| ![Statistik: Klassenverteilung, Völkertorte und Levelverteilung der Gilde](docs/bilder/statistik.webp) | ![Titel der Woche: zwölf Spaßtitel wie Nachteule und Frühaufsteher mit Gewinnern und die Ehrentafel der Vorwochen](docs/bilder/titel.webp) |
+| **Wochenzeitung** | **Auf dem Handy** |
+| ![Wochenzeitung: Schlagzeile, die Woche in Zahlen, Aufsteiger und Klatsch](docs/bilder/zeitung.webp) | <img src="docs/bilder/handy-zeitung.webp" alt="Die Wochenzeitung in Handybreite" width="260"> |
 
 ## Funktionen
 
