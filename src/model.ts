@@ -159,11 +159,13 @@ export interface MemberSummary {
   /** Anzahl bekannter Rezepte über alle Berufe. */
   recipeCount?: number | null;
   /**
-   * Abgeschlossene Erfolge des Charakters selbst; accountweite (`static/achievement-account-wide`) zählen nicht mit,
-   * weil Twinks sie vom Hauptcharakter erben. Erfolge ohne bekannte Angabe zählen, bis der statische Sammler sie kennt.
+   * Abgeschlossene Erfolge. Bei Twinks (`TWINK_RANKS`) ohne accountweite Erfolge (`static/achievement-account-wide`),
+   * die zählen nur beim Hauptcharakter. Erfolge ohne bekannte Angabe zählen, bis der statische Sammler sie kennt.
    * null ohne Daten.
    */
   achievementCount?: number | null;
+  /** `achievementCount` ohne accountweite Erfolge, weil der Charakter beim Abruf einen Twink-Rang hatte. */
+  achievementsTwink?: boolean;
   /** Summe der Rufstufen über alle Fraktionen; null ohne Daten. */
   reputationTiers?: number | null;
 }
@@ -217,6 +219,8 @@ export interface DaySnapshot {
       recipes?: number;
       /** Abgeschlossene Erfolge. */
       achievements?: number;
+      /** `achievements` ohne accountweite Erfolge (Twink-Rang); fehlt bei allen anderen. */
+      achievementsTwink?: true;
       /** Summe der Rufstufen über alle Fraktionen. */
       reputation?: number;
     }

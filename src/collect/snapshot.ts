@@ -13,6 +13,7 @@ export function buildSnapshot(members: MemberSummary[], at: string): DaySnapshot
       ...(typeof m.dungeonsEntered === "number" ? { dungeons: m.dungeonsEntered } : {}),
       ...(typeof m.recipeCount === "number" ? { recipes: m.recipeCount } : {}),
       ...(typeof m.achievementCount === "number" ? { achievements: m.achievementCount } : {}),
+      ...(typeof m.achievementCount === "number" && m.achievementsTwink ? { achievementsTwink: true as const } : {}),
       ...(typeof m.reputationTiers === "number" ? { reputation: m.reputationTiers } : {}),
     };
   }

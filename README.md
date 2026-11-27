@@ -86,7 +86,7 @@ is in [.env.example](.env.example). The most important ones:
 |---|---|
 | Required | `BNET_CLIENT_ID`, `BNET_CLIENT_SECRET`, `GUILD_SLUGS` |
 | Game and API | `WOW_VERSION`, `BNET_REGION`, `BNET_LOCALE` |
-| Guild | `GUILD_RANKS` (rank names as JSON), `TITLE_OPT_OUTS` |
+| Guild | `GUILD_RANKS` (rank names as JSON), `TWINK_RANKS`, `TITLE_OPT_OUTS` |
 | Appearance | `WEBSITE_NAME`, `WEBSITE_DESCRIPTION`, `WEBSITE_TAGLINE`, `WEBSITE_LOGO`, `WEBSITE_FAVICON`, `WEBSITE_OG_IMAGE`, `WEBSITE_COLORS` |
 | Languages | `WEBSITE_LANGUAGES` (`de,en` or with `schwaebisch`, `bayrisch`), `WEBSITE_NEWSPAPER` |
 | Legal | `WEBSITE_IMPRINT_NAME`, `WEBSITE_IMPRINT_ADDRESS`, `WEBSITE_IMPRINT_EMAIL` |
@@ -102,6 +102,10 @@ Notes:
   have to write and check yourself. Your own legal texts are best added as a module (`impressumSeite`,
   `datenschutzSeite`, see [docs/extensions.md](docs/extensions.md)), so they stay untouched when you update.
   Anyone running such a site in Germany needs both. This is not legal advice.
+- `TWINK_RANKS` lists twink ranks by their name from `GUILD_RANKS`, comma-separated (e.g. `Twink,Twink GL`).
+  WoW Forever reports account-wide achievements (class, professions, dungeon explorer) as completed on every
+  character of the account. They then count only for characters without a twink rank. Without the variable they
+  count everywhere.
 - Netlify passes only about 4 KB of environment variables to the functions in total. Keep `GUILD_RANKS` short.
 - The weekly newspaper is written by Claude when `NEWSPAPER_AI_URL` and `NEWSPAPER_AI_KEY` point to an
   Anthropic-compatible gateway. Without both, the sentence templates write it, free of charge.

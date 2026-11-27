@@ -81,3 +81,14 @@ test("Zeitbudget des Sammlers bleibt mit Reserve unter dem 15-s-Abbruch von Netl
   const { STANDARDWERTE } = await import("../scripts/netlify-umgebung-lib.mjs");
   expect(STANDARDWERTE.COLLECT_BUDGET_MS).toBe(String(c.budgetMs));
 });
+
+test("TWINK_RANKS löst Rangnamen aus GUILD_RANKS je Gilde zu Rangnummern auf", () => {
+  const basis = { BNET_CLIENT_ID: "id", BNET_CLIENT_SECRET: "s", GUILD_SLUGS: "meine-gilde,zweite" };
+  const GUILD_RANKS = JSON.stringify({ "meine-gilde": ["GM", "Offizier", "Twink", "Mitglied", "twink gl"], zweite: { "3": "Twink" }, dritte: ["Twink"] });
+  expect(loadConfig({ ...basis, GUILD_RANKS, TWINK_RANKS: " Twink , Twink GL" }).twinkRanks).toEqual({
+    "meine-gilde": [2, 4], zweite: [3], dritte: [0],
+  });
+  expect(loadConfig({ ...basis, GUILD_RANKS }).twinkRanks).toBeUndefined();
+  expect(loadConfig({ ...basis, TWINK_RANKS: "Twink" }).twinkRanks).toBeUndefined();
+  expect(loadConfig({ ...basis, GUILD_RANKS, TWINK_RANKS: "Gibtsnicht" }).twinkRanks).toBeUndefined();
+});

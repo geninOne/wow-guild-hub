@@ -434,16 +434,21 @@ test("Tode, betretene Dungeons und Rezeptanzahl landen im Datensatz und im Tages
   expect((await store.get<CharacterRecord>(`characters/${LUVIA}`))?.stats).toEqual({ deaths: 4, dungeonsEntered: 2 });
 });
 
-test("Erfolgszahl ohne accountweite Erfolge aus static/achievement-account-wide", async () => {
+test("accountweite Erfolge zählen nur beim Hauptcharakter, Twink-Rang aus der Konfiguration", async () => {
   const done = (id: number) => ({ id, criteria: { id: 1, is_completed: true } });
   routes[`${LUVIA_BASE}/achievements`] = { status: 200, data: { achievements: [done(62031), done(627), done(1176)] } };
-  await run(T10);
-  const count = async () => (await store.get<GuildRecord>("guild"))?.members.find((m) => m.id === LUVIA)?.achievementCount;
-  expect(await count()).toBe(3);
   await store.set("static/achievement-account-wide", { "62031": true, "627": false });
-  await run(T11);
-  expect(await count()).toBe(2);
-  expect((await store.get<DaySnapshot>("history/2026-11-06"))?.characters[String(LUVIA)].achievements).toBe(2);
+  await run(T10);
+  const luvia = async () => (await store.get<GuildRecord>("guild"))?.members.find((m) => m.id === LUVIA);
+  // Ohne Twink-Ränge zählt alles.
+  expect((await luvia())?.achievementCount).toBe(3);
+  const rank = (await luvia())!.rank;
+  await run(T11, { twinkRanks: { ["bärenklaue".normalize("NFC")]: [rank] } });
+  expect(await luvia()).toMatchObject({ achievementCount: 2, achievementsTwink: true });
+  expect((await store.get<DaySnapshot>("history/2026-11-06"))?.characters[String(LUVIA)]).toMatchObject({ achievements: 2, achievementsTwink: true });
+  await run(T12, { twinkRanks: { ["bärenklaue".normalize("NFC")]: [rank + 1] } });
+  expect(await luvia()).toMatchObject({ achievementCount: 3, achievementsTwink: false });
+  expect((await store.get<DaySnapshot>("history/2026-11-06"))?.characters[String(LUVIA)]).not.toHaveProperty("achievementsTwink");
 });
 
 test("Vollständige Statistik im Datensatz, 404 behält den vorigen Stand", async () => {

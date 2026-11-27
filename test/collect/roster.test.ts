@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { applyRecord, fetchOrder, mergeRoster, ownAchievementCount, parseRoster } from "../../src/collect/roster";
+import { applyRecord, fetchOrder, isTwink, mergeRoster, ownAchievementCount, parseRoster } from "../../src/collect/roster";
 import { buildCharacterRecord } from "../../src/transform/character";
 import { loadFixture } from "../helpers/fixtures";
 import { entry, member } from "../helpers/members";
@@ -126,20 +126,39 @@ describe("eigene Erfolge", () => {
     );
   const done = (id: number) => ({ id, criteria: { is_completed: true } });
 
-  test("accountweite Erfolge zählen nicht, nicht accountweite und noch unbekannte schon", () => {
+  const flags = { "62031": true, "627": false };
+
+  test("Twink: accountweite Erfolge zählen nicht, nicht accountweite und noch unbekannte schon", () => {
     const rec = withAchievements([done(62031), done(627), done(1176), { id: 5, criteria: { is_completed: false, child_criteria: [{ id: 1, is_completed: true }] } }]);
-    expect(ownAchievementCount(rec, { "62031": true, "627": false })).toBe(2);
-    expect(applyRecord(member({ id: 9 }), rec, "t5", { "62031": true, "627": false }).achievementCount).toBe(2);
+    expect(ownAchievementCount(rec, flags, true)).toBe(2);
+    const m = applyRecord(member({ id: 9 }), rec, "t5", { accountWide: flags, twink: true });
+    expect([m.achievementCount, m.achievementsTwink]).toEqual([2, true]);
+  });
+
+  test("Hauptcharakter: accountweite Erfolge zählen mit", () => {
+    const rec = withAchievements([done(62031), done(627), done(1176)]);
+    expect(ownAchievementCount(rec, flags)).toBe(3);
+    const m = applyRecord(member({ id: 9, achievementsTwink: true }), rec, "t5", { accountWide: flags });
+    expect([m.achievementCount, m.achievementsTwink]).toEqual([3, false]);
+  });
+
+  test("isTwink über Gilde und Rang, ohne guildSlug die Hauptgilde, Slug unabhängig von der Unicode-Form", () => {
+    const ranks = { ["bärenklaue".normalize("NFC")]: [4, 5] };
+    expect(isTwink(member({ id: 1, rank: 4 }), "bärenklaue", ranks)).toBe(true);
+    expect(isTwink(member({ id: 1, rank: 3 }), "bärenklaue", ranks)).toBe(false);
+    expect(isTwink(member({ id: 1, rank: 4, guildSlug: "andere" }), "bärenklaue", ranks)).toBe(false);
+    expect(isTwink({ ...member({ id: 1, rank: 5 }), guildSlug: undefined }, "bärenklaue".normalize("NFD"), ranks)).toBe(true);
+    expect(isTwink(member({ id: 1, rank: 4 }), "bärenklaue")).toBe(false);
   });
 
   test("ohne bekannte Angaben zählt jeder abgeschlossene Erfolg, Leereinträge auch", () => {
     const rec = withAchievements([done(62031), done(627)]);
-    expect(ownAchievementCount(rec)).toBe(2);
-    expect(ownAchievementCount(rec, { "62031": null })).toBe(2);
+    expect(ownAchievementCount(rec, {}, true)).toBe(2);
+    expect(ownAchievementCount(rec, { "62031": null }, true)).toBe(2);
   });
 
   test("ohne Erfolgsdaten bleibt die Zahl offen", () => {
     expect(ownAchievementCount(withAchievements(null))).toBeNull();
-    expect(applyRecord(member({ id: 9 }), withAchievements(null), "t5", { "62031": true }).achievementCount).toBeNull();
+    expect(applyRecord(member({ id: 9 }), withAchievements(null), "t5", { accountWide: flags, twink: true }).achievementCount).toBeNull();
   });
 });

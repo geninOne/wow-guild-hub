@@ -1,3 +1,4 @@
+import { parseRankNames } from "./api/config";
 export interface Config {
   clientId: string;
   clientSecret: string;
@@ -9,6 +10,11 @@ export interface Config {
   locale: string;
   concurrency: number;
   budgetMs: number;
+  /**
+   * Twink-Ränge je Gilden-Slug (Rangnummern), aufgelöst aus `TWINK_RANKS` und `GUILD_RANKS`. Twinks bekommen
+   * accountweite Erfolge nicht gezählt, weil sie sie vom Hauptcharakter erben. Fehlt es, zählen sie überall.
+   */
+  twinkRanks?: Record<string, number[]>;
 }
 
 type Env = Record<string, string | undefined>;
@@ -52,7 +58,25 @@ function guildSlugs(env: Env): string[] {
   return slugs;
 }
 
+/**
+ * `TWINK_RANKS`: kommagetrennte Rangnamen, wie sie in `GUILD_RANKS` stehen (Groß- und Kleinschreibung egal).
+ * Ergebnis je Gilde die passenden Rangnummern; ohne Treffer leer.
+ */
+export function twinkRanks(env: Env): Record<string, number[]> {
+  const wanted = new Set(
+    (env.TWINK_RANKS ?? "").split(",").map((n) => n.trim().toLowerCase()).filter((n) => n !== ""),
+  );
+  if (wanted.size === 0) return {};
+  const out: Record<string, number[]> = {};
+  for (const [slug, names] of Object.entries(parseRankNames(env.GUILD_RANKS))) {
+    const ranks = Object.entries(names).filter(([, name]) => wanted.has(name.toLowerCase())).map(([rank]) => Number(rank));
+    if (ranks.length > 0) out[slug.normalize("NFC")] = ranks;
+  }
+  return out;
+}
+
 export function loadConfig(env: Env): Config {
+  const twinks = twinkRanks(env);
   return {
     clientId: required(env, "BNET_CLIENT_ID"),
     clientSecret: required(env, "BNET_CLIENT_SECRET"),
@@ -62,5 +86,6 @@ export function loadConfig(env: Env): Config {
     locale: env.BNET_LOCALE || "de_DE",
     concurrency: number(env, "COLLECT_CONCURRENCY", 10, { min: 1, integer: true }),
     budgetMs: number(env, "COLLECT_BUDGET_MS", 12000, { min: 0 }),
+    ...(Object.keys(twinks).length > 0 ? { twinkRanks: twinks } : {}),
   };
 }

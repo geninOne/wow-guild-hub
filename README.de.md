@@ -84,7 +84,7 @@ Liste steht in [.env.example](.env.example). Die wichtigsten:
 |---|---|
 | Pflicht | `BNET_CLIENT_ID`, `BNET_CLIENT_SECRET`, `GUILD_SLUGS` |
 | Spiel und API | `WOW_VERSION`, `BNET_REGION`, `BNET_LOCALE` |
-| Gilde | `GUILD_RANKS` (Rangnamen als JSON), `TITLE_OPT_OUTS` |
+| Gilde | `GUILD_RANKS` (Rangnamen als JSON), `TWINK_RANKS`, `TITLE_OPT_OUTS` |
 | Aussehen | `WEBSITE_NAME`, `WEBSITE_DESCRIPTION`, `WEBSITE_TAGLINE`, `WEBSITE_LOGO`, `WEBSITE_FAVICON`, `WEBSITE_OG_IMAGE`, `WEBSITE_COLORS` |
 | Sprachen | `WEBSITE_LANGUAGES` (`de,en` oder mit `schwaebisch`, `bayrisch`), `WEBSITE_NEWSPAPER` |
 | Rechtliches | `WEBSITE_IMPRINT_NAME`, `WEBSITE_IMPRINT_ADDRESS`, `WEBSITE_IMPRINT_EMAIL` |
@@ -101,6 +101,9 @@ Hinweise:
   verfassen und prüfen. Eigene Rechtstexte setzt du am besten als Modul ein (`impressumSeite`, `datenschutzSeite`,
   siehe [docs/extensions.de.md](docs/extensions.de.md)), dann bleiben sie beim Aktualisieren unberührt. Wer in
   Deutschland eine solche Seite betreibt, braucht beides. Das ist keine Rechtsberatung.
+- `TWINK_RANKS` nennt Twink-Ränge mit ihrem Namen aus `GUILD_RANKS`, kommagetrennt (z. B. `Twink,Twink GL`).
+  WoW Forever meldet accountweite Erfolge (Klasse, Berufe, Dungeonerforscher) bei jedem Charakter des Accounts als
+  erledigt. Sie zählen dann nur bei Charakteren ohne Twink-Rang. Ohne die Variable zählen sie überall.
 - Netlify gibt den Functions zusammen nur rund 4 KB an Umgebungsvariablen mit. `GUILD_RANKS` deshalb knapp halten.
 - Die Wochenzeitung schreibt mit Claude, wenn `NEWSPAPER_AI_URL` und `NEWSPAPER_AI_KEY` auf ein
   Anthropic-kompatibles Gateway zeigen. Ohne beides schreiben die Satzbausteine, kostenlos.

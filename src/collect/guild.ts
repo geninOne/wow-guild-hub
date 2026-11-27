@@ -9,7 +9,7 @@ import { CHARACTER_INDEX_KEY, toCharacterIndexEntry } from "./character-index";
 import { detectLogin, recordActivity, type LoginSeen } from "./activity";
 import { fetchCharacter } from "./fetch-character";
 import { appendLevelUps, detectLevelUps } from "./levelups";
-import { ACCOUNT_WIDE_KEY, applyRecord, fetchOrder, mergeRoster, parseRoster, type GuildRosterEntry } from "./roster";
+import { ACCOUNT_WIDE_KEY, applyRecord, fetchOrder, isTwink, mergeRoster, parseRoster, type GuildRosterEntry } from "./roster";
 import { buildSnapshot } from "./snapshot";
 import { saveStatsStand, type StatValues } from "../stats/stand";
 
@@ -126,7 +126,7 @@ export async function runGuildCollection(deps: CollectDeps): Promise<GuildRunRep
       if (record.statValues) statUpdates[String(member.id)] = record.statValues;
       const login = detectLogin(previous, record);
       if (login) seen.push(login);
-      members[index.get(member.id)!] = applyRecord(member, record, at, accountWide);
+      members[index.get(member.id)!] = applyRecord(member, record, at, { accountWide, twink: isTwink(member, mainSlug, config.twinkRanks) });
     },
     { concurrency: config.concurrency, deadline },
   );
