@@ -60,7 +60,7 @@ jobs:
             exit 0
           fi
           version="$(node -p "require('./.release-please-manifest.json')['.']")"
-          node scripts/changelog-abschnitt.mjs "$version" > "$RUNNER_TEMP/notes.md"
+          node scripts/changelog-section.mjs "$version" > "$RUNNER_TEMP/notes.md"
           gh release create "v$version" --target "$GITHUB_SHA" --title "v$version" --notes-file "$RUNNER_TEMP/notes.md"
 
       - name: release-please

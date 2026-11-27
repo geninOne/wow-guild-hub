@@ -78,8 +78,8 @@ test("Zeitbudget des Sammlers bleibt mit Reserve unter dem 15-s-Abbruch von Netl
   // Netlify bricht geplante Läufe nach 15 s ab (Status 499) und wiederholt sie teils; Vor- und Nacharbeit brauchen gut 1 s.
   const c = loadConfig({ BNET_CLIENT_ID: "id", BNET_CLIENT_SECRET: "s", GUILD_SLUG: "g" });
   expect(c.budgetMs).toBeLessThanOrEqual(12000);
-  const { STANDARDWERTE } = await import("../scripts/netlify-umgebung-lib.mjs");
-  expect(STANDARDWERTE.COLLECT_BUDGET_MS).toBe(String(c.budgetMs));
+  const { DEFAULTS } = await import("../scripts/netlify-env-lib.mjs");
+  expect(DEFAULTS.COLLECT_BUDGET_MS).toBe(String(c.budgetMs));
 });
 
 test("TWINK_RANKS löst Rangnamen aus GUILD_RANKS je Gilde zu Rangnummern auf", () => {

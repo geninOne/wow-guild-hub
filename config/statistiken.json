@@ -1,5 +1,5 @@
 {
-  "_hinweis": "Namen und Kategorien der Charakterstatistik (Blizzard-Endpunkt achievements/statistics, deutsch). Einen Endpunkt mit allen Definitionen gibt es für WoW Forever nicht, deshalb wird die Liste aus den gesehenen Antworten fortgeschrieben: npm run statistik:erkunden. Die Wochenstände unter stats/<Samstag> enthalten nur Statistik-ID und Wert. art: zaehler (Ereignisse, Differenz sinnvoll), stand (aktueller Stand oder Höchstwert), text (Häufigstes einer Sorte, Name im Charakterdatensatz unter statTexts), schnitt (Durchschnitt, Differenz sinnlos).",
+  "_hinweis": "Namen und Kategorien der Charakterstatistik (Blizzard-Endpunkt achievements/statistics, deutsch). Einen Endpunkt mit allen Definitionen gibt es für WoW Forever nicht, deshalb wird die Liste aus den gesehenen Antworten fortgeschrieben: npm run stats:explore. Die Wochenstände unter stats/<Samstag> enthalten nur Statistik-ID und Wert. art: zaehler (Ereignisse, Differenz sinnvoll), stand (aktueller Stand oder Höchstwert), text (Häufigstes einer Sorte, Name im Charakterdatensatz unter statTexts), schnitt (Durchschnitt, Differenz sinnlos).",
   "kategorien": [
     {
       "id": 130,

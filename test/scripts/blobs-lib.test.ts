@@ -2,153 +2,164 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
-import { liveUebernahme, sammleEintraege, uebernehmen } from "../../scripts/blobs-lib.mjs";
+import { collectEntries, importEntries, liveImport } from "../../scripts/blobs-lib.mjs";
 
-let quelle: string;
+let source: string;
 
-function datei(pfad: string, inhalt: string) {
-  const voll = join(quelle, pfad);
-  mkdirSync(dirname(voll), { recursive: true });
-  writeFileSync(voll, inhalt);
+function file(path: string, content: string) {
+  const full = join(source, path);
+  mkdirSync(dirname(full), { recursive: true });
+  writeFileSync(full, content);
 }
 
 beforeEach(() => {
-  quelle = mkdtempSync(join(tmpdir(), "blobs-"));
-  datei("entries/unlinked/site:gilde/guild", '{"name":"Bärenklaue"}');
-  datei("entries/unlinked/site:gilde/characters/1", '{"id":1}');
-  datei("entries/unlinked/site:gilde/history/2026-11-06", '{"tag":"geheim"}');
-  datei("metadata/unlinked/site:gilde/guild", "{}");
-  datei("metadata/unlinked/site:gilde/characters/1", '{"quelle":"lokal"}');
+  source = mkdtempSync(join(tmpdir(), "blobs-"));
+  file("entries/unlinked/site:gilde/guild", '{"name":"Bärenklaue"}');
+  file("entries/unlinked/site:gilde/characters/1", '{"id":1}');
+  file("entries/unlinked/site:gilde/history/2026-11-06", '{"tag":"secret"}');
+  file("metadata/unlinked/site:gilde/guild", "{}");
+  file("metadata/unlinked/site:gilde/characters/1", '{"origin":"local"}');
 });
 
-afterEach(() => rmSync(quelle, { recursive: true, force: true }));
+afterEach(() => rmSync(source, { recursive: true, force: true }));
 
-function fakeZiel(vorhanden: string[] = []) {
-  const gesetzt: { key: string; inhalt: string; metadata?: object }[] = [];
-  let gelistet = 0;
+function fakeTarget(existing: string[] = []) {
+  const written: { key: string; content: string; metadata?: object }[] = [];
+  let listed = 0;
   return {
-    gesetzt,
-    get gelistet() {
-      return gelistet;
+    written,
+    get listed() {
+      return listed;
     },
     async list() {
-      gelistet++;
-      return vorhanden;
+      listed++;
+      return existing;
     },
-    async set(key: string, inhalt: string, metadata?: object) {
-      gesetzt.push({ key, inhalt, metadata });
+    async set(key: string, content: string, metadata?: object) {
+      written.push({ key, content, metadata });
     },
   };
 }
 
-describe("sammleEintraege", () => {
-  test("liefert alle Schlüssel des Stores mit Größe und nicht leeren Metadaten", async () => {
-    const eintraege = await sammleEintraege(quelle);
-    expect(eintraege.map((e) => e.key)).toEqual(["characters/1", "guild", "history/2026-11-06"]);
-    expect(eintraege.find((e) => e.key === "guild")).toMatchObject({ groesse: 22, metadata: null });
-    expect(eintraege.find((e) => e.key === "characters/1")?.metadata).toEqual({ quelle: "lokal" });
+describe("collectEntries", () => {
+  test("returns all keys of the store with size and non-empty metadata", async () => {
+    const entries = await collectEntries(source);
+    expect(entries.map((e) => e.key)).toEqual(["characters/1", "guild", "history/2026-11-06"]);
+    expect(entries.find((e) => e.key === "guild")).toMatchObject({ size: 22, metadata: null });
+    expect(entries.find((e) => e.key === "characters/1")?.metadata).toEqual({ origin: "local" });
   });
 
-  test("bricht bei mehreren Site-Ordnern mit deren Namen ab", async () => {
-    datei("entries/abc123/site:gilde/guild", "{}");
-    await expect(sammleEintraege(quelle)).rejects.toThrow(/abc123.*unlinked|unlinked.*abc123/);
+  test("aborts with their names when there are several site folders", async () => {
+    file("entries/abc123/site:gilde/guild", "{}");
+    await expect(collectEntries(source)).rejects.toThrow(/abc123.*unlinked|unlinked.*abc123/);
   });
 
-  test("bricht ab, wenn der Store oder die Quelle fehlt", async () => {
-    await expect(sammleEintraege(quelle, "anderer")).rejects.toThrow(/site:anderer/);
-    await expect(sammleEintraege(join(quelle, "gibt-es-nicht"))).rejects.toThrow(/entries/);
+  test("aborts when the store or the source is missing", async () => {
+    await expect(collectEntries(source, "other")).rejects.toThrow(/site:other/);
+    await expect(collectEntries(join(source, "does-not-exist"))).rejects.toThrow(/entries/);
   });
 });
 
-describe("uebernehmen", () => {
-  test("Trockenlauf listet nur auf und fasst das Ziel nicht an", async () => {
-    const ziel = fakeZiel();
+describe("importEntries", () => {
+  test("dry run only lists and does not touch the target", async () => {
+    const target = fakeTarget();
     const log: string[] = [];
-    const ergebnis = await uebernehmen({
-      eintraege: await sammleEintraege(quelle),
-      ziel,
-      trocken: true,
-      log: (z: string) => log.push(z),
+    const result = await importEntries({
+      entries: await collectEntries(source),
+      target,
+      dryRun: true,
+      log: (line: string) => log.push(line),
     });
-    expect(ziel.gelistet).toBe(0);
-    expect(ziel.gesetzt).toEqual([]);
-    expect(ergebnis).toEqual({ hochgeladen: 0, eintraege: 3, bytes: 22 + 8 + 16 });
+    expect(target.listed).toBe(0);
+    expect(target.written).toEqual([]);
+    expect(result).toEqual({ uploaded: 0, entries: 3, bytes: 22 + 8 + 16 });
     expect(log.join("\n")).toContain("characters/1");
-    expect(log.join("\n")).toMatch(/Trockenlauf/);
+    expect(log.join("\n")).toMatch(/Dry run/);
   });
 
-  test("lädt den Inhalt unverändert hoch, mit Metadaten nur wo vorhanden", async () => {
-    const ziel = fakeZiel();
+  test("uploads the content unchanged, with metadata only where present", async () => {
+    const target = fakeTarget();
     const log: string[] = [];
-    const ergebnis = await uebernehmen({
-      eintraege: await sammleEintraege(quelle),
-      ziel,
-      trocken: false,
-      log: (z: string) => log.push(z),
+    const result = await importEntries({
+      entries: await collectEntries(source),
+      target,
+      dryRun: false,
+      log: (line: string) => log.push(line),
     });
-    expect(ergebnis.hochgeladen).toBe(3);
-    expect(ziel.gesetzt).toContainEqual({ key: "guild", inhalt: '{"name":"Bärenklaue"}', metadata: undefined });
-    expect(ziel.gesetzt).toContainEqual({ key: "characters/1", inhalt: '{"id":1}', metadata: { quelle: "lokal" } });
-    expect(log.join("\n")).not.toContain("geheim");
+    expect(result.uploaded).toBe(3);
+    expect(target.written).toContainEqual({ key: "guild", content: '{"name":"Bärenklaue"}', metadata: undefined });
+    expect(target.written).toContainEqual({ key: "characters/1", content: '{"id":1}', metadata: { origin: "local" } });
+    expect(log.join("\n")).not.toContain("secret");
   });
 
-  test("bricht ab, wenn das Ziel schon Einträge hat, außer mit ueberschreiben", async () => {
-    const eintraege = await sammleEintraege(quelle);
-    const ziel = fakeZiel(["guild"]);
-    await expect(uebernehmen({ eintraege, ziel, trocken: false, log: () => {} })).rejects.toThrow(/--ueberschreiben/);
-    expect(ziel.gesetzt).toEqual([]);
+  test("aborts if the target already has entries, unless overwrite is set", async () => {
+    const entries = await collectEntries(source);
+    const target = fakeTarget(["guild"]);
+    await expect(importEntries({ entries, target, dryRun: false, log: () => {} })).rejects.toThrow(/--overwrite/);
+    expect(target.written).toEqual([]);
 
-    const erlaubt = await uebernehmen({ eintraege, ziel, trocken: false, ueberschreiben: true, log: () => {} });
-    expect(erlaubt.hochgeladen).toBe(3);
+    const allowed = await importEntries({ entries, target, dryRun: false, overwrite: true, log: () => {} });
+    expect(allowed.uploaded).toBe(3);
   });
 });
 
-describe("liveUebernahme", () => {
-  function ablauf(antwort: string, token = "tok-geheim") {
-    const schritte: string[] = [];
+describe("liveImport", () => {
+  function flow(answer: string, token = "tok-secret") {
+    const steps: string[] = [];
     const log: string[] = [];
-    const ziel = fakeZiel();
-    const optionen = {
-      quelle,
-      log: (z: string) => {
-        log.push(z);
-        if (z.startsWith("Trockenlauf")) schritte.push("trockenlauf");
+    const target = fakeTarget();
+    const options = {
+      source,
+      log: (line: string) => {
+        log.push(line);
+        if (line.startsWith("Dry run")) steps.push("dry run");
       },
-      bestaetigen: async (frage: string) => {
-        schritte.push(`frage: ${frage}`);
-        return antwort;
+      confirm: async (question: string) => {
+        steps.push(`question: ${question}`);
+        return answer;
       },
-      frageToken: async () => {
-        schritte.push("token");
+      askToken: async () => {
+        steps.push("token");
         return token;
       },
-      erstelleZiel: (t: string) => {
-        schritte.push(`ziel mit ${t === "tok-geheim" ? "token" : "anderem"}`);
-        return ziel;
+      createTarget: (t: string) => {
+        steps.push(`target with ${t === "tok-secret" ? "token" : "other"}`);
+        return target;
       },
     };
-    return { schritte, log, ziel, optionen };
+    return { steps, log, target, options };
   }
 
-  test("zeigt erst den Trockenlauf, fragt dann und lädt nach ja mit dem Token hoch", async () => {
-    const { schritte, log, ziel, optionen } = ablauf("ja");
-    const ergebnis = await liveUebernahme(optionen);
-    expect(schritte).toEqual(["trockenlauf", "frage: 3 Einträge in den Store gilde der Netlify-Site hochladen? (ja/nein) ", "token", "ziel mit token"]);
-    expect(ergebnis?.hochgeladen).toBe(3);
-    expect(ziel.gesetzt).toHaveLength(3);
-    expect(log.join("\n")).not.toContain("tok-geheim");
+  test("shows the dry run first, then asks and uploads with the token after yes", async () => {
+    const { steps, log, target, options } = flow("yes");
+    const result = await liveImport(options);
+    expect(steps).toEqual([
+      "dry run",
+      "question: Upload 3 entries to the store gilde of the Netlify site? (yes/no) ",
+      "token",
+      "target with token",
+    ]);
+    expect(result?.uploaded).toBe(3);
+    expect(target.written).toHaveLength(3);
+    expect(log.join("\n")).not.toContain("tok-secret");
   });
 
-  test("ohne ja wird nichts hochgeladen und kein Token abgefragt", async () => {
-    const { schritte, ziel, optionen } = ablauf("n");
-    expect(await liveUebernahme(optionen)).toBeNull();
-    expect(schritte).not.toContain("token");
-    expect(ziel.gesetzt).toEqual([]);
+  test("still accepts the deprecated German answer ja", async () => {
+    const { target, options } = flow("ja");
+    expect((await liveImport(options))?.uploaded).toBe(3);
+    expect(target.written).toHaveLength(3);
   });
 
-  test("leerer Token bricht ab", async () => {
-    const { ziel, optionen } = ablauf("ja", "  ");
-    await expect(liveUebernahme(optionen)).rejects.toThrow(/Token/);
-    expect(ziel.gesetzt).toEqual([]);
+  test("without yes nothing is uploaded and no token is requested", async () => {
+    const { steps, target, options } = flow("n");
+    expect(await liveImport(options)).toBeNull();
+    expect(steps).not.toContain("token");
+    expect(target.written).toEqual([]);
+  });
+
+  test("an empty token aborts", async () => {
+    const { target, options } = flow("yes", "  ");
+    await expect(liveImport(options)).rejects.toThrow(/token/);
+    expect(target.written).toEqual([]);
   });
 });

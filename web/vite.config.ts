@@ -2,14 +2,14 @@ import react from "@vitejs/plugin-react";
 import { fileURLToPath } from "node:url";
 import { defineConfig, loadEnv, type Plugin } from "vite";
 import { readFileSync } from "node:fs";
-import { changelogAbschnitt, heuteIso } from "../scripts/release-lib.mjs";
+import { changelogSection, todayIso } from "../scripts/release-lib.mjs";
 import { fehlerseite } from "./build/fehlerseite";
 import { seitenKopf, withSeite } from "./build/seite";
 import { withSiteUrl } from "./build/site-url";
 
 /**
- * Angaben aus den WEBSITE_-Variablen und die öffentliche Adresse (Netlify: Umgebungsvariable URL) in index.html
- * einsetzen. Die Seitenangaben zuerst, denn das Teilen-Bild bekommt dabei den Platzhalter der Adresse.
+ * Inserts the details from the WEBSITE_ variables and the public address (Netlify: environment variable URL) into
+ * index.html. Site details first, because the share image gets the address placeholder in the process.
  */
 function seitenAngaben(env: Record<string, string | undefined>): Plugin {
   return {
@@ -18,11 +18,11 @@ function seitenAngaben(env: Record<string, string | undefined>): Plugin {
   };
 }
 
-/** Version aus package.json, Datum aus ihrem CHANGELOG-Abschnitt (sonst heute), für den Fußbereich. */
+/** Version from package.json, date from its CHANGELOG section (otherwise today), for the footer. */
 function versionsAngaben(): { version: string; datum: string } {
   const lies = (datei: string) => readFileSync(fileURLToPath(new URL(`../${datei}`, import.meta.url)), "utf8");
   const { version } = JSON.parse(lies("package.json")) as { version: string };
-  const datum = changelogAbschnitt(lies("CHANGELOG.md"), version)?.datum ?? heuteIso(new Date());
+  const datum = changelogSection(lies("CHANGELOG.md"), version)?.date ?? todayIso(new Date());
   return { version, datum };
 }
 
@@ -30,9 +30,9 @@ const { version, datum } = versionsAngaben();
 const wurzel = fileURLToPath(new URL("..", import.meta.url));
 
 export default defineConfig(({ mode }) => {
-  // WEBSITE_-Variablen aus der .env im Projektordner (lokal) und aus der Umgebung (Netlify); die Umgebung gewinnt.
-  // Nur Variablen mit Präfix VITE_ oder WEBSITE_ landen im Bundle, Geheimnisse aus der .env also nie. Bewusst nicht SITE_:
-  // Netlify setzt beim Build selbst SITE_NAME und SITE_ID, die ließen sich nicht überschreiben.
+  // WEBSITE_ variables from the .env in the project folder (local) and from the environment (Netlify); the environment
+  // wins. Only variables prefixed VITE_ or WEBSITE_ end up in the bundle, so secrets from the .env never do. Deliberately
+  // not SITE_: Netlify sets SITE_NAME and SITE_ID itself during the build, and those could not be overridden.
   const env = { ...loadEnv(mode, wurzel, ["WEBSITE_"]), ...process.env };
   return {
     root: fileURLToPath(new URL(".", import.meta.url)),

@@ -68,6 +68,14 @@ describe("tokenizer", () => {
   });
 });
 
+test("treats regular expression literals like strings", () => {
+  const pieces = tokenizeJs('const re = /^(Höchste|Meiste) [a-z/]+$/u; const x = a / b / c;');
+  expect(pieces.filter((p) => p.kind === "string").map((p) => p.text)).toEqual(["/^(Höchste|Meiste) [a-z/]+$/u"]);
+  expect(scanFile("src/x.ts", 'const re = /^(Höchste|Meiste)/;', words)).toEqual([]);
+  const jsx = tokenizeJs('const a = <p className="x">{zeitung}</p>;\nconst b = <br />;');
+  expect(jsx.filter((p) => p.kind === "string").map((p) => p.text)).toEqual(["x"]);
+});
+
 describe("scanFile", () => {
   test("reports identifiers, comments, test names and messages", () => {
     const source = [

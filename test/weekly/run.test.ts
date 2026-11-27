@@ -227,7 +227,7 @@ test("Woche des Serverstarts neu erzeugen: nur sie entsteht neu, spätere Ausgab
   const alt45 = await store.get<WeeklyRecord>("weekly/2026-11-07");
   const alt46 = await store.get<WeeklyRecord>("weekly/2026-11-14");
   expect(alt45?.titles).toEqual([]);
-  // Wie `npm run zeitung:neu -- 2026-11-07`: Die Woche aus dem Index nehmen, dann erneut auswerten.
+  // Like `npm run newspaper:regenerate -- 2026-11-07`: remove the week from the index, then evaluate it again.
   await store.set("weekly/index", { weeks: ["2026-11-14"], entries: { "2026-11-14": { headline: alt46!.zeitung.lead.headline } } });
   const report = await run("2026-11-16T08:00:00.000Z", [], "2026-11-05");
   expect(report.evaluated).toEqual(["2026-11-07"]);
