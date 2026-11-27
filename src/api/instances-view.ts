@@ -55,12 +55,38 @@ function levels(info: DungeonInfo | undefined): LevelRange | null {
   return info?.stufe ? { min: info.stufe[0], max: info.stufe[1] } : null;
 }
 
-/** Abschluss aus der Statistik: Kills der Endbosse (ohne gepflegte Liste alle zugeordneten Kills). */
-function completion(kills: KillRef[], finals: string[]): { at: string | null; times: number } {
-  const finalSet = new Set(finals.map(norm));
-  const relevant = finalSet.size > 0 ? kills.filter((k) => finalSet.has(norm(k.boss))) : kills;
-  const dates = relevant.map((k) => k.lastAt).filter((d): d is string => d !== null).sort();
-  return { at: dates.at(-1) ?? null, times: relevant.reduce((sum, k) => sum + k.quantity, 0) };
+/**
+ * Abschluss aus der Statistik des Charakters: Siege über den Endboss, je Gruppe gleichwertiger Endboss-Einträge
+ * (Endboss der Bossliste und gepflegte Statistik-Namen derselben Instanz) das Maximum, über die Gruppen die Summe. Ohne
+ * gepflegten Endboss zählen alle zugeordneten Kills.
+ */
+function completion(kills: KillRef[], groups: string[][]): { at: string | null; times: number } {
+  const known = groups.filter((g) => g.length > 0);
+  if (known.length === 0) {
+    const dates = kills.map((k) => k.lastAt).filter((d): d is string => d !== null).sort();
+    return { at: dates.at(-1) ?? null, times: kills.reduce((sum, k) => sum + k.quantity, 0) };
+  }
+  let times = 0;
+  const dates: string[] = [];
+  for (const group of known) {
+    const names = new Set(group.map(norm));
+    const relevant = kills.filter((k) => names.has(norm(k.boss)));
+    times += Math.max(0, ...relevant.map((k) => k.quantity));
+    dates.push(...relevant.map((k) => k.lastAt).filter((d): d is string => d !== null));
+  }
+  return { at: dates.sort().at(-1) ?? null, times };
+}
+
+/** Endboss-Namen, die für einen Dungeon zählen: letzter Eintrag der Bossliste und die gepflegten Statistik-Namen. */
+function finalGroup(info: DungeonInfo): string[] {
+  return [...info.bosse.slice(-1), ...info.statistik.map((s) => s.endboss)];
+}
+
+/** Gehört ein Kill zu dieser Alternative: gleicher Instanzname oder ein gepflegter Statistik-Eintrag. */
+function killMatches(k: BossKill, alternative: string, info: DungeonInfo | undefined): boolean {
+  if (k.instance === null) return false;
+  if (norm(k.instance) === norm(alternative)) return true;
+  return (info?.statistik ?? []).some((s) => norm(s.instanz) === norm(k.instance!) && norm(s.endboss) === norm(k.boss));
 }
 
 function killRef(k: BossKill): KillRef {
@@ -83,14 +109,18 @@ export function buildInstancesView(
   if (!defs || defs.achievements.length === 0) return { available: false, dungeonTiers: [], raids: [], otherKills: [] };
 
   const done = new Map((progress?.achievements ?? []).map((a) => [a.id, a]));
-  const isDone = (def: InstanceAchievement, criterionId: number | null): boolean => {
+  /**
+   * Erfolge und ihre Kriterien gelten bei WoW Forever für den ganzen Account (Twinks erben sie vom Hauptcharakter).
+   * Sie zeigen deshalb nur "auf diesem Account" an; abgeschlossen ist ein Dungeon allein über die eigene Statistik.
+   */
+  const onAccount = (def: InstanceAchievement, criterionId: number | null): boolean => {
     const p = done.get(def.id);
     return !!p && (p.completed || (criterionId !== null && p.criteria.includes(criterionId)));
   };
   // Jeder Kill wird höchstens einmal zugeordnet.
   const open = new Set(progress?.bossKills ?? []);
 
-  // Kriterien, die Zusatz-Dungeons ersetzen, entfallen; ob sie erledigt waren, zählt dort für die eigene Fraktion.
+  // Kriterien, die Zusatz-Dungeons ersetzen, entfallen; ob sie auf dem Account erledigt sind, zeigt der Zusatz-Dungeon.
   const replaced = new Set(extras.flatMap((e) => e.replaces.map(norm)));
   const replacedDone = new Set<string>();
   const dungeonTiers = pickSeries(defs.achievements, "dungeon", done).map((def) => ({
@@ -98,14 +128,14 @@ export function buildInstancesView(
     tier: def.name.split(":")[0].trim(),
     dungeons: def.criteria.filter((c) => {
       if (!replaced.has(norm(c.description))) return true;
-      if (isDone(def, c.id)) replacedDone.add(norm(c.description));
+      if (onAccount(def, c.id)) replacedDone.add(norm(c.description));
       return false;
     }).map((c) => {
       const alternatives = c.description.split(" oder ");
       const kills: KillRef[] = [];
       const matched = new Set<string>();
       for (const k of [...open]) {
-        const alt = alternatives.find((a) => k.instance !== null && norm(a) === norm(k.instance));
+        const alt = alternatives.find((a) => killMatches(k, a, lookup([a])));
         if (!alt) continue;
         open.delete(k);
         matched.add(alt);
@@ -117,19 +147,22 @@ export function buildInstancesView(
       const infos = shown.length > 1 ? infosOf(shown) : infosOf(shown.length > 0 ? shown : alternatives).slice(0, 1);
       const bossNames = [...new Set(infos.flatMap((i) => i.bosse))];
       const finals = infos.flatMap((i) => (i.bosse.length > 0 ? [i.bosse[i.bosse.length - 1]] : []));
-      const done = completion(kills, finals);
+      const result = completion(kills, infos.map(finalGroup));
+      const completed = result.times > 0 || (finals.length === 0 && kills.length > 0);
       return {
         criterionId: c.id,
         name,
         description: c.description,
-        completed: isDone(def, c.id) || done.times > 0 || (finals.length === 0 && kills.length > 0),
+        completed,
+        onAccount: !completed && onAccount(def, c.id),
+        tracked: infos.length === 0 || infos.some((i) => !i.ohneStatistik),
         kills,
         image: instanceImage(name, tiles),
         levels: levels(infos.find((i) => i.stufe)),
         bosses: bossNames.length > 0 ? bossNames : null,
         finalBosses: finals,
-        completedAt: done.at,
-        timesCompleted: done.times,
+        completedAt: result.at,
+        timesCompleted: result.times,
       };
     }),
   }));
@@ -146,14 +179,16 @@ export function buildInstancesView(
     const ownFaction = extra.faction === null || faction === null || extra.faction === faction;
     if (!ownFaction) kills.length = 0;
     const finals = [extra.source.finalBoss];
-    const result = completion(kills, finals);
+    const result = completion(kills, [finals]);
     const criterionDone =
       extra.faction !== null && extra.faction === faction && extra.replaces.some((r) => replacedDone.has(norm(r)));
     const entry: DungeonEntry = {
       criterionId: -(index + 1),
       name: extra.name,
       description: extra.name,
-      completed: result.times > 0 || criterionDone,
+      completed: result.times > 0,
+      onAccount: result.times === 0 && criterionDone,
+      tracked: true,
       kills,
       image: instanceImage(extra.name, tiles),
       levels: levels(extra.info),
@@ -176,21 +211,21 @@ export function buildInstancesView(
   const raids = pickSeries(defs.achievements, "raid", done).map((def) => {
     const name = raidName(def);
     const bossList = def.criteria.length > 0 ? def.criteria : [{ id: null, description: name }];
+    // Besiegt nur über die eigene Statistik; die Kriterien des Erfolgs gelten für den ganzen Account.
+    const bosses = bossList.map((b) => {
+      const kill = [...open].find((k) => norm(k.boss) === norm(b.description));
+      if (kill) open.delete(kill);
+      return { name: b.description, defeated: !!kill, lastAt: kill?.lastAt ?? null };
+    });
+    const completed = bosses.every((b) => b.defeated);
     return {
       achievementId: def.id,
       name,
       image: instanceImage(name, tiles),
       levels: levels(lookup([name])),
-      completed: isDone(def, null),
-      bosses: bossList.map((b) => {
-        const kill = [...open].find((k) => norm(k.boss) === norm(b.description));
-        if (kill) open.delete(kill);
-        return {
-          name: b.description,
-          defeated: isDone(def, b.id) || !!kill,
-          lastAt: kill?.lastAt ?? null,
-        };
-      }),
+      completed,
+      onAccount: !completed && onAccount(def, null),
+      bosses,
     };
   });
 

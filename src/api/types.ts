@@ -93,7 +93,11 @@ export interface KillRef {
   lastAt: string | null;
 }
 
-/** "Dungeons & Raids" eines Charakters, aus Erfolgen, Boss-Kill-Statistik und statischen Definitionen. */
+/**
+ * "Dungeons & Raids" eines Charakters, aus Erfolgen, Boss-Kill-Statistik und statischen Definitionen. Abgeschlossen
+ * heißt: eigener Sieg über den Endboss laut Statistik des Charakters. Die Erfolge gelten für den ganzen Account und
+ * zeigen nur `onAccount`.
+ */
 export interface InstancesView {
   /** false, solange die statischen Definitionen fehlen. */
   available: boolean;
@@ -107,7 +111,15 @@ export interface InstancesView {
       name: string;
       /** Bezeichnung im Erfolg, bei Gegenstücken beider Fraktionen "A oder B". */
       description: string;
+      /** Eigener Sieg über den Endboss laut Statistik dieses Charakters. */
       completed: boolean;
+      /**
+       * Nicht abgeschlossen, aber laut accountweitem Erfolgskriterium auf diesem Account erledigt (anderer Charakter
+       * oder ein Dungeon, dessen Endboss die Statistik nicht führt). Zählt in keiner Gildenauswertung.
+       */
+      onAccount: boolean;
+      /** false, wenn die Statistik den Endboss gar nicht führt (`ohneStatistik`): Abschluss je Charakter unbekannt. */
+      tracked: boolean;
       kills: KillRef[];
       image: string | null;
       /** Levelbereich aus `config/dungeons.json`, sonst null. */
@@ -116,7 +128,7 @@ export interface InstancesView {
       bosses: string[] | null;
       /** Endbosse (je Alternative der letzte Eintrag); nur sie erscheinen in der Blizzard-Statistik. */
       finalBosses: string[];
-      /** Letzter Sieg über den Endboss laut Statistik, sonst null (auch wenn nur das Kriterium erledigt ist). */
+      /** Letzter Sieg über den Endboss laut Statistik, sonst null. */
       completedAt: string | null;
       /** Wie oft der Endboss besiegt wurde (Summe von `quantity`). */
       timesCompleted: number;
@@ -127,7 +139,11 @@ export interface InstancesView {
     name: string;
     image: string | null;
     levels: LevelRange | null;
+    /** Alle Bosse laut eigener Statistik besiegt. */
     completed: boolean;
+    /** Nicht abgeschlossen, aber der Erfolg ist auf diesem Account erledigt. */
+    onAccount: boolean;
+    /** `defeated` nur über die eigene Statistik. */
     bosses: { name: string; defeated: boolean; lastAt: string | null }[];
   }[];
   /** Boss-Kills, die keinem angezeigten Dungeon oder Raidboss zugeordnet werden konnten. */
@@ -504,15 +520,17 @@ export interface GuildDungeonView {
   tier: string;
   image: string | null;
   levels: LevelRange | null;
-  /** Charaktere, die den Dungeon abgeschlossen haben. */
+  /** Charaktere, die den Dungeon abgeschlossen haben (eigener Endboss-Sieg laut Statistik). */
   completed: number;
+  /** false, wenn die Statistik den Endboss nicht führt: `completed` ist dann immer 0 und sagt nichts aus. */
+  tracked: boolean;
   /** Endboss-Siege aller Charaktere zusammen. */
   timesCompleted: number;
   /** Wer den Endboss am öftesten gelegt hat, null ohne Siege. */
   best: { character: CharacterRef; times: number } | null;
   /** Letzter Endboss-Sieg in der Gilde. */
   lastAt: string | null;
-  /** Wer durch ist, mit seinen Endboss-Siegen (0, wenn nur der Erfolg zählt). */
+  /** Wer durch ist, mit seinen Endboss-Siegen. */
   who: MemberValue[];
 }
 
@@ -520,7 +538,7 @@ export interface GuildRaidView {
   name: string;
   image: string | null;
   levels: LevelRange | null;
-  /** Charaktere mit abgeschlossenem Raid-Erfolg. */
+  /** Charaktere, die laut eigener Statistik alle Bosse besiegt haben. */
   completed: number;
   bosses: { name: string; defeated: number }[];
   /** Wer mindestens einen Boss gelegt hat, mit der Zahl seiner besiegten Bosse. */

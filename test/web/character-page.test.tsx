@@ -345,7 +345,7 @@ test("Reiter Dungeons & Raids über ?reiter=dungeons", async () => {
     gelmarView({
       instances: {
         available: true,
-        dungeonTiers: [{ achievementId: 1, tier: "Novize", dungeons: [{ criterionId: 1, name: "Todesminen", description: "Todesminen", completed: true, kills: [], image: null, levels: null, bosses: null, finalBosses: [], completedAt: null, timesCompleted: 0 }] }],
+        dungeonTiers: [{ achievementId: 1, tier: "Novize", dungeons: [{ criterionId: 1, name: "Todesminen", description: "Todesminen", completed: true, onAccount: false, tracked: true, kills: [], image: null, levels: null, bosses: null, finalBosses: [], completedAt: null, timesCompleted: 0 }] }],
         raids: [],
         otherKills: [],
       },

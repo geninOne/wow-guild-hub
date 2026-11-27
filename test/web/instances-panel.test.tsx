@@ -10,7 +10,7 @@ const TILE = "https://render.worldofwarcraft.com/eu/zones/ragefire-chasm-small.j
 type Dungeon = InstancesView["dungeonTiers"][number]["dungeons"][number];
 
 const dungeon = (over: Partial<Dungeon> & { criterionId: number; name: string }): Dungeon => ({
-  description: over.name, completed: false, kills: [], image: null, levels: null, bosses: null, finalBosses: [], completedAt: null, timesCompleted: 0, ...over,
+  description: over.name, completed: false, onAccount: false, tracked: true, kills: [], image: null, levels: null, bosses: null, finalBosses: [], completedAt: null, timesCompleted: 0, ...over,
 });
 
 const view: InstancesView = {
@@ -40,7 +40,7 @@ const view: InstancesView = {
   ],
   raids: [
     {
-      achievementId: 62034, name: "Hyjalgipfel", image: null, levels: { min: 60, max: 60 }, completed: false,
+      achievementId: 62034, name: "Hyjalgipfel", image: null, levels: { min: 60, max: 60 }, completed: false, onAccount: false,
       bosses: [
         ...["Bandalar", "Urtum des Verfalls", "Zeitverlorenes Bataillon"].map((name) => ({ name, defeated: true, lastAt: null })),
         ...Array.from({ length: 10 }, (_, i) => ({ name: `Boss ${i}`, defeated: false, lastAt: null })),
@@ -48,7 +48,7 @@ const view: InstancesView = {
     },
     {
       achievementId: 684, name: "Onyxia", image: "https://render.worldofwarcraft.com/eu/zones/onyxias-lair-small.jpg", levels: null,
-      completed: false, bosses: [{ name: "Onyxia", defeated: false, lastAt: null }],
+      completed: false, onAccount: false, bosses: [{ name: "Onyxia", defeated: false, lastAt: null }],
     },
   ],
   otherKills: [],
@@ -144,4 +144,22 @@ test("Weitere Boss-Siege nur, wenn vorhanden", () => {
 test("ohne Definitionen ein freundlicher Hinweis", () => {
   render(<InstancesPanel view={{ available: false, dungeonTiers: [], raids: [], otherKills: [] }} />);
   expect(screen.getByText("Dungeon- und Raiddaten werden gerade zusammengetragen. Schau bald wieder vorbei.")).toBeTruthy();
+});
+
+test("nur accountweit erledigt: kein Wimpel, sondern der Hinweis \"Auf diesem Account\" mit Erklärung", () => {
+  const account: InstancesView = {
+    ...view,
+    dungeonTiers: [{ achievementId: 62033, tier: "Meister", dungeons: [dungeon({ criterionId: 5, name: "Scholomance" }), dungeon({ criterionId: 6, name: "Stratholme: Tot", onAccount: true })] }],
+    raids: view.raids.map((r) => (r.name === "Onyxia" ? { ...r, onAccount: true } : r)),
+  };
+  render(<InstancesPanel view={account} />);
+  for (const name of ["Stratholme: Tot", "Onyxia"]) {
+    const c = card(name);
+    expect(c.className).toContain("instance-card-account");
+    expect(c.querySelector(".instance-pennant")).toBeNull();
+    const note = c.querySelector(".instance-card-note-account")!;
+    expect(note.textContent).toBe("Auf diesem Account");
+    expect(note.getAttribute("title")).toContain("nur für den ganzen Account");
+  }
+  expect(card("Scholomance").querySelector(".instance-card-note")?.textContent).toBe("Noch nicht besucht");
 });

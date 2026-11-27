@@ -6,18 +6,28 @@ import zusatz from "../config/zusatz-dungeons.json";
 export interface DungeonInfo {
   stufe: [number, number] | null;
   bosse: string[];
+  /**
+   * Weitere Einträge der Boss-Kill-Statistik, die den Abschluss anzeigen, wenn die Statistik Instanz oder Endboss
+   * anders nennt als Erfolg und Bossliste (etwa "Siege über Erzmagier Arugal (Burg Schattenfang)").
+   */
+  statistik: { instanz: string; endboss: string }[];
+  /** Der Endboss steht nicht in der Boss-Kill-Statistik: kein Abschluss je Charakter nachweisbar. */
+  ohneStatistik: boolean;
 }
 
 /** Liest einen Eintrag aus `config/dungeons.json`; ungültige Stufen werden zu null, fehlende Bosse zu []. */
-export function toDungeonInfo(raw: { stufe?: unknown; bosse?: unknown }): DungeonInfo {
+export function toDungeonInfo(raw: { stufe?: unknown; bosse?: unknown; statistik?: unknown; ohneStatistik?: unknown }): DungeonInfo {
   const stufe = raw.stufe;
   const valid = Array.isArray(stufe) && stufe.length === 2 && stufe.every((n) => typeof n === "number");
   const bosse = Array.isArray(raw.bosse) ? raw.bosse.filter((b): b is string => typeof b === "string") : [];
-  return { stufe: valid ? [stufe[0], stufe[1]] : null, bosse };
+  const statistik = (Array.isArray(raw.statistik) ? raw.statistik : []).flatMap((e: { instanz?: unknown; endboss?: unknown }) =>
+    typeof e?.instanz === "string" && typeof e.endboss === "string" ? [{ instanz: e.instanz, endboss: e.endboss }] : [],
+  );
+  return { stufe: valid ? [stufe[0], stufe[1]] : null, bosse, statistik, ohneStatistik: raw.ohneStatistik === true };
 }
 
 export const DUNGEON_INFO: Record<string, DungeonInfo> = Object.fromEntries(
-  Object.entries(dungeons.instanzen as Record<string, { stufe?: unknown; bosse?: unknown }>).map(([name, raw]) => [
+  Object.entries(dungeons.instanzen as Record<string, Parameters<typeof toDungeonInfo>[0]>).map(([name, raw]) => [
     name,
     toDungeonInfo(raw),
   ]),
@@ -58,7 +68,13 @@ export function toExtraDungeon(raw: Record<string, unknown>, known: Record<strin
   return {
     name,
     tier: rang,
-    info: { stufe: own.stufe ?? fallback?.stufe ?? null, bosse: own.bosse.length > 0 ? own.bosse : (fallback?.bosse ?? []) },
+    info: {
+      stufe: own.stufe ?? fallback?.stufe ?? null,
+      bosse: own.bosse.length > 0 ? own.bosse : (fallback?.bosse ?? []),
+      statistik: own.statistik.length > 0 ? own.statistik : (fallback?.statistik ?? []),
+      // Zusatz-Dungeons haben mit `quelle` immer einen Eintrag in der Statistik.
+      ohneStatistik: false,
+    },
     source: { instance: quelle.instanz, finalBoss: quelle.endboss },
     image: typeof bild === "number" || typeof bild === "string" ? bild : null,
     faction: typeof fraktion === "string" ? fraktion : null,
@@ -84,7 +100,10 @@ export const INSTANCE_IMAGE_IDS: number[] = [
   ...new Set(Object.values(INSTANCE_IMAGES).filter((v): v is number => typeof v === "number")),
 ];
 
-/** Vergleichsform für Instanz- und Bossnamen: klein, ohne führenden Artikel. */
+/**
+ * Vergleichsform für Instanz- und Bossnamen: klein, ohne führenden Artikel. Die Statistik beugt Namen ("Siege über
+ * Mutanus den Verschlinger"), deshalb gilt "den" wie "der".
+ */
 export function normName(name: string): string {
-  return name.trim().toLowerCase().replace(/^(die|der|das) /, "");
+  return name.trim().toLowerCase().replace(/^(die|der|das|den) /, "").replace(/ den /g, " der ");
 }

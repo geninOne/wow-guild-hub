@@ -1,5 +1,5 @@
 {
-  "_hinweis": "Gepflegte Angaben, die die Blizzard-API für WoW Forever nicht liefert: je Instanz (Name wie in den Erfolgskriterien bzw. Raidname) der Levelbereich [min, max] und die Bossnamen auf Deutsch wie in der Statistik \"Siege über BOSS (INSTANZ)\". Bei Dungeons ist der LETZTE Eintrag immer der Endboss: Nur er erscheint in der Blizzard-Statistik und zeigt den Abschluss an (belegt am 2026-11-06 über alle Mitglieder: Bazzalan, Rath'mael, Durgen Dirgehammer, Edwin van Cleef). Quellen: mmonster.co/de/wow-forever (Stufen, Bosslisten), wowhead.com/de (Schreibweise), conquestcapped.com. \"_pruefen\" nennt Unsicherheiten aus der Recherche vom 2026-11-06.",
+  "_hinweis": "Gepflegte Angaben, die die Blizzard-API für WoW Forever nicht liefert: je Instanz (Name wie in den Erfolgskriterien bzw. Raidname) der Levelbereich [min, max] und die Bossnamen auf Deutsch wie in der Statistik \"Siege über BOSS (INSTANZ)\". Bei Dungeons ist der LETZTE Eintrag immer der Endboss: Nur er erscheint in der Blizzard-Statistik und zeigt den Abschluss an (belegt am 2026-11-06 über alle Mitglieder: Bazzalan, Rath'mael, Durgen Dirgehammer, Edwin van Cleef). Die Statistik beugt Namen (\"Siege über Mutanus den Verschlinger\"); \"den\" gilt beim Vergleich wie \"der\". \"statistik\" (optional) nennt Einträge, unter denen die Statistik den Endboss mit anderem Instanz- oder Bossnamen führt, je {instanz, endboss} wie in \"Siege über ENDBOSS (INSTANZ)\"; auch sie zeigen den Abschluss an. \"ohneStatistik\": true kennzeichnet Dungeons, deren Endboss in der Statistik gar nicht vorkommt (am 2026-11-27 über alle Mitglieder geprüft: kein Eintrag, obwohl viele das Kriterium haben). Für sie gibt es keinen Nachweis je Charakter: Die Charakterseite zeigt nur \"auf diesem Account\" aus den accountweiten Erfolgen, die Gildenübersicht zählt sie nicht und nennt sie nicht als Gildenziel. Quellen: mmonster.co/de/wow-forever (Stufen, Bosslisten), wowhead.com/de (Schreibweise), conquestcapped.com. \"_pruefen\" nennt Unsicherheiten aus der Recherche vom 2026-11-06.",
   "instanzen": {
     "Flammenschlund": {
       "stufe": [
@@ -91,7 +91,13 @@
         "Wolfmeister Nandos",
         "Erzmagier Arugal"
       ],
-      "_pruefen": "Namen per wowhead.com/de (Retail) geprüft; mmonster schreibt 'Rethilgore' und 'Baron Silverlaine' (Classic-Schreibweise). 'Kommandant Springvale' nur in Classic belegt. Teufelsross/Schattenstürmer, Arugals Leerwandler (keine eigentlichen Bosse) und seltener Todeshöriger Captain weggelassen."
+      "_pruefen": "Namen per wowhead.com/de (Retail) geprüft; mmonster schreibt 'Rethilgore' und 'Baron Silverlaine' (Classic-Schreibweise). 'Kommandant Springvale' nur in Classic belegt. Teufelsross/Schattenstürmer, Arugals Leerwandler (keine eigentlichen Bosse) und seltener Todeshöriger Captain weggelassen. Am 2026-11-27 lokal über alle Mitglieder geprüft (Boss-Kill-Statistik gegen die Erfolgskriterien): Statistik \"Burg Schattenfang\".",
+      "statistik": [
+        {
+          "instanz": "Burg Schattenfang",
+          "endboss": "Erzmagier Arugal"
+        }
+      ]
     },
     "Ausgrabungsstätte: Sumpfland": {
       "stufe": [
@@ -104,7 +110,8 @@
         "Hochlandschrecken",
         "Reliktwächter"
       ],
-      "_pruefen": "Bossnamen nur aus einer Quelle (mmonster), Clientschreibweise unbestätigt. Endboss (letzter Eintrag) nicht belegt."
+      "_pruefen": "Bossnamen nur aus einer Quelle (mmonster), Clientschreibweise unbestätigt. Endboss (letzter Eintrag) nicht belegt.",
+      "ohneStatistik": true
     },
     "Dalaran": {
       "stufe": [
@@ -118,10 +125,10 @@
         "Teufelsurtum",
         "Instabile Schildwache",
         "Arkanes Mysterium",
-        "Schemen des Erzmagiers",
-        "Lyn der Ignorierte"
+        "Lyn der Ignorierte",
+        "Schemen des Erzmagiers"
       ],
-      "_pruefen": "Nur eine Quelle (mmonster). Lyn der Ignorierte ist optional (beschworen). Laut mmonster gibt es in den Spieldateien eine neunte Begegnung (Managespenst), die in der Beta nie auftauchte. Endboss (letzter Eintrag) nicht belegt."
+      "_pruefen": "Nur eine Quelle (mmonster). Lyn der Ignorierte ist optional (beschworen). Laut mmonster gibt es in den Spieldateien eine neunte Begegnung (Managespenst), die in der Beta nie auftauchte. Endboss Schemen des Erzmagiers am 2026-11-27 lokal über alle Mitglieder geprüft (Boss-Kill-Statistik gegen die Erfolgskriterien): Jeder Sieg über ihn passt zum Kriterium Dalaran, Lyn allein nicht."
     },
     "Blackfathom-Tiefe": {
       "stufe": [
@@ -160,7 +167,8 @@
         40
       ],
       "bosse": [],
-      "_pruefen": "Keine bestätigte Bossliste. mmonster nennt nur eine vorläufige englische Liste aus der BlizzCon-Demo (Zul'Alai, Var'Taka oder Zin'aka, Captain Dreadrise, Deathless Marrow, Gill, Min'loth the Serpent)."
+      "_pruefen": "Keine bestätigte Bossliste. mmonster nennt nur eine vorläufige englische Liste aus der BlizzCon-Demo (Zul'Alai, Var'Taka oder Zin'aka, Captain Dreadrise, Deathless Marrow, Gill, Min'loth the Serpent).",
+      "ohneStatistik": true
     },
     "Scharlachrotes Kloster: Friedhof": {
       "stufe": [
@@ -171,7 +179,8 @@
         "Befrager Vishas",
         "Blutmagier Thalnos"
       ],
-      "_pruefen": "Namen nicht gegen den Client geprüft. Seltene Gegner (Azshir der Schlaflose, Gestürzter Held, Eisenrücken) weggelassen."
+      "_pruefen": "Namen nicht gegen den Client geprüft. Seltene Gegner (Azshir der Schlaflose, Gestürzter Held, Eisenrücken) weggelassen.",
+      "ohneStatistik": true
     },
     "Scharlachrotes Kloster: Bibliothek": {
       "stufe": [
@@ -182,7 +191,8 @@
         "Hundemeister Loksey",
         "Arkanist Doan"
       ],
-      "_pruefen": "Namen nicht gegen den Client geprüft."
+      "_pruefen": "Namen nicht gegen den Client geprüft.",
+      "ohneStatistik": true
     },
     "Scharlachrotes Kloster: Waffenkammer": {
       "stufe": [
@@ -191,7 +201,8 @@
       ],
       "bosse": [
         "Herod"
-      ]
+      ],
+      "ohneStatistik": true
     },
     "Scharlachrotes Kloster: Kathedrale": {
       "stufe": [
@@ -203,7 +214,17 @@
         "Scharlachroter Kommandant Mograine",
         "Hochinquisitor Whitemane"
       ],
-      "_pruefen": "'Hochinquisitor Whitemane' ist die (unübersetzte) Classic-Schreibweise laut wowhead Classic de; ein Retail-Name war nicht abrufbar, der heutige deutsche Client nutzt vermutlich eine übersetzte Form. Mograine per wowhead.com/de bestätigt, Fairbanks nicht gegengeprüft."
+      "_pruefen": "'Hochinquisitor Whitemane' ist die (unübersetzte) Classic-Schreibweise laut wowhead Classic de; ein Retail-Name war nicht abrufbar, der heutige deutsche Client nutzt vermutlich eine übersetzte Form. Mograine per wowhead.com/de bestätigt, Fairbanks nicht gegengeprüft. Am 2026-11-27 lokal über alle Mitglieder geprüft (Boss-Kill-Statistik gegen die Erfolgskriterien): Beide Statistiken stehen bei allen Charakteren mit gleicher Zahl und gleichem Zeitpunkt und passen nur zum Kriterium Kathedrale; sie zählen als ein Abschluss.",
+      "statistik": [
+        {
+          "instanz": "Scharlachrotes Kloster",
+          "endboss": "Kommandant Mograine"
+        },
+        {
+          "instanz": "Scharlachrote Hallen",
+          "endboss": "Flammenwirker Koegler"
+        }
+      ]
     },
     "Kral von Razorfen": {
       "stufe": [
@@ -219,7 +240,13 @@
         "Agathelos der Tobende",
         "Charlga Klingenflanke"
       ],
-      "_pruefen": "'Charlga Klingenflanke' laut wowhead Retail (mmonster: 'Charlga Razorflank'). Roogug und Oberanführer Rammhauer bestätigt, übrige Namen nur von mmonster. Seltene Gegner (Blinder Jäger, Erdenrufer Halmgar) weggelassen."
+      "_pruefen": "'Charlga Klingenflanke' laut wowhead Retail (mmonster: 'Charlga Razorflank'). Roogug und Oberanführer Rammhauer bestätigt, übrige Namen nur von mmonster. Seltene Gegner (Blinder Jäger, Erdenrufer Halmgar) weggelassen. Am 2026-11-27 lokal über alle Mitglieder geprüft (Boss-Kill-Statistik gegen die Erfolgskriterien): Die Statistik schreibt \"Charlga Razorflank\".",
+      "statistik": [
+        {
+          "instanz": "Kral von Razorfen",
+          "endboss": "Charlga Razorflank"
+        }
+      ]
     },
     "Feste Krol'dok": {
       "stufe": [
@@ -227,7 +254,8 @@
         45
       ],
       "bosse": [],
-      "_pruefen": "Bossliste nicht veröffentlicht. Einzig bekannt aus Beta-Spieldateien: 'Oberanführer Mugg'; Gesamtzahl unbekannt."
+      "_pruefen": "Bossliste nicht veröffentlicht. Einzig bekannt aus Beta-Spieldateien: 'Oberanführer Mugg'; Gesamtzahl unbekannt.",
+      "ohneStatistik": true
     },
     "Hügel von Razorfen": {
       "stufe": [
@@ -302,8 +330,10 @@
         48,
         53
       ],
-      "bosse": [],
-      "_pruefen": "Bossliste nicht veröffentlicht. Einzig bekannt aus Beta-Erfolgsdaten: Endboss 'Blazeroar' (nur englisch)."
+      "bosse": [
+        "Blazeroar"
+      ],
+      "_pruefen": "Bossliste nicht veröffentlicht. Einzig bekannt aus Beta-Erfolgsdaten: Endboss 'Blazeroar' (nur englisch). Am 2026-11-27 lokal über alle Mitglieder geprüft (Boss-Kill-Statistik gegen die Erfolgskriterien): Statistik \"Blazeroar (Das Gefängnis von Alcaz)\"."
     },
     "Der Tempel von Atal'Hakkar": {
       "stufe": [
@@ -321,7 +351,13 @@
         "Hazzas",
         "Eranikus' Schemen"
       ],
-      "_pruefen": "Avatar von Hakkar, Jammal'an der Prophet und Eranikus' Schemen per wowhead.com/de bestätigt; übrige Namen nur von mmonster. Die sechs Troll-Minibosse auf den Balkonen (Gasher, Hukku, Loro, Mijan, Zolo, Zul'Lor) und die Brut von Hakkar weggelassen. Reihenfolge nicht eindeutig belegt."
+      "_pruefen": "Avatar von Hakkar, Jammal'an der Prophet und Eranikus' Schemen per wowhead.com/de bestätigt; übrige Namen nur von mmonster. Die sechs Troll-Minibosse auf den Balkonen (Gasher, Hukku, Loro, Mijan, Zolo, Zul'Lor) und die Brut von Hakkar weggelassen. Reihenfolge nicht eindeutig belegt. Am 2026-11-27 lokal über alle Mitglieder geprüft (Boss-Kill-Statistik gegen die Erfolgskriterien): Statistik \"Versunkener Tempel\".",
+      "statistik": [
+        {
+          "instanz": "Versunkener Tempel",
+          "endboss": "Eranikus' Schemen"
+        }
+      ]
     },
     "Blackrocktiefen": {
       "stufe": [
@@ -348,7 +384,13 @@
         "Magmus",
         "Imperator Dagran Thaurissan"
       ],
-      "_pruefen": "Liste und Reihenfolge nach den Bosskämpfen auf wowhead.com/de (Retail). mmonster schreibt abweichend u.a. 'Fineous Darkvire', 'Hurley Blackbreath', 'Plugger Spazzring', 'Pyromant Weiskorn'. 'Ring des Gesetzes' und 'Die Sieben' sind Gruppenbegegnungen. Prinzessin Moira Bronzebart, Verek, Ribbly und die Dunkelhüter weggelassen."
+      "_pruefen": "Liste und Reihenfolge nach den Bosskämpfen auf wowhead.com/de (Retail). mmonster schreibt abweichend u.a. 'Fineous Darkvire', 'Hurley Blackbreath', 'Plugger Spazzring', 'Pyromant Weiskorn'. 'Ring des Gesetzes' und 'Die Sieben' sind Gruppenbegegnungen. Prinzessin Moira Bronzebart, Verek, Ribbly und die Dunkelhüter weggelassen. Am 2026-11-27 lokal über alle Mitglieder geprüft (Boss-Kill-Statistik gegen die Erfolgskriterien): Statistik \"Schwarzfelstiefen\".",
+      "statistik": [
+        {
+          "instanz": "Schwarzfelstiefen",
+          "endboss": "Imperator Dagran Thaurissan"
+        }
+      ]
     },
     "Schwarzschlundfeste": {
       "stufe": [
@@ -356,7 +398,8 @@
         60
       ],
       "bosse": [],
-      "_pruefen": "Bossliste nicht veröffentlicht. Einzig bekannt aus Beta-Spieldateien: 'Varrox Bleakhoof' (nur englisch, unbestätigt)."
+      "_pruefen": "Bossliste nicht veröffentlicht. Einzig bekannt aus Beta-Spieldateien: 'Varrox Bleakhoof' (nur englisch, unbestätigt).",
+      "ohneStatistik": true
     },
     "Untere Blackrockspitze": {
       "stufe": [
@@ -374,7 +417,13 @@
         "Gizrul der Geifernde",
         "Oberanführer Wyrmthalak"
       ],
-      "_pruefen": "Namen per wowhead.com/de bestätigt. Urok Schreckensbote wird beschworen. Seltene Gegner weggelassen."
+      "_pruefen": "Namen per wowhead.com/de bestätigt. Urok Schreckensbote wird beschworen. Seltene Gegner weggelassen. Am 2026-11-27 lokal über alle Mitglieder geprüft (Boss-Kill-Statistik gegen die Erfolgskriterien): Statistik \"Untere Schwarzfelsspitze\".",
+      "statistik": [
+        {
+          "instanz": "Untere Schwarzfelsspitze",
+          "endboss": "Oberanführer Wyrmthalak"
+        }
+      ]
     },
     "Obere Blackrockspitze": {
       "stufe": [
@@ -390,7 +439,13 @@
         "Die Bestie",
         "General Drakkisath"
       ],
-      "_pruefen": "Feuerwache Glutseher, Solakar Feuerkrone, Goraluk Hammerbruch, Die Bestie und General Drakkisath per wowhead.com/de bestätigt. 'Kriegshäuptling Rend Blackhand' ist mmonster-Schreibweise und nicht abrufbar; der deutsche Client nennt ihn möglicherweise 'Rend Schwarzfaust' (Goraluks Titel lautet dort 'Rüstungsschmied der Schwarzfaustlegion'). Seltener Jed Runenblick weggelassen."
+      "_pruefen": "Feuerwache Glutseher, Solakar Feuerkrone, Goraluk Hammerbruch, Die Bestie und General Drakkisath per wowhead.com/de bestätigt. 'Kriegshäuptling Rend Blackhand' ist mmonster-Schreibweise und nicht abrufbar; der deutsche Client nennt ihn möglicherweise 'Rend Schwarzfaust' (Goraluks Titel lautet dort 'Rüstungsschmied der Schwarzfaustlegion'). Seltener Jed Runenblick weggelassen. Am 2026-11-27 lokal über alle Mitglieder geprüft (Boss-Kill-Statistik gegen die Erfolgskriterien): Statistik \"Obere Schwarzfelsspitze\".",
+      "statistik": [
+        {
+          "instanz": "Obere Schwarzfelsspitze",
+          "endboss": "General Drakkisath"
+        }
+      ]
     },
     "Scholomance": {
       "stufe": [
@@ -430,7 +485,8 @@
         "Archivar Galford",
         "Balnazzar"
       ],
-      "_pruefen": "Zuordnung Lebendig = Haupttor angenommen. Namen von mmonster (Classic-Stand). Dieselben NPCs heißen im heutigen Retail-Client nach Umbenennung in Cataclysm 'Die Unverziehene', 'Kommandant Malor', 'Willey Hoffnungsbrecher' und 'Instrukteur Galford'; welche Fassung Forever nutzt, ist offen. Fras Siabi, Postmeister Malown und Purpurroter Hammerschmied sind optional bzw. beschworen. 'Kurier von Stratholme' und seltene Gegner (Skul, Herdsinger Forresten) weggelassen."
+      "_pruefen": "Zuordnung Lebendig = Haupttor angenommen. Namen von mmonster (Classic-Stand). Dieselben NPCs heißen im heutigen Retail-Client nach Umbenennung in Cataclysm 'Die Unverziehene', 'Kommandant Malor', 'Willey Hoffnungsbrecher' und 'Instrukteur Galford'; welche Fassung Forever nutzt, ist offen. Fras Siabi, Postmeister Malown und Purpurroter Hammerschmied sind optional bzw. beschworen. 'Kurier von Stratholme' und seltene Gegner (Skul, Herdsinger Forresten) weggelassen.",
+      "ohneStatistik": true
     },
     "Stratholme: Tot": {
       "stufe": [
@@ -445,7 +501,13 @@
         "Ramstein der Verschlinger",
         "Baron Totenschwur"
       ],
-      "_pruefen": "Zuordnung Tot = Dienstbotentor angenommen. 'Baron Totenschwur' ist der deutsche Name von Baron Rivendare laut wowhead.com/de (mmonster: 'Baron Rivendare'). Übrige Namen nur von mmonster. Schwertschmied der schwarzen Wache (nur Schmiedequest) und seltener Steinbuckel weggelassen."
+      "_pruefen": "Zuordnung Tot = Dienstbotentor angenommen. 'Baron Totenschwur' ist der deutsche Name von Baron Rivendare laut wowhead.com/de (mmonster: 'Baron Rivendare'). Übrige Namen nur von mmonster. Schwertschmied der schwarzen Wache (nur Schmiedequest) und seltener Steinbuckel weggelassen. Am 2026-11-27 lokal über alle Mitglieder geprüft (Boss-Kill-Statistik gegen die Erfolgskriterien): Statistik \"Baron Rivendare (Stratholme)\".",
+      "statistik": [
+        {
+          "instanz": "Stratholme",
+          "endboss": "Baron Rivendare"
+        }
+      ]
     },
     "Düsterbruch: Ost": {
       "stufe": [
@@ -459,7 +521,8 @@
         "Lethtendris",
         "Alzzin der Wildformer"
       ],
-      "_pruefen": "Pusillin, Zevrim Dornhuf, Hydrobrut und Alzzin der Wildformer per wowhead.com/de bestätigt, Lethtendris nur von mmonster."
+      "_pruefen": "Pusillin, Zevrim Dornhuf, Hydrobrut und Alzzin der Wildformer per wowhead.com/de bestätigt, Lethtendris nur von mmonster.",
+      "ohneStatistik": true
     },
     "Düsterbruch: Nord": {
       "stufe": [
@@ -475,7 +538,13 @@
         "Cho'Rush der Beobachter",
         "König Gordok"
       ],
-      "_pruefen": "Stampfer Kreeg und Hauptmann Krombruch per wowhead.com/de bestätigt, übrige nur von mmonster."
+      "_pruefen": "Stampfer Kreeg und Hauptmann Krombruch per wowhead.com/de bestätigt, übrige nur von mmonster. Am 2026-11-27 lokal über alle Mitglieder geprüft (Boss-Kill-Statistik gegen die Erfolgskriterien): Statistik \"König Gordok (Düsterbruch)\".",
+      "statistik": [
+        {
+          "instanz": "Düsterbruch",
+          "endboss": "König Gordok"
+        }
+      ]
     },
     "Düsterbruch: West": {
       "stufe": [
@@ -489,7 +558,8 @@
         "Immol'thar",
         "Prinz Tortheldrin"
       ],
-      "_pruefen": "Tendris Wucherborke, Illyanna Rabeneiche und Prinz Tortheldrin per wowhead.com/de bestätigt, übrige nur von mmonster. Seltener Tsu'zee weggelassen."
+      "_pruefen": "Tendris Wucherborke, Illyanna Rabeneiche und Prinz Tortheldrin per wowhead.com/de bestätigt, übrige nur von mmonster. Seltener Tsu'zee weggelassen.",
+      "ohneStatistik": true
     },
     "Terrasse des Formers": {
       "stufe": [
@@ -497,12 +567,12 @@
         60
       ],
       "bosse": [
-        "Nanaya",
         "Zunder",
         "Bolt",
-        "Schneekralle"
+        "Schneekralle",
+        "Nanaya"
       ],
-      "_pruefen": "Vier Namen aus der Erfolgsliste des Beta-Clients; Reihenfolge und Vollständigkeit unbestätigt. Endboss (letzter Eintrag) nicht belegt."
+      "_pruefen": "Vier Namen aus der Erfolgsliste des Beta-Clients; Reihenfolge und Vollständigkeit unbestätigt. Endboss Nanaya: am 2026-11-27 der einzige Eintrag dieser Instanz in der Boss-Kill-Statistik, passend zum Kriterium."
     },
     "Hyjalgipfel": {
       "stufe": [
