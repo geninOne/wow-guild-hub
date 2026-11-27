@@ -59,7 +59,12 @@ const IGNORED_PATHS = [
   // Deprecated aliases of 2.x at their old paths (and their test), kept for extension modules until 4.0.
   /^src\/sprache\.ts$/,
   /^web\/src\/lib\/sprache\.tsx$/,
+  /^src\/weekly\/(bausteine|zeitung-facts)\.ts$/,
+  /^(src|web\/src)\/erweiterungen\/(index|typen)\.ts$/,
+  /^src\/extensions\/legacy\.ts$/,
+  /^web\/src\/extensions\/legacy\.tsx$/,
   /^test\/web\/language-legacy\.test\.tsx$/,
+  /^test\/(web\/)?erweiterungen\/kern-2x\.test\.tsx?$/,
   // The check itself names German words and umlauts.
   /^scripts\/check-english(-lib\.mjs|\.mjs|-words\.txt)$/,
   /^test\/scripts\/check-english-lib\.test\.ts$/,

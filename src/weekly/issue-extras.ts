@@ -1,8 +1,8 @@
 // What an issue needs besides the weekly facts: week in numbers including the previous week, records against all
 // earlier weeks, lookback, weather situation and the extensions' articles. All computed deterministically, the
 // writers only come up with the words.
-import { SERVER_ERWEITERUNGEN } from "../erweiterungen";
-import type { ServerErweiterung } from "../erweiterungen/typen";
+import { serverExtensions, type AnyServerExtension } from "../extensions/legacy";
+import { REGISTERED_SERVER_EXTENSIONS } from "../extensions/registry";
 import { addDays } from "../lib/time";
 import type { NewspaperLookback, GuildRecord, WeekMetrics, WeeklyIndex, WeeklyRecord, WeeklyNumbers } from "../model";
 import type { JsonStore } from "../store";
@@ -46,6 +46,12 @@ export async function earlierFigures(
   return out.filter((x) => x !== null);
 }
 
+/** The extensions a caller passed (in either shape), else the registered ones. */
+function extensionsOf(input: { extensions?: readonly AnyServerExtension[]; erweiterungen?: readonly AnyServerExtension[] }) {
+  const given = input.extensions ?? input.erweiterungen;
+  return given ? serverExtensions(given) : REGISTERED_SERVER_EXTENSIONS;
+}
+
 export async function issueExtras(input: {
   store: JsonStore;
   guild: GuildRecord;
@@ -56,14 +62,16 @@ export async function issueExtras(input: {
   /** Earlier issues, the most recent first (for the lookback). */
   previous: WeeklyRecord[];
   keyFigures: KeyFigures;
-  /** Registered extensions; default from `src/erweiterungen/index.ts`. */
-  erweiterungen?: readonly ServerErweiterung[];
+  /** Extensions to use instead of the registered ones (tests); 2.x modules are converted. */
+  extensions?: readonly AnyServerExtension[];
+  /** @deprecated 2.x name of `extensions`. */
+  erweiterungen?: readonly AnyServerExtension[];
 }): Promise<IssueExtras> {
   const { store, guild, from, to, metrics, excluded } = input;
   const ids = new Set(countedMembers(guild.members, excluded).map((m) => m.id));
   const [earlier, ...fromExtensions] = await Promise.all([
     earlierFigures(store, guild, from, input.keyFigures, excluded),
-    ...(input.erweiterungen ?? SERVER_ERWEITERUNGEN).map((e) => e.wochenArtikel?.({ store, guild, from, to, ids }) ?? []),
+    ...extensionsOf(input).map((e) => e.weeklyArticles?.({ store, guild, from, to, ids }) ?? []),
   ]);
   const own = buildWeeklyNumbers(metrics, guild, excluded);
   const prev = earlier.find((w) => w.to === addDays(from, -1));

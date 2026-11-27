@@ -197,8 +197,8 @@ export function factsForModel(facts: NewspaperFact[], ctx: TextContext, language
             mehr_als_bisher: e.value - e.previous,
           })),
         };
-      case "erweiterung":
-        return { ...base, ...f.fuerKi(n, language) };
+      case "extension":
+        return { ...base, ...f.forAi(n, language) };
     }
   });
 }
@@ -373,7 +373,7 @@ export function createClaudeGenerator(options: ClaudeGeneratorOptions): TextGene
   // write everything; if another language fails, the phrases step in for it.
   return async (facts, context): Promise<TextResult> => {
     const languages = languagesFor(context);
-    const ctx: TextContext = { ...context, sprachen: languages };
+    const ctx: TextContext = { ...context, languages };
     const others: OtherLanguage[] = ["en", ...DIALECTS.filter((d) => languages.includes(d))];
     const [de, ...rest] = await Promise.allSettled([writeVersion(facts, ctx, "de"), ...others.map((s) => writeVersion(facts, ctx, s))]);
     if (de.status === "rejected") {

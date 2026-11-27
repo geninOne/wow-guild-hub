@@ -9,13 +9,13 @@ export const SECTIONS = ["Aufsteiger", "Rekorde", "Handwerk", "Klatsch", "Friedh
 export type Section = (typeof SECTIONS)[number] | (string & {});
 
 /** Headline and text of an article in one language. */
-export interface MeldungsText {
+export interface ArticleText {
   headline: string;
   text: string;
 }
 
 /** What an extension gets for writing its article from phrases. */
-export interface SchreibWerkzeug {
+export interface WriteTools {
   /** Name of a character. */
   name: (id: number) => string;
   /**
@@ -29,24 +29,27 @@ export interface SchreibWerkzeug {
 
 /**
  * Article of an extension for the weekly newspaper. The extension computes everything itself and delivers texts from
- * phrases; only the finished article is stored, with `art` as its kind, like the core's articles.
+ * phrases; only the finished article is stored, with `type` as its kind, like the core's articles.
  */
-export interface ErweiterungsFakt {
-  kind: "erweiterung";
-  /** Kind of the article, such as `"umfrage"`; stored in the article and counts for the variation between issues. */
-  art: string;
-  /** Section (German name); versions in other languages come from `ServerErweiterung.rubriken`. */
-  rubrik: string;
+export interface ExtensionFact {
+  kind: "extension";
+  /** Kind of the article, such as `"poll"`; stored in the article and counts for the variation between issues. */
+  type: string;
+  /** Section (German name); versions in other languages come from `ServerExtension.sections`. */
+  section: string;
   /** News value as for the core's articles: about 10 (trifles) to 80 (huge). */
-  nachrichtenwert: number;
+  newsValue: number;
   /** Characters concerned. Articles with former or opted-out members are dropped. */
   characterIds: number[];
   /** All numbers a text may mention (the AI texts are checked against them). */
-  zahlen: number[];
+  numbers: number[];
   /** Texts from phrases: German and English required, missing dialects fall back to German. */
-  schreibe(w: SchreibWerkzeug): Translations<MeldungsText>;
-  /** The fact for the AI writers, without `nr`, `rubrik` and `art` (the core sets them), with names instead of ids. */
-  fuerKi(name: (id: number) => string, language: Language): Record<string, unknown>;
+  write(tools: WriteTools): Translations<ArticleText>;
+  /**
+   * The fact for the AI writers, with names instead of ids. The core adds `nr`, `rubrik` (section) and `art` (type);
+   * these keys of the model's input stay German.
+   */
+  forAi(name: (id: number) => string, language: Language): Record<string, unknown>;
 }
 
 /** What happened in a week, still without words. A `TextGenerator` turns facts into articles. */
@@ -61,7 +64,7 @@ export type NewspaperFact =
   | { kind: "zahl"; value: number; what: NumberKind }
   | { kind: "ruhig" }
   | { kind: "rekord"; entries: { art: WeeklyNumberKind; characterId: number | null; value: number; previous: number }[] }
-  | ErweiterungsFakt;
+  | ExtensionFact;
 
 /** What the number of the week can consist of. */
 export type NumberKind = "level" | "anmeldungen" | "rezepte" | "dungeons" | "tode" | "erfolge";
@@ -106,8 +109,8 @@ export function sectionOf(fact: NewspaperFact): Section {
       return "Zahl der Woche";
     case "rekord":
       return "Rekorde";
-    case "erweiterung":
-      return fact.rubrik;
+    case "extension":
+      return fact.section;
     default:
       return "Klatsch";
   }
@@ -120,7 +123,7 @@ export function factKey(fact: NewspaperFact): string {
 
 /** Kind as stored in the article: for extensions their own. */
 export function factKindOf(fact: NewspaperFact): string {
-  return fact.kind === "erweiterung" ? fact.art : fact.kind;
+  return fact.kind === "extension" ? fact.type : fact.kind;
 }
 
 /** News value: how big this week's event is. Higher comes further to the front. */
@@ -144,8 +147,8 @@ export function newsValue(fact: NewspaperFact): number {
       return 10 + Math.min(20, fact.count);
     case "rekord":
       return 50 + 5 * fact.entries.length;
-    case "erweiterung":
-      return fact.nachrichtenwert;
+    case "extension":
+      return fact.newsValue;
     default:
       return 0;
   }
@@ -343,7 +346,7 @@ export function factTitle(fact: NewspaperFact): string | null {
 export function factCharacters(fact: NewspaperFact): number[] {
   switch (fact.kind) {
     case "neuzugang":
-    case "erweiterung":
+    case "extension":
       return fact.characterIds;
     case "rekord":
       return [...new Set(fact.entries.flatMap((e) => (e.characterId === null ? [] : [e.characterId])))];
@@ -383,7 +386,7 @@ export function factNumbers(fact: NewspaperFact): number[] {
       return [];
     case "rekord":
       return fact.entries.flatMap((e) => [e.value, e.previous, e.value - e.previous]);
-    case "erweiterung":
-      return fact.zahlen;
+    case "extension":
+      return fact.numbers;
   }
 }

@@ -35,8 +35,8 @@ export function storedTranslations<T>(f: AllLanguages<T>, languages: readonly La
 }
 
 /** Languages offered by a generator: from the context or from WEBSITE_LANGUAGES (read at runtime). */
-export function languagesFor(context: Pick<TextContext, "sprachen">): Language[] {
-  return context.sprachen ? [...context.sprachen] : activeLanguages(process.env.WEBSITE_LANGUAGES);
+export function languagesFor(context: Pick<TextContext, "languages">): Language[] {
+  return context.languages ? [...context.languages] : activeLanguages(process.env.WEBSITE_LANGUAGES);
 }
 
 /** An earlier issue, as far as a generator needs to know it to avoid repeating itself. */
@@ -65,7 +65,7 @@ export interface TextContext {
   /** Weather situation of the week; without it there is no weather report. */
   wetter?: WeatherSituation;
   /** Offered languages; defaults to WEBSITE_LANGUAGES. Dialects are only written when they are listed here. */
-  sprachen?: readonly Language[];
+  languages?: readonly Language[];
   /** Guild names, main guild first, so a language model can name them. */
   gilden?: string[];
   /** Newspaper name from WEBSITE_NEWSPAPER; defaults to the standard name per language. */
@@ -255,9 +255,9 @@ function write(fact: NewspaperFact, ctx: TextContext, p: Picker, seed: string): 
       });
       return texts(p.chooseAll("rekord-kopf", RECORD_HEADLINE, seed), apply(p.chooseAll("rekord-text", RECORD_TEXT, seed), a));
     }
-    case "erweiterung": {
+    case "extension": {
       // Missing dialects fall back to German.
-      const f = fact.schreibe({ name: n, picker: p, seed });
+      const f = fact.write({ name: n, picker: p, seed });
       return allLanguages((s) => translationIn(f, s));
     }
   }

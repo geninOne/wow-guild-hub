@@ -1,4 +1,7 @@
 // @vitest-environment jsdom
+// Interface extension tests of 2.1.5, kept to prove that modules written for 2.x still work in 3.x through the
+// deprecated names (web/src/erweiterungen/typen.ts, web/src/lib/sprache.tsx). Changed against 2.1.5: only imports of
+// core internals that were renamed in 3.x, and the API field `erweiterungen`, which is now `extensions`. Removed in 4.0.
 // Erweiterungspunkte der Oberfläche: ohne Module keine fremden Reiter und Seiten, mit einer Test-Erweiterung an allen Stellen.
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -9,9 +12,9 @@ import type { CharacterView } from "../../../src/api/types";
 import type { CharacterRecord } from "../../../src/model";
 import App from "../../../web/src/App";
 import type { CharakterDatenProps, OberflaechenErweiterung } from "../../../web/src/erweiterungen/typen";
-import { LANGUAGE_STORAGE_KEY } from "../../../web/src/lib/language";
+import { SPRACH_SCHLUESSEL } from "../../../web/src/lib/sprache";
 import { CharacterPage } from "../../../web/src/pages/CharacterPage";
-import { PrivacyPage } from "../../../web/src/pages/PrivacyPage";
+import { PrivacyPage as DatenschutzPage } from "../../../web/src/pages/PrivacyPage";
 
 const registry = vi.hoisted(() => ({ liste: [] as OberflaechenErweiterung[] }));
 vi.mock("../../../web/src/erweiterungen", () => ({
@@ -81,7 +84,7 @@ function renderCharakter(url: string) {
 }
 
 beforeEach(() => {
-  window.localStorage.setItem(LANGUAGE_STORAGE_KEY, "de");
+  window.localStorage.setItem(SPRACH_SCHLUESSEL, "de");
 });
 
 afterEach(() => {
@@ -105,7 +108,7 @@ describe("ohne Erweiterungen", () => {
   });
 
   test("Charakterseite nur mit den eigenen Reitern, ohne Abzeichen; unbekannte Reiter zeigen die Ausrüstung", async () => {
-    mockFetch(view({ erweiterungen: { umfragen: { stimmen: 3 } } }));
+    mockFetch(view({ extensions: { umfragen: { stimmen: 3 } } }));
     renderCharakter("/charakter/gelmar-soulvenn?reiter=umfragen");
     await screen.findByRole("heading", { level: 1, name: "Gelmar Soulvenn" });
     const tabs = screen.getAllByRole("tab").map((t) => t.textContent);
@@ -117,7 +120,7 @@ describe("ohne Erweiterungen", () => {
   test("Datenschutz ohne zusätzliche Abschnitte", () => {
     render(
       <MemoryRouter>
-        <PrivacyPage />
+        <DatenschutzPage />
       </MemoryRouter>,
     );
     const titel = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
@@ -149,7 +152,7 @@ describe("mit Test-Erweiterung", () => {
   });
 
   test("Charakter: Reiter ganz rechts mit den Zusatzdaten, Abzeichen in der Kopfzeile", async () => {
-    mockFetch(view({ erweiterungen: { umfragen: { stimmen: 3 } } }));
+    mockFetch(view({ extensions: { umfragen: { stimmen: 3 } } }));
     renderCharakter("/charakter/gelmar-soulvenn");
     await screen.findByRole("heading", { level: 1, name: "Gelmar Soulvenn" });
     expect(screen.getByText("Wähler 3")).toBeTruthy();
@@ -167,7 +170,7 @@ describe("mit Test-Erweiterung", () => {
   });
 
   test("Charakter ohne Profil: keine Reiter, der Inhalt steht unter dem Hinweis, aber nur mit Daten", async () => {
-    mockFetch(view({ erweiterungen: { umfragen: { stimmen: 5 } } }, { hasProfile: false }));
+    mockFetch(view({ extensions: { umfragen: { stimmen: 5 } } }, { hasProfile: false }));
     renderCharakter("/charakter/gelmar-soulvenn");
     expect(await screen.findByText("5 Stimmen")).toBeTruthy();
     expect(screen.queryByRole("tablist")).toBeNull();
@@ -181,7 +184,7 @@ describe("mit Test-Erweiterung", () => {
   test("Datenschutz-Abschnitt vor den Links zu anderen Seiten", () => {
     render(
       <MemoryRouter>
-        <PrivacyPage />
+        <DatenschutzPage />
       </MemoryRouter>,
     );
     const titel = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);

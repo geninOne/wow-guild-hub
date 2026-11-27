@@ -257,7 +257,7 @@ test("phrases write every issue in German, English and the offered dialects", as
   const issue = writeIssue([{ kind: "neuzugang", characterIds: [1, 2, 3] }], {
     week: "2026-11-21",
     name: (id: number) => ["", "Anna", "Bodo", "Cleo"][id],
-    sprachen: ["de", "schwaebisch", "bayrisch", "en"],
+    languages: ["de", "schwaebisch", "bayrisch", "en"],
   });
   const a = issue.articles[0];
   expect(a.text).toContain("Anna, Bodo und Cleo");

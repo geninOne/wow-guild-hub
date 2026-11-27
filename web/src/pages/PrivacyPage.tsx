@@ -1,5 +1,5 @@
 import { PostalAddress, LegalTextNotice } from "../components/Contact";
-import { OBERFLAECHEN_ERWEITERUNGEN } from "../erweiterungen";
+import { registeredUiExtensions } from "../extensions/registry";
 import { site } from "../lib/site";
 
 /** One section of the template: heading and a note on what the operator has to describe there. */
@@ -14,8 +14,8 @@ function Placeholder({ title, content }: { title: string; content: string }) {
 
 /**
  * Placeholder for the privacy policy. It only names which sections are needed; every operator
- * has to write the text themselves and have it checked. A module provides its own legal texts via `datenschutzSeite`
- * (docs/extensions.md). Sections from modules (`datenschutz`) still appear.
+ * has to write the text themselves and have it checked. A module provides its own legal texts via `privacyPage`
+ * (docs/extensions.md). Sections from modules (`privacy`) still appear.
  */
 export function PrivacyPage() {
   const { umami, discord } = site();
@@ -57,7 +57,7 @@ export function PrivacyPage() {
           content="Die gewählte Sprache steht im lokalen Speicher des Browsers und wird nicht übertragen."
         />
 
-        {OBERFLAECHEN_ERWEITERUNGEN.map(({ id, datenschutz: Section }) => Section && <Section key={id} />)}
+        {registeredUiExtensions().map(({ id, privacy: Section }) => Section && <Section key={id} />)}
 
         <Placeholder
           title="Links zu anderen Seiten"

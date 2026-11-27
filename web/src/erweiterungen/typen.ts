@@ -1,13 +1,16 @@
-// Schnittstellen für Module (Erweiterungen) in der Oberfläche. Ein Modul meldet sich in `index.ts` an; die Seiten des
-// Kerns zeigen dann seine Reiter, Abzeichen, Routen und Datenschutz-Abschnitte. Anleitung: docs/extensions.md.
+/**
+ * Deprecated 2.x interface for interface modules (`OberflaechenErweiterung`), so modules written for 2.x keep working
+ * unchanged. Modules registered in `./index.ts` with this shape are converted by `web/src/extensions/legacy.tsx`.
+ * Removed in the major version after 3.0.0. New modules use `UiExtension` from `web/src/extensions/types.ts`.
+ */
 import type { ComponentType } from "react";
 import type { CharacterView } from "../../../src/api/types";
-import type { Translations } from "../lib/language";
+import type { Fassungen } from "../lib/sprache";
 
 /** Ein Reiter der Statistikseite unter `/statistik/<id>`, hinter den Reitern des Kerns. */
 export interface StatistikReiter {
   id: string;
-  label: Translations;
+  label: Fassungen;
   /** Inhalt; `guild` ist die gewählte Gilde aus `?gilde=`, `onGuild` ändert sie. */
   Komponente: ComponentType<{ guild: string | null; onGuild: (guild: string | null) => void }>;
 }
@@ -21,7 +24,7 @@ export interface CharakterDatenProps {
 /** Ein Reiter der Charakterseite (`?reiter=<id>`), hinter den Reitern des Kerns. */
 export interface CharakterReiter {
   id: string;
-  label: Translations;
+  label: Fassungen;
   /**
    * Inhalt des Reiters, auch ohne Zusatzdaten (dann am besten ein Hinweis). Charaktere ohne Profil haben keine Reiter;
    * dort steht die Komponente unter dem Hinweis, aber nur mit Zusatzdaten.
