@@ -1,5 +1,5 @@
 import { hourRange, heatLevel, weekdayNames, weekdayNamesShort } from "../lib/fun";
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 
 const HOURS = Array.from({ length: 24 }, (_, h) => h);
 
@@ -15,12 +15,12 @@ const T = {
   weekday: { de: "Wochentag", en: "Weekday" },
   hour: { de: (h: number) => `${h} Uhr`, en: (h: number) => `${h}:00` },
   many: { de: "viel", en: "many", schwaebisch: "viel", bayrisch: "vui" },
-} satisfies Record<string, Fassungen<unknown>>;
+} satisfies Record<string, Translations<unknown>>;
 
 /** Grid of weekday by hour, 168 values starting Monday 0:00. */
 export function Heatmap({ cells }: { cells: number[] }) {
-  const { t, sprache } = useSprache();
-  const short = weekdayNamesShort(sprache);
+  const { t, language } = useLanguage();
+  const short = weekdayNamesShort(language);
   const max = Math.max(0, ...cells);
   return (
     <div className="heatmap" role="table" aria-label={t(T.grid)}>
@@ -32,14 +32,14 @@ export function Heatmap({ cells }: { cells: number[] }) {
           </span>
         ))}
       </div>
-      {weekdayNames(sprache).map((day, d) => (
+      {weekdayNames(language).map((day, d) => (
         <div key={day} className="heatmap-row" role="row">
           <span className="heatmap-day" role="rowheader" aria-label={day}>
             {short[d]}
           </span>
           {HOURS.map((h) => {
             const value = cells[d * 24 + h] ?? 0;
-            const label = `${day}, ${hourRange(h, sprache)}: ${t(T.logins)(value)}`;
+            const label = `${day}, ${hourRange(h, language)}: ${t(T.logins)(value)}`;
             return (
               <span
                 key={h}

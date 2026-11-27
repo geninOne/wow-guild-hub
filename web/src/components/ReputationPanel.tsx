@@ -1,5 +1,5 @@
 import type { ReputationView } from "../../../src/api/types";
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 
 const T = {
   gathering: {
@@ -14,7 +14,7 @@ const T = {
     schwaebisch: "No koin Ruf bei ra Fraktion gsammlet.",
     bayrisch: "No koan Ruf bei a Fraktion gsammelt.",
   },
-} satisfies Record<string, Fassungen>;
+} satisfies Record<string, Translations>;
 
 /** Color by standing: red up to Unfriendly, yellow for Neutral, green from Friendly on (standing ids 0 to 7). */
 function tierClass(tier: number): string {
@@ -26,7 +26,7 @@ function tierClass(tier: number): string {
 /** Reputation of a character, by faction group. Only its own standing, no comparison. */
 
 export function ReputationPanel({ view }: { view: ReputationView }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   if (!view.available) {
     return (
       <div className="state state-empty">

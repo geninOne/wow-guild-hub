@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import type { Axis } from "../lib/crossfilter";
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 import { ClassName } from "./ClassName";
 
 const T = {
@@ -12,9 +12,9 @@ const T = {
     bayrisch: "Olle Mitglieder. Klick ins Diagramm, nacha werd gfiltert.",
   },
   resetAll: { de: "Alles zurücksetzen", en: "Reset all", schwaebisch: "Älles zrucksetza", bayrisch: "Ois zruckstelln" },
-} satisfies Record<string, Fassungen>;
+} satisfies Record<string, Translations>;
 
-const REMOVE: Fassungen<(what: string) => string> = {
+const REMOVE: Translations<(what: string) => string> = {
   de: (what) => `${what} entfernen`,
   en: (what) => `Remove ${what}`,
   schwaebisch: (what) => `${what} weglasse`,
@@ -43,7 +43,7 @@ function Cross() {
  * plus "Reset all". Without a selection a short hint. The row keeps its height so nothing jumps.
  */
 export function SelectionBar({ race, classId, classLabel, level, onRemove, onReset }: SelectionBarProps) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const chips: { axis: Axis; label: string; node: ReactNode }[] = [];
   if (race !== null) chips.push({ axis: "race", label: race, node: race });
   if (classId !== null && classLabel !== null) {

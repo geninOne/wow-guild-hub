@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import type { MemberFigures } from "../lib/crossfilter";
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 import { numberLocale } from "../lib/format";
 
 const T = {
@@ -19,7 +19,7 @@ const T = {
   classes: { de: "Klassen", en: "Classes", schwaebisch: "Klasse", bayrisch: "Klassn" },
   list: { de: "Liste", en: "List", schwaebisch: "Lischt", bayrisch: "Listn" },
   openList: { de: "Liste öffnen", en: "Open list", schwaebisch: "Lischt aufmache", bayrisch: "Listn aufmacha" },
-} satisfies Record<string, Fassungen>;
+} satisfies Record<string, Translations>;
 
 /* Custom icons in the site's style: plain, filled, in currentColor (gold). */
 function PeopleGlyph() {
@@ -80,7 +80,7 @@ interface FigureProps {
 }
 
 function Figure({ icon, label, value, onClick }: FigureProps) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const inner = (
     <>
       <span className="figure-icon">{icon}</span>
@@ -126,7 +126,7 @@ interface FigureTileProps {
  * classes. Members and level 60 open the member list. With a selection, gold border and a "Filtered" badge.
  */
 export function FigureTile({ figures, filtered, onMembers, onCapped }: FigureTileProps) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   return (
     <section className="figures" data-filtered={filtered ? "" : undefined} aria-label={t(filtered ? T.keyFiguresSelection : T.keyFigures)}>
       <span className="figures-badge" aria-hidden={!filtered}>

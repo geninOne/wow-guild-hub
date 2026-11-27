@@ -4,7 +4,7 @@ import type { CharacterRef, ProfessionRecipe, RecipeView } from "../../../src/ap
 import { ClassName } from "./ClassName";
 import { FactionCrest } from "./FactionCrest";
 import { Icon } from "./Icon";
-import { fassungIn, useSprache, type Fassungen, type Sprache } from "../lib/sprache";
+import { translationIn, useLanguage, type Translations, type Language } from "../lib/language";
 import { RecipeIcon, recipeTone, RecipeTooltip, RECIPE_TEXTS } from "./RecipeTooltip";
 import { Tooltip } from "./Tooltip";
 
@@ -40,15 +40,15 @@ const T = {
     schwaebisch: (n: number) => `älle ${n} zoiga`,
     bayrisch: (n: number) => `olle ${n} ozoagn`,
   },
-} satisfies Record<string, Fassungen | Fassungen<(...a: never[]) => string>>;
+} satisfies Record<string, Translations | Translations<(...a: never[]) => string>>;
 
 /** Subline: crafted item if it differs from the recipe name, otherwise type and slot. */
-function subline(name: string, recipe: RecipeView | null, language: Sprache): string | null {
-  if (!recipe) return fassungIn(RECIPE_TEXTS.detailsPending, language);
+function subline(name: string, recipe: RecipeView | null, language: Language): string | null {
+  if (!recipe) return translationIn(RECIPE_TEXTS.detailsPending, language);
   const item = recipe.item;
   if (!item) return recipe.description;
   if (item.name !== name || recipe.craftedQuantity > 1) {
-    return `${fassungIn(T.creates, language)}: ${item.name}${recipe.craftedQuantity > 1 ? ` × ${recipe.craftedQuantity}` : ""}`;
+    return `${translationIn(T.creates, language)}: ${item.name}${recipe.craftedQuantity > 1 ? ` × ${recipe.craftedQuantity}` : ""}`;
   }
   const kind = [item.tooltip?.subclass, item.tooltip?.slotType].filter(Boolean).join(" · ");
   return kind || null;
@@ -70,11 +70,11 @@ export function RecipeCard({
   factionOf: (guildSlug: string) => string;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const { t, sprache } = useSprache();
+  const { t, language } = useLanguage();
   const { name, recipe } = entry;
   const collapsible = people.length > VISIBLE_PEOPLE + 1;
   const shown = collapsible && !expanded ? people.slice(0, VISIBLE_PEOPLE) : people;
-  const sub = subline(name, recipe, sprache);
+  const sub = subline(name, recipe, language);
 
   return (
     <li className="recipe-card">

@@ -9,7 +9,7 @@ import type { CharacterView } from "../../../src/api/types";
 import type { CharacterRecord } from "../../../src/model";
 import App from "../../../web/src/App";
 import type { CharakterDatenProps, OberflaechenErweiterung } from "../../../web/src/erweiterungen/typen";
-import { SPRACH_SCHLUESSEL } from "../../../web/src/lib/sprache";
+import { LANGUAGE_STORAGE_KEY } from "../../../web/src/lib/language";
 import { CharacterPage } from "../../../web/src/pages/CharacterPage";
 import { PrivacyPage } from "../../../web/src/pages/PrivacyPage";
 
@@ -81,7 +81,7 @@ function renderCharakter(url: string) {
 }
 
 beforeEach(() => {
-  window.localStorage.setItem(SPRACH_SCHLUESSEL, "de");
+  window.localStorage.setItem(LANGUAGE_STORAGE_KEY, "de");
 });
 
 afterEach(() => {

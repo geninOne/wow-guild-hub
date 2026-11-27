@@ -1,6 +1,6 @@
 import type { CharacterRecord, EquippedItem } from "../../../src/model";
 import { qualityColor, SLOT_LAYOUT, SLOT_NAMES_DE } from "../lib/wow";
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 import { Icon } from "./Icon";
 import { ItemTooltip } from "./ItemTooltip";
 import { Portrait } from "./Portrait";
@@ -38,16 +38,16 @@ const SLOT_NAMES_EN: Record<string, string> = {
   AMMO: "Ammo",
 };
 
-const SLOT_NAMES: Fassungen<Record<string, string>> = { de: SLOT_NAMES_DE, en: SLOT_NAMES_EN };
+const SLOT_NAMES: Translations<Record<string, string>> = { de: SLOT_NAMES_DE, en: SLOT_NAMES_EN };
 
 const T = {
   left: { de: "Ausrüstung links", en: "Equipment, left" },
   right: { de: "Ausrüstung rechts", en: "Equipment, right" },
   weapons: { de: "Waffen", en: "Weapons" },
-} satisfies Record<string, Fassungen>;
+} satisfies Record<string, Translations>;
 
 function Slot({ slot, item, icon }: { slot: string; item: EquippedItem | undefined; icon: string | null }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const slotName = t(SLOT_NAMES)[slot] ?? slot;
   if (!item) {
     return (
@@ -85,7 +85,7 @@ function Slot({ slot, item, icon }: { slot: string; item: EquippedItem | undefin
 /** Equipment: slots left and right of the character portrait, weapons below. */
 
 export function EquipmentPanel({ character, itemIcons }: EquipmentPanelProps) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const bySlot = new Map(character.equipment.map((item) => [item.slot, item]));
   const column = (slots: string[]) =>
     slots

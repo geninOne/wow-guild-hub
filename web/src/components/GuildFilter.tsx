@@ -1,10 +1,10 @@
 import { useRef, type KeyboardEvent } from "react";
 import type { GuildRef } from "../../../src/api/types";
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 import { FactionCrest } from "./FactionCrest";
 
-const GUILD: Fassungen = { de: "Gilde", en: "Guild" };
-const ALL: Fassungen = { de: "Alle", en: "All", schwaebisch: "Älle", bayrisch: "Olle" };
+const GUILD: Translations = { de: "Gilde", en: "Guild" };
+const ALL: Translations = { de: "Alle", en: "All", schwaebisch: "Älle", bayrisch: "Olle" };
 
 interface GuildFilterProps {
   guilds: GuildRef[];
@@ -19,7 +19,7 @@ interface GuildFilterProps {
  */
 export function GuildFilter({ guilds, value, onChange }: GuildFilterProps) {
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
-  const { t } = useSprache();
+  const { t } = useLanguage();
   if (guilds.length < 2) return null;
   const options = [
     { slug: null as string | null, name: t(ALL), faction: "" },

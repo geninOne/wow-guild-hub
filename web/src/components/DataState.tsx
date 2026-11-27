@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import type { ApiError } from "../lib/api";
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 
 const T = {
   noData: {
@@ -17,7 +17,7 @@ const T = {
     bayrisch: "De Datn ham se ned ladn lassn.",
   },
   loading: { de: "Lade Daten", en: "Loading data", schwaebisch: "Lad Daten", bayrisch: "Lad Datn" },
-} satisfies Record<string, Fassungen>;
+} satisfies Record<string, Translations>;
 
 interface DataStateProps {
   loading: boolean;
@@ -25,7 +25,7 @@ interface DataStateProps {
   children?: ReactNode;
 }
 
-function errorText(error: ApiError): Fassungen {
+function errorText(error: ApiError): Translations {
   if (error.status === 503) return T.noData;
   if (error.status === 404) return T.notFound;
   return T.error;
@@ -33,7 +33,7 @@ function errorText(error: ApiError): Fassungen {
 
 /** Shows loading, empty state or error, otherwise the children. */
 export function DataState({ loading, error, children }: DataStateProps) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   if (loading) {
     return (
       <div className="state" role="status">

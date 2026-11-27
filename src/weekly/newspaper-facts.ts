@@ -1,6 +1,6 @@
 import { berlinDate } from "../lib/time";
 import type { ActivityWeek, DaySnapshot, MemberSummary, TitleAward, WeekMetrics, WeeklyNumberKind } from "../model";
-import type { Fassungen, Sprache } from "../sprache";
+import type { Translations, Language } from "../language";
 import type { Picker } from "./phrases";
 
 /** Sections of the issue, in this order after the lead article. */
@@ -44,9 +44,9 @@ export interface ErweiterungsFakt {
   /** All numbers a text may mention (the AI texts are checked against them). */
   zahlen: number[];
   /** Texts from phrases: German and English required, missing dialects fall back to German. */
-  schreibe(w: SchreibWerkzeug): Fassungen<MeldungsText>;
+  schreibe(w: SchreibWerkzeug): Translations<MeldungsText>;
   /** The fact for the AI writers, without `nr`, `rubrik` and `art` (the core sets them), with names instead of ids. */
-  fuerKi(name: (id: number) => string, sprache: Sprache): Record<string, unknown>;
+  fuerKi(name: (id: number) => string, language: Language): Record<string, unknown>;
 }
 
 /** What happened in a week, still without words. A `TextGenerator` turns facts into articles. */

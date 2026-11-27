@@ -4,7 +4,7 @@
 // It is a heuristic. A name counts as German when one of its word parts (camelCase, snake_case, kebab-case) has an
 // umlaut or ß or is in the word list (scripts/check-english-words.txt). A comment or message counts as German when it
 // has an umlaut or ß, or enough German function words or listed words.
-// UI texts are not checked: they are translations (`Fassungen`) and stay multilingual.
+// UI texts are not checked: they are translations (`Translations`) and stay multilingual.
 
 /**
  * @typedef {{ path: string; line: number; kind: "file-name" | "identifier" | "comment" | "test-name" | "message"; text: string }} Finding
@@ -56,6 +56,10 @@ const IGNORED_PATHS = [
   /^config\//,
   /^docs\//,
   /\.(png|jpe?g|webp|svg|ico|gif|woff2?)$/,
+  // Deprecated aliases of 2.x at their old paths (and their test), kept for extension modules until 4.0.
+  /^src\/sprache\.ts$/,
+  /^web\/src\/lib\/sprache\.tsx$/,
+  /^test\/web\/language-legacy\.test\.tsx$/,
   // The check itself names German words and umlauts.
   /^scripts\/check-english(-lib\.mjs|\.mjs|-words\.txt)$/,
   /^test\/scripts\/check-english-lib\.test\.ts$/,
@@ -91,7 +95,7 @@ export function isIgnoredPath(path) {
   return IGNORED_PATHS.some((re) => re.test(path));
 }
 
-/** Splits `fassungIn`, `SPRACH_NAMEN` or `frueher-vogel` into lowercase word parts. */
+/** Splits `translationIn`, `LANGUAGE_NAMES` or `frueher-vogel` into lowercase word parts. */
 export function splitName(name) {
   return name
     .replace(/([a-zäöüß0-9])([A-ZÄÖÜ])/g, "$1 $2")

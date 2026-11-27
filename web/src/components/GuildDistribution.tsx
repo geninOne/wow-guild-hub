@@ -14,7 +14,7 @@ import {
 } from "../lib/crossfilter";
 import { formatDateTime } from "../lib/format";
 import { classDistribution, LEVEL_BANDS, levelDistribution } from "../lib/members";
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 import { classColor } from "../lib/wow";
 import { ClassName } from "./ClassName";
 import { DataState } from "./DataState";
@@ -50,23 +50,23 @@ const T = {
     schwaebisch: "D'meischte send scho auf Sechzge. Respekt vor so viel Sitzfleisch.",
     bayrisch: "De meistn san scho auf Sechzg. Respekt vor so vui Sitzfleisch.",
   },
-} satisfies Record<string, Fassungen>;
+} satisfies Record<string, Translations>;
 
-const PEAK: Fassungen<(range: string) => string> = {
+const PEAK: Translations<(range: string) => string> = {
   de: (range) => `Die meisten tummeln sich bei ${range}. Weiterleveln, die Sechzig wartet!`,
   en: (range) => `Most are hanging out at ${range}. Keep leveling, sixty awaits!`,
   schwaebisch: (range) => `D'meischte hocket bei ${range}. Weiterlevla, d'Sechzge wartet!`,
   bayrisch: (range) => `De meistn hocka bei ${range}. Weiterlevln, de Sechzg wart scho!`,
 };
 
-const EMPTY_CLASSES: Fassungen = {
+const EMPTY_CLASSES: Translations = {
   de: "Hier schwingt keiner was. Diese Mischung gibt es noch nicht.",
   en: "Nobody wields anything here. This combination does not exist yet.",
   schwaebisch: "Do schwingt koiner ebbes. Die Mischung gibt's no net.",
   bayrisch: "Do schwingt koana wos. De Mischung gibt's no ned.",
 };
 
-const EMPTY_LEVELS: Fassungen = {
+const EMPTY_LEVELS: Translations = {
   de: "Leere Säulen. Für diese Auswahl hat noch niemand gelevelt.",
   en: "Empty columns. Nobody has leveled for this selection yet.",
   schwaebisch: "Leere Säule. Für die Auswahl hot no koiner glevelt.",
@@ -74,14 +74,14 @@ const EMPTY_LEVELS: Fassungen = {
 };
 
 /** Note in a chart's header saying which selections of the other charts filter it. */
-const ONLY: Fassungen<(parts: string) => string> = {
+const ONLY: Translations<(parts: string) => string> = {
   de: (parts) => `Nur ${parts}.`,
   en: (parts) => `Only ${parts}.`,
   schwaebisch: (parts) => `Bloß ${parts}.`,
   bayrisch: (parts) => `Bloß ${parts}.`,
 };
 
-const PER_CLASS: Fassungen = { de: "Mitglieder je Klasse", en: "Members per class" };
+const PER_CLASS: Translations = { de: "Mitglieder je Klasse", en: "Members per class" };
 
 /** Label of a level range: "10 bis 19" or "Level 60". */
 function bandName(bandIndex: number, toWord: string): string {
@@ -89,7 +89,7 @@ function bandName(bandIndex: number, toWord: string): string {
 }
 
 function DistributionContent({ guild }: { guild: GuildView }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const [guildSlug, setGuildSlug] = useState<string | null>(null);
   // Shared selection of race, class and level range for the crossfilter.
   const [selection, setSelection] = useState<Selection>(EMPTY_SELECTION);

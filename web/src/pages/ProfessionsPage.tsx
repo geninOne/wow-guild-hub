@@ -9,10 +9,10 @@ import { Icon } from "../components/Icon";
 import { RecipeCard } from "../components/RecipeCard";
 import { useApi } from "../lib/api";
 import { filterRecipes, MIN_QUERY } from "../lib/recipes";
-import { fassungIn, useSprache, type Fassungen, type Sprache } from "../lib/sprache";
+import { translationIn, useLanguage, type Translations, type Language } from "../lib/language";
 
-type Text = Fassungen;
-type Fn<A extends unknown[]> = Fassungen<(...a: A) => string>;
+type Text = Translations;
+type Fn<A extends unknown[]> = Translations<(...a: A) => string>;
 
 const T = {
   title: { de: "Berufe", en: "Professions", schwaebisch: "Berufe", bayrisch: "Berufe" } as Text,
@@ -133,10 +133,10 @@ function groupsOf(professions: Profession[]): [string, Profession[]][] {
   return [...groups];
 }
 
-function countText(n: number, guilds: GuildRef[], guildSlug: string | null, language: Sprache): string {
-  const who = fassungIn(T.characters, language)(n);
-  if (guildSlug !== null) return fassungIn(T.inGuild, language)(who, guilds.find((g) => g.slug === guildSlug)?.name ?? guildSlug);
-  return guilds.length > 1 ? fassungIn(T.inBothGuilds, language)(who) : fassungIn(T.inTheGuild, language)(who);
+function countText(n: number, guilds: GuildRef[], guildSlug: string | null, language: Language): string {
+  const who = translationIn(T.characters, language)(n);
+  if (guildSlug !== null) return translationIn(T.inGuild, language)(who, guilds.find((g) => g.slug === guildSlug)?.name ?? guildSlug);
+  return guilds.length > 1 ? translationIn(T.inBothGuilds, language)(who) : translationIn(T.inTheGuild, language)(who);
 }
 
 function ProfessionNav({
@@ -149,7 +149,7 @@ function ProfessionNav({
   count: (p: Profession) => number;
 }) {
   const navigate = useNavigate();
-  const { t } = useSprache();
+  const { t } = useLanguage();
   return (
     <>
       <nav className="bench-nav" aria-label={t(T.professionsNav)}>
@@ -204,7 +204,7 @@ function ProfessionDetail({
   profession: Profession;
   guildSlug: string | null;
 }) {
-  const { t, sprache } = useSprache();
+  const { t, language } = useLanguage();
   const [query, setQuery] = useState("");
   const [mode, setMode] = useState<DetailMode>("people");
   const recipesApi = useApi<ProfessionRecipesView>(`/api/professions/${encodeURIComponent(profession.slug)}`);
@@ -256,7 +256,7 @@ function ProfessionDetail({
           <h2 className="bench-detail-title" id="beruf-titel">
             {profession.name}
           </h2>
-          <p className="muted small">{countText(members.length, view.guilds, guildSlug, sprache)
+          <p className="muted small">{countText(members.length, view.guilds, guildSlug, language)
 }</p>
         </div>
       </header>
@@ -331,7 +331,7 @@ function ProfessionDetail({
 }
 
 function Workbench({ view, slug }: { view: ProfessionsView; slug: string | undefined }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const [guildSlug, setGuildSlug] = useState<string | null>(null);
   if (view.professions.length === 0) {
     return (
@@ -355,7 +355,7 @@ function Workbench({ view, slug }: { view: ProfessionsView; slug: string | undef
 
 export function ProfessionsPage() {
   const { beruf: slug } = useParams();
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const { data, error, loading } = useApi<ProfessionsView>("/api/professions");
   return (
     <section className="page">

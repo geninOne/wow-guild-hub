@@ -1,7 +1,7 @@
 import type { CSSProperties, ReactNode } from "react";
 import type { AttributeGroupId, AttributeRow, AttributesView, ResourceKind } from "../../../src/api/types";
 import { formatDateTime, numberLocale } from "../lib/format";
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 
 const T = {
   gathering: {
@@ -30,16 +30,16 @@ const T = {
     schwaebisch: (plus: string) => `${plus} durch Ausrüschtung ond Buffs`,
     bayrisch: (plus: string) => `${plus} durch Ausrüstung und Buffs`,
   },
-} satisfies Record<string, Fassungen<unknown>>;
+} satisfies Record<string, Translations<unknown>>;
 
-const GROUPS: Record<AttributeGroupId, Fassungen> = {
+const GROUPS: Record<AttributeGroupId, Translations> = {
   basis: { de: "Grundwerte", en: "Base Stats", schwaebisch: "Grondwerte", bayrisch: "Grundwerte" },
   angriff: { de: "Angriff", en: "Attack", schwaebisch: "Agriff", bayrisch: "Ogriff" },
   zauber: { de: "Zauber", en: "Spells", schwaebisch: "Zauber", bayrisch: "Zauba" },
   verteidigung: { de: "Verteidigung", en: "Defense", schwaebisch: "Verteidigung", bayrisch: "Vateidigung" },
 };
 
-const RESOURCES: Record<Exclude<ResourceKind, "other">, Fassungen> = {
+const RESOURCES: Record<Exclude<ResourceKind, "other">, Translations> = {
   mana: { de: "Mana", en: "Mana" },
   rage: { de: "Wut", en: "Rage", schwaebisch: "Wut", bayrisch: "Wuad" },
   focus: { de: "Fokus", en: "Focus" },
@@ -47,7 +47,7 @@ const RESOURCES: Record<Exclude<ResourceKind, "other">, Fassungen> = {
   runic_power: { de: "Runenmacht", en: "Runic Power" },
 };
 
-const LABELS: Record<string, Fassungen> = {
+const LABELS: Record<string, Translations> = {
   health: { de: "Gesundheit", en: "Health", schwaebisch: "Gsondheit", bayrisch: "Gsundheit" },
   strength: { de: "Stärke", en: "Strength", schwaebisch: "Schtärke", bayrisch: "Stärk" },
   agility: { de: "Beweglichkeit", en: "Agility" },
@@ -297,7 +297,7 @@ function formatValue(row: AttributeRow): string {
 
 /** Label, icon and color of a row; the resource follows its kind. */
 function useRowLook(row: AttributeRow, view: AttributesView): { label: string; glyph: GlyphName; color: string } {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   if (row.key === "power" && view.resource) {
     const { kind, name } = view.resource;
     return { label: kind === "other" ? name : t(RESOURCES[kind]), ...RESOURCE_LOOK[kind] };
@@ -308,7 +308,7 @@ function useRowLook(row: AttributeRow, view: AttributesView): { label: string; g
 
 /** Hint about the base value when gear and buffs change the value. */
 function useBaseTooltip(row: AttributeRow): string | undefined {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   if (row.base === undefined) return undefined;
   const diff = row.value - row.base;
   const plus = `${diff >= 0 ? "+" : "−"}${Math.abs(diff).toLocaleString(numberLocale(), { maximumFractionDigits: 1 })}`;
@@ -316,7 +316,7 @@ function useBaseTooltip(row: AttributeRow): string | undefined {
 }
 
 function AttributeTile({ row, view }: { row: AttributeRow; view: AttributesView }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const { label, glyph, color } = useRowLook(row, view);
   const title = useBaseTooltip(row);
   const plus = row.base !== undefined && row.value > row.base
@@ -350,7 +350,7 @@ function AttributeLine({ row, view }: { row: AttributeRow; view: AttributesView 
 
 /** A character's stats as in the Armory: base stats as tiles at the top, attack, spells and defense below. */
 export function AttributesPanel({ view }: { view: AttributesView | undefined }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   if (!view?.available) {
     return (
       <div className="state state-empty">

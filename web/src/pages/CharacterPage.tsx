@@ -18,7 +18,7 @@ import { hasTitleBadge, TitleBadge } from "../components/TitleBadge";
 import { weekLabel } from "../lib/fun";
 import { useApi } from "../lib/api";
 import { formatDateTime } from "../lib/format";
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 
 const TABS = [
   { id: "ausruestung", label: { de: "Ausrüstung", en: "Equipment", schwaebisch: "Ausrüschtung", bayrisch: "Ausrüstung" } },
@@ -28,7 +28,7 @@ const TABS = [
   { id: "dungeons", label: { de: "Dungeons & Raids", en: "Dungeons & Raids", schwaebisch: "Dungeons & Raids", bayrisch: "Dungeons & Raids" } },
   { id: "ruf", label: { de: "Ruf", en: "Reputation", schwaebisch: "Ruf", bayrisch: "Ruf" } },
   { id: "wrapped", label: { de: "Rückblick", en: "Recap", schwaebisch: "Rückblick", bayrisch: "Rückblick" } },
-] as const satisfies readonly { id: string; label: Fassungen }[];
+] as const satisfies readonly { id: string; label: Translations }[];
 
 const T = {
   former: { de: "Ehemaliges Mitglied", en: "Former member", schwaebisch: "Ehemaligs Mitglied", bayrisch: "Ehemaligs Mitglied" },
@@ -73,7 +73,7 @@ const T = {
     schwaebisch: "Zrück zur Gildenübersicht",
     bayrisch: "Zruck zur Gildnübersicht",
   },
-} satisfies Record<string, Fassungen | Fassungen<(...a: never[]) => string>>;
+} satisfies Record<string, Translations | Translations<(...a: never[]) => string>>;
 
 type TabId = (typeof TABS)[number]["id"];
 
@@ -97,7 +97,7 @@ function extensionData(view: CharacterView, id: string): unknown {
 }
 
 function CharacterHeader({ view }: { view: CharacterView }) {
-  const { t, sprache } = useSprache();
+  const { t, language } = useLanguage();
   const c = view.character;
   return (
     <header className="page-header character-header">
@@ -128,7 +128,7 @@ function CharacterHeader({ view }: { view: CharacterView }) {
         {view.former && <span className="badge character-former">{t(T.former)}</span>}
         {(view.titles ?? []).map((title) => {
           const name = t(title.name);
-          const tooltip = t(T.titleTooltip)(name, weekLabel(title.from, title.to, sprache), t(title.valueText));
+          const tooltip = t(T.titleTooltip)(name, weekLabel(title.from, title.to, language), t(title.valueText));
           return hasTitleBadge(title.titleId) ? (
             <Link key={title.titleId} to="/titel" className="title-medal-link" aria-label={name}>
               <TitleBadge titleId={title.titleId} name={name} size={40} tooltip={tooltip} />
@@ -160,7 +160,7 @@ function EquipmentTab({ view }: { view: CharacterView }) {
 }
 
 function TalentsTab({ view }: { view: CharacterView }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const { data, error, loading } = useApi<TalentView>("/api/talents/" + view.character.classId);
   if (error?.status === 404) {
     return (
@@ -177,7 +177,7 @@ function TalentsTab({ view }: { view: CharacterView }) {
 }
 
 function ProfessionsTab({ view }: { view: CharacterView }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const professions = [...view.character.professions].sort(
     (a, b) => Number(b.primary) - Number(a.primary) || a.name.localeCompare(b.name, "de"),
   );
@@ -251,10 +251,10 @@ function TabContent({ tab, view }: { tab: string; view: CharacterView }) {
 }
 
 function CharacterContent({ view }: { view: CharacterView }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const [params, setParams] = useSearchParams();
   const requested = params.get("reiter");
-  const allTabs: { id: string; label: Fassungen }[] = [...TABS, ...extensionTabs()];
+  const allTabs: { id: string; label: Translations }[] = [...TABS, ...extensionTabs()];
   const tab = allTabs.find((r) => r.id === requested)?.id ?? DEFAULT_TAB;
 
   if (!view.character.hasProfile) {
@@ -313,7 +313,7 @@ function CharacterContent({ view }: { view: CharacterView }) {
 }
 
 function NotFound() {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   return (
     <>
       <header className="page-header">

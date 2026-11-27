@@ -1,6 +1,6 @@
 import { useIconSource } from "./Icon";
 import type { CharacterRecord } from "../../../src/model";
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 import { classColor } from "../lib/wow";
 
 const T = {
@@ -16,7 +16,7 @@ const T = {
     schwaebisch: (name: string) => `Charakterbild vo ${name}`,
     bayrisch: (name: string) => `Charakterbild vo ${name}`,
   },
-} satisfies Record<string, Fassungen | Fassungen<(name: string) => string>>;
+} satisfies Record<string, Translations | Translations<(name: string) => string>>;
 
 /** Full-body image of the character, loaded directly from render.worldofwarcraft.com. */
 
@@ -24,7 +24,7 @@ export function Portrait({ character }: { character: CharacterRecord }) {
   const src = character.media?.["main-raw"] ?? null;
   const [url, onError] = useIconSource(src);
   const color = classColor(character.classId);
-  const { t } = useSprache();
+  const { t } = useLanguage();
 
   if (!url) {
     return (

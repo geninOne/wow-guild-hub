@@ -1,18 +1,18 @@
 import type { MemberSummary, TitleAward, WeekMetrics, WeeklyRecord } from "../model";
-import type { Fassungen } from "../sprache";
+import type { Translations } from "../language";
 
 export interface TitleDef {
   id: string;
   /** Name in every language version (German and English required, dialects optional). */
-  name: Fassungen;
+  name: Translations;
   /** The rule in one sentence, for the overview. */
-  description: Fassungen;
+  description: Translations;
   /** Minimum value; below it the title is not awarded (a single login is not worth a story). */
   min: number;
   /** Value the title is awarded by; null does not count. Missing for titles derived from other titles. */
   value?(m: WeekMetrics): number | null;
   /** Value as text, e.g. "7 Tode". */
-  valueText(n: number): Fassungen;
+  valueText(n: number): Translations;
 }
 
 const plural = (n: number, one: string, many: string) => (n === 1 ? `1 ${one}` : `${n} ${many}`);

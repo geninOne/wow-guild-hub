@@ -9,21 +9,21 @@ import { TitleBadge } from "../components/TitleBadge";
 import { SampleDataNotice } from "../components/SampleDataNotice";
 import { useApi } from "../lib/api";
 import { PUBLISHED_WHEN, splitByNames, weekRangeLabel } from "../lib/fun";
-import { useSprache, type Fassungen, type Sprache, fassungIn } from "../lib/sprache";
+import { useLanguage, type Translations, type Language, translationIn } from "../lib/language";
 import { newspaperName } from "../../../src/weekly/phrases-extras";
 import { numberLocale } from "../lib/format";
 
 /** Name of the newspaper: WEBSITE_NEWSPAPER or the default name for the language. */
-function paperName(sprache: Sprache): string {
-  return newspaperName(sprache, import.meta.env.WEBSITE_NEWSPAPER);
+function paperName(language: Language): string {
+  return newspaperName(language, import.meta.env.WEBSITE_NEWSPAPER);
 }
 
-const AND: Record<Sprache, string> = { de: "und", en: "and", schwaebisch: "ond", bayrisch: "und" };
+const AND: Record<Language, string> = { de: "und", en: "and", schwaebisch: "ond", bayrisch: "und" };
 
 /** Names as a list: "A, B and C". */
-function joinNames(names: string[], sprache: Sprache): string {
+function joinNames(names: string[], language: Language): string {
   if (names.length <= 1) return names.join("");
-  return `${names.slice(0, -1).join(", ")} ${AND[sprache]} ${names[names.length - 1]}`;
+  return `${names.slice(0, -1).join(", ")} ${AND[language]} ${names[names.length - 1]}`;
 }
 
 const T = {
@@ -99,9 +99,9 @@ const T = {
     schwaebisch: (n: string) => `Vor 4 Woche im ${n}`,
     bayrisch: (n: string) => `Vor 4 Wochn im ${n}`,
   },
-} satisfies Record<string, Record<Sprache, unknown>>;
+} satisfies Record<string, Record<Language, unknown>>;
 
-const NUMBER_NAMES: Record<WeeklyNumberKind, Fassungen> = {
+const NUMBER_NAMES: Record<WeeklyNumberKind, Translations> = {
   anmeldungen: { de: "Anmeldungen", en: "Logins", schwaebisch: "Aameldunga", bayrisch: "Anmeldungen" },
   level: { de: "Level", en: "Levels", schwaebisch: "Level", bayrisch: "Level" },
   tode: { de: "Tode", en: "Deaths", schwaebisch: "Tode", bayrisch: "Tode" },
@@ -116,7 +116,7 @@ const formatNumber = (n: number) => n.toLocaleString(numberLocale());
 
 /** Arrow with the difference to last week; nothing without last week. */
 function Trend({ row }: { row: NewspaperNumberView }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   if (row.vorwoche === null) return null;
   const diff = row.wert - row.vorwoche;
   if (diff === 0) {
@@ -138,7 +138,7 @@ function Trend({ row }: { row: NewspaperNumberView }) {
 
 /** Info box with the guild totals of the week, switchable like the guild filter on the other pages. */
 function WeekInNumbers({ zahlen }: { zahlen: NewspaperNumbersView }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const [params, setParams] = useSearchParams();
   const selected = params.get("gilde");
   const slug = selected !== null && zahlen.gilden[selected] ? selected : null;
@@ -172,18 +172,18 @@ function WeekInNumbers({ zahlen }: { zahlen: NewspaperNumbersView }) {
 }
 
 /** Articles by section (grouped by the Standard German version), in the order delivered. */
-function bySection(articles: NewspaperArticleView[]): [Fassungen, NewspaperArticleView[]][] {
-  const groups = new Map<string, [Fassungen, NewspaperArticleView[]]>();
+function bySection(articles: NewspaperArticleView[]): [Translations, NewspaperArticleView[]][] {
+  const groups = new Map<string, [Translations, NewspaperArticleView[]]>();
   for (const a of articles) {
-    const group = groups.get(fassungIn(a.section, "de"));
+    const group = groups.get(translationIn(a.section, "de"));
     if (group) group[1].push(a);
-    else groups.set(fassungIn(a.section, "de"), [a.section, [a]]);
+    else groups.set(translationIn(a.section, "de"), [a.section, [a]]);
   }
   return [...groups.values()];
 }
 
 function IssueNav({ view }: { view: NewspaperView }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   return (
     <nav className="zeitung-nav" aria-label={t(T.issues)}>
       {view.previous ? (
@@ -226,7 +226,7 @@ function Avatar({ view, character, className }: { view: NewspaperView; character
 }
 
 function Card({ article, view }: { article: NewspaperArticleView; view: NewspaperView }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const faces = article.characters.length > 1 ? article.characters.filter((c) => view.avatars?.[String(c.id)]).slice(0, 8) : [];
   return (
     <article className="zeitung-card" data-kind={article.kind}>
@@ -256,7 +256,7 @@ function Card({ article, view }: { article: NewspaperArticleView; view: Newspape
 }
 
 function Issue({ view }: { view: NewspaperView }) {
-  const { t, sprache } = useSprache();
+  const { t, language } = useLanguage();
   const numberArticle = view.articles.find((a) => a.kind === "zahl");
   const sections = bySection(view.articles.filter((a) => a !== numberArticle));
   const leadCharacter = view.lead.characters[0];
@@ -267,15 +267,15 @@ function Issue({ view }: { view: NewspaperView }) {
         <header className="zeitung-masthead">
           <p className="zeitung-kicker">
             <FactionCrest faction="HORDE" size={20} />
-            <span>{t(T.kicker)(joinNames(view.zahlen?.guilds.map((g) => g.name) ?? [], sprache))}</span>
+            <span>{t(T.kicker)(joinNames(view.zahlen?.guilds.map((g) => g.name) ?? [], language))}</span>
             <FactionCrest faction="ALLIANCE" size={20} />
           </p>
-          <h1 className="zeitung-title">{paperName(sprache)}</h1>
+          <h1 className="zeitung-title">{paperName(language)}</h1>
           <p className="zeitung-meta">
             <span>
               {t(T.issue)} {view.issue}
             </span>
-            <span>{weekRangeLabel(view.from, view.to, sprache)}</span>
+            <span>{weekRangeLabel(view.from, view.to, language)}</span>
             <span>
               {t(T.out)} {t(PUBLISHED_WHEN)}
             </span>
@@ -307,7 +307,7 @@ function Issue({ view }: { view: NewspaperView }) {
         </article>
         {view.zahlen && <WeekInNumbers zahlen={view.zahlen} />}
         {sections.map(([section, articles]) => (
-          <section key={fassungIn(section, "de")} className="zeitung-section" data-farbe={SECTION_COLOR[fassungIn(section, "de")] ?? "gold"} aria-label={t(section)}>
+          <section key={translationIn(section, "de")} className="zeitung-section" data-farbe={SECTION_COLOR[translationIn(section, "de")] ?? "gold"} aria-label={t(section)}>
             <h2 className="zeitung-section-title">
               <span>{t(section)}</span>
             </h2>
@@ -345,14 +345,14 @@ function Issue({ view }: { view: NewspaperView }) {
               </section>
             )}
             {view.rueckblick && (
-              <section className="zeitung-rueckblick" aria-label={t(T.lookBack)(paperName(sprache))}>
+              <section className="zeitung-rueckblick" aria-label={t(T.lookBack)(paperName(language))}>
                 <h2 className="zeitung-section-title">
-                  <span>{t(T.lookBack)(paperName(sprache))}</span>
+                  <span>{t(T.lookBack)(paperName(language))}</span>
                 </h2>
                 <p className="zeitung-rueckblick-meta muted">
                   <Link to={`/zeitung/${view.rueckblick.week}`}>
                     {view.rueckblick.issue !== null ? `${t(T.issue)} ${view.rueckblick.issue}, ` : ""}
-                    {weekRangeLabel(view.rueckblick.from, view.rueckblick.to, sprache)}
+                    {weekRangeLabel(view.rueckblick.from, view.rueckblick.to, language)}
                   </Link>
                 </p>
                 <q className="zeitung-rueckblick-zitat">{t(view.rueckblick.headline)}</q>
@@ -367,7 +367,7 @@ function Issue({ view }: { view: NewspaperView }) {
 }
 
 export function NewspaperPage() {
-  const { t, sprache } = useSprache();
+  const { t, language } = useLanguage();
   const { woche: week } = useParams();
   const { data, error, loading } = useApi<NewspaperView>(week ? `/api/newspaper/${encodeURIComponent(week)}` : "/api/newspaper");
   return (
@@ -375,14 +375,14 @@ export function NewspaperPage() {
       {error?.status === 404 ? (
         <>
           <header className="page-header">
-            <h1 className="page-title">{paperName(sprache)}</h1>
+            <h1 className="page-title">{paperName(language)}</h1>
           </header>
           <div className="state state-empty" role="status">
             {week ? (
               <p>{t(T.notFound)}</p>
             ) : (
               <p className="erscheint-hint">
-                {t(T.publishedBefore)(paperName(sprache))}
+                {t(T.publishedBefore)(paperName(language))}
                 <strong>{t(PUBLISHED_WHEN)}</strong>
                 {t(T.publishedAfter)}
               </p>
@@ -405,20 +405,20 @@ export function NewspaperPage() {
 
 /** Archive: every issue with number, scored week and lead headline, newest first. */
 export function NewspaperArchivePage() {
-  const { t, sprache } = useSprache();
+  const { t, language } = useLanguage();
   const { data, error, loading } = useApi<NewspaperArchiveView>("/api/newspaper/archive");
   return (
     <section className="page">
       <header className="page-header">
-        <h1 className="page-title">{t(T.archiveTitle)(paperName(sprache))}</h1>
-        <p className="page-subtitle muted">{t(T.archiveSubtitle)(paperName(sprache), t(PUBLISHED_WHEN))}</p>
+        <h1 className="page-title">{t(T.archiveTitle)(paperName(language))}</h1>
+        <p className="page-subtitle muted">{t(T.archiveSubtitle)(paperName(language), t(PUBLISHED_WHEN))}</p>
       </header>
       <DataState loading={loading} error={error}>
         {data &&
           (data.issues.length === 0 ? (
             <div className="state state-empty" role="status">
               <p className="erscheint-hint">
-                {t(T.emptyBefore)(paperName(sprache))}
+                {t(T.emptyBefore)(paperName(language))}
                 <strong>{t(PUBLISHED_WHEN)}</strong>
                 {t(T.emptyAfter)}
               </p>
@@ -433,7 +433,7 @@ export function NewspaperArchivePage() {
                       <span className="zeitung-archive-issue">
                         {t(T.issueNo)} {i.issue}
                       </span>
-                      <span className="zeitung-archive-week">{weekRangeLabel(i.from, i.to, sprache)}</span>
+                      <span className="zeitung-archive-week">{weekRangeLabel(i.from, i.to, language)}</span>
                       <span className="zeitung-archive-headline">{t(i.headline)}</span>
                     </Link>
                   </li>

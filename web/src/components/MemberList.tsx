@@ -10,7 +10,7 @@ import {
   type MemberEntry,
   type MemberListSortKey,
 } from "../lib/member-list";
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 import { CharacterLink } from "./CharacterLink";
 import { ClassName } from "./ClassName";
 import { DataState } from "./DataState";
@@ -60,7 +60,7 @@ const T = {
     schwaebisch: (what: string) => `Lischt: ${what}`,
     bayrisch: (what: string) => `Listn: ${what}`,
   },
-} satisfies Record<string, Fassungen<unknown>>;
+} satisfies Record<string, Translations<unknown>>;
 
 const fmt = (n: number) => n.toLocaleString(numberLocale());
 
@@ -105,7 +105,7 @@ export interface MemberListDialogProps {
  * Reusable from anywhere: cards, pie slices, bars. Easiest via `useMemberList`.
  */
 export function MemberListDialog({ title, subtitle, sets, error = null, guild, guildView, fixedGuild = false, onClose }: MemberListDialogProps) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   const loaded = useApi<GuildView>(guildView ? null : "/api/guild");
@@ -184,7 +184,7 @@ function MemberListBody({
   guilds: GuildRef[];
   members: GuildView["members"];
 }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const [setKey, setSetKey] = useState(sets[0]?.key ?? "");
   const [guildSlug, setGuildSlug] = useState(guild);
   const [text, setText] = useState("");
@@ -398,7 +398,7 @@ export function PeopleIcon() {
  * people icon and "Alle ansehen", so it is immediately recognizable as clickable. Without `onClick` a plain tile.
  */
 export function MemberFact({ label, value, onClick }: { label: string; value: ReactNode; onClick?: () => void }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   if (!onClick) {
     // Without a set (e.g. nobody at level 60) it stays a plain number.
     return (
@@ -424,4 +424,4 @@ export function MemberFact({ label, value, onClick }: { label: string; value: Re
 }
 
 /** "Alle ansehen" in the selected language, for custom triggers. */
-export const VIEW_ALL: Fassungen = T.viewAll;
+export const VIEW_ALL: Translations = T.viewAll;

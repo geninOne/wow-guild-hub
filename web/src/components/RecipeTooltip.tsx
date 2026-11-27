@@ -1,5 +1,5 @@
 import type { RecipeView } from "../../../src/api/types";
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 import { qualityColor } from "../lib/wow";
 import { Icon } from "./Icon";
 import { ItemTooltip } from "./ItemTooltip";
@@ -18,7 +18,7 @@ export const RECIPE_TEXTS = {
     schwaebisch: "Details kommet nach em nächschte Datenabruf.",
     bayrisch: "Details kemman nach'm nächstn Datnabruf.",
   },
-} satisfies Record<string, Fassungen | Fassungen<(n: number) => string>>;
+} satisfies Record<string, Translations | Translations<(n: number) => string>>;
 const T = RECIPE_TEXTS;
 
 /** Border color of a recipe: quality of the result, the default border without a result. */
@@ -34,7 +34,7 @@ export function RecipeIcon({ name, recipe, size }: { name: string; recipe: Recip
 /** Tooltip of a recipe: crafted item as in the equipment, effect and reagents. */
 
 export function RecipeTooltip({ name, recipe }: { name: string; recipe: RecipeView | null }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const item = recipe?.item ?? null;
   const showName = !item || item.name !== name;
   return (

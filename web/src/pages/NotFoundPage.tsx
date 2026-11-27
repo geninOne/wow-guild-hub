@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 
 const T = {
   title: { de: "Seite nicht gefunden", en: "Page not found", schwaebisch: "Seite net gfonda", bayrisch: "Seitn ned gfundn" },
@@ -15,10 +15,10 @@ const T = {
     schwaebisch: "Zrück zur Gildenübersicht",
     bayrisch: "Zruck zur Gildnübersicht",
   },
-} satisfies Record<string, Fassungen>;
+} satisfies Record<string, Translations>;
 
 export function NotFoundPage() {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   return (
     <section className="page">
       <header className="page-header">

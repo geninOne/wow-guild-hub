@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { RecipeView } from "../../../src/api/types";
 import type { CharacterProfession } from "../../../src/model";
 import { filterRecipes, recipeEntries } from "../lib/recipes";
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 import { RecipeIcon, RecipeTooltip } from "./RecipeTooltip";
 import { Tooltip } from "./Tooltip";
 
@@ -20,7 +20,7 @@ const T = {
     schwaebisch: (profession: string) => `Rezepte ${profession}`,
     bayrisch: (profession: string) => `Rezepte ${profession}`,
   },
-} satisfies Record<string, Fassungen | Fassungen<(profession: string) => string>>;
+} satisfies Record<string, Translations | Translations<(profession: string) => string>>;
 
 /** From this many recipes on, a filter field appears. */
 const FILTER_FROM = 24;
@@ -29,7 +29,7 @@ const FILTER_FROM = 24;
 
 export function RecipeGrid({ profession, recipes }: { profession: CharacterProfession; recipes: Record<string, RecipeView> }) {
   const [query, setQuery] = useState("");
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const entries = recipeEntries(profession, recipes);
   if (entries.length === 0) return null;
   const shown = filterRecipes(entries, query);

@@ -1,6 +1,6 @@
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 
-const NOTICE: Fassungen = {
+const NOTICE: Translations = {
   de: "Beispieldaten für die lokale Entwicklung. Diese Werte sind erfunden.",
   en: "Sample data for local development. These values are made up.",
   schwaebisch: "Beispieldaten fürs lokale Entwickla. Die Werte sin erfonda.",
@@ -9,7 +9,7 @@ const NOTICE: Fassungen = {
 
 /** Notice shown when local sample data is displayed. */
 export function SampleDataNotice({ show }: { show: boolean }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   if (!show) return null;
   return (
     <p className="testdaten-hint" role="note">

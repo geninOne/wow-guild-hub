@@ -1,7 +1,7 @@
 const ZONE = "Europe/Berlin";
 
 /**
- * Language for numbers and dates. Set by the SpracheProvider on every change, so the formatters do not need
+ * Language for numbers and dates. Set by the LanguageProvider on every change, so the formatters do not need
  * a language passed in everywhere. English uses British notation (1,234 and 26 Nov 2026), German and the
  * dialects use German notation (1.234 and 26.11.2026).
  */

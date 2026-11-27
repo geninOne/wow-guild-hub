@@ -3,7 +3,7 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-li
 import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import type { GuildView, MemberRow, StatCardMembersView, StatCardView } from "../../src/api/types";
-import { ueberall } from "../../src/sprache";
+import { sameInAll } from "../../src/language";
 import { MemberListDialog, type MemberSet } from "../../web/src/components/MemberList";
 import { statMemberSets, statMembersPath } from "../../web/src/components/StatCards";
 import {
@@ -13,7 +13,7 @@ import {
   resolveMembers,
   sortMemberList,
 } from "../../web/src/lib/member-list";
-import { SpracheProvider, type Sprache } from "../../web/src/lib/sprache";
+import { LanguageProvider, type Language } from "../../web/src/lib/language";
 
 afterEach(() => {
   cleanup();
@@ -79,9 +79,9 @@ describe("selecting the set", () => {
 
   test("statMemberSets: one set per statistic with short name and unit, statistics without an answer are dropped", () => {
     const card: StatCardView = {
-      slug: "tode", form: "grabsteinfeld", title: ueberall("Tode"), blurb: null, span: 3,
+      slug: "tode", form: "grabsteinfeld", title: sameInAll("Tode"), blurb: null, span: 3,
       stats: [
-        { id: 60, name: "Tode insgesamt", art: "zaehler", total: 9, perGuild: {}, leaders: [], holders: 2, sum: 9, classId: null, short: { de: "Tode", en: "Tode", schwaebisch: "Tod", bayrisch: "Tod" }, unit: ueberall<[string, string]>(["Tod", "Tode"]), honor: null, conversion: null },
+        { id: 60, name: "Tode insgesamt", art: "zaehler", total: 9, perGuild: {}, leaders: [], holders: 2, sum: 9, classId: null, short: { de: "Tode", en: "Tode", schwaebisch: "Tod", bayrisch: "Tod" }, unit: sameInAll<[string, string]>(["Tod", "Tode"]), honor: null, conversion: null },
         { id: 114, name: "Tode durch Stürze", art: "zaehler", total: 1, perGuild: {}, leaders: [], holders: 1, sum: 1, classId: null, short: null, unit: null, honor: null, conversion: null },
         { id: 112, name: "Ertrinken", art: "zaehler", total: 0, perGuild: {}, leaders: [], holders: 0, sum: 0, classId: null, short: null, unit: null, honor: null, conversion: null },
       ],
@@ -100,15 +100,15 @@ describe("selecting the set", () => {
   });
 });
 
-function renderDialog(sets: MemberSet[] | null, opts: { guild?: string | null; language?: Sprache; onClose?: () => void } = {}) {
+function renderDialog(sets: MemberSet[] | null, opts: { guild?: string | null; language?: Language; onClose?: () => void } = {}) {
   const onClose = opts.onClose ?? vi.fn();
   render(
-    <SpracheProvider start={opts.language ?? "de"}>
+    <LanguageProvider start={opts.language ?? "de"}>
       <MemoryRouter>
         <button type="button">Trigger</button>
         <MemberListDialog title="Auf Level 60" sets={sets} guild={opts.guild ?? null} guildView={guildView} onClose={onClose} />
       </MemoryRouter>
-    </SpracheProvider>,
+    </LanguageProvider>,
   );
   return onClose;
 }

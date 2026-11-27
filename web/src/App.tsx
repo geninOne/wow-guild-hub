@@ -3,7 +3,7 @@ import { DiscordLink } from "./components/DiscordLink";
 import { OBERFLAECHEN_ERWEITERUNGEN } from "./erweiterungen";
 import { LanguageSwitcher } from "./components/LanguageSwitcher";
 import { site } from "./lib/site";
-import { SpracheProvider, useSprache, type Fassungen } from "./lib/sprache";
+import { LanguageProvider, useLanguage, type Translations } from "./lib/language";
 import { versionText } from "./lib/version";
 import { NewspaperArchivePage, NewspaperPage } from "./pages/NewspaperPage";
 import { CharacterPage } from "./pages/CharacterPage";
@@ -15,7 +15,7 @@ import { ProfessionsPage } from "./pages/ProfessionsPage";
 import { StatsPage } from "./pages/StatsPage";
 import { TitlesPage } from "./pages/TitlesPage";
 
-const NAVIGATION: { to: string; label: Fassungen; end: boolean }[] = [
+const NAVIGATION: { to: string; label: Translations; end: boolean }[] = [
   { to: "/", label: { de: "Gilde", en: "Guild", schwaebisch: "Gilde", bayrisch: "Gilde" }, end: true },
   { to: "/berufe", label: { de: "Berufe", en: "Professions", schwaebisch: "Berufe", bayrisch: "Berufe" }, end: false },
   {
@@ -41,7 +41,7 @@ const T = {
   legal: { de: "Rechtliches", en: "Legal" },
   imprint: { de: "Impressum", en: "Legal notice" },
   privacy: { de: "Datenschutz", en: "Privacy" },
-} satisfies Record<string, Fassungen>;
+} satisfies Record<string, Translations>;
 
 /** Legal texts from a module, otherwise the core's placeholder templates. */
 const CustomImprint = OBERFLAECHEN_ERWEITERUNGEN.find((e) => e.impressumSeite)?.impressumSeite ?? ImprintPage;
@@ -50,15 +50,15 @@ const CustomPrivacy = OBERFLAECHEN_ERWEITERUNGEN.find((e) => e.datenschutzSeite)
 /** Layout and routes. The caller provides the router (main.tsx or tests). */
 export default function App() {
   return (
-    <SpracheProvider>
+    <LanguageProvider>
       <Site />
-    </SpracheProvider>
+    </LanguageProvider>
   );
 }
 
 function Site() {
-  const { t, sprache } = useSprache();
-  const version = versionText(import.meta.env.VITE_VERSION, import.meta.env.VITE_VERSION_DATE, sprache === "en");
+  const { t, language } = useLanguage();
+  const version = versionText(import.meta.env.VITE_VERSION, import.meta.env.VITE_VERSION_DATE, language === "en");
   const { name, logo, logoAlt, tagline, imprint } = site();
   return (
     <div className="site">
@@ -75,7 +75,7 @@ function Site() {
             <img
               className="brand-crest"
               src={logo}
-              alt={logoAlt ?? (sprache === "en" ? `Crest of ${name}` : `Wappen der Gilde ${name}`)}
+              alt={logoAlt ?? (language === "en" ? `Crest of ${name}` : `Wappen der Gilde ${name}`)}
               width="256"
               height="256"
             />

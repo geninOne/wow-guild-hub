@@ -3,9 +3,9 @@ import { cleanup, fireEvent, render, screen, within } from "@testing-library/rea
 import { MemoryRouter, Route, Routes, useLocation } from "react-router";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import type { GuildDungeonsView, GuildView, MemberRow, StatsView } from "../../src/api/types";
-import { ueberall, type Fassungen } from "../../src/sprache";
+import { sameInAll, type Translations } from "../../src/language";
 import App from "../../web/src/App";
-import { SpracheProvider, type Sprache } from "../../web/src/lib/sprache";
+import { LanguageProvider, type Language } from "../../web/src/lib/language";
 import { StatsPage } from "../../web/src/pages/StatsPage";
 
 beforeEach(() => {
@@ -20,8 +20,8 @@ afterEach(() => {
   window.localStorage.clear();
 });
 
-const f = (de: string, schwaebisch = de, bayrisch = de, en = de): Fassungen => ({ de, en, schwaebisch, bayrisch });
-const pair = (singular: string, plural: string): Fassungen<[string, string]> => ueberall([singular, plural]);
+const f = (de: string, schwaebisch = de, bayrisch = de, en = de): Translations => ({ de, en, schwaebisch, bayrisch });
+const pair = (singular: string, plural: string): Translations<[string, string]> => sameInAll([singular, plural]);
 
 function member(over: Partial<MemberRow>): MemberRow {
   return {
@@ -367,16 +367,16 @@ test("unknown tab shows the error page", () => {
   expect(screen.queryByRole("tablist")).toBeNull();
 });
 
-function renderIn(language: Sprache, path: string) {
+function renderIn(language: Language, path: string) {
   render(
-    <SpracheProvider start={language}>
+    <LanguageProvider start={language}>
       <MemoryRouter initialEntries={[path]}>
         <Routes>
           <Route path="/statistik" element={<StatsPage />} />
           <Route path="/statistik/:reiter" element={<StatsPage />} />
         </Routes>
       </MemoryRouter>
-    </SpracheProvider>,
+    </LanguageProvider>,
   );
 }
 
@@ -463,7 +463,7 @@ const newCards: StatsView = {
       stats: [
         entry({
           id: 344, name: "Verbände", total: 323, unit: pair("Verband", "Verbände"),
-          conversion: { per: 80.75, unit: ueberall(["Ulmer Münster", "Ulmer Münster"] as [string, string]), text: f("aufgestapelt bis zur Turmspitze", "aufgstapelt bis zur Turmspitz", "aufgstaplt bis zur Turmspitzn") },
+          conversion: { per: 80.75, unit: sameInAll(["Ulmer Münster", "Ulmer Münster"] as [string, string]), text: f("aufgestapelt bis zur Turmspitze", "aufgstapelt bis zur Turmspitz", "aufgstaplt bis zur Turmspitzn") },
         }),
       ],
     },

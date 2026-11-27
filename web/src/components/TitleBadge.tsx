@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 
 /** Titles with a painted badge at web/public/titel/<id>.png. Future titles without a file are missing here. */
 export const TITLE_BADGE_IDS = new Set([
@@ -14,7 +14,7 @@ export function titleBadgeSrc(titleId: string): string | null {
 interface TitleBadgeProps {
   titleId: string;
   /** Name of the title as alt text, as plain text or in all versions (then the selected language applies). */
-  name: string | Fassungen;
+  name: string | Translations;
   /** Edge length in CSS pixels; the images have 192 pixels, so at most about 100 for a sharp rendering. */
   size: number;
   /** Tooltip, defaults to the name. */
@@ -27,7 +27,7 @@ interface TitleBadgeProps {
 
 /** Painted medallion of a fun title; nothing without a file or on a load error (the caller then shows text). */
 export function TitleBadge({ titleId, name: versions, size, tooltip, muted = false, decorative = false }: TitleBadgeProps) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const name = typeof versions === "string" ? versions : t(versions);
   const [failed, setFailed] = useState<string | null>(null);
   const src = titleBadgeSrc(titleId);

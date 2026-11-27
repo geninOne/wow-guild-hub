@@ -10,7 +10,7 @@ import {
   talentRanks,
   visibleUnplaced,
 } from "../lib/talents";
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 import { Icon } from "./Icon";
 import { Tooltip } from "./Tooltip";
 
@@ -26,9 +26,9 @@ const T = {
     schwaebisch: "No koine Talentpunkt verteilt",
     bayrisch: "No koane Talentpunkte verteilt",
   },
-} satisfies Record<string, Fassungen>;
+} satisfies Record<string, Translations>;
 
-const POINTS: Fassungen<(points: number) => string> = {
+const POINTS: Translations<(points: number) => string> = {
   de: pointsLabel,
   en: (points) => (points === 1 ? "1 point" : `${points} points`),
 };
@@ -70,7 +70,7 @@ function arrowPath(from: PlacedTalent, to: PlacedTalent): string {
 }
 
 function TalentTip({ node, rank }: { node: TalentNode; rank: number }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const current = rankDescription(node, Math.max(rank, 1));
   const next = rank > 0 && rank < node.maxRank ? rankDescription(node, rank + 1) : "";
   return (
@@ -122,7 +122,7 @@ interface SpecProps {
 
 function SpecTree({ spec, rows, points, ranks, icons }: SpecProps) {
   const id = useId();
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const width = COLS * CELL + (COLS - 1) * GAP_X;
   const height = rows * CELL + (rows - 1) * GAP_Y;
   const rankOf = (node: TalentNode) => ranks.get(node.talentId) ?? 0;
@@ -212,7 +212,7 @@ interface TalentTreeProps {
 /** The three talent trees of a class with the character's ranks. */
 
 export function TalentTree({ view, specs }: TalentTreeProps) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const ranks = talentRanks(specs);
   const total = specs.reduce((sum, s) => sum + s.spentPoints, 0);
   const pointsOf = (specId: number) => specs.find((s) => s.specId === specId)?.spentPoints ?? 0;
