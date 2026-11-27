@@ -1,23 +1,23 @@
-// Satzbausteine der Zeitung. Jede Liste ist ein "Topf"; ein Baustein hat die Kennung `<Topf>:<Nummer>`.
-// Die Auswahl merkt sich, was in den letzten Ausgaben stand, damit sich die Texte von Woche zu Woche ändern.
-// Jeder Topf hat vier gleich lange Listen: Hochdeutsch (ohne Dialekt), Englisch, Schwäbisch und Bayrisch. Der Baustein
-// mit derselben Nummer sagt in allen Listen sinngemäß dasselbe; gewählt wird die Nummer, geschrieben alle Sprachen.
-// Welche Dialekte in einer Ausgabe landen, entscheidet der Texter (WEBSITE_LANGUAGES).
+// Sentence templates for the newspaper. Each list is a "pool"; a phrase has the id `<pool>:<number>`.
+// The picker remembers what ran in the last issues so the texts change from week to week.
+// Each pool has four lists of equal length: Standard German (no dialect), English, Swabian and Bavarian. The phrase
+// with the same number says roughly the same thing in every list; the number is picked, all languages are written.
+// Which dialects end up in an issue is decided by the writer (WEBSITE_LANGUAGES).
 
 import { SPRACHEN, type Sprache } from "../sprache";
 
-/** Ein Wert in allen Sprachen, auch den Dialekten; passt überall, wo `Fassungen` erwartet wird. */
+/** One value in every language, dialects included; fits wherever `Fassungen` is expected. */
 export type Alle<T> = Record<Sprache, T>;
 
-/** Baut einen Wert je Sprache für alle Sprachen. */
-export function alle<T>(bau: (sprache: Sprache) => T): Alle<T> {
-  return Object.fromEntries(SPRACHEN.map((s) => [s, bau(s)])) as Alle<T>;
+/** Builds one value per language for all languages. */
+export function alle<T>(build: (language: Sprache) => T): Alle<T> {
+  return Object.fromEntries(SPRACHEN.map((s) => [s, build(s)])) as Alle<T>;
 }
 
-/** Wie viele frühere Ausgaben die Auswahl berücksichtigt. */
+/** How many earlier issues the picker takes into account. */
 export const RECENT_ISSUES = 6;
 
-/** FNV-1a über den Schlüssel: gleicher Schlüssel ergibt immer dieselbe Zahl. */
+/** FNV-1a over the key: the same key always gives the same number. */
 export function hash(seed: string): number {
   let h = 0x811c9dc5;
   for (let i = 0; i < seed.length; i++) {
@@ -28,30 +28,30 @@ export function hash(seed: string): number {
 }
 
 /**
- * Wählt Bausteine deterministisch und mit Gedächtnis: Innerhalb einer Ausgabe nie zweimal derselbe Baustein,
- * und bevorzugt einer, der in den letzten Ausgaben nicht vorkam; sonst der, der am längsten her ist.
+ * Picks phrases deterministically and with memory: never the same phrase twice within an issue, preferably one
+ * that did not appear in the last issues; otherwise the one that appeared longest ago.
  */
 export class Picker {
-  /** In dieser Ausgabe gewählte Kennungen, in Reihenfolge. */
+  /** Ids chosen in this issue, in order. */
   readonly chosen: string[] = [];
   private readonly used = new Set<string>();
   private readonly localUsed = new Set<string>();
 
-  /** `recent`: Kennungen je früherer Ausgabe, die jüngste zuerst. */
+  /** `recent`: ids per earlier issue, most recent first. */
   constructor(
     private readonly week: string,
     private readonly recent: string[][] = [],
   ) {}
 
-  /** Alter einer Kennung: 0 = in der letzten Ausgabe, unendlich = in keiner der berücksichtigten. */
+  /** Age of an id: 0 = in the last issue, infinity = in none of the issues taken into account. */
   private age(id: string): number {
     const index = this.recent.findIndex((ids) => ids.includes(id));
     return index < 0 ? Number.POSITIVE_INFINITY : index;
   }
 
   /**
-   * Wählt aus `options` des Topfs `pool`. `local` ordnet Bausteine einer Gruppe zu, die innerhalb der Ausgabe nur
-   * einmal vorkommen soll (z. B. derselbe Satzrahmen für verschiedene Titel).
+   * Picks from `options` of the pool `pool`. `local` assigns phrases to a group that should appear only once within
+   * the issue (e.g. the same sentence frame for different titles).
    */
   choose<T>(pool: string, options: T[], seed: string, local?: (index: number) => string): T {
     const ids = options.map((_, i) => `${pool}:${i}`);
@@ -68,30 +68,30 @@ export class Picker {
     return options[pick.i];
   }
 
-  /** Wie `choose`, aber für einen Topf in allen Sprachen: eine Nummer, alle Texte dazu. */
+  /** Like `choose`, but for a pool in all languages: one number, all its texts. */
   chooseAll<T>(pool: string, options: Alle<T[]>, seed: string, local?: (index: number) => string): Alle<T> {
     const i = this.choose(pool, options.de.map((_, index) => index), seed, local);
     return alle((s) => options[s][i]);
   }
 }
 
-const UND: Alle<string> = { de: "und", en: "and", schwaebisch: "ond", bayrisch: "und" };
+const AND: Alle<string> = { de: "und", en: "and", schwaebisch: "ond", bayrisch: "und" };
 
-export function list(names: string[], sprache: Sprache = "de"): string {
+export function list(names: string[], language: Sprache = "de"): string {
   if (names.length <= 1) return names.join("");
-  return `${names.slice(0, -1).join(", ")} ${UND[sprache]} ${names[names.length - 1]}`;
+  return `${names.slice(0, -1).join(", ")} ${AND[language]} ${names[names.length - 1]}`;
 }
 
-/** Prüft, dass jeder Topf in allen Sprachen gleich viele Bausteine hat (für Tests). */
-export function gleichLang(topf: Alle<unknown[]>): boolean {
-  return SPRACHEN.every((s) => topf[s].length === topf.de.length) && topf.de.length > 0;
+/** Checks that every pool has the same number of phrases in all languages (for tests). */
+export function sameLength(pool: Alle<unknown[]>): boolean {
+  return SPRACHEN.every((s) => pool[s].length === pool.de.length) && pool.de.length > 0;
 }
 
 type Make<A> = (a: A) => string;
 
-/* Levelsprung */
-export interface SprungArgs { n: string; levels: number; from: number; to: number }
-export const SPRUNG_KOPF: Alle<Make<SprungArgs>[]> = {
+/* Level jump */
+export interface JumpArgs { n: string; levels: number; from: number; to: number }
+export const JUMP_HEADLINE: Alle<Make<JumpArgs>[]> = {
   de: [
     (a) => `${a.n} rast von Level ${a.from} auf ${a.to}`,
     (a) => `${a.n} kennt keine Bremse`,
@@ -141,7 +141,7 @@ export const SPRUNG_KOPF: Alle<Make<SprungArgs>[]> = {
     (a) => `${a.n} zündt an Nachbrenner`,
   ],
 };
-export const SPRUNG_TEXT: Alle<Make<SprungArgs>[]> = {
+export const JUMP_TEXT: Alle<Make<JumpArgs>[]> = {
   de: [
     (a) => `${a.levels} Level in einer Woche. Donnerwetter! Ob ${a.n} zwischendurch geschlafen hat, konnte die Redaktion nicht klären.`,
     (a) => `Von Level ${a.from} auf ${a.to}: Der Rest der Gilde schaut nur noch hinterher und staunt.`,
@@ -192,8 +192,8 @@ export const SPRUNG_TEXT: Alle<Make<SprungArgs>[]> = {
   ],
 };
 
-/** Zusatzsatz, wenn in einer Meldung auch ein Titel steckt. */
-export const TITEL_BONUS: Alle<Make<{ t: string }>[]> = {
+/** Extra sentence when a story also involves a title. */
+export const TITLE_BONUS: Alle<Make<{ t: string }>[]> = {
   de: [
     (a) => `Den Titel ${a.t} gibt es obendrauf.`,
     (a) => `Dafür wandert der Titel ${a.t} ins Regal.`,
@@ -236,9 +236,9 @@ export const TITEL_BONUS: Alle<Make<{ t: string }>[]> = {
   ],
 };
 
-/* Runde Level */
-export interface EinMeilenstein { n: string; level: number }
-export const MEILENSTEIN_KOPF: Alle<Make<EinMeilenstein>[]> = {
+/* Round levels */
+export interface OneMilestone { n: string; level: number }
+export const MILESTONE_HEADLINE: Alle<Make<OneMilestone>[]> = {
   de: [
     (a) => `Runde Sache für ${a.n}`,
     (a) => `${a.n} knackt Level ${a.level}`,
@@ -280,7 +280,7 @@ export const MEILENSTEIN_KOPF: Alle<Make<EinMeilenstein>[]> = {
     (a) => `Neie Hausnummer für ${a.n}: ${a.level}`,
   ],
 };
-export const MEILENSTEIN_TEXT: Alle<Make<EinMeilenstein>[]> = {
+export const MILESTONE_TEXT: Alle<Make<OneMilestone>[]> = {
   de: [
     (a) => `Level ${a.level} ist geschafft. Das muss gefeiert werden, am besten mit einem Festmahl und ohne Kalorienzähler.`,
     (a) => `Sauber geschafft! Wer jetzt noch behauptet, ${a.n} spiele nur nebenbei, flunkert.`,
@@ -322,8 +322,8 @@ export const MEILENSTEIN_TEXT: Alle<Make<EinMeilenstein>[]> = {
     (a) => `De Zahl ${a.level} prangt jetzt nebn ${a.n}. Mia sogn: Weida so, aber ned hudln.`,
   ],
 };
-export interface VieleMeilensteine { l: string; k: number }
-export const MEILENSTEINE_KOPF: Alle<Make<VieleMeilensteine>[]> = {
+export interface ManyMilestones { l: string; k: number }
+export const MILESTONES_HEADLINE: Alle<Make<ManyMilestones>[]> = {
   de: [
     () => `Runde Geburtstage im Levelrennen`,
     () => `Jubiläen am laufenden Band`,
@@ -365,7 +365,7 @@ export const MEILENSTEINE_KOPF: Alle<Make<VieleMeilensteine>[]> = {
     () => `Runde Sachan, glei a paar`,
   ],
 };
-export const MEILENSTEINE_TEXT: Alle<Make<VieleMeilensteine>[]> = {
+export const MILESTONES_TEXT: Alle<Make<ManyMilestones>[]> = {
   de: [
     (a) => `Diese Woche haben eine runde Stufe erreicht: ${a.l}. Die Redaktion gibt eine Runde für alle aus.`,
     (a) => `Neue runde Zahlen auf den Namensschildern: ${a.l}. Gelobt wird bei uns eher selten, heute machen wir eine Ausnahme.`,
@@ -408,9 +408,9 @@ export const MEILENSTEINE_TEXT: Alle<Make<VieleMeilensteine>[]> = {
   ],
 };
 
-/* Überholungen */
-export interface EineUeberholung { a: string; b: string; level: number }
-export const UEBERHOLUNG_KOPF: Alle<Make<EineUeberholung>[]> = {
+/* Overtakes */
+export interface OneOvertake { a: string; b: string; level: number }
+export const OVERTAKE_HEADLINE: Alle<Make<OneOvertake>[]> = {
   de: [
     (x) => `${x.a} zieht an ${x.b} vorbei`,
     (x) => `Überholmanöver: ${x.a} vor ${x.b}`,
@@ -452,7 +452,7 @@ export const UEBERHOLUNG_KOPF: Alle<Make<EineUeberholung>[]> = {
     (x) => `As Renna is offn: ${x.a} überholt`,
   ],
 };
-export const UEBERHOLUNG_TEXT: Alle<Make<EineUeberholung>[]> = {
+export const OVERTAKE_TEXT: Alle<Make<OneOvertake>[]> = {
   de: [
     (x) => `Mit Level ${x.level} hat ${x.a} im Levelrennen überholt. ${x.b}, das lässt du dir doch nicht gefallen, oder?`,
     (x) => `${x.a} steht jetzt auf Level ${x.level} und winkt freundlich zurück. ${x.b} sieht nur noch die Staubwolke.`,
@@ -494,7 +494,7 @@ export const UEBERHOLUNG_TEXT: Alle<Make<EineUeberholung>[]> = {
     (x) => `Wer hätt des denkt: ${x.a} lasst ${x.b} hinter se und meldt Level ${x.level}.`,
   ],
 };
-export const UEBERHOLUNGEN_KOPF: Alle<Make<{ l: string }>[]> = {
+export const OVERTAKES_HEADLINE: Alle<Make<{ l: string }>[]> = {
   de: [
     () => `Gedränge im Levelrennen`,
     () => `Überholspur: wer an wem vorbeizog`,
@@ -536,7 +536,7 @@ export const UEBERHOLUNGEN_KOPF: Alle<Make<{ l: string }>[]> = {
     () => `Stau auf da Überholspur`,
   ],
 };
-export const UEBERHOLUNGEN_TEXT: Alle<Make<{ l: string }>[]> = {
+export const OVERTAKES_TEXT: Alle<Make<{ l: string }>[]> = {
   de: [
     (a) => `Überholt wurde fleißig: ${a.l}. Wer hinten liegt, sollte sich warm anziehen.`,
     (a) => `Im Levelrennen ging es rund: ${a.l}. Die Überholten haben bereits Revanche angekündigt, zumindest im Kopf.`,
@@ -579,8 +579,8 @@ export const UEBERHOLUNGEN_TEXT: Alle<Make<{ l: string }>[]> = {
   ],
 };
 
-/* Neuzugänge */
-export const NEU_KOPF: Alle<Make<{ n: string }>[]> = {
+/* Newcomers */
+export const NEWCOMER_HEADLINE: Alle<Make<{ n: string }>[]> = {
   de: [
     (a) => `Frisch eingezogen: ${a.n}`,
     (a) => `Willkommen, ${a.n}!`,
@@ -622,7 +622,7 @@ export const NEU_KOPF: Alle<Make<{ n: string }>[]> = {
     (a) => `Nei bei uns herinnen: ${a.n}`,
   ],
 };
-export const NEU_TEXT: Alle<Make<{ n: string }>[]> = {
+export const NEWCOMER_TEXT: Alle<Make<{ n: string }>[]> = {
   de: [
     (a) => `Herzlich willkommen, ${a.n}! Setz dich, am Lagerfeuer ist genug Platz.`,
     (a) => `${a.n} hat sich zu uns gesellt. Erste Regel: Wer zuletzt kommt, spült das Geschirr.`,
@@ -664,7 +664,7 @@ export const NEU_TEXT: Alle<Make<{ n: string }>[]> = {
     (a) => `Mit ${a.n} is de Gilde wieda a Stückerl größer worn. Auf guade Abenteuer!`,
   ],
 };
-export const NEUE_KOPF: Alle<Make<{ l: string; k: number }>[]> = {
+export const NEWCOMERS_HEADLINE: Alle<Make<{ l: string; k: number }>[]> = {
   de: [
     (a) => `${a.k} Neue am Lagerfeuer`,
     (a) => `Volles Haus: ${a.k} Neuzugänge`,
@@ -706,7 +706,7 @@ export const NEUE_KOPF: Alle<Make<{ l: string; k: number }>[]> = {
     () => `De Neizugäng vo da Woch`,
   ],
 };
-export const NEUE_TEXT: Alle<Make<{ l: string; k: number }>[]> = {
+export const NEWCOMERS_TEXT: Alle<Make<{ l: string; k: number }>[]> = {
   de: [
     (a) => `Herzlich willkommen, ${a.l}! Setzt euch, am Lagerfeuer ist Platz für alle.`,
     (a) => `Neu im Gildenbuch stehen ${a.l}. Die Redaktion hat extra größere Töpfe gekauft.`,
@@ -749,9 +749,9 @@ export const NEUE_TEXT: Alle<Make<{ l: string; k: number }>[]> = {
   ],
 };
 
-/* Handwerk */
-export interface RezepteArgs { n: string; total: number; dat: string; akk: string }
-export const REZEPTE_KOPF: Alle<Make<RezepteArgs>[]> = {
+/* Crafting */
+export interface RecipesArgs { n: string; total: number; dat: string; akk: string }
+export const RECIPES_HEADLINE: Alle<Make<RecipesArgs>[]> = {
   de: [
     (a) => `Die Werkbänke glühen: ${a.total} neue Rezepte`,
     (a) => `${a.total} neue Rezepte in der Gilde`,
@@ -801,7 +801,7 @@ export const REZEPTE_KOPF: Alle<Make<RezepteArgs>[]> = {
     () => `A Hoch aufs Handwerk`,
   ],
 };
-export const REZEPTE_TEXT: Alle<Make<RezepteArgs>[]> = {
+export const RECIPES_TEXT: Alle<Make<RecipesArgs>[]> = {
   de: [
     (a) => `Vorneweg ${a.n} mit ${a.dat}. Wer etwas braucht, weiß jetzt, wo er fragen muss.`,
     (a) => `Am fleißigsten war ${a.n} mit ${a.dat}. Die Taschen sind voll, die Werkbank glüht, und das Häuschen wächst.`,
@@ -852,9 +852,9 @@ export const REZEPTE_TEXT: Alle<Make<RezepteArgs>[]> = {
   ],
 };
 
-/* Stoßzeit */
-export interface StossArgs { day: string; hour: number; next: number; count: number }
-export const STOSS_KOPF: Alle<Make<StossArgs>[]> = {
+/* Rush hour */
+export interface RushHourArgs { day: string; hour: number; next: number; count: number }
+export const RUSH_HOUR_HEADLINE: Alle<Make<RushHourArgs>[]> = {
   de: [
     (a) => `${a.day}, ${a.hour} Uhr: Hochbetrieb`,
     (a) => `Volles Haus am ${a.day}`,
@@ -896,7 +896,7 @@ export const STOSS_KOPF: Alle<Make<StossArgs>[]> = {
     (a) => `Treffpunkt ${a.day}, ${a.hour} Uhr`,
   ],
 };
-export const STOSS_TEXT: Alle<Make<StossArgs>[]> = {
+export const RUSH_HOUR_TEXT: Alle<Make<RushHourArgs>[]> = {
   de: [
     (a) => `${a.count} Anmeldungen in einer einzigen Stunde, so viel war die ganze Woche nirgends los.`,
     (a) => `Um ${a.hour} Uhr am ${a.day} haben sich ${a.count} Charaktere angemeldet. Es ging zu wie auf dem Volksfest, nur ohne Fahrgeschäfte.`,
@@ -939,8 +939,8 @@ export const STOSS_TEXT: Alle<Make<StossArgs>[]> = {
   ],
 };
 
-/* Zahl der Woche: Text je Art der Zahl; die Schlagzeile ist die Zahl selbst */
-export const ZAHL_TEXT: Record<string, Alle<string[]>> = {
+/* Number of the week: text per kind of number; the headline is the number itself */
+export const NUMBER_TEXT: Record<string, Alle<string[]>> = {
   level: {
     de: [
       "Level hat die Gilde diese Woche gesammelt. Das kann sich sehen lassen.",
@@ -1111,8 +1111,8 @@ export const ZAHL_TEXT: Record<string, Alle<string[]>> = {
   },
 };
 
-/* Ruhige Woche */
-export const RUHIG_KOPF: Alle<string[]> = {
+/* Quiet week */
+export const QUIET_HEADLINE: Alle<string[]> = {
   de: [
     "Ruhige Woche im Gildenhaus",
     "Nichts los, und das ist auch gut so",
@@ -1154,7 +1154,7 @@ export const RUHIG_KOPF: Alle<string[]> = {
     "Verschnaufpause für olle",
   ],
 };
-export const RUHIG_TEXT: Alle<string[]> = {
+export const QUIET_TEXT: Alle<string[]> = {
   de: [
     "Keine Aufstiege, keine Neuen, keine Rekorde. Die Redaktion hat Kaffee getrunken und gewartet.",
     "Die Redaktion hat gesucht und nichts gefunden. Vielleicht waren alle im Garten oder beim Großputz.",
@@ -1197,8 +1197,8 @@ export const RUHIG_TEXT: Alle<string[]> = {
   ],
 };
 
-/* Titel: Schlagzeilen-Rahmen (T = Titelname), Satzrahmen für den Wert (v) und Pointen je Titel */
-export const TITEL_KOPF: Alle<Make<{ t: string; n: string }>[]> = {
+/* Titles: headline frames (t = title name), sentence frames for the value (v) and punchlines per title */
+export const TITLE_HEADLINE: Alle<Make<{ t: string; n: string }>[]> = {
   de: [
     (a) => `${a.t} der Woche: ${a.n}`,
     (a) => `${a.n} ist ${a.t} der Woche`,
@@ -1250,10 +1250,10 @@ export const TITEL_KOPF: Alle<Make<{ t: string; n: string }>[]> = {
 };
 
 /**
- * Eigene Schlagzeilen für Titel, deren Name in mindestens einer Sprache nicht in die allgemeinen Rahmen passt
- * (kein Hauptwort): "Frisch eingekleidet" und "Schaffe, schaffe".
+ * Dedicated headlines for titles whose name does not fit the general frames in at least one language
+ * (not a noun): "Frisch eingekleidet" and "Schaffe, schaffe".
  */
-export const TITEL_KOPF_EIGEN: Record<string, Alle<Make<{ t: string; n: string }>[]>> = {
+export const TITLE_HEADLINE_OWN: Record<string, Alle<Make<{ t: string; n: string }>[]>> = {
   "frisch-eingekleidet": {
     de: [
       (a) => `Frisch eingekleidet: ${a.n}`,
@@ -1340,10 +1340,10 @@ export const TITEL_KOPF_EIGEN: Record<string, Alle<Make<{ t: string; n: string }
   },
 };
 
-const gross = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-export const WERT_RAHMEN: Alle<Make<{ v: string }>[]> = {
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+export const VALUE_FRAME: Alle<Make<{ v: string }>[]> = {
   de: [
-    (a) => `${gross(a.v)}.`,
+    (a) => `${capitalize(a.v)}.`,
     (a) => `Die Zahlen lügen nicht: ${a.v}.`,
     (a) => `Laut Statistik: ${a.v}.`,
     (a) => `Das Protokoll vermerkt: ${a.v}.`,
@@ -1353,7 +1353,7 @@ export const WERT_RAHMEN: Alle<Make<{ v: string }>[]> = {
     (a) => `Gemessen und notiert: ${a.v}.`,
   ],
   en: [
-    (a) => `${gross(a.v)}.`,
+    (a) => `${capitalize(a.v)}.`,
     (a) => `The numbers don't lie: ${a.v}.`,
     (a) => `According to the stats: ${a.v}.`,
     (a) => `The record shows: ${a.v}.`,
@@ -1363,7 +1363,7 @@ export const WERT_RAHMEN: Alle<Make<{ v: string }>[]> = {
     (a) => `Measured and noted: ${a.v}.`,
   ],
   schwaebisch: [
-    (a) => `${gross(a.v)}.`,
+    (a) => `${capitalize(a.v)}.`,
     (a) => `D'Zahla lüget net: ${a.v}.`,
     (a) => `Laut Statistik: ${a.v}.`,
     (a) => `'s Protokoll vermerkt: ${a.v}.`,
@@ -1373,7 +1373,7 @@ export const WERT_RAHMEN: Alle<Make<{ v: string }>[]> = {
     (a) => `Gmessa ond notiert: ${a.v}.`,
   ],
   bayrisch: [
-    (a) => `${gross(a.v)}.`,
+    (a) => `${capitalize(a.v)}.`,
     (a) => `De Zahln liagn ned: ${a.v}.`,
     (a) => `Laut Statistik: ${a.v}.`,
     (a) => `As Protokoll vermerkt: ${a.v}.`,
@@ -1384,7 +1384,7 @@ export const WERT_RAHMEN: Alle<Make<{ v: string }>[]> = {
   ],
 };
 
-export const TITEL_POINTE: Record<string, Alle<Make<{ n: string }>[]>> = {
+export const TITLE_PUNCHLINE: Record<string, Alle<Make<{ n: string }>[]>> = {
   nachteule: {
     de: [
       (a) => `Während anständige Leute schlafen, zieht ${a.n} durch Azeroth.`,
@@ -1891,8 +1891,8 @@ export const TITEL_POINTE: Record<string, Alle<Make<{ n: string }>[]>> = {
   },
 };
 
-/** Pointen für Titel ohne eigene Liste (künftige Titel). */
-export const POINTE_ALLGEMEIN: Alle<Make<{ n: string }>[]> = {
+/** Punchlines for titles without their own list (future titles). */
+export const GENERIC_PUNCHLINE: Alle<Make<{ n: string }>[]> = {
   de: [
     (a) => `Respekt, ${a.n}!`,
     (a) => `Die Redaktion zieht den Hut vor ${a.n}.`,

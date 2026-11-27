@@ -1,12 +1,12 @@
 import { SERVER_ERWEITERUNGEN } from "../erweiterungen";
 import type { ServerErweiterung } from "../erweiterungen/typen";
 import { weekBounds } from "../lib/time";
-import type { ZeitungArticle, CharacterRecord, GuildRecord, WeeklyIndex, WeeklyRecord, WochenSummen, WochenZahlen } from "../model";
+import type { NewspaperArticle, CharacterRecord, GuildRecord, WeeklyIndex, WeeklyRecord, WeeklySums, WeeklyNumbers } from "../model";
 import { mitDialekten, ueberall, type Dialekte, type Fassungen } from "../sprache";
 import type { JsonStore } from "../store";
-import { uebersetzungIn } from "../weekly/zeitung-text";
+import { storedTranslationIn } from "../weekly/newspaper-text";
 import { titleDef } from "../weekly/titles";
-import { WOCHEN_ZAHL_ARTEN } from "../weekly/zahlen";
+import { WEEKLY_NUMBER_KINDS } from "../weekly/numbers";
 import { refOf, weeklyIndex } from "./fun-common";
 import { guildRefs } from "./guild-view";
 import type { ZeitungArchiveView, ZeitungArticleView, ZeitungRueckblickView, ZeitungView, ZeitungZahlenView, ZeitungZahlView } from "./types";
@@ -38,7 +38,7 @@ export function rubrik(name: string, erweiterungen: readonly ServerErweiterung[]
  * Ausgaben haben es nicht, dann gilt Deutsch.
  */
 function fassungen<T>(de: T, gespeichert: Dialekte<T> | undefined): Fassungen<T> {
-  return mitDialekten(de, gespeichert, uebersetzungIn(gespeichert, "en") ?? de);
+  return mitDialekten(de, gespeichert, storedTranslationIn(gespeichert, "en") ?? de);
 }
 
 /** Ein Feld aus Fassungen von Objekten, z. B. die Schlagzeilen aus Schlagzeile und Text. */
@@ -46,7 +46,7 @@ function feld<T, K extends keyof T>(f: Fassungen<T>, key: K): Fassungen<T[K]> {
   return Object.fromEntries(Object.entries(f).map(([s, v]) => [s, (v as T)[key]])) as Fassungen<T[K]>;
 }
 
-function article(guild: GuildRecord, a: ZeitungArticle): ZeitungArticleView {
+function article(guild: GuildRecord, a: NewspaperArticle): ZeitungArticleView {
   const def = a.titleId ? titleDef(a.titleId) : undefined;
   const fassung = fassungen({ headline: a.headline, text: a.text }, a.dialekte);
   return {
@@ -60,8 +60,8 @@ function article(guild: GuildRecord, a: ZeitungArticle): ZeitungArticleView {
 }
 
 /** Zeilen des Infokastens: nur Arten mit Wert, Vorwoche dazu, wenn sie bekannt ist. */
-function zeilen(s: WochenSummen, vor: WochenSummen | undefined): ZeitungZahlView[] {
-  return WOCHEN_ZAHL_ARTEN.flatMap((art) => {
+function zeilen(s: WeeklySums, vor: WeeklySums | undefined): ZeitungZahlView[] {
+  return WEEKLY_NUMBER_KINDS.flatMap((art) => {
     const wert = s[art];
     if (wert === null || wert === undefined) return [];
     const v = vor?.[art];
@@ -69,7 +69,7 @@ function zeilen(s: WochenSummen, vor: WochenSummen | undefined): ZeitungZahlView
   });
 }
 
-export function zahlenView(guild: GuildRecord, zahlen: WochenZahlen | undefined): ZeitungZahlenView | null {
+export function zahlenView(guild: GuildRecord, zahlen: WeeklyNumbers | undefined): ZeitungZahlenView | null {
   if (!zahlen) return null;
   const guilds = guildRefs(guild);
   return {

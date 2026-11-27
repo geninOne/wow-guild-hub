@@ -4,7 +4,7 @@
 import type { GuildRecord, MemberSummary } from "../model";
 import type { Fassungen } from "../sprache";
 import type { JsonStore } from "../store";
-import type { ErweiterungsFakt } from "../weekly/zeitung-facts";
+import type { ErweiterungsFakt } from "../weekly/newspaper-facts";
 
 /** Was der Server einer Erweiterung von außen durchreicht (auf Netlify aus der Function `api.mts`). */
 export interface ErweiterungsUmgebung {

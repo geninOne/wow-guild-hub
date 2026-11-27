@@ -366,7 +366,7 @@ export interface TitleAward {
   value: number;
 }
 
-export interface ZeitungArticle {
+export interface NewspaperArticle {
   /** Art des Fakts, z. B. `sprung`, `titel`, `neuzugang`. */
   kind: string;
   /** Rubrik, z. B. `Aufsteiger`; fehlt in Ausgaben vor den Rubriken. */
@@ -382,9 +382,9 @@ export interface ZeitungArticle {
   characterIds: number[];
 }
 
-export interface ZeitungIssue {
-  lead: ZeitungArticle;
-  articles: ZeitungArticle[];
+export interface NewspaperIssue {
+  lead: NewspaperArticle;
+  articles: NewspaperArticle[];
   /** Spruch der Woche, hochdeutsch. */
   motto: string;
   /** Spruch der Woche auf Schwäbisch und Bayrisch; fehlt in Ausgaben vor den Sprachvarianten. */
@@ -404,11 +404,11 @@ export interface ZeitungIssue {
   /** Wetterbericht auf Schwäbisch und Bayrisch. */
   wetterDialekte?: Dialekte<string>;
   /** Schlagzeile der Ausgabe von vor vier Wochen; fehlt, wenn es sie nicht gibt, und in Ausgaben davor. */
-  rueckblick?: ZeitungRueckblick;
+  rueckblick?: NewspaperLookback;
 }
 
 /** Eine Schlagzeile aus einer früheren Ausgabe, so wie sie damals erschien. */
-export interface ZeitungRueckblick {
+export interface NewspaperLookback {
   week: string;
   from: string;
   to: string;
@@ -418,21 +418,21 @@ export interface ZeitungRueckblick {
 }
 
 /** Was die Woche in Zahlen zählt. */
-export type WochenZahlArt = "anmeldungen" | "level" | "tode" | "dungeons" | "rezepte" | "erfolge" | "ruf" | "gegenstandsstufe";
+export type WeeklyNumberKind = "anmeldungen" | "level" | "tode" | "dungeons" | "rezepte" | "erfolge" | "ruf" | "gegenstandsstufe";
 
 /** Summen einer Woche; null, wenn kein Charakter einen Wert hatte. */
-export type WochenSummen = Record<WochenZahlArt, number | null>;
+export type WeeklySums = Record<WeeklyNumberKind, number | null>;
 
 /** Gildensummen einer Woche, fest berechnet (nicht von der KI). */
-export interface WochenZahlen {
+export interface WeeklyNumbers {
   /** Alle Gilden zusammen. */
-  gesamt: WochenSummen;
+  gesamt: WeeklySums;
   /** Je Gilden-Slug. */
-  gilden: Record<string, WochenSummen>;
+  gilden: Record<string, WeeklySums>;
   /** Bester Einzelwert der Woche je Art als [Charakter-ID, Wert], für Rekorde. */
-  spitze: Partial<Record<WochenZahlArt, [id: number, value: number]>>;
+  spitze: Partial<Record<WeeklyNumberKind, [id: number, value: number]>>;
   /** Dieselben Summen der Vorwoche; fehlt ohne Vorwoche. */
-  vorwoche?: { gesamt: WochenSummen; gilden: Record<string, WochenSummen> };
+  vorwoche?: { gesamt: WeeklySums; gilden: Record<string, WeeklySums> };
 }
 
 /**
@@ -451,11 +451,11 @@ export interface WeeklyRecord {
    * Fehlt in Wochen, die vor der Rangliste ausgewertet wurden.
    */
   rankings?: Record<string, [id: number, value: number][]>;
-  zeitung: ZeitungIssue;
+  zeitung: NewspaperIssue;
   /** Nur, wenn lokale Beispieldaten eingeflossen sind. */
   testdaten?: boolean;
   /** Woche in Zahlen; fehlt in Ausgaben davor. */
-  zahlen?: WochenZahlen;
+  zahlen?: WeeklyNumbers;
 }
 
 /** Blob `weekly/index`: ausgewertete Wochen, aufsteigend nach ihrem letzten Tag, mit dem Nötigsten fürs Archiv. */

@@ -8,7 +8,7 @@ import { MemberListDialog, MemberListTrigger, PeopleIcon, type MemberSet } from 
 import { TitleBadge } from "../components/TitleBadge";
 import { TestdatenHinweis } from "../components/TestdatenHinweis";
 import { useApi } from "../lib/api";
-import { ERSCHEINT_FASSUNGEN, formatPlainDayMonth, weekRangeLabel, zeitungsName } from "../lib/fun";
+import { ERSCHEINT_FASSUNGEN, formatPlainDayMonth, weekRangeLabel, newspaperName } from "../lib/fun";
 import { useSprache, type Fassungen } from "../lib/sprache";
 import { zahlLocale } from "../lib/format";
 
@@ -322,7 +322,7 @@ function TitlesContent({ view }: { view: TitlesView }) {
     <>
       <p className="page-subtitle muted">
         {weekRangeLabel(current.from, current.to, sprache)} ·{" "}
-        <Link to={`/zeitung/${current.week}`}>{t(T.zurZeitung)(zeitungsName(sprache))}</Link>
+        <Link to={`/zeitung/${current.week}`}>{t(T.zurZeitung)(newspaperName(sprache))}</Link>
       </p>
       <TestdatenHinweis show={view.testdaten} />
       <ul className="title-tiles">
@@ -352,7 +352,7 @@ export function TitlesPage() {
       <header className="page-header">
         <h1 className="page-title">{t(T.seitentitel)}</h1>
         <p className="erscheint-hint">
-          {t(T.erscheintVor)(zeitungsName(sprache))}
+          {t(T.erscheintVor)(newspaperName(sprache))}
           <strong>{t(ERSCHEINT_FASSUNGEN)}</strong>
           {t(T.erscheintNach)}
         </p>

@@ -1,44 +1,44 @@
-// Satzbausteine für Rekorde und den Wetterbericht. Aufbau wie in `bausteine.ts`:
-// je Topf vier gleich lange Listen (Deutsch, Englisch, Schwäbisch, Bayrisch), gleiche Nummer heißt sinngemäß derselbe Satz.
-// Dazu der Name der Zeitung, den auch die Oberfläche braucht; deshalb hier nur Typ-Importe.
+// Sentence templates for records and the weather report. Same layout as in `phrases.ts`: per pool four lists of
+// equal length (German, English, Swabian, Bavarian); the same number means roughly the same sentence.
+// Also the newspaper name, which the web UI needs too; that is why only type imports are used here.
 
-import type { WochenZahlArt } from "../model";
+import type { WeeklyNumberKind } from "../model";
 import type { Sprache } from "../sprache";
-import type { Alle } from "./bausteine";
-import type { WetterArt } from "./wetter";
+import type { Alle } from "./phrases";
+import type { WeatherKind } from "./weather";
 
-/** Name der Zeitung ohne WEBSITE_NEWSPAPER, je Sprache. */
-export const ZEITUNG_STANDARD: Alle<string> = { de: "Gildenblatt", en: "Guild Gazette", schwaebisch: "Gildeblatt", bayrisch: "Gildnblatt" };
+/** Newspaper name without WEBSITE_NEWSPAPER, per language. */
+export const NEWSPAPER_DEFAULT: Alle<string> = { de: "Gildenblatt", en: "Guild Gazette", schwaebisch: "Gildeblatt", bayrisch: "Gildnblatt" };
 
-/** Name der Zeitung: WEBSITE_NEWSPAPER (ein Name für alle Sprachen) oder der Standardname der Sprache. */
-export function zeitungsName(sprache: Sprache, seiteZeitung?: string | null): string {
-  const name = seiteZeitung?.trim();
-  return name ? name : ZEITUNG_STANDARD[sprache];
+/** Newspaper name: WEBSITE_NEWSPAPER (one name for all languages) or the default name of the language. */
+export function newspaperName(language: Sprache, siteNewspaper?: string | null): string {
+  const name = siteNewspaper?.trim();
+  return name ? name : NEWSPAPER_DEFAULT[language];
 }
 
 type Make<A> = (a: A) => string;
 
-/* Rekorde: Wörter im Dativ, weil sie hinter „mit“ stehen */
-export const REKORD_ART: Alle<Record<WochenZahlArt, string>> = {
+/* Records: German words in the dative case because they follow „mit“ */
+export const RECORD_KIND: Alle<Record<WeeklyNumberKind, string>> = {
   de: { anmeldungen: "Anmeldungen", level: "Level", tode: "Toden", dungeons: "Dungeonbesuchen", rezepte: "neuen Rezepten", erfolge: "Erfolgen", ruf: "Rufstufen", gegenstandsstufe: "Gegenstandsstufen" },
   en: { anmeldungen: "logins", level: "levels", tode: "deaths", dungeons: "dungeon runs", rezepte: "new recipes", erfolge: "achievements", ruf: "reputation levels", gegenstandsstufe: "item levels" },
   schwaebisch: { anmeldungen: "Aameldunga", level: "Level", tode: "Tode", dungeons: "Dungeonbsuch", rezepte: "neie Rezept", erfolge: "Erfolg", ruf: "Rufstufa", gegenstandsstufe: "Gegenstandsstufa" },
   bayrisch: { anmeldungen: "Anmeldungen", level: "Level", tode: "Tode", dungeons: "Dungeonbesuch", rezepte: "neie Rezepte", erfolge: "Erfolge", ruf: "Rufstufn", gegenstandsstufe: "Gegenstandsstufn" },
 };
-/** Ein Rekord in einer Aufzählung: `n` ist ein Name oder null für die Gilde. */
-export const REKORD_EINTRAG: Alle<Make<{ n: string | null; v: number; art: string; p: number }>> = {
+/** One record in an enumeration: `n` is a name, or null for the guild. */
+export const RECORD_ENTRY: Alle<Make<{ n: string | null; v: number; art: string; p: number }>> = {
   de: (a) => `${a.n ?? "die Gilde"} mit ${a.v} ${a.art} (bisher ${a.p})`,
   en: (a) => `${a.n ?? "the guild"} with ${a.v} ${a.art} (previously ${a.p})`,
   schwaebisch: (a) => `${a.n ?? "d'Gilde"} mit ${a.v} ${a.art} (bis etzt ${a.p})`,
   bayrisch: (a) => `${a.n ?? "de Gilde"} mit ${a.v} ${a.art} (bislang ${a.p})`,
 };
-export const REKORD_KOPF: Alle<string[]> = {
+export const RECORD_HEADLINE: Alle<string[]> = {
   de: ["Neuer Rekord!", "Rekordwoche in der Gilde", "So viel war noch nie", "Die Bestmarke fällt", "Rekordalarm!"],
   en: ["New record!", "Record week in the guild", "Never been this many", "The high score falls", "Record alert!"],
   schwaebisch: ["Neier Rekord!", "Rekordwoch in dr Gilde", "So viel war no nia", "D'Bestmarke fällt", "Rekordalarm!"],
   bayrisch: ["Neier Rekord!", "Rekordwoch in da Gilde", "So vui war no nia", "De Bestmarkn fallt", "Rekordalarm!"],
 };
-export const REKORD_TEXT: Alle<Make<{ l: string }>[]> = {
+export const RECORD_TEXT: Alle<Make<{ l: string }>[]> = {
   de: [
     (a) => `Die Redaktion musste die Bestenliste neu schreiben: ${a.l}.`,
     (a) => `Noch nie war es so viel in einer Woche: ${a.l}. Die alten Werte dürfen in Rente.`,
@@ -65,21 +65,21 @@ export const REKORD_TEXT: Alle<Make<{ l: string }>[]> = {
   ],
 };
 
-/* Wetterbericht */
-export const WETTER_EINSTIEG: Alle<string[]> = {
+/* Weather report */
+export const WEATHER_OPENING: Alle<string[]> = {
   de: ["Der Wetterbericht für Azeroth:", "Die Aussichten für die kommende Woche:", "Unser Wetterfrosch meldet:", "Aus der Wetterküche der Redaktion:"],
   en: ["The weather forecast for Azeroth:", "The outlook for the coming week:", "Our resident weather frog reports:", "Fresh from the editorial weather desk:"],
   schwaebisch: ["Dr Wetterbericht für Azeroth:", "D'Aussichta für die kommende Woch:", "Dr Gildeblatt-Wetterfrosch meldet:", "Aus dr Wetterkuche vo dr Redaktion:"],
   bayrisch: ["Da Wetterbericht für Azeroth:", "De Aussichtn für de kommende Woch:", "Da Gildnblatt-Wetterfrosch meldt:", "Aus da Wetterkuchl vo da Redaktion:"],
 };
-/** Ort eines Sturms: über einer Gilde oder über ganz Azeroth. */
-export const WETTER_ORT: Alle<(gilde: string | undefined) => string> = {
+/** Location of a storm: over a guild or over all of Azeroth. */
+export const WEATHER_PLACE: Alle<(guild: string | undefined) => string> = {
   de: (g) => (g ? `über der Gilde ${g}` : "über Azeroth"),
   en: (g) => (g ? `over the guild ${g}` : "over Azeroth"),
   schwaebisch: (g) => (g ? `über dr Gilde ${g}` : "über Azeroth"),
   bayrisch: (g) => (g ? `über da Gilde ${g}` : "über Azeroth"),
 };
-export const WETTER: Record<WetterArt, Alle<Make<{ u: string }>[]>> = {
+export const WEATHER: Record<WeatherKind, Alle<Make<{ u: string }>[]>> = {
   sturm: {
     de: [
       (a) => `Ein Sturmtief zieht ${a.u} auf, die Geistheiler schieben Sonderschichten.`,
@@ -289,7 +289,7 @@ export const WETTER: Record<WetterArt, Alle<Make<{ u: string }>[]>> = {
     ],
   },
 };
-export const WETTER_AUSKLANG: Alle<string[]> = {
+export const WEATHER_CLOSING: Alle<string[]> = {
   de: ["Die Redaktion übernimmt keine Gewähr.", "Regenschirm einpacken schadet nie.", "Weitere Aussichten: Eintopf im Gasthaus.", "Ohne Gewähr, aber mit Herz."],
   en: ["The editors accept no liability.", "Packing an umbrella never hurts.", "Further outlook: stew at the inn.", "No guarantees, but with heart."],
   schwaebisch: ["D'Redaktion übernimmt koi Gwähr.", "A Schirm eipacka schadet nia.", "Weitere Aussichta: Schupfnudla mit Kraut.", "Ohne Gwähr, aber mit Herz."],

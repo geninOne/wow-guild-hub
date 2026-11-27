@@ -1,56 +1,56 @@
 import { berlinDate } from "../lib/time";
-import type { ActivityWeek, DaySnapshot, MemberSummary, TitleAward, WeekMetrics, WochenZahlArt } from "../model";
+import type { ActivityWeek, DaySnapshot, MemberSummary, TitleAward, WeekMetrics, WeeklyNumberKind } from "../model";
 import type { Fassungen, Sprache } from "../sprache";
-import type { Picker } from "./bausteine";
+import type { Picker } from "./phrases";
 
-/** Rubriken der Ausgabe, in dieser Reihenfolge nach dem Aufmacher. */
+/** Sections of the issue, in this order after the lead article. */
 export const SECTIONS = ["Aufsteiger", "Rekorde", "Handwerk", "Klatsch", "Friedhof", "Zahl der Woche"] as const;
-/** Eine Rubrik des Kerns oder, bei Meldungen von Erweiterungen, deren eigene (deutscher Name). */
+/** A section of the core or, for articles from extensions, their own (German name). */
 export type Section = (typeof SECTIONS)[number] | (string & {});
 
-/** Schlagzeile und Text einer Meldung in einer Sprache. */
+/** Headline and text of an article in one language. */
 export interface MeldungsText {
   headline: string;
   text: string;
 }
 
-/** Was eine Erweiterung zum Schreiben ihrer Meldung aus Satzbausteinen bekommt. */
+/** What an extension gets for writing its article from phrases. */
 export interface SchreibWerkzeug {
-  /** Name eines Charakters. */
+  /** Name of a character. */
   name: (id: number) => string;
   /**
-   * Wählt Satzbausteine so, dass sie sich nicht aus den letzten Ausgaben wiederholen. Topfnamen der Erweiterung
-   * sollten mit ihrer Kennung beginnen, damit sie sich nicht mit denen des Kerns oder anderer Module überschneiden.
+   * Picks phrases so they do not repeat from the last issues. The extension's pool names should start with its id,
+   * so they do not overlap with those of the core or other modules.
    */
   picker: Picker;
-  /** Startwert für die Wahl, je Meldung verschieden. */
+  /** Seed for the choice, different per article. */
   seed: string;
 }
 
 /**
- * Meldung einer Erweiterung für die Wochenzeitung. Die Erweiterung rechnet alles selbst aus und liefert Texte aus
- * Satzbausteinen; gespeichert wird nur der fertige Artikel mit `art` als Art, wie bei den Meldungen des Kerns.
+ * Article of an extension for the weekly newspaper. The extension computes everything itself and delivers texts from
+ * phrases; only the finished article is stored, with `art` as its kind, like the core's articles.
  */
 export interface ErweiterungsFakt {
   kind: "erweiterung";
-  /** Art der Meldung, etwa `"umfrage"`; steht im gespeicherten Artikel und zählt für den Wechsel zwischen Ausgaben. */
+  /** Kind of the article, such as `"umfrage"`; stored in the article and counts for the variation between issues. */
   art: string;
-  /** Rubrik (deutscher Name); Fassungen in anderen Sprachen kommen aus `ServerErweiterung.rubriken`. */
+  /** Section (German name); versions in other languages come from `ServerErweiterung.rubriken`. */
   rubrik: string;
-  /** Nachrichtenwert wie bei den eigenen Meldungen: etwa 10 (Kleinkram) bis 80 (ganz groß). */
+  /** News value as for the core's articles: about 10 (trifles) to 80 (huge). */
   nachrichtenwert: number;
-  /** Betroffene Charaktere. Meldungen mit Ehemaligen oder Abgemeldeten fallen weg. */
+  /** Characters concerned. Articles with former or opted-out members are dropped. */
   characterIds: number[];
-  /** Alle Zahlen, die ein Text nennen darf (die KI-Texte werden dagegen geprüft). */
+  /** All numbers a text may mention (the AI texts are checked against them). */
   zahlen: number[];
-  /** Texte aus Satzbausteinen: Deutsch und Englisch Pflicht, fehlende Dialekte fallen auf Deutsch zurück. */
+  /** Texts from phrases: German and English required, missing dialects fall back to German. */
   schreibe(w: SchreibWerkzeug): Fassungen<MeldungsText>;
-  /** Der Fakt für die KI-Texter, ohne `nr`, `rubrik` und `art` (die setzt der Kern), mit Namen statt IDs. */
+  /** The fact for the AI writers, without `nr`, `rubrik` and `art` (the core sets them), with names instead of ids. */
   fuerKi(name: (id: number) => string, sprache: Sprache): Record<string, unknown>;
 }
 
-/** Was in einer Woche passiert ist, noch ohne Worte. Aus Fakten macht ein `TextGenerator` Artikel. */
-export type ZeitungFact =
+/** What happened in a week, still without words. A `TextGenerator` turns facts into articles. */
+export type NewspaperFact =
   | { kind: "sprung"; characterId: number; levels: number; from: number; to: number; title: string | null }
   | { kind: "meilensteine"; entries: { characterId: number; level: number }[] }
   | { kind: "ueberholungen"; entries: { characterId: number; passedId: number; level: number }[] }
@@ -58,38 +58,38 @@ export type ZeitungFact =
   | { kind: "neuzugang"; characterIds: number[] }
   | { kind: "rezepte"; characterId: number; count: number; total: number; crafters: number; title: string | null }
   | { kind: "stosszeit"; weekday: number; hour: number; count: number }
-  | { kind: "zahl"; value: number; what: ZahlArt }
+  | { kind: "zahl"; value: number; what: NumberKind }
   | { kind: "ruhig" }
-  | { kind: "rekord"; entries: { art: WochenZahlArt; characterId: number | null; value: number; previous: number }[] }
+  | { kind: "rekord"; entries: { art: WeeklyNumberKind; characterId: number | null; value: number; previous: number }[] }
   | ErweiterungsFakt;
 
-/** Woraus die Zahl der Woche bestehen kann. */
-export type ZahlArt = "level" | "anmeldungen" | "rezepte" | "dungeons" | "tode" | "erfolge";
+/** What the number of the week can consist of. */
+export type NumberKind = "level" | "anmeldungen" | "rezepte" | "dungeons" | "tode" | "erfolge";
 
-/** Was eine frühere Ausgabe enthielt, damit die nächste anders aussieht. Die jüngste zuerst. */
+/** What an earlier issue contained, so the next one looks different. The most recent first. */
 export interface RecentFacts {
-  /** Meldungsarten der Ausgabe, Titel als `titel:<id>`. */
+  /** Article kinds of the issue, titles as `titel:<id>`. */
   kinds: string[];
-  /** Art der Zahl der Woche. */
+  /** Kind of the number of the week. */
   zahl?: string;
 }
 
-/** Mindestwerte, ab denen etwas eine Meldung wert ist. */
+/** Minimum values from which something is worth an article. */
 export const MIN = {
-  sprung: 3,
-  rezepteGesamt: 3,
-  stosszeit: 5,
+  jump: 3,
+  totalRecipes: 3,
+  peakHour: 5,
 } as const;
 
 const MILESTONES = [60, 50, 40, 30, 20, 10];
 const MAX_MILESTONES = 6;
 const MAX_OVERTAKES = 3;
 const RACE_TOP = 15;
-/** Höchstzahl der Meldungen einer Ausgabe, Aufmacher eingeschlossen. */
+/** Maximum number of articles in an issue, lead article included. */
 export const MAX_ARTICLES = 10;
 
-/** Rubrik eines Fakts. */
-export function sectionOf(fact: ZeitungFact): Section {
+/** Section of a fact. */
+export function sectionOf(fact: NewspaperFact): Section {
   switch (fact.kind) {
     case "sprung":
     case "meilensteine":
@@ -113,18 +113,18 @@ export function sectionOf(fact: ZeitungFact): Section {
   }
 }
 
-/** Art eines Fakts für den Abgleich mit früheren Ausgaben. */
-export function factKey(fact: ZeitungFact): string {
-  return fact.kind === "titel" ? `titel:${fact.titleId}` : artOf(fact);
+/** Kind of a fact for comparison with earlier issues. */
+export function factKey(fact: NewspaperFact): string {
+  return fact.kind === "titel" ? `titel:${fact.titleId}` : factKindOf(fact);
 }
 
-/** Art, wie sie im gespeicherten Artikel steht: bei Erweiterungen deren eigene. */
-export function artOf(fact: ZeitungFact): string {
+/** Kind as stored in the article: for extensions their own. */
+export function factKindOf(fact: NewspaperFact): string {
   return fact.kind === "erweiterung" ? fact.art : fact.kind;
 }
 
-/** Nachrichtenwert: wie groß das Ereignis dieser Woche ist. Höher kommt weiter nach vorn. */
-export function newsValue(fact: ZeitungFact): number {
+/** News value: how big this week's event is. Higher comes further to the front. */
+export function newsValue(fact: NewspaperFact): number {
   switch (fact.kind) {
     case "meilensteine":
       return 30 + 5 * Math.min(4, fact.entries.length) + (fact.entries.some((e) => e.level === 60) ? 45 : 0);
@@ -151,7 +151,7 @@ export function newsValue(fact: ZeitungFact): number {
   }
 }
 
-/** Abschlag für Meldungsarten, die in den letzten Ausgaben schon vorkamen, damit die Ausgaben wechseln. */
+/** Discount for article kinds that already appeared in the last issues, so the issues vary. */
 function freshness(key: string, recent: RecentFacts[]): number {
   if (recent[0]?.kinds.includes(key)) return 0.7;
   if (recent[1]?.kinds.includes(key)) return 0.85;
@@ -159,10 +159,9 @@ function freshness(key: string, recent: RecentFacts[]): number {
 }
 
 /**
- * Fakten einer Woche: Aufmacher zuerst, danach nach Rubriken. Ähnliche Meldungen sind zusammengefasst
- * (alle runden Level in einer Meldung, alle Überholungen in einer), Kleinkram unter den Mindestwerten
- * fällt weg, höchstens `MAX_ARTICLES` Meldungen. Charaktere aus `excluded` (Abmeldeliste) kommen nicht vor.
- * Ohne Ereignisse genau ein Fakt `ruhig`.
+ * Facts of a week: lead article first, then by section. Similar articles are combined (all round levels in one
+ * article, all overtakes in one), trifles below the minimum values are dropped, at most `MAX_ARTICLES` articles.
+ * Characters from `excluded` (opt-out list) do not appear. Without events exactly one fact `ruhig`.
  */
 export function collectFacts(input: {
   from: string;
@@ -174,11 +173,11 @@ export function collectFacts(input: {
   activity: ActivityWeek | null;
   titles: TitleAward[];
   excluded?: Set<number>;
-  /** Frühere Ausgaben, die jüngste zuerst. */
+  /** Earlier issues, the most recent first. */
   recent?: RecentFacts[];
-  /** Fertige Meldungen aus anderen Quellen (Rekorde, Erweiterungen), die mit um die Plätze konkurrieren. */
-  zusatz?: ZeitungFact[];
-}): ZeitungFact[] {
+  /** Finished articles from other sources (records, extensions) that compete for the slots too. */
+  extraFacts?: NewspaperFact[];
+}): NewspaperFact[] {
   const recent = input.recent ?? [];
   const { metrics, before, end } = input;
   const excluded = input.excluded ?? new Set<number>();
@@ -186,16 +185,16 @@ export function collectFacts(input: {
   const byName = (a: MemberSummary, b: MemberSummary) => a.name.localeCompare(b.name, "de") || a.id - b.id;
   const levelOf = (snap: DaySnapshot | null, id: number) => snap?.characters[String(id)]?.level;
   const titleOf = (titleId: string, id: number) => input.titles.find((t) => t.titleId === titleId && t.characterId === id);
-  // Bei Gleichstand an der Spitze zuerst der Titelträger von der Karte, damit Zeitung und Titelseite denselben Namen nennen
+  // On a tie at the top, the title holder from the card first, so newspaper and title page name the same character
   const cardFirst = (titleId: string, a: MemberSummary, b: MemberSummary) =>
     Number(titleOf(titleId, b.id) !== undefined) - Number(titleOf(titleId, a.id) !== undefined);
-  const facts: ZeitungFact[] = [];
-  const used = new Set<string>(); // Titel, die schon in einer anderen Meldung stecken
+  const facts: NewspaperFact[] = [];
+  const used = new Set<string>(); // titles already contained in another article
 
-  // Größter Levelsprung, ab Mindestwert; der Dauerläufer-Titel steckt dann mit drin.
+  // Biggest level jump, from the minimum value on; the `dauerlaeufer` title is then included.
   const climbers = active
     .map((m) => ({ m, levels: metrics.get(m.id)?.levels ?? 0 }))
-    .filter((c) => c.levels >= MIN.sprung)
+    .filter((c) => c.levels >= MIN.jump)
     .sort((a, b) => b.levels - a.levels || cardFirst("dauerlaeufer", a.m, b.m) || byName(a.m, b.m));
   if (climbers.length > 0) {
     const { m, levels } = climbers[0];
@@ -204,7 +203,7 @@ export function collectFacts(input: {
     facts.push({ kind: "sprung", characterId: m.id, levels, from: levelOf(before, m.id)!, to: levelOf(end, m.id)!, title });
   }
 
-  // Runde Level, alle in einer Meldung: je Charakter das höchste, das in der Woche erreicht wurde.
+  // Round levels, all in one article: per character the highest one reached during the week.
   const milestones = active
     .flatMap((m) => {
       const a = levelOf(before, m.id);
@@ -219,7 +218,7 @@ export function collectFacts(input: {
     facts.push({ kind: "meilensteine", entries: milestones.map(({ m, level }) => ({ characterId: m.id, level })) });
   }
 
-  // Überholungen unter den Höchsten am Wochenende, jeder Charakter nur einmal beteiligt.
+  // Overtakes among the highest at the end of the week, each character involved only once.
   const race = active
     .flatMap((m) => {
       const a = levelOf(before, m.id);
@@ -240,13 +239,13 @@ export function collectFacts(input: {
   }
   if (overtakes.length > 0) facts.push({ kind: "ueberholungen", entries: overtakes });
 
-  // Handwerk: Summe und der Fleißigste; der Titel "Schaffe, schaffe" steckt mit drin, wenn er derselbe ist.
+  // Crafting: total and the busiest crafter; the title "Schaffe, schaffe" is included if it is the same character.
   const crafters = active
     .map((m) => ({ m, count: metrics.get(m.id)?.recipes ?? 0 }))
     .filter((c) => c.count >= 1)
     .sort((a, b) => b.count - a.count || cardFirst("schaffe-schaffe", a.m, b.m) || byName(a.m, b.m));
   const totalRecipes = crafters.reduce((sum, c) => sum + c.count, 0);
-  if (totalRecipes >= MIN.rezepteGesamt) {
+  if (totalRecipes >= MIN.totalRecipes) {
     const top = crafters[0];
     const title = titleOf("schaffe-schaffe", top.m.id) ? "schaffe-schaffe" : null;
     if (title) used.add(title);
@@ -261,7 +260,7 @@ export function collectFacts(input: {
     facts.push({ kind: "titel", titleId: t.titleId, characterId: t.characterId, value: t.value });
   }
 
-  // Am ersten Tag der Aufzeichnung gelten alle als "neu"; das ist kein Neuzugang.
+  // On the first day of recording everyone counts as "new"; that is no newcomer.
   const recordingStart = input.members.reduce((min, m) => {
     const day = berlinDate(m.firstSeenAt);
     return day < min ? day : min;
@@ -274,7 +273,7 @@ export function collectFacts(input: {
     .sort(byName);
   if (newcomers.length > 0) facts.push({ kind: "neuzugang", characterIds: newcomers.map((m) => m.id) });
 
-  // Stoßzeit: stärkste Stunde, erst ab Mindestwert eine Meldung wert.
+  // Peak hour: busiest hour, only worth an article from the minimum value on.
   const cells = new Array<number>(168).fill(0);
   let logins = 0;
   for (const [id, hours] of Object.entries(input.activity?.characters ?? {})) {
@@ -287,15 +286,15 @@ export function collectFacts(input: {
     }
   }
   const peak = Math.max(...cells);
-  if (peak >= MIN.stosszeit) {
+  if (peak >= MIN.peakHour) {
     const hour = cells.indexOf(peak);
     facts.push({ kind: "stosszeit", weekday: Math.floor(hour / 24), hour: hour % 24, count: peak });
   }
 
-  // Zahl der Woche: wechselt zwischen den Kennzahlen, die diesmal groß genug sind.
+  // Number of the week: alternates between the key figures that are big enough this time.
   const sum = (field: "levels" | "deaths" | "dungeons" | "achievements") =>
     active.reduce((total, m) => total + (metrics.get(m.id)?.[field] ?? 0), 0);
-  const zahlen: { what: ZahlArt; value: number }[] = [
+  const numbers: { what: NumberKind; value: number }[] = [
     { what: "level", value: sum("levels") },
     { what: "anmeldungen", value: logins },
     { what: "rezepte", value: totalRecipes },
@@ -303,44 +302,45 @@ export function collectFacts(input: {
     { what: "erfolge", value: sum("achievements") },
     { what: "tode", value: sum("deaths") },
   ];
-  const eligible = zahlen.filter((z) => z.value >= 10);
-  const recentZahl = recent.slice(0, 3).map((r) => r.zahl);
-  const zahl = eligible.find((z) => !recentZahl.includes(z.what)) ?? eligible.find((z) => z.what !== recentZahl[0]) ?? eligible[0];
+  const eligible = numbers.filter((n) => n.value >= 10);
+  const recentNumbers = recent.slice(0, 3).map((r) => r.zahl);
+  const number =
+    eligible.find((n) => !recentNumbers.includes(n.what)) ?? eligible.find((n) => n.what !== recentNumbers[0]) ?? eligible[0];
 
-  facts.push(...(input.zusatz ?? []).filter((f) => factCharacters(f).every((id) => activeIds.has(id))));
+  facts.push(...(input.extraFacts ?? []).filter((f) => factCharacters(f).every((id) => activeIds.has(id))));
 
-  if (facts.length === 0 && !zahl) return [{ kind: "ruhig" }];
-  if (facts.length === 0) return [{ kind: "ruhig" }, { kind: "zahl", ...zahl! }];
+  if (facts.length === 0 && !number) return [{ kind: "ruhig" }];
+  if (facts.length === 0) return [{ kind: "ruhig" }, { kind: "zahl", ...number! }];
 
-  // Nach Nachrichtenwert, mit Abschlag für das, was zuletzt schon drin war. Der stärkste Fakt wird Aufmacher,
-  // die übrigen werden nach ihrer stärksten Meldung je Rubrik geordnet, die Zahl der Woche bildet den Schluss.
-  // Der Aufmacher der letzten Ausgabe macht diesmal nur ungern wieder auf.
+  // By news value, with a discount for what was in recently. The strongest fact becomes the lead article, the rest
+  // are ordered by their strongest article per section, the number of the week comes last.
+  // The last issue's lead is reluctant to lead again this time.
   const lastLead = recent[0]?.kinds[0];
   const scored = facts
     .map((f, i) => ({ f, i, score: newsValue(f) * freshness(factKey(f), recent) }))
     .map((x) => ({ ...x, leadScore: x.score * (factKey(x.f) === lastLead ? 0.6 : 1) }))
     .sort((a, b) => b.leadScore - a.leadScore || a.i - b.i);
   const [lead, ...others] = scored;
-  // Aus der Rubrik des Aufmachers kommt der Rest etwas weiter hinten, damit die Ausgabe gemischt wirkt.
+  // The rest of the lead article's section moves a bit further back, so the issue feels mixed.
   const rest = others
     .map((x) => ({ ...x, score: x.score * (sectionOf(x.f) === sectionOf(lead.f) ? 0.75 : 1) }))
     .sort((a, b) => b.score - a.score || a.i - b.i);
-  const body = rest.slice(0, MAX_ARTICLES - 1 - (zahl ? 1 : 0));
+  const body = rest.slice(0, MAX_ARTICLES - 1 - (number ? 1 : 0));
   const sectionRank = new Map<Section, number>();
   for (const [i, x] of body.entries()) if (!sectionRank.has(sectionOf(x.f))) sectionRank.set(sectionOf(x.f), i);
   body.sort((a, b) => sectionRank.get(sectionOf(a.f))! - sectionRank.get(sectionOf(b.f))! || b.score - a.score || a.i - b.i);
-  return [lead.f, ...body.map((x) => x.f), ...(zahl ? [{ kind: "zahl" as const, ...zahl }] : [])];
+  return [lead.f, ...body.map((x) => x.f), ...(number ? [{ kind: "zahl" as const, ...number }] : [])];
 }
 
-/** Spaßtitel, um den es in einem Fakt geht, sonst null. */
-export function factTitle(fact: ZeitungFact): string | null {
+/** Fun title a fact is about, else null. */
+export function factTitle(fact: NewspaperFact): string | null {
   if (fact.kind === "titel") return fact.titleId;
   if (fact.kind === "sprung" || fact.kind === "rezepte") return fact.title;
   return null;
 }
 
-/** Charaktere, die ein Fakt betrifft. */
-export function factCharacters(fact: ZeitungFact): number[] {
+/** Characters a fact concerns. */
+export function factCharacters(fact: NewspaperFact): number[] {
   switch (fact.kind) {
     case "neuzugang":
     case "erweiterung":
@@ -360,8 +360,8 @@ export function factCharacters(fact: ZeitungFact): number[] {
   }
 }
 
-/** Alle Zahlen, die in einem Fakt vorkommen (für die Prüfung von Fremdtexten). */
-export function factNumbers(fact: ZeitungFact): number[] {
+/** All numbers that occur in a fact (for checking texts from outside). */
+export function factNumbers(fact: NewspaperFact): number[] {
   switch (fact.kind) {
     case "sprung":
       return [fact.levels, fact.from, fact.to];

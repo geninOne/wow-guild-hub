@@ -1,8 +1,8 @@
-// Wochenauswertung mit Woche in Zahlen, Wetter, Rekord und Rückblick; Aufbau wie in run.test.ts.
+// Weekly evaluation with week in numbers, weather, record and lookback; setup as in run.test.ts.
 import { beforeEach, expect, onTestFinished, test, vi } from "vitest";
 import type { DaySnapshot, GuildRecord, WeeklyRecord } from "../../src/model";
 import { createMemoryStore } from "../../src/store";
-import { bausteinGenerator } from "../../src/weekly/zeitung-text";
+import { phraseGenerator } from "../../src/weekly/newspaper-text";
 import { runWeeklyEvaluation } from "../../src/weekly/run";
 import { member } from "../helpers/members";
 
@@ -22,12 +22,12 @@ const snap = (date: string, levels: Record<string, number>, deaths: Record<strin
   ),
 });
 
-// Sonntag, 15.11.2026, 10 Uhr: die letzte abgeschlossene Bärenklaue-Woche ist 2026-11-14 (8. bis 14.11.).
+// Sunday, 2026-11-15, 10:00: the last completed guild week is 2026-11-14 (Nov 8 to 14).
 const NOW = "2026-11-15T09:00:00.000Z";
 let store: ReturnType<typeof createMemoryStore>;
-// Ohne Serverstart gilt überall der Vergleich zweier Tagesstände; eigene Tests weiter unten setzen ihn.
+// Without a server start, comparing two daily snapshots applies everywhere; dedicated tests further down set it.
 const run = (iso = NOW, optOuts: (string | number)[] = [], serverStart: string | null = null) =>
-  runWeeklyEvaluation({ store, now: () => new Date(iso), optOuts, generator: bausteinGenerator, serverStart });
+  runWeeklyEvaluation({ store, now: () => new Date(iso), optOuts, generator: phraseGenerator, serverStart });
 
 beforeEach(async () => {
   store = createMemoryStore();
@@ -39,44 +39,44 @@ beforeEach(async () => {
   await store.set("activity/2026-W46", { week: "2026-W46", characters: { "1": [2, 26], "2": [20] } });
 });
 
-test("Ausgabe enthält Woche in Zahlen mit Vorwoche, Wetterbericht und ohne alte Ausgabe keinen Rückblick", async () => {
+test("issue contains week in numbers with previous week, weather report and, without an old issue, no lookback", async () => {
   vi.stubEnv("WEBSITE_LANGUAGES", "");
   onTestFinished(() => {
     vi.unstubAllEnvs();
   });
   await run();
   const record = await store.get<WeeklyRecord>("weekly/2026-11-14");
-  // 5 Level und 3 Tode wie bei den Titeln, Anmeldungen aus der Aktivität.
+  // 5 levels and 3 deaths as for the titles, logins from the activity.
   expect(record?.zahlen?.gesamt).toMatchObject({ anmeldungen: 3, level: 5, tode: 3 });
   expect(record?.zahlen?.spitze).toMatchObject({ level: [1, 5], tode: [1, 3] });
   expect(record?.zahlen?.vorwoche?.gesamt).toMatchObject({ level: 0, tode: 0 });
   expect(record?.zeitung.wetter).toBeTruthy();
-  // Ohne WEBSITE_LANGUAGES: Englisch dazu, keine Dialekte
+  // Without WEBSITE_LANGUAGES: English added, no dialects
   expect((record?.zeitung.wetterDialekte as { en?: string } | undefined)?.en).toBeTruthy();
   expect(record?.zeitung.wetterDialekte?.schwaebisch).toBeUndefined();
   expect(record?.zeitung).not.toHaveProperty("rueckblick");
-  // Die nächste Ausgabe meidet die Wetter-Bausteine der letzten.
+  // The next issue avoids the weather phrases of the last one.
   expect(record?.zeitung.bausteine?.some((b) => b.startsWith("wetter-"))).toBe(true);
 });
 
-test("mit genug früheren Ausgaben: Rekordmeldung und Rückblick auf vier Wochen vorher", async () => {
-  const summen = { anmeldungen: 2, level: 1, tode: 1, dungeons: null, rezepte: null, erfolge: null, ruf: null, gegenstandsstufe: null };
-  const frueher = (week: string, from: string) =>
+test("with enough earlier issues: record article and lookback on four weeks before", async () => {
+  const weeklySums = { anmeldungen: 2, level: 1, tode: 1, dungeons: null, rezepte: null, erfolge: null, ruf: null, gegenstandsstufe: null };
+  const earlier = (week: string, from: string) =>
     ({
       week, from, to: week, generatedAt: NOW, titles: [],
       zeitung: { lead: { kind: "sprung", headline: `Schlagzeile ${week}`, text: "Text.", characterIds: [2] }, articles: [], motto: "Spruch." },
-      zahlen: { gesamt: summen, gilden: { "": summen }, spitze: { level: [2, 1], tode: [2, 1] } },
+      zahlen: { gesamt: weeklySums, gilden: { "": weeklySums }, spitze: { level: [2, 1], tode: [2, 1] } },
     }) satisfies WeeklyRecord;
-  const wochen = [["2026-10-17", "2026-10-11"], ["2026-10-24", "2026-10-18"], ["2026-10-31", "2026-10-25"], ["2026-11-07", "2026-11-01"]];
-  for (const [w, from] of wochen) await store.set(`weekly/${w}`, frueher(w, from));
-  await store.set("weekly/index", { weeks: wochen.map(([w]) => w) });
+  const weeks = [["2026-10-17", "2026-10-11"], ["2026-10-24", "2026-10-18"], ["2026-10-31", "2026-10-25"], ["2026-11-07", "2026-11-01"]];
+  for (const [w, from] of weeks) await store.set(`weekly/${w}`, earlier(w, from));
+  await store.set("weekly/index", { weeks: weeks.map(([w]) => w) });
   await run();
   const record = await store.get<WeeklyRecord>("weekly/2026-11-14");
   const all = [record!.zeitung.lead, ...record!.zeitung.articles];
-  const rekord = all.find((a) => a.kind === "rekord");
-  expect(rekord?.section).toBe("Rekorde");
-  expect(rekord?.characterIds).toEqual([1]);
-  expect(rekord?.text).toContain("Anna mit 5 Level (bisher 1)");
+  const recordArticle = all.find((a) => a.kind === "rekord");
+  expect(recordArticle?.section).toBe("Rekorde");
+  expect(recordArticle?.characterIds).toEqual([1]);
+  expect(recordArticle?.text).toContain("Anna mit 5 Level (bisher 1)");
   expect(record?.zeitung.rueckblick).toEqual({ week: "2026-10-17", from: "2026-10-11", to: "2026-10-17", headline: "Schlagzeile 2026-10-17", characterIds: [2] });
-  expect(record?.zahlen?.vorwoche?.gesamt).toEqual(summen);
+  expect(record?.zahlen?.vorwoche?.gesamt).toEqual(weeklySums);
 });

@@ -1,9 +1,9 @@
 // Hilfen für Aktivität, Titel, Zeitung und Wrapped.
 
-import { zeitungsName as zeitungsNameFuer } from "../../../src/weekly/bausteine-woche";
+import { newspaperName as zeitungsNameFuer } from "../../../src/weekly/phrases-extras";
 import { fassungIn, type Fassungen, type Sprache } from "./sprache";
 
-const WOCHENTAGE: Fassungen<string[]> = {
+const WEEKDAY_NAMES: Fassungen<string[]> = {
   de: ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"],
   en: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
   schwaebisch: ["Mendig", "Dienschdig", "Mittwoch", "Donnerschdig", "Freidig", "Samschdig", "Sonndig"],
@@ -25,9 +25,9 @@ const BIS: Fassungen = { de: "bis", en: "to", schwaebisch: "bis", bayrisch: "bis
 const WOCHE_VOM: Fassungen = { de: "Woche vom", en: "Week of", schwaebisch: "Woch vom", bayrisch: "Woch vom" };
 
 /** Wochentage ab Montag; Hochdeutsch, wenn keine Sprache angegeben ist. */
-export const WEEKDAYS = WOCHENTAGE.de;
+export const WEEKDAYS = WEEKDAY_NAMES.de;
 export const WEEKDAYS_SHORT = WOCHENTAGE_KURZ.de;
-export const wochentage = (sprache: Sprache = "de"): string[] => fassungIn(WOCHENTAGE, sprache);
+export const wochentage = (sprache: Sprache = "de"): string[] => fassungIn(WEEKDAY_NAMES, sprache);
 export const wochentageKurz = (sprache: Sprache = "de"): string[] => fassungIn(WOCHENTAGE_KURZ, sprache);
 
 /** `2026-11-09` als `09.11.2026`. */
@@ -67,7 +67,7 @@ export const ERSCHEINT_FASSUNGEN: Fassungen = {
 export const ERSCHEINT = ERSCHEINT_FASSUNGEN.de;
 
 /** Name der Wochenzeitung: WEBSITE_NEWSPAPER für alle Sprachen, sonst der Standardname der Sprache. */
-export function zeitungsName(sprache: Sprache = "de"): string {
+export function newspaperName(sprache: Sprache = "de"): string {
   return zeitungsNameFuer(sprache, import.meta.env.WEBSITE_NEWSPAPER);
 }
 

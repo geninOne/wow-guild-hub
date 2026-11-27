@@ -5,11 +5,11 @@ import { addDays, berlinDate, compareWeeks, dateOfWeekHour, isoWeeksBetween, isW
 import type { ActivityWeek, DaySnapshot, GuildRecord, WeekMetrics, WeeklyIndex, WeeklyRecord } from "../model";
 import type { JsonStore } from "../store";
 import type { ServerErweiterung } from "../erweiterungen/typen";
-import { ausgabeExtras } from "./ausgabe-extras";
-import { RECENT_ISSUES } from "./bausteine";
-import { collectFacts, factKey, type RecentFacts } from "./zeitung-facts";
+import { issueExtras } from "./issue-extras";
+import { RECENT_ISSUES } from "./phrases";
+import { collectFacts, factKey, type RecentFacts } from "./newspaper-facts";
 import { DIALEKTE } from "../sprache";
-import { uebersetzungIn, type Fremdsprache, type RecentIssue, type TextGenerator } from "./zeitung-text";
+import { storedTranslationIn, type OtherLanguage, type RecentIssue, type TextGenerator } from "./newspaper-text";
 import { generatorFromEnv } from "./claude-text";
 import { weekMetrics } from "./metrics";
 import { isOptedOut, rankTitles, TITLE_OPT_OUTS } from "./titles";
@@ -17,28 +17,28 @@ import { isOptedOut, rankTitles, TITLE_OPT_OUTS } from "./titles";
 export interface WeeklyDeps {
   store: JsonStore;
   now: () => Date;
-  /** Abmeldeliste für Titel; Standard aus `TITLE_OPT_OUTS`. */
+  /** Opt-out list for titles; default from `TITLE_OPT_OUTS`. */
   optOuts?: (string | number)[];
-  /** Texter für die Zeitung; Standard nach Umgebung (Claude API mit Schlüssel, sonst Satzbausteine). */
+  /** Writer for the newspaper; default by environment (Claude API with a key, else phrases). */
   generator?: TextGenerator;
-  /** Wie viele abgeschlossene Wochen höchstens nachgeholt werden. */
+  /** How many completed weeks are caught up at most. */
   maxWeeks?: number;
-  /** Tag des Serverstarts; Standard aus `config/serverstart.json`, null schaltet die Regel ab. */
+  /** Day of the server start; default from `config/serverstart.json`, null turns the rule off. */
   serverStart?: string | null;
-  /** Erweiterungen mit eigenen Meldungen; Standard aus `src/erweiterungen/index.ts`. */
+  /** Extensions with their own articles; default from `src/erweiterungen/index.ts`. */
   erweiterungen?: readonly ServerErweiterung[];
 }
 
 export interface WeeklyRunReport {
   at: string;
-  /** Neu ausgewertete Wochen. */
+  /** Newly evaluated weeks. */
   evaluated: string[];
-  /** Wochen ohne Daten, für die nichts geschrieben wurde. */
+  /** Weeks without data, for which nothing was written. */
   empty: string[];
   durationMs: number;
 }
 
-/** Tagesstände für eine Woche: der letzte davor (ersatzweise der früheste in der Woche) und der letzte in der Woche. */
+/** Daily snapshots for a week: the last one before it (failing that, the earliest in the week) and the last in the week. */
 export function snapshotDates(dates: string[], from: string, to: string): { before: string | null; end: string | null } {
   const sorted = [...dates].sort();
   const inside = sorted.filter((d) => d >= from && d <= to);
@@ -50,12 +50,12 @@ export function snapshotDates(dates: string[], from: string, to: string): { befo
 }
 
 /**
- * Aktivität eines Zeitraums (eine Wertungswoche oder ein Teil davon), zusammengesetzt aus den ISO-Wochen-Blöcken,
- * die ihn berühren. Die Stunden bleiben Wochenstunden mit Montag 0 Uhr = 0: Weil der Zeitraum jeden Wochentag
- * höchstens einmal enthält, gibt es keine Überschneidungen, und Wochentag und Uhrzeit lassen sich wie gewohnt ablesen.
+ * Activity of a period (a scoring week or part of one), assembled from the ISO week blocks that touch it. The hours
+ * stay week hours with Monday 0:00 = 0: since the period contains each weekday at most once, there is no overlap,
+ * and weekday and time of day can be read as usual.
  *
- * Eine Rückkehr (mindestens 7 Tage Pause) ist immer der erste Login ihres ISO-Blocks; sie zählt, wenn dieser im Zeitraum liegt.
- * null, wenn im Zeitraum niemand angemeldet war und es keinen Block gibt.
+ * A return (a break of at least 7 days) is always the first login of its ISO block; it counts if that lies in the period.
+ * null if nobody logged in during the period and there is no block.
  */
 export async function weekActivity(store: JsonStore, week: string, from: string, to: string): Promise<ActivityWeek | null> {
   const blocks = await Promise.all(isoWeeksBetween(from, to).map((w) => store.get<ActivityWeek>(`activity/${w}`)));
@@ -66,11 +66,11 @@ export async function weekActivity(store: JsonStore, week: string, from: string,
   const characters: Record<string, number[]> = {};
   const returns: Record<string, number> = {};
   let found = false;
-  let testdaten = false;
+  let testData = false;
   for (const block of blocks) {
     if (!block) continue;
     found = true;
-    testdaten ||= block.testdaten === true;
+    testData ||= block.testdaten === true;
     for (const [id, hours] of Object.entries(block.characters)) {
       const kept = hours.filter((h) => inside(block, h));
       if (kept.length > 0) characters[id] = [...(characters[id] ?? []), ...kept].sort((a, b) => a - b);
@@ -85,11 +85,11 @@ export async function weekActivity(store: JsonStore, week: string, from: string,
     week,
     characters,
     ...(Object.keys(returns).length > 0 ? { returns } : {}),
-    ...(testdaten ? { testdaten: true } : {}),
+    ...(testData ? { testdaten: true } : {}),
   };
 }
 
-/** Was Fakten-Auswahl und Texter über eine frühere Ausgabe wissen müssen. */
+/** What fact selection and writers need to know about an earlier issue. */
 export function recentOf(records: WeeklyRecord[]): { facts: RecentFacts[]; issues: RecentIssue[] } {
   return {
     facts: records.map((r) => {
@@ -107,15 +107,15 @@ export function recentOf(records: WeeklyRecord[]): { facts: RecentFacts[]; issue
         headlines: all.map((a) => a.headline),
         texts: all.map((a) => a.text),
         motto: r.zeitung.motto,
-        // Englisch und Dialekte; ältere Ausgaben ohne Übersetzung liefern dafür die hochdeutschen Texte.
+        // English and dialects; older issues without a translation provide the Standard German texts instead.
         dialekte: Object.fromEntries(
-          (["en", ...DIALEKTE] as Fremdsprache[]).map((d) => [
+          (["en", ...DIALEKTE] as OtherLanguage[]).map((d) => [
             d,
             {
-              headlines: all.map((a) => uebersetzungIn(a.dialekte, d)?.headline ?? a.headline),
-              texts: all.map((a) => uebersetzungIn(a.dialekte, d)?.text ?? a.text),
-              motto: uebersetzungIn(r.zeitung.mottoDialekte, d) ?? r.zeitung.motto,
-              ...(r.zeitung.wetter ? { wetter: uebersetzungIn(r.zeitung.wetterDialekte, d) ?? r.zeitung.wetter } : {}),
+              headlines: all.map((a) => storedTranslationIn(a.dialekte, d)?.headline ?? a.headline),
+              texts: all.map((a) => storedTranslationIn(a.dialekte, d)?.text ?? a.text),
+              motto: storedTranslationIn(r.zeitung.mottoDialekte, d) ?? r.zeitung.motto,
+              ...(r.zeitung.wetter ? { wetter: storedTranslationIn(r.zeitung.wetterDialekte, d) ?? r.zeitung.wetter } : {}),
             },
           ]),
         ),
@@ -125,17 +125,17 @@ export function recentOf(records: WeeklyRecord[]): { facts: RecentFacts[]; issue
   };
 }
 
-/** Wertet eine Woche aus; null, wenn es weder Aktivität noch einen Tagesstand in der Woche gibt. */
+/** Evaluates a week; null if there is neither activity nor a daily snapshot in the week. */
 export async function evaluateWeek(
   deps: WeeklyDeps,
   week: string,
   guild: GuildRecord,
   historyDates: string[],
-  /** Frühere Ausgaben, die jüngste zuerst. */
+  /** Earlier issues, the most recent first. */
   previous: WeeklyRecord[] = [],
-  /** Gewerteter Zeitraum; Standard ist die ganze Woche. In der Übergangswoche beginnt er später. */
+  /** Scored period; default is the whole week. In the transition week it starts later. */
   range: { from: string; to: string } = weekBounds(week),
-  /** Alle früheren Wochenergebnisse, die jüngste zuerst, für die Wahl des Titelträgers bei Gleichstand. */
+  /** All earlier weekly results, the most recent first, for choosing the title holder on a tie. */
   titleHistory: Pick<WeeklyRecord, "titles">[] = previous,
 ): Promise<WeeklyRecord | null> {
   const recent = recentOf(previous.slice(0, RECENT_ISSUES));
@@ -145,25 +145,25 @@ export async function evaluateWeek(
   const { activity, before, end, metrics } = basis;
   const optOuts = deps.optOuts ?? TITLE_OPT_OUTS;
   const { awards: titles, rankings } = rankTitles(metrics, guild.members, optOuts, { week, previous: titleHistory });
-  // Abgemeldete tauchen in der Zeitung gar nicht auf, auch nicht in Überholungen oder als Neuzugang.
+  // Opted-out members do not appear in the newspaper at all, not even in overtakes or as newcomers.
   const excluded = new Set(guild.members.filter((m) => isOptedOut(m, optOuts)).map((m) => m.id));
-  const extras = await ausgabeExtras({
+  const extras = await issueExtras({
     store: deps.store, guild, from, to, metrics, excluded, previous, erweiterungen: deps.erweiterungen,
-    kennzahlen: async (f, t) => (await weekBasis(deps, t, guild, historyDates, { from: f, to: t }))?.metrics ?? null,
+    keyFigures: async (f, t) => (await weekBasis(deps, t, guild, historyDates, { from: f, to: t }))?.metrics ?? null,
   });
-  const facts = collectFacts({ from, to, metrics, members: guild.members, before, end, activity, titles, excluded, recent: recent.facts, zusatz: extras.zusatz });
+  const facts = collectFacts({ from, to, metrics, members: guild.members, before, end, activity, titles, excluded, recent: recent.facts, extraFacts: extras.extraFacts });
   const names = new Map(guild.members.map((m) => [m.id, m.name]));
   const result = await (deps.generator ?? generatorFromEnv())(facts, {
     week,
     name: (id) => names.get(id) ?? "Unbekannt",
     allNames: [...new Set(guild.members.map((m) => m.name))],
     recent: recent.issues,
-    wetter: extras.wetter,
+    wetter: extras.weather,
     gilden: guild.guilds?.map((g) => g.name) ?? [guild.name],
   });
-  const zahl = facts.find((f) => f.kind === "zahl");
+  const numberFact = facts.find((f) => f.kind === "zahl");
   const [lead, ...articles] = result.articles;
-  const testdaten = Boolean(activity?.testdaten || before?.testdaten || end?.testdaten);
+  const testData = Boolean(activity?.testdaten || before?.testdaten || end?.testdaten);
   return {
     week,
     from,
@@ -180,18 +180,18 @@ export async function evaluateWeek(
       ...(result.model ? { model: result.model } : {}),
       ...(result.fallback ? { fallback: result.fallback } : {}),
       ...(result.bausteine ? { bausteine: result.bausteine } : {}),
-      ...(zahl?.kind === "zahl" ? { zahl: zahl.what } : {}),
+      ...(numberFact?.kind === "zahl" ? { zahl: numberFact.what } : {}),
       ...(result.wetter ? { wetter: result.wetter, ...(result.wetterDialekte ? { wetterDialekte: result.wetterDialekte } : {}) } : {}),
-      ...(extras.rueckblick ? { rueckblick: extras.rueckblick } : {}),
+      ...(extras.lookback ? { rueckblick: extras.lookback } : {}),
     },
-    ...(testdaten ? { testdaten: true } : {}),
-    zahlen: extras.zahlen,
+    ...(testData ? { testdaten: true } : {}),
+    zahlen: extras.numbers,
   };
 }
 
 /**
- * Aktivität, Tagesstände und Kennzahlen eines Zeitraums; null, wenn es weder Aktivität noch einen Tagesstand gibt.
- * Dient der Auswertung und dem Nachrechnen früherer Wochen für Vorwoche und Rekorde.
+ * Activity, daily snapshots and key figures of a period; null if there is neither activity nor a daily snapshot.
+ * Serves the evaluation and recomputing earlier weeks for the previous week and records.
  */
 export async function weekBasis(
   deps: WeeklyDeps,
@@ -204,7 +204,7 @@ export async function weekBasis(
   const { from, to } = range;
   const activity = await weekActivity(store, week, from, to);
   const serverStart = deps.serverStart === undefined ? SERVER_START : deps.serverStart;
-  // Tagesstände vor dem Serverstart taugen nie als Vergleich.
+  // Daily snapshots before the server start are never fit for comparison.
   const usable = sinceServerStart(historyDates, serverStart);
   const startWeek = startsWithin(serverStart, from, to);
   const dates = snapshotDates(usable, from, to);
@@ -215,8 +215,8 @@ export async function weekBasis(
     dates.before && !startWeek ? store.get<DaySnapshot>(`history/${dates.before}`) : null,
     dates.end ? store.get<DaySnapshot>(`history/${dates.end}`) : null,
   ]);
-  // In der Woche des Serverstarts beginnen alle bei Level 1 und Zählerstand 0.
-  // Sonst gilt: Wer erst im Lauf der Woche dazukam, zählt ab seinem ersten Stand in der Woche.
+  // In the server start week everyone starts at level 1 and counter 0.
+  // Otherwise: whoever joined during the week counts from their first snapshot in the week.
   const before = startWeek
     ? end && serverStartSnapshot(serverStart, end)
     : (await withLateStarts(store, usable, first, end, guild.members)).before;
@@ -225,8 +225,8 @@ export async function weekBasis(
 }
 
 /**
- * Letzter Tag, den Ausgaben aus der Zeit vor der Umstellung (ISO-Wochen Montag bis Sonntag) schon gewertet haben; null ohne solche.
- * Die erste Wertungswoche danach beginnt am Tag darauf, damit kein Tag fehlt oder doppelt zählt.
+ * Last day already scored by issues from before the switch (ISO weeks Monday to Sunday); null without such issues.
+ * The first scoring week after that starts on the following day, so no day is missing or counted twice.
  */
 export function legacyEnd(weeks: string[]): string | null {
   const ends = weeks.filter(isWeek).map((w) => weekRange(w).to).sort();
@@ -234,10 +234,10 @@ export function legacyEnd(weeks: string[]): string | null {
 }
 
 /**
- * Wertet alle abgeschlossenen Wertungswochen (Sonntag bis Samstag) aus, für die noch kein Ergebnis vorliegt
- * (Titel und Zeitung). Eine Woche ist ab Sonntag 0 Uhr Berliner Zeit abgeschlossen.
- * Idempotent: Ein zweiter Lauf schreibt nichts. Wochen ohne Daten bleiben offen und werden später erneut geprüft.
- * Ausgaben alter ISO-Wochen bleiben unverändert; Wertungswochen bis zu deren Ende entstehen nicht mehr.
+ * Evaluates all completed scoring weeks (Sunday to Saturday) that have no result yet (titles and newspaper).
+ * A week is completed from Sunday 0:00 Berlin time.
+ * Idempotent: a second run writes nothing. Weeks without data stay open and are checked again later.
+ * Issues of old ISO weeks stay unchanged; scoring weeks up to their end are no longer created.
  */
 export async function runWeeklyEvaluation(deps: WeeklyDeps): Promise<WeeklyRunReport> {
   const { store } = deps;
@@ -263,8 +263,8 @@ export async function runWeeklyEvaluation(deps: WeeklyDeps): Promise<WeeklyRunRe
   if (!guild) return report([], missing);
 
   const historyDates = (await store.list("history/")).map((key) => key.slice("history/".length));
-  // Der Reihe nach, älteste zuerst: Jede Ausgabe kennt die vorherigen und meidet deren Formulierungen.
-  // Jede Woche wird sofort gespeichert; bricht ein Lauf ab, macht der nächste dort weiter.
+  // One after another, oldest first: each issue knows the previous ones and avoids their wording.
+  // Each week is stored right away; if a run aborts, the next one continues there.
   const generator = deps.generator ?? generatorFromEnv();
   const cache = new Map<string, WeeklyRecord | null>();
   const load = async (w: string) => {
@@ -276,7 +276,7 @@ export async function runWeeklyEvaluation(deps: WeeklyDeps): Promise<WeeklyRunRe
   const entries = { ...index.entries };
   const known = [...index.weeks];
   for (const week of [...missing].sort(compareWeeks)) {
-    // Alle früheren Wochen, die jüngste zuerst: für die Titel die ganze Historie, für die Zeitung nur die letzten Ausgaben.
+    // All earlier weeks, the most recent first: the whole history for the titles, only the last issues for the newspaper.
     const earlier = known.filter((w) => compareWeeks(w, week) < 0).sort(compareWeeks).reverse();
     const all = (await Promise.all(earlier.map(load))).filter((r): r is WeeklyRecord => r !== null);
     const previous = all.slice(0, RECENT_ISSUES);
