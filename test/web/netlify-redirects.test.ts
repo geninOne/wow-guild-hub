@@ -25,7 +25,7 @@ function covered(path: string): boolean {
   return redirects.some(({ from }) => {
     if (from === path) return true;
     if (!from.endsWith("/*")) return false;
-    const prefix = from.slice(0, -1); // "/charakter/"
+    const prefix = from.slice(0, -1); // e.g. `/charakter/`
     return path.startsWith(prefix) && path.length > prefix.length;
   });
 }

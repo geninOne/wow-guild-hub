@@ -102,7 +102,7 @@ function mockFetch(routes: Record<string, unknown>) {
   const fn = vi.fn(async (path: string) => {
     const body = routes[path];
     return body === undefined
-      ? new Response(JSON.stringify({ error: "Nicht gefunden" }), { status: 404 })
+      ? new Response(JSON.stringify({ error: "Not found" }), { status: 404 })
       : new Response(JSON.stringify(body), { status: 200 });
   });
   vi.stubGlobal("fetch", fn);

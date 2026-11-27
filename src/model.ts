@@ -1,4 +1,4 @@
-// Alle Datentypen, die in Netlify Blobs abgelegt werden. Vertrag für Lese-API und Frontend.
+// All data types stored in Netlify Blobs. Contract for the read API and the frontend.
 
 import type { OtherTranslations } from "./language";
 
@@ -7,7 +7,7 @@ export interface ItemTooltip {
   unique: string | null;
   slotType: string | null;
   subclass: string | null;
-  /** Taschen, z.B. "6 Platz Behälter". Fehlt in Daten vor den Rezeptdetails. */
+  /** Bags: the container slot line. Missing in data from before the recipe details. */
   containerSlots?: string | null;
   armor: string | null;
   block: string | null;
@@ -55,20 +55,20 @@ export interface CharacterProfession {
   skill: number;
   max: number;
   primary: boolean;
-  /** Englische Rezeptnamen aus den Charakterdaten (Rückfall für die Anzeige). */
+  /** English recipe names from the character data (fallback for display). */
   recipes: string[];
-  /** Rezept-IDs parallel zu `recipes`. Fehlt in Daten vor dem Nachtrag Oberfläche. */
+  /** Recipe IDs parallel to `recipes`. Missing in data from before the UI addendum. */
   recipeIds?: number[];
 }
 
-/** Fortschritt eines Erfolgs: nur die IDs der erledigten Kind-Kriterien. */
+/** Progress of an achievement: only the IDs of the completed child criteria. */
 export interface AchievementProgress {
   id: number;
   completed: boolean;
   criteria: number[];
 }
 
-/** Ein Eintrag aus der Statistik "Boss-Kills", z.B. "Siege über Bazzalan (Flammenschlund)". */
+/** One entry of the `Boss-Kills` statistic, i.e. a `Siege über BOSS (INSTANCE)` line (victories over a boss). */
 export interface BossKill {
   boss: string;
   instance: string | null;
@@ -81,10 +81,10 @@ export interface InstanceProgress {
   bossKills: BossKill[];
 }
 
-/** Ruf bei einer Fraktion; `value` von `max` ist der Fortschritt innerhalb der Stufe. */
+/** Reputation with a faction; `value` of `max` is the progress within the tier. */
 export interface CharacterReputation {
   factionId: number;
-  /** Name aus den Charakterdaten, teils englisch; die Lese-API übersetzt. */
+  /** Name from the character data, partly English; the read API translates it. */
   name: string;
   tier: number;
   tierName: string;
@@ -92,11 +92,11 @@ export interface CharacterReputation {
   max: number;
 }
 
-/** Zähler aus der Charakterstatistik; null, wenn die Statistik den Wert nicht liefert. */
+/** Counters from the character statistics; null when the statistics do not provide the value. */
 export interface CharacterStats {
-  /** "Tode insgesamt". */
+  /** Total deaths. */
   deaths: number | null;
-  /** "5-Spieler-Dungeons betreten". */
+  /** 5-player dungeons entered. */
   dungeonsEntered: number | null;
 }
 
@@ -122,15 +122,15 @@ export interface CharacterRecord {
   mainSpecId: number | null;
   professions: CharacterProfession[];
   raidsRaw: unknown | null;
-  /** Dungeon- und Raidfortschritt; null ohne Daten, fehlt in Daten vor dem Nachtrag Oberfläche. */
+  /** Dungeon and raid progress; null without data, missing in data from before the UI addendum. */
   instances?: InstanceProgress | null;
-  /** Ruf; null ohne Daten, fehlt in Daten vor dem Nachtrag Oberfläche. */
+  /** Reputation; null without data, missing in data from before the UI addendum. */
   reputations?: CharacterReputation[] | null;
-  /** Zähler für Titel und Wrapped; null ohne Statistik, fehlt in Daten vor den Spaßtiteln. */
+  /** Counters for titles and Wrapped; null without statistics, missing in data from before the fun titles. */
   stats?: CharacterStats | null;
-  /** Vollständige Statistik, Statistik-ID auf Wert (fehlende = 0); null ohne Statistik, fehlt in Daten vor den Statistik-Ständen. */
+  /** Complete statistics, statistic ID to value (missing = 0); null without statistics, missing in data from before the statistic snapshots. */
   statValues?: Record<string, number> | null;
-  /** Texte der Am-häufigsten-Statistiken, Statistik-ID auf Text (etwa "Humanoid"). */
+  /** Texts of the "most often" statistics, statistic ID to text (such as a creature type). */
   statTexts?: Record<string, string> | null;
 }
 
@@ -151,26 +151,26 @@ export interface MemberSummary {
   equippedItemLevel: number | null;
   mainSpecName: string | null;
   professions: { id: number; skill: number }[];
-  /** Gilde, in der das Mitglied zuletzt gesehen wurde. Fehlt nur in Daten vor dem ersten Lauf mit mehreren Gilden. */
+  /** Guild the member was last seen in. Missing only in data from before the first run with several guilds. */
   guildSlug?: string;
-  /** Zähler für den Tagesstand; fehlen in Daten vor den Spaßtiteln, null ohne Profil oder Statistik. */
+  /** Counters for the daily snapshot; missing in data from before the fun titles, null without profile or statistics. */
   deaths?: number | null;
   dungeonsEntered?: number | null;
-  /** Anzahl bekannter Rezepte über alle Berufe. */
+  /** Number of known recipes across all professions. */
   recipeCount?: number | null;
   /**
-   * Abgeschlossene Erfolge. Bei Twinks (`TWINK_RANKS`) ohne accountweite Erfolge (`static/achievement-account-wide`),
-   * die zählen nur beim Hauptcharakter. Erfolge ohne bekannte Angabe zählen, bis der statische Sammler sie kennt.
-   * null ohne Daten.
+   * Completed achievements. For alts (`TWINK_RANKS`) without account-wide achievements (`static/achievement-account-wide`),
+   * which count only for the main character. Achievements without known information count until the static collector knows them.
+   * null without data.
    */
   achievementCount?: number | null;
-  /** `achievementCount` ohne accountweite Erfolge, weil der Charakter beim Abruf einen Twink-Rang hatte. */
+  /** `achievementCount` without account-wide achievements because the character had an alt rank when fetched. */
   achievementsTwink?: boolean;
-  /** Summe der Rufstufen über alle Fraktionen; null ohne Daten. */
+  /** Sum of reputation tiers across all factions; null without data. */
   reputationTiers?: number | null;
 }
 
-/** Eine der Gilden der Gemeinschaft; `main` ist die Hauptgilde (erste in `GUILD_SLUGS`). */
+/** One of the community's guilds; `main` is the main guild (first in `GUILD_SLUGS`). */
 export interface GuildInfo {
   slug: string;
   id: number;
@@ -181,7 +181,7 @@ export interface GuildInfo {
   main: boolean;
 }
 
-/** Kopf-Felder beschreiben die Hauptgilde, `members` umfasst alle Gilden. */
+/** Header fields describe the main guild, `members` covers all guilds. */
 export interface GuildRecord {
   fetchedAt: string;
   id: number;
@@ -190,7 +190,7 @@ export interface GuildRecord {
   memberCount: number;
   rulesetName: string;
   members: MemberSummary[];
-  /** Alle Gilden, Hauptgilde zuerst. Fehlt nur in Daten vor dem ersten Lauf mit mehreren Gilden. */
+  /** All guilds, main guild first. Missing only in data from before the first run with several guilds. */
   guilds?: GuildInfo[];
 }
 
@@ -213,34 +213,34 @@ export interface DaySnapshot {
       level: number;
       equippedItemLevel: number | null;
       professions: Record<string, number>;
-      /** Zähler seit den Spaßtiteln; fehlen in älteren Ständen und bei Charakteren ohne Statistik. */
+      /** Counters since the fun titles; missing in older snapshots and for characters without statistics. */
       deaths?: number;
       dungeons?: number;
       recipes?: number;
-      /** Abgeschlossene Erfolge. */
+      /** Completed achievements. */
       achievements?: number;
-      /** `achievements` ohne accountweite Erfolge (Twink-Rang); fehlt bei allen anderen. */
+      /** `achievements` without account-wide achievements (alt rank); missing for everyone else. */
       achievementsTwink?: true;
-      /** Summe der Rufstufen über alle Fraktionen. */
+      /** Sum of reputation tiers across all factions. */
       reputation?: number;
     }
   >;
-  /** Nur bei lokalen Beispieldaten. */
+  /** Only for local sample data. */
   testdaten?: boolean;
 }
 
 /**
- * Blob `activity/{Woche}`: wer in welcher Wochenstunde (Montag 0 Uhr = 0, Berliner Zeit) einen Login hatte.
- * Gespeichert wird je ISO-Woche; die Wochenauswertung setzt daraus ihre Wertungswochen zusammen (siehe `weekActivity`).
+ * Blob `activity/{week}`: who had a login in which hour of the week (Monday 0:00 = 0, Berlin time).
+ * Stored per ISO week; the weekly evaluation assembles its scoring weeks from these (see `weekActivity`).
  */
 export interface ActivityWeek {
-  /** ISO-Woche, z. B. `2026-W47`; in der Wochenauswertung auch die Wertungswoche, aus der die Stunden stammen. */
+  /** ISO week, e.g. `2026-W47`; in the weekly evaluation also the scoring week the hours come from. */
   week: string;
-  /** Charakter-ID auf Wochenstunden 0 bis 167, aufsteigend, ohne Doppelte. */
+  /** Character ID to hours of the week 0 to 167, ascending, without duplicates. */
   characters: Record<string, number[]>;
-  /** Rückkehrer: Charakter-ID auf Tage Pause vor dem Login in dieser Woche (nur ab 7 Tagen, längste Pause). */
+  /** Returners: character ID to days of absence before the login in this week (only from 7 days, longest absence). */
   returns?: Record<string, number>;
-  /** Nur bei lokalen Beispieldaten. */
+  /** Only for local sample data. */
   testdaten?: boolean;
 }
 
@@ -270,32 +270,32 @@ export interface NamedList {
 
 export type IconMap = Record<string, string | null>;
 
-/** Definition eines Dungeon- oder Raid-Erfolgs (Kategorien 15593 und 15594), Namen deutsch. */
+/** Definition of a dungeon or raid achievement (categories 15593 and 15594), names in German. */
 export interface InstanceAchievement {
   id: number;
   name: string;
   kind: "dungeon" | "raid";
-  /** Position innerhalb der Kategorie. */
+  /** Position within the category. */
   order: number;
-  /** Beschreibung des Wurzelkriteriums, z.B. "Schließt den Hyjalgipfel ab" oder "Tötet Onyxia". */
+  /** Description of the root criterion, e.g. completing a raid or killing its final boss. */
   rootDescription: string | null;
   criteria: { id: number; description: string }[];
 }
 
-/** Blob `static/instance-achievements`, Reihenfolge: Dungeons, dann Schlachtzüge, je in Kategorie-Reihenfolge. */
+/** Blob `static/instance-achievements`, order: dungeons, then raids, each in category order. */
 export interface InstanceAchievementsRecord {
   achievements: InstanceAchievement[];
 }
 
-/** Blob `static/recipe-names`: Rezept-ID zu deutschem Namen, null bei 404. Nur noch Rückfall für ältere Daten, neu ist `static/recipes`. */
+/** Blob `static/recipe-names`: recipe ID to German name, null on 404. Only a fallback for older data now, the new one is `static/recipes`. */
 export type RecipeNames = Record<string, string | null>;
 
-/** Blob `static/reputation-factions`: Namen aus dem Verzeichnis und Gruppen der Wurzelfraktionen. */
+/** Blob `static/reputation-factions`: names from the index and groups of the root factions. */
 export interface ReputationFactionsRecord {
   names: Record<string, string>;
-  /** In Reihenfolge der Wurzelfraktionen. */
+  /** In the order of the root factions. */
   groups: { id: number; name: string; factionIds: number[] }[];
-  /** Wurzelfraktionen, deren Details schon abgefragt wurden (auch ohne Unterfraktionen). */
+  /** Root factions whose details have already been fetched (also those without subfactions). */
   checkedRoots: number[];
 }
 
@@ -305,21 +305,21 @@ export interface RecipeReagent {
   quantity: number;
 }
 
-/** Hergestellter Gegenstand; Qualität, Stufe und Tooltip fehlen, wenn der Gegenstand nicht abrufbar war. */
+/** Crafted item; quality, level and tooltip are missing when the item could not be fetched. */
 export interface CraftedItem {
   id: number;
   name: string;
   quality: string | null;
-  /** Nur für Gegenstände mit angezeigter Stufe, nicht bei Verbrauchsgütern. */
+  /** Only for items with a displayed level, not for consumables. */
   itemLevel: number | null;
   tooltip: ItemTooltip | null;
 }
 
 export interface RecipeDetail {
   id: number;
-  /** Deutscher Rezeptname. */
+  /** German recipe name. */
   name: string;
-  /** Bei Rezepten ohne Gegenstand (z.B. Verzauberungen) die Wirkung. */
+  /** For recipes without an item (e.g. enchantments) the effect. */
   description: string | null;
   icon: string | null;
   craftedQuantity: number;
@@ -327,87 +327,87 @@ export interface RecipeDetail {
   reagents: RecipeReagent[];
 }
 
-/** Blob `static/recipes`: Rezept-ID zu Details, null bei 404. */
+/** Blob `static/recipes`: recipe ID to details, null on 404. */
 export type RecipeDetails = Record<string, RecipeDetail | null>;
 
-/** Wochenkennzahlen eines Charakters; null, wenn die Tagesstände den Wert nicht hergeben. */
+/** Weekly metrics of a character; null when the daily snapshots do not yield the value. */
 export interface WeekMetrics {
-  /** Wochenstunden mit Login. */
+  /** Hours of the week with a login. */
   logins: number;
-  /** Logins zwischen 1 und 5 Uhr. */
+  /** Logins between 1:00 and 5:00. */
   nightLogins: number;
-  /** Logins zwischen 5 und 8 Uhr. */
+  /** Logins between 5:00 and 8:00. */
   earlyLogins: number;
-  /** Tage mit mindestens einem Login. */
+  /** Days with at least one login. */
   activeDays: number;
   levels: number | null;
   deaths: number | null;
   recipes: number | null;
   dungeons: number | null;
-  /** Neu abgeschlossene Erfolge. */
+  /** Newly completed achievements. */
   achievements: number | null;
-  /** Zuwachs der angelegten Gegenstandsstufe; null ohne Vergleichswert. */
+  /** Increase of the equipped item level; null without a value to compare. */
   itemLevel: number | null;
-  /** Gewonnene Rufstufen, über alle Fraktionen summiert. */
+  /** Reputation tiers gained, summed across all factions. */
   reputation: number | null;
-  /** Längste Pause in Tagen vor einem Login in dieser Woche, 0 ohne Rückkehr. */
+  /** Longest absence in days before a login in this week, 0 without a return. */
   awayDays: number;
 }
 
 export interface TitleAward {
   titleId: string;
-  /** Titelträger auf der Karte; bei Gleichstand der, der den Titel am längsten nicht hatte. */
+  /** Title holder on the card; on a tie the one who has gone longest without the title. */
   characterId: number;
   /**
-   * Alle Inhaber mit dem Höchstwert, der Titelträger zuerst. Fehlt in Wochen vor dem geteilten Titel und bei nur einem
-   * Inhaber; dann gilt `characterId` allein, siehe `titleHolders`.
+   * All holders with the top value, the title holder first. Missing in weeks before shared titles and with only one
+   * holder; then `characterId` alone applies, see `titleHolders`.
    */
   characterIds?: number[];
   value: number;
 }
 
 export interface NewspaperArticle {
-  /** Art des Fakts, z. B. `sprung`, `titel`, `neuzugang`. */
+  /** Kind of fact, e.g. `sprung`, `titel`, `neuzugang`. */
   kind: string;
-  /** Rubrik, z. B. `Aufsteiger`; fehlt in Ausgaben vor den Rubriken. */
+  /** Section heading shown in the UI; missing in issues from before the sections. */
   section?: string;
-  /** Spaßtitel, um den es in der Meldung geht (für das Abzeichen); fehlt ohne Titel und in älteren Ausgaben. */
+  /** Fun title the article is about (for the badge); missing without a title and in older issues. */
   titleId?: string;
-  /** Hochdeutsche Fassung. */
+  /** Standard German version. */
   headline: string;
   text: string;
-  /** Schwäbische und bayrische Fassung; fehlt in Ausgaben vor den Sprachvarianten. */
+  /** Swabian and Bavarian versions; missing in issues from before the language variants. */
   dialekte?: OtherTranslations<{ headline: string; text: string }>;
-  /** Beteiligte Charaktere, damit die Oberfläche verlinken kann. */
+  /** Characters involved, so the UI can link to them. */
   characterIds: number[];
 }
 
 export interface NewspaperIssue {
   lead: NewspaperArticle;
   articles: NewspaperArticle[];
-  /** Spruch der Woche, hochdeutsch. */
+  /** Motto of the week, Standard German. */
   motto: string;
-  /** Spruch der Woche auf Schwäbisch und Bayrisch; fehlt in Ausgaben vor den Sprachvarianten. */
+  /** Motto of the week in Swabian and Bavarian; missing in issues from before the language variants. */
   mottoDialekte?: OtherTranslations<string>;
-  /** Wer die Texte geschrieben hat: `bausteine` oder `claude`; fehlt in älteren Ausgaben. */
+  /** Who wrote the texts: `bausteine` or `claude`; missing in older issues. */
   generator?: string;
-  /** Modell, falls ein Sprachmodell geschrieben hat. */
+  /** Model, if a language model wrote the texts. */
   model?: string;
-  /** Grund, falls ein eingestelltes Sprachmodell nicht geschrieben hat und die Satzbausteine eingesprungen sind. */
+  /** Reason, if a configured language model did not write and the text templates stepped in. */
   fallback?: string;
-  /** Verwendete Satzbaustein-Kennungen, damit die nächsten Ausgaben andere wählen. */
+  /** Text template IDs used, so the next issues pick different ones. */
   bausteine?: string[];
-  /** Art der Zahl der Woche, z. B. `level` oder `tode`. */
+  /** Kind of the number of the week, e.g. `level` or `tode`. */
   zahl?: string;
-  /** Wetterbericht für Azeroth, hochdeutsch, gedichtet aus den Wochenzahlen; fehlt in Ausgaben davor. */
+  /** Weather report for Azeroth, Standard German, composed from the weekly numbers; missing in earlier issues. */
   wetter?: string;
-  /** Wetterbericht auf Schwäbisch und Bayrisch. */
+  /** Weather report in Swabian and Bavarian. */
   wetterDialekte?: OtherTranslations<string>;
-  /** Schlagzeile der Ausgabe von vor vier Wochen; fehlt, wenn es sie nicht gibt, und in Ausgaben davor. */
+  /** Headline of the issue from four weeks ago; missing when there is none, and in earlier issues. */
   rueckblick?: NewspaperLookback;
 }
 
-/** Eine Schlagzeile aus einer früheren Ausgabe, so wie sie damals erschien. */
+/** A headline from an earlier issue, as it appeared at the time. */
 export interface NewspaperLookback {
   week: string;
   from: string;
@@ -417,100 +417,100 @@ export interface NewspaperLookback {
   characterIds: number[];
 }
 
-/** Was die Woche in Zahlen zählt. */
+/** What the week in numbers counts. */
 export type WeeklyNumberKind = "anmeldungen" | "level" | "tode" | "dungeons" | "rezepte" | "erfolge" | "ruf" | "gegenstandsstufe";
 
-/** Summen einer Woche; null, wenn kein Charakter einen Wert hatte. */
+/** Sums of a week; null when no character had a value. */
 export type WeeklySums = Record<WeeklyNumberKind, number | null>;
 
-/** Gildensummen einer Woche, fest berechnet (nicht von der KI). */
+/** Guild sums of a week, computed deterministically (not by the AI). */
 export interface WeeklyNumbers {
-  /** Alle Gilden zusammen. */
+  /** All guilds combined. */
   gesamt: WeeklySums;
-  /** Je Gilden-Slug. */
+  /** Per guild slug. */
   gilden: Record<string, WeeklySums>;
-  /** Bester Einzelwert der Woche je Art als [Charakter-ID, Wert], für Rekorde. */
+  /** Best individual value of the week per kind as [character ID, value], for records. */
   spitze: Partial<Record<WeeklyNumberKind, [id: number, value: number]>>;
-  /** Dieselben Summen der Vorwoche; fehlt ohne Vorwoche. */
+  /** The same sums for the previous week; missing without a previous week. */
   vorwoche?: { gesamt: WeeklySums; gilden: Record<string, WeeklySums> };
 }
 
 /**
- * Blob `weekly/{Woche}`: Ergebnis der Wochenauswertung. Woche ist eine Wertungswoche (Sonntag bis Samstag,
- * Kennung ist der Samstag, z. B. `2026-11-21`) oder, für Ausgaben vor der Umstellung, eine ISO-Woche wie `2026-W46`.
+ * Blob `weekly/{week}`: result of the weekly evaluation. The week is a scoring week (Sunday to Saturday,
+ * identified by the Saturday, e.g. `2026-11-21`) or, for issues from before the switch, an ISO week such as `2026-W46`.
  */
 export interface WeeklyRecord {
   week: string;
-  /** Erster und letzter gewerteter Tag; in der Übergangswoche beginnt sie nach dem letzten Tag der alten Ausgaben. */
+  /** First and last scored day; in the transition week it starts after the last day of the old issues. */
   from: string;
   to: string;
   generatedAt: string;
   titles: TitleAward[];
   /**
-   * Je Titel die ganze Rangliste der Woche als [Charakter-ID, Wert], bester zuerst; alle mit einem Wert ab 1.
-   * Fehlt in Wochen, die vor der Rangliste ausgewertet wurden.
+   * Per title the full ranking of the week as [character ID, value], best first; everyone with a value of 1 or more.
+   * Missing in weeks evaluated before the ranking existed.
    */
   rankings?: Record<string, [id: number, value: number][]>;
   zeitung: NewspaperIssue;
-  /** Nur, wenn lokale Beispieldaten eingeflossen sind. */
+  /** Only when local sample data was included. */
   testdaten?: boolean;
-  /** Woche in Zahlen; fehlt in Ausgaben davor. */
+  /** Week in numbers; missing in earlier issues. */
   zahlen?: WeeklyNumbers;
 }
 
-/** Blob `weekly/index`: ausgewertete Wochen, aufsteigend nach ihrem letzten Tag, mit dem Nötigsten fürs Archiv. */
+/** Blob `weekly/index`: evaluated weeks, ascending by their last day, with the essentials for the archive. */
 export interface WeeklyIndex {
   weeks: string[];
   /**
-   * Je Woche die Schlagzeile des Aufmachers und der gewertete Zeitraum; fehlt für Wochen vor dem Archiv.
-   * Der Zeitraum fehlt in Einträgen vor der Umstellung auf Wertungswochen.
+   * Per week the headline of the lead article and the scored period; missing for weeks before the archive.
+   * The period is missing in entries from before the switch to scoring weeks.
    */
   entries?: Record<string, { headline: string; dialekte?: OtherTranslations<string>; from?: string; to?: string; testdaten?: boolean }>;
 }
 
 /**
- * Ein Feld der Charakterwerte (Endpunkt `/statistics` des Profils): eine Zahl oder die Zahlen eines Objekts,
- * etwa `{ base, effective }` bei Primärwerten oder `{ rating, rating_bonus, value }` bei Krit und Ausweichen.
+ * One field of the character attributes (profile endpoint `/statistics`): a number or the numbers of an object,
+ * such as `{ base, effective }` for primary stats or `{ rating, rating_bonus, value }` for crit and dodge.
  */
 export type AttributeField = number | Record<string, number>;
 
-/** Blob `attributes/<Charakter-ID>`: Grundwerte eines Charakters, vom statischen Sammler alle vier Stunden geholt. */
+/** Blob `attributes/<character ID>`: base attributes of a character, fetched by the static collector every four hours. */
 export interface CharacterAttributesRecord {
   fetchedAt: string;
-  /** Zahlenfelder der Antwort, Schlüssel wie bei Blizzard; null, wenn Blizzard keine Werte liefert (404). */
+  /** Number fields of the response, keys as from Blizzard; null when Blizzard returns no values (404). */
   fields: Record<string, AttributeField> | null;
-  /** Ressource (Mana, Wut, Energie, Runenmacht ...); null ohne Angabe. */
+  /** Resource (mana, rage, energy, runic power ...); null when not given. */
   powerType: { id: number; name: string } | null;
-  /** Nur bei erfundenen Werten aus den lokalen Beispieldaten. */
+  /** Only for made-up values from the local sample data. */
   testdaten?: boolean;
 }
 
-/** Blob `attributes/index`: je Charakter-ID der Zeitpunkt des letzten Abrufs der Werte. */
+/** Blob `attributes/index`: per character ID the time the attributes were last fetched. */
 export type AttributesIndex = Record<string, string>;
 
 /**
- * Was `collect-static` aus einem Charakterdatensatz braucht, damit er nicht alle `characters/*` lesen muss.
- * Gepflegt von `collect-guild` beim Schreiben eines Charakters.
+ * What `collect-static` needs from a character record so it does not have to read all `characters/*`.
+ * Maintained by `collect-guild` when it writes a character.
  */
 export interface CharacterIndexEntry {
   slug: string;
   hasProfile: boolean;
   lastLoginAt: string | null;
-  /** IDs der angelegten Gegenstände. */
+  /** IDs of the equipped items. */
   itemIds: number[];
-  /** Gegenstandsstufen, die Blizzard in der Ausrüstung noch mitliefert, Gegenstands-ID auf Stufe. */
+  /** Item levels Blizzard still includes in the equipment, item ID to level. */
   itemLevels: Record<string, number>;
-  /** Bekannte Rezepte über alle Berufe. */
+  /** Known recipes across all professions. */
   recipeIds: number[];
-  /** Abgeschlossene Erfolge; fehlt in Einträgen vor der Erkennung accountweiter Erfolge. */
+  /** Completed achievements; missing in entries from before account-wide achievements were detected. */
   achievementIds?: number[];
 }
 
 /**
- * Blob `static/achievement-account-wide`: Erfolgs-ID auf `is_account_wide` aus `/data/wow/achievement/{id}`,
- * null bei 404 oder fehlender Angabe.
+ * Blob `static/achievement-account-wide`: achievement ID to `is_account_wide` from `/data/wow/achievement/{id}`,
+ * null on 404 or when not given.
  */
 export type AchievementAccountWide = Record<string, boolean | null>;
 
-/** Blob `character-index`: Charakter-ID auf `CharacterIndexEntry`. */
+/** Blob `character-index`: character ID to `CharacterIndexEntry`. */
 export type CharacterIndex = Record<string, CharacterIndexEntry>;

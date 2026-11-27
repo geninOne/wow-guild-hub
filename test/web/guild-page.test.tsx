@@ -108,7 +108,7 @@ test("clicking a column header sorts, a second click reverses", async () => {
   expect(names()[0]).toContain("Neuling");
 });
 
-test("header names both guilds, Bärenklaue first, with crests", async () => {
+test("header names both guilds, main guild first, with crests", async () => {
   mockFetch();
   renderPage();
   await screen.findByText("Gelmar Soulvenn");
@@ -117,7 +117,7 @@ test("header names both guilds, Bärenklaue first, with crests", async () => {
   expect(within(header as HTMLElement).getAllByRole("img").map((i) => i.getAttribute("alt"))).toEqual(["Horde", "Allianz"]);
 });
 
-test("guild column with crest and filter All / Bärenklaue / Goldene Bärenklaue", async () => {
+test("guild column with crest and filter All / first / second guild", async () => {
   mockFetch();
   renderPage();
   await screen.findByText("Gelmar Soulvenn");

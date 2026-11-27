@@ -243,7 +243,7 @@ test("unknown character", async () => {
 
 function mockRoutes(routes: Record<string, [number, unknown]>) {
   const fn = vi.fn(async (path: string) => {
-    const [status, body] = routes[path] ?? [500, { error: "unerwartet" }];
+    const [status, body] = routes[path] ?? [500, { error: "Unexpected" }];
     return new Response(JSON.stringify(body), { status });
   });
   vi.stubGlobal("fetch", fn);
@@ -487,7 +487,7 @@ test("character page in Swabian: tabs and empty states", async () => {
 });
 
 test("unknown character in Swabian", async () => {
-  mockFetch(404, { error: "nicht gefunden" });
+  mockFetch(404, { error: "Not found" });
   renderIn("schwaebisch", "/charakter/niemand");
   expect(await screen.findByText("Charakter net gfonda")).toBeTruthy();
   expect(screen.getByText("Den Charakter kennet mr net.")).toBeTruthy();

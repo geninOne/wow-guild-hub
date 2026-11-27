@@ -92,7 +92,7 @@ function Site() {
           <Route path="/" element={<GuildPage />} />
           <Route path="/charakter/:key" element={<CharacterPage />} />
           <Route path="/berufe" element={<ProfessionsPage />} />
-          <Route path="/berufe/:beruf" element={<ProfessionsPage />} />
+          <Route path="/berufe/:profession" element={<ProfessionsPage />} />
           <Route path="/statistik" element={<StatsPage />} />
           <Route path="/statistik/:reiter" element={<StatsPage />} />
           <Route path="/aktivitaet" element={<Navigate to="/statistik/aktivitaet" replace />} />

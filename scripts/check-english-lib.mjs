@@ -110,6 +110,14 @@ export function splitName(name) {
     .map((part) => part.toLowerCase());
 }
 
+/** Reads the list of frozen names: one name per line, case-sensitive, `#` starts a comment. */
+export function parseNameList(text) {
+  return text
+    .split("\n")
+    .map((line) => line.replace(/#.*/, "").trim())
+    .filter(Boolean);
+}
+
 export function isGermanName(name, words) {
   if (FROZEN_NAMES.has(name)) return false;
   return splitName(name).some((part) => GERMAN_LETTERS.test(part) || words.has(part));
@@ -265,18 +273,38 @@ function snippet(text) {
   return flat.length > 80 ? `${flat.slice(0, 77)}...` : flat;
 }
 
+/** Blanks the text between a closing `>` of a JSX tag and the next `<` or `{`, keeping line breaks. */
+export function withoutJsxText(code) {
+  const blank = (text) => text.replace(/[^\n]/g, " ");
+  return code
+    .replace(/(^|[\w"'}/])>([^<>{}]*)(?=[<{])/g, (_, before, text) => `${before}>${blank(text)}`)
+    .replace(/\}([^<>{}=;()[\]]*)(?=<\/?[A-Za-z])/g, (_, text) => `}${blank(text)}`);
+}
+
+const DECLARATION = /\b(?:const|let|var|function|class|interface|type|enum)\s+([A-Za-z_$ÄÖÜäöüß][\w$ÄÖÜäöüß]*)/g;
+
+/** Names declared on one line of code (variables, functions, classes, types). */
+export function declaredNames(line) {
+  return [...line.matchAll(DECLARATION)].map((m) => m[1]);
+}
+
 /** Findings in one JavaScript or TypeScript file. */
 function scanJs(path, source, words) {
   /** @type {Finding[]} */
   const findings = [];
   const pieces = tokenizeJs(source);
   const isTest = path.startsWith("test/");
+  const isJsx = /\.(tsx|jsx)$/.test(path);
   pieces.forEach((piece, index) => {
     if (piece.kind === "code") {
       const seen = new Set();
       let line = piece.line;
-      for (const part of piece.text.split("\n")) {
-        for (const name of part.match(IDENTIFIER) ?? []) {
+      // JSX text is visible text, not code. Line breaks are kept so line numbers stay right.
+      const code = isJsx ? withoutJsxText(piece.text) : piece.text;
+      for (const part of code.split("\n")) {
+        // In tests only declared names count; object keys and other data mirror fixtures, stored data or the API.
+        const names = isTest ? declaredNames(part) : (part.match(IDENTIFIER) ?? []);
+        for (const name of names) {
           const key = `${line}:${name}`;
           if (!seen.has(key) && isGermanName(name, words)) {
             seen.add(key);

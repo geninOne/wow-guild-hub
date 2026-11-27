@@ -1,0 +1,92 @@
+# Names that stay German on purpose, for scripts/check-english.mjs. One name per line, case-sensitive.
+# Each one is part of stored data, the public API, a contract with the language model, a CSS hook or game data.
+# Renaming any of them needs a migration (see AGENTS.md, hard rule 4); then remove it here.
+
+# Fields of stored records (src/model.ts) and API responses (src/api/types.ts).
+zeitung
+artikel
+elemente
+ueber
+gilden
+wetter
+wetterDialekte
+mottoDialekte
+dialekte
+
+# Kinds of weekly numbers (`WeeklyNumberKind`), stored with every weekly record.
+anmeldungen
+rezepte
+erfolge
+ruf
+gegenstandsstufe
+tode
+
+# Section names (German), stored with every article; keys of `SECTIONS`.
+Aufsteiger
+Rekorde
+Handwerk
+Klatsch
+Friedhof
+Vermischtes
+
+# Weather kinds, part of stored phrase pool ids (`wetter-<kind>`).
+sturm
+sternklar
+sonne
+morgennebel
+kellerluft
+schmiedehitze
+flaute
+wechselhaft
+
+# Attribute group ids of the character API (`AttributeGroupId`).
+basis
+angriff
+zauber
+verteidigung
+
+# Keys of the facts sent to the language model and of its JSON answer (src/weekly/claude-text.ts).
+neue_rekorde
+neuer_rekord
+alter_rekord
+mehr_als_bisher
+level_gewonnen
+von_level
+jetzt_level
+auf_level
+runde_level_erreicht
+neu_in_der_gilde
+beteiligte_charaktere
+neue_rezepte_gesamt
+dessen_neue_rezepte
+fleissigster
+im_levelrennen_ueberholt
+wochentag
+stunde
+charakter
+titel
+ueberholt
+regel
+bedeutung
+
+# Values of `StatsView.kind` and German API route aliases of 2.x (src/api/router.ts).
+woche
+monat
+archiv
+
+# Data attributes used as CSS hooks (web/src/styles/theme.css).
+richtung
+farbe
+
+# Stat card slugs (config/statistik-karten.json), used in URLs and as symbol keys.
+fische
+lagerfeuer
+
+# Old section name of 2.x, still in stored issues.
+Erfolge
+
+# The `data-sprache` attribute on <html> (CSS hook) and the 2.x extension names, kept as deprecated aliases until 4.0.
+sprache
+erweiterungen
+SERVER_ERWEITERUNGEN
+OBERFLAECHEN_ERWEITERUNGEN

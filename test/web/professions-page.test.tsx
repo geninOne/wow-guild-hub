@@ -82,7 +82,7 @@ function renderAt(path: string, base: ProfessionsView = view, recipes = recipesB
     <MemoryRouter initialEntries={[path]}>
       <Routes>
         <Route path="/berufe" element={<ProfessionsPage />} />
-        <Route path="/berufe/:beruf" element={<ProfessionsPage />} />
+        <Route path="/berufe/:profession" element={<ProfessionsPage />} />
       </Routes>
       <Where />
     </MemoryRouter>,

@@ -17,8 +17,8 @@ const byValue = (list: MemberValue[]) => [...list].sort((a, b) => b[1] - a[1] ||
 const firstAlternative = (description: string) => description.split(" oder ")[0];
 
 /**
- * Dungeons and raids across all given characters. Counterparts of both factions ("Flammenschlund oder Halle der
- * Thanen") count as one dungeon; the alternatives someone has completed are shown.
+ * Dungeons and raids across all given characters. Counterparts of both factions (two names joined by ` oder `)
+ * count as one dungeon; the alternatives someone has completed are shown.
  */
 export function buildGuildDungeons(
   guild: GuildRecord,

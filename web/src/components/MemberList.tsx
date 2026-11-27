@@ -67,7 +67,7 @@ const fmt = (n: number) => n.toLocaleString(numberLocale());
 /** A set of members with a label and value column; the dialog can switch between several sets. */
 export interface MemberSet {
   key: string;
-  /** Name of the set in the picker, e.g. "Tode durch Stürze". */
+  /** Name of the set in the picker, e.g. deaths from falling. */
   label: string;
   /** Heading of the value column; null without a value column. */
   valueLabel: string | null;

@@ -25,7 +25,7 @@ export function instanceImage(name: string, tiles: IconMap | null): string | nul
   return null;
 }
 
-/** Raid name from the root criterion ("Schließt den Hyjalgipfel ab", "Tötet Onyxia"), else the achievement name. */
+/** Raid name from the root criterion (`Schließt den X ab` or `Tötet X`), else the achievement name. */
 export function raidName(def: InstanceAchievement): string {
   const root = def.rootDescription ?? "";
   const complete = /^Schließt (?:den|die|das) (.+) ab$/.exec(root);

@@ -2,13 +2,13 @@
   command = "npm run build"
   publish = "dist"
 
-# Abfrage beim "Deploy to Netlify"-Knopf. Alle weiteren Einstellungen stehen in .env.example und lassen sich
-# später unter Site configuration, Environment variables ergänzen.
+# Prompted by the "Deploy to Netlify" button. All other settings are in .env.example and can be
+# added later under Site configuration, Environment variables.
 [template.environment]
-  BNET_CLIENT_ID = "Client-ID aus dem Battle.net Developer Portal (develop.battle.net)"
-  BNET_CLIENT_SECRET = "Client-Secret aus dem Battle.net Developer Portal"
-  GUILD_SLUGS = "Slug deiner Gilde wie in der Blizzard-API, z. B. meine-gilde"
-  WEBSITE_NAME = "Name, der oben auf der Seite steht, z. B. Meine Gilde"
+  BNET_CLIENT_ID = "Client ID from the Battle.net Developer Portal (develop.battle.net)"
+  BNET_CLIENT_SECRET = "Client secret from the Battle.net Developer Portal"
+  GUILD_SLUGS = "Slug of your guild as in the Blizzard API, e.g. my-guild"
+  WEBSITE_NAME = "Name shown at the top of the page, e.g. My Guild"
 
 [functions]
   directory = "netlify/functions"
@@ -20,7 +20,7 @@
   targetPort = 5173
   port = 8888
 
-# Seiten der Oberfläche liefern die App aus. Bewusst kein "/*", damit /api/* nie verdeckt wird.
+# UI pages serve the app. Deliberately no "/*", so /api/* is never shadowed.
 [[redirects]]
   from = "/charakter/*"
   to = "/index.html"
