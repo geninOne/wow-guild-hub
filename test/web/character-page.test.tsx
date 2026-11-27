@@ -42,7 +42,7 @@ function gelmarView(over: Partial<CharacterView> = {}, character: Partial<Charac
   };
 }
 
-const waistMitTooltip: EquippedItem = {
+const waistWithTooltip: EquippedItem = {
   slot: "WAIST",
   slotName: "Taille",
   itemId: 9999,
@@ -85,13 +85,13 @@ function renderAt(url: string) {
   );
 }
 
-/** jsdom liefert Inline-Farben als rgb(); Hex dafür umrechnen. */
+/** jsdom returns inline colors as rgb(); convert hex for that. */
 function rgb(hex: string): string {
   const n = Number.parseInt(hex.slice(1), 16);
   return `rgb(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255})`;
 }
 
-test("Kopf von Gelmar", async () => {
+test("Gelmar's header", async () => {
   const fetchMock = mockFetch(200, gelmarView());
   renderAt("/charakter/gelmar-soulvenn");
   expect(await screen.findByRole("heading", { level: 1, name: "Gelmar Soulvenn" })).toBeTruthy();
@@ -107,13 +107,13 @@ test("Kopf von Gelmar", async () => {
   expect(screen.getByRole("tab", { name: "Ausrüstung" }).getAttribute("aria-selected")).toBe("true");
 });
 
-test("Ehemalige tragen einen Hinweis", async () => {
+test("former members carry a note", async () => {
   mockFetch(200, gelmarView({ former: true }));
   renderAt("/charakter/gelmar-soulvenn");
   expect(await screen.findByText("Ehemaliges Mitglied")).toBeTruthy();
 });
 
-test("Leere Slots zeigen den Slotnamen, belegte Slots Name in Qualitätsfarbe", async () => {
+test("empty slots show the slot name, filled slots the name in quality color", async () => {
   mockFetch(200, gelmarView());
   renderAt("/charakter/gelmar-soulvenn");
   const robe = await screen.findByText("Weiße Leinenrobe");
@@ -125,7 +125,7 @@ test("Leere Slots zeigen den Slotnamen, belegte Slots Name in Qualitätsfarbe", 
   expect(robeIcon).toBeTruthy();
 });
 
-test("Fokus auf einem belegten Slot zeigt den Tooltip, Escape schließt ihn", async () => {
+test("focus on a filled slot shows the tooltip, Escape closes it", async () => {
   mockFetch(200, gelmarView());
   renderAt("/charakter/gelmar-soulvenn");
   const robe = await screen.findByText("Weiße Leinenrobe");
@@ -137,8 +137,8 @@ test("Fokus auf einem belegten Slot zeigt den Tooltip, Escape schließt ihn", as
   expect(screen.queryByRole("tooltip")).toBeNull();
 });
 
-test("Tooltip mit allen Feldern und Minimal-Tooltip für alte Daten", () => {
-  render(<ItemTooltip item={{ ...waistMitTooltip }} />);
+test("tooltip with all fields and minimal tooltip for old data", () => {
+  render(<ItemTooltip item={{ ...waistWithTooltip }} />);
   for (const t of [
     "Gegenstandsstufe 20",
     "Wird beim Aufheben gebunden",
@@ -154,7 +154,7 @@ test("Tooltip mit allen Feldern und Minimal-Tooltip für alte Daten", () => {
   expect(price.querySelector(".coin-gold")).toBeNull();
   expect(screen.getByText("Gürtel der Probe").style.color).toBe(rgb(QUALITY_COLORS.UNCOMMON));
   cleanup();
-  const altesTeil: EquippedItem = {
+  const oldItem: EquippedItem = {
     slot: "WRIST",
     slotName: "Handgelenke",
     itemId: 1,
@@ -163,13 +163,13 @@ test("Tooltip mit allen Feldern und Minimal-Tooltip für alte Daten", () => {
     itemLevel: 5,
     enchantments: ["Verzaubert: Ausdauer +2"],
   };
-  render(<ItemTooltip item={altesTeil} />);
+  render(<ItemTooltip item={oldItem} />);
   expect(screen.getByText("Altes Teil")).toBeTruthy();
   expect(screen.getByText("Gegenstandsstufe 5")).toBeTruthy();
   expect(screen.getByText("Verzaubert: Ausdauer +2")).toBeTruthy();
 });
 
-test("ohne Bild Platzhalter, ohne Profil Hinweis und keine Reiter", async () => {
+test("placeholder without an image, note and no tabs without a profile", async () => {
   mockFetch(200, gelmarView({}, { media: null }));
   renderAt("/charakter/gelmar-soulvenn");
   expect(await screen.findByText("Kein Charakterbild verfügbar")).toBeTruthy();
@@ -186,7 +186,7 @@ test("ohne Bild Platzhalter, ohne Profil Hinweis und keine Reiter", async () => 
   expect(screen.queryByRole("tablist")).toBeNull();
 });
 
-test("Reiter Verlauf und Raids gibt es nicht mehr, alte Links zeigen die Ausrüstung", async () => {
+test("history and raids tabs are gone, old links show the equipment", async () => {
   mockFetch(200, gelmarView());
   renderAt("/charakter/gelmar-soulvenn?reiter=verlauf");
   expect(await screen.findByText("Weiße Leinenrobe")).toBeTruthy();
@@ -195,7 +195,7 @@ test("Reiter Verlauf und Raids gibt es nicht mehr, alte Links zeigen die Ausrüs
   expect(tabs).not.toContain("Raids");
 });
 
-test("Reiterwechsel über die Reiterleiste", async () => {
+test("switching tabs via the tab bar", async () => {
   mockFetch(200, gelmarView());
   renderAt("/charakter/gelmar-soulvenn");
   await screen.findByText("Weiße Leinenrobe");
@@ -204,7 +204,7 @@ test("Reiterwechsel über die Reiterleiste", async () => {
   expect(screen.queryByText("Weiße Leinenrobe")).toBeNull();
 });
 
-test("Icon ohne Quelle zeigt Platzhalter statt kaputtem Bild", () => {
+test("icon without a source shows a placeholder instead of a broken image", () => {
   const { container } = render(<Icon src={null} alt="x" size={40} />);
   expect(container.querySelector("img")).toBeNull();
   cleanup();
@@ -213,7 +213,7 @@ test("Icon ohne Quelle zeigt Platzhalter statt kaputtem Bild", () => {
   expect(c2.querySelector("img")).toBeNull();
 });
 
-test("Icon versucht nach einem Ladefehler forever-us und zeigt erst dann den Platzhalter", () => {
+test("icon tries forever-us after a load error and only then shows the placeholder", () => {
   const { container } = render(
     <Icon src="https://render.worldofwarcraft.com/forever-eu/icons/56/a.jpg" alt="x" size={40} />,
   );
@@ -225,7 +225,7 @@ test("Icon versucht nach einem Ladefehler forever-us und zeigt erst dann den Pla
   expect(container.querySelector("img")).toBeNull();
 });
 
-test("fallbackIconUrl und factionName", () => {
+test("fallbackIconUrl and factionName", () => {
   expect(fallbackIconUrl("https://r.com/forever-eu/icons/56/1.jpg")).toBe("https://r.com/forever-us/icons/56/1.jpg");
   expect(fallbackIconUrl("https://r.com/forever-us/icons/56/1.jpg")).toBeNull();
   expect(fallbackIconUrl("https://r.com/eu/icons/56/1.jpg")).toBeNull();
@@ -234,7 +234,7 @@ test("fallbackIconUrl und factionName", () => {
   expect(factionName("X")).toBe("X");
 });
 
-test("unbekannter Charakter", async () => {
+test("unknown character", async () => {
   mockFetch(404, { error: "Not found" });
   renderAt("/charakter/niemand");
   expect(await screen.findByText("Charakter nicht gefunden")).toBeTruthy();
@@ -250,7 +250,7 @@ function mockRoutes(routes: Record<string, [number, unknown]>) {
   return fn;
 }
 
-test("Talente-Reiter lädt den Klassenbaum und zeigt ihn", async () => {
+test("talents tab loads the class tree and shows it", async () => {
   const tree = JSON.parse(
     readFileSync(resolve(process.cwd(), "test/fixtures/records/talent-trees/1114.json"), "utf8"),
   ) as TalentTreeRecord;
@@ -265,7 +265,7 @@ test("Talente-Reiter lädt den Klassenbaum und zeigt ihn", async () => {
   expect(screen.getByRole("heading", { level: 2, name: "Schattenmagie" })).toBeTruthy();
 });
 
-test("Talente-Reiter ohne gesammelten Baum", async () => {
+test("talents tab without a collected tree", async () => {
   mockRoutes({
     "/api/characters/gelmar-soulvenn": [200, gelmarView()],
     "/api/talents/5": [404, { error: "Not found" }],
@@ -274,18 +274,18 @@ test("Talente-Reiter ohne gesammelten Baum", async () => {
   expect(await screen.findByText("Talentbäume sind noch nicht geladen.")).toBeTruthy();
 });
 
-const hose = {
+const pants = {
   id: 2408, name: "Braune Leinenhose", description: null,
   icon: "https://render.worldofwarcraft.com/forever-eu/icons/56/134586.jpg", craftedQuantity: 1,
   item: { id: 4343, name: "Braune Leinenhose", quality: "UNCOMMON", itemLevel: 10, tooltip: null },
   reagents: [{ id: 2996, name: "Leinenstoffballen", quantity: 2, icon: null }],
 };
 
-test("Reiter Berufe zeigt Balken und Rezept-Icons mit Tooltip", async () => {
+test("professions tab shows bars and recipe icons with tooltip", async () => {
   mockFetch(
     200,
     gelmarView(
-      { recipes: { "2408": hose } },
+      { recipes: { "2408": pants } },
       {
         professions: [
           { id: 197, name: "Schneiderei", nameEn: "Tailoring", skill: 37, max: 75, primary: true,
@@ -307,7 +307,7 @@ test("Reiter Berufe zeigt Balken und Rezept-Icons mit Tooltip", async () => {
   expect(screen.queryByLabelText("Rezepte in Schneiderei filtern")).toBeNull();
 });
 
-test("Reiter Berufe: Filter ab 24 Rezepten", async () => {
+test("professions tab: filter from 24 recipes on", async () => {
   const names = Array.from({ length: 24 }, (_, i) => `Rezept ${String(i).padStart(2, "0")}`);
   names[5] = "Leinentasche";
   mockFetch(
@@ -323,14 +323,14 @@ test("Reiter Berufe: Filter ab 24 Rezepten", async () => {
   expect(screen.getByText("Kein Rezept gefunden.")).toBeTruthy();
 });
 
-test("Reiter Berufe ohne Berufe", async () => {
+test("professions tab without professions", async () => {
   mockFetch(200, gelmarView({}, { professions: [] }));
   renderAt("/charakter/gelmar-soulvenn?reiter=berufe");
   expect(await screen.findByText("Keine Berufe erlernt")).toBeTruthy();
 });
 
 
-test("Charakterkopf zeigt Gilde und Fraktionswappen des Mitglieds", async () => {
+test("character header shows the member's guild and faction crest", async () => {
   mockFetch(200, gelmarView({ guildName: "Goldene Bärenklaue", guildFaction: "ALLIANCE" }));
   renderAt("/charakter/gelmar-soulvenn");
   await screen.findByText("Weiße Leinenrobe");
@@ -339,7 +339,7 @@ test("Charakterkopf zeigt Gilde und Fraktionswappen des Mitglieds", async () => 
   expect(within(meta as HTMLElement).getByRole("img", { name: "Allianz" })).toBeTruthy();
 });
 
-test("Reiter Dungeons & Raids über ?reiter=dungeons", async () => {
+test("Dungeons & Raids tab via ?reiter=dungeons", async () => {
   mockFetch(
     200,
     gelmarView({
@@ -356,7 +356,7 @@ test("Reiter Dungeons & Raids über ?reiter=dungeons", async () => {
   expect(screen.getByRole("tab", { name: "Dungeons & Raids" }).getAttribute("aria-selected")).toBe("true");
 });
 
-test("Reiter Ruf über ?reiter=ruf", async () => {
+test("reputation tab via ?reiter=ruf", async () => {
   mockFetch(
     200,
     gelmarView({
@@ -371,7 +371,7 @@ test("Reiter Ruf über ?reiter=ruf", async () => {
   expect(screen.getByRole("tab", { name: "Ruf" }).getAttribute("aria-selected")).toBe("true");
 });
 
-test("Link mit #beruf öffnet Berufe, scrollt hin und hebt hervor", async () => {
+test("link with #beruf opens professions, scrolls there and highlights", async () => {
   const scroll = vi.fn();
   Element.prototype.scrollIntoView = scroll;
   mockFetch(
@@ -387,16 +387,16 @@ test("Link mit #beruf öffnet Berufe, scrollt hin und hebt hervor", async () => 
     ),
   );
   renderAt("/charakter/gelmar-soulvenn?reiter=berufe#schneiderei");
-  const schneiderei = (await screen.findByText("Schneiderei")).closest<HTMLElement>(".character-profession")!;
+  const tailoring = (await screen.findByText("Schneiderei")).closest<HTMLElement>(".character-profession")!;
   expect(screen.getByRole("tab", { name: "Berufe" }).getAttribute("aria-selected")).toBe("true");
-  expect(schneiderei.className).toContain("character-profession-highlight");
-  const bergbau = screen.getByText("Bergbau").closest<HTMLElement>(".character-profession")!;
-  expect(bergbau.className).not.toContain("character-profession-highlight");
+  expect(tailoring.className).toContain("character-profession-highlight");
+  const mining = screen.getByText("Bergbau").closest<HTMLElement>(".character-profession")!;
+  expect(mining.className).not.toContain("character-profession-highlight");
   expect(scroll).toHaveBeenCalledTimes(1);
-  expect(scroll.mock.contexts[0]).toBe(schneiderei);
+  expect(scroll.mock.contexts[0]).toBe(tailoring);
 });
 
-test("Titel der Woche erscheinen als Abzeichen im Kopf und Wrapped als Reiter", async () => {
+test("titles of the week appear as badges in the header and Wrapped as a tab", async () => {
   vi.stubGlobal(
     "fetch",
     vi.fn(async () =>
@@ -415,16 +415,16 @@ test("Titel der Woche erscheinen als Abzeichen im Kopf und Wrapped als Reiter", 
   );
   const badge = await screen.findByRole("link", { name: "Pechvogel" });
   expect(badge.getAttribute("href")).toBe("/titel");
-  const medaille = badge.querySelector("img")!;
-  expect(medaille.getAttribute("src")).toBe("/titel/pechvogel.png");
-  expect(medaille.getAttribute("alt")).toBe("Pechvogel");
-  expect(medaille.getAttribute("title")).toBe("Pechvogel, Titel der Woche vom 15.11. bis 21.11.: 7 Tode");
-  expect([medaille.getAttribute("width"), medaille.getAttribute("height"), medaille.getAttribute("loading")]).toEqual(["40", "40", "lazy"]);
+  const medal = badge.querySelector("img")!;
+  expect(medal.getAttribute("src")).toBe("/titel/pechvogel.png");
+  expect(medal.getAttribute("alt")).toBe("Pechvogel");
+  expect(medal.getAttribute("title")).toBe("Pechvogel, Titel der Woche vom 15.11. bis 21.11.: 7 Tode");
+  expect([medal.getAttribute("width"), medal.getAttribute("height"), medal.getAttribute("loading")]).toEqual(["40", "40", "lazy"]);
   expect(screen.getByRole("tab", { name: "Rückblick" })).toBeTruthy();
   expect(screen.queryByRole("tab", { name: "Wrapped" })).toBeNull();
 });
 
-test("Titel ohne Abzeichen-Datei erscheint wie bisher als goldenes Textabzeichen", async () => {
+test("title without a badge file still appears as a golden text badge", async () => {
   vi.stubGlobal(
     "fetch",
     vi.fn(async () =>
@@ -446,9 +446,9 @@ test("Titel ohne Abzeichen-Datei erscheint wie bisher als goldenes Textabzeichen
   expect(badge.querySelector("img")).toBeNull();
 });
 
-function renderIn(sprache: Sprache, url: string) {
+function renderIn(language: Sprache, url: string) {
   render(
-    <SpracheProvider start={sprache}>
+    <SpracheProvider start={language}>
       <MemoryRouter initialEntries={[url]}>
         <Routes>
           <Route path="/charakter/:key" element={<CharacterPage />} />
@@ -467,33 +467,33 @@ const pechvogel = {
   valueText: { de: "7 Tode", en: "7 Tode", schwaebisch: "7 Mol higfloga", bayrisch: "7 Moi higfoin" },
 };
 
-test("Charakterseite auf Bayrisch: Kopf, Titel-Tooltip und Hinweise im Dialekt", async () => {
+test("character page in Bavarian: header, title tooltip and notes in dialect", async () => {
   mockFetch(200, gelmarView({ former: true, titles: [pechvogel] }));
   renderIn("bayrisch", "/charakter/gelmar-soulvenn");
   expect(await screen.findByText("Ehemaligs Mitglied")).toBeTruthy();
   expect(document.body.textContent).toContain("Zletzt online: 06.11.2026, 07:14 Uhr");
-  const medaille = screen.getByRole("link", { name: "Pechvogel" }).querySelector("img")!;
-  expect(medaille.getAttribute("title")).toBe("Pechvogel, Titel vo da Woch vom 15.11. bis 21.11.: 7 Moi higfoin");
-  // Amtliche Namen bleiben, auch der Ausrüstungsplatz.
+  const medal = screen.getByRole("link", { name: "Pechvogel" }).querySelector("img")!;
+  expect(medal.getAttribute("title")).toBe("Pechvogel, Titel vo da Woch vom 15.11. bis 21.11.: 7 Moi higfoin");
+  // Official names stay, including the equipment slot.
   expect(screen.getByText("Kopf")).toBeTruthy();
   expect(document.body.textContent).toContain("10 Untoter Priester");
 });
 
-test("Charakterseite auf Schwäbisch: Reiter und leere Zustände", async () => {
+test("character page in Swabian: tabs and empty states", async () => {
   mockFetch(200, gelmarView({}, { professions: [] }));
   renderIn("schwaebisch", "/charakter/gelmar-soulvenn?reiter=berufe");
   expect(await screen.findByText("Koine Berufe glernt")).toBeTruthy();
   expect(screen.getByRole("tab", { name: "Ausrüschtung" })).toBeTruthy();
 });
 
-test("Unbekannter Charakter auf Schwäbisch", async () => {
+test("unknown character in Swabian", async () => {
   mockFetch(404, { error: "nicht gefunden" });
   renderIn("schwaebisch", "/charakter/niemand");
   expect(await screen.findByText("Charakter net gfonda")).toBeTruthy();
   expect(screen.getByText("Den Charakter kennet mr net.")).toBeTruthy();
 });
 
-const werte: CharacterView["attributes"] = {
+const stats: CharacterView["attributes"] = {
   available: true,
   fetchedAt: "2026-11-26T03:00:00.000Z",
   resource: { id: 1, kind: "rage", name: "Wut" },
@@ -511,31 +511,31 @@ const werte: CharacterView["attributes"] = {
   ],
 };
 
-test("Reiter Werte zeigt Grundwerte als Kacheln, Ressource nach Art und Gruppen", async () => {
-  mockFetch(200, gelmarView({ attributes: werte }));
+test("stats tab shows base stats as tiles, resource by kind and groups", async () => {
+  mockFetch(200, gelmarView({ attributes: stats }));
   renderAt("/charakter/gelmar-soulvenn?reiter=werte");
   expect(await screen.findByText("Gesundheit")).toBeTruthy();
   expect(screen.getByRole("tab", { name: "Werte" }).getAttribute("aria-selected")).toBe("true");
   expect(screen.getByText("4.210")).toBeTruthy();
   expect(screen.getByText("Wut")).toBeTruthy();
-  const staerke = screen.getByText("Stärke").closest("li")!;
-  expect(within(staerke).getByText("152")).toBeTruthy();
-  // Zuwachs sichtbar in der Fußzeile.
-  expect(within(staerke).getByText("+32 durch Ausrüstung und Buffs").className).toBe("attribute-foot");
-  expect(staerke.getAttribute("title")).toBe("Grundwert 120, +32 durch Ausrüstung und Buffs");
-  // Ohne Zuwachs keine Erklärung.
-  const gesundheit = screen.getByText("Gesundheit").closest("li")!;
-  expect(within(gesundheit).queryByText(/Ausrüstung/)).toBeNull();
-  // Die Fußzeile bleibt auch leer stehen, damit alle Kacheln gleich hoch sind.
-  expect(gesundheit.querySelector(".attribute-foot")).not.toBeNull();
+  const strength = screen.getByText("Stärke").closest("li")!;
+  expect(within(strength).getByText("152")).toBeTruthy();
+  // Gain visible in the footer.
+  expect(within(strength).getByText("+32 durch Ausrüstung und Buffs").className).toBe("attribute-foot");
+  expect(strength.getAttribute("title")).toBe("Grundwert 120, +32 durch Ausrüstung und Buffs");
+  // No explanation without a gain.
+  const health = screen.getByText("Gesundheit").closest("li")!;
+  expect(within(health).queryByText(/Ausrüstung/)).toBeNull();
+  // The footer stays even when empty so all tiles have the same height.
+  expect(health.querySelector(".attribute-foot")).not.toBeNull();
   expect(screen.getByRole("heading", { name: "Angriff" })).toBeTruthy();
   expect(screen.getByText("5,25 %")).toBeTruthy();
   expect(screen.getByRole("heading", { name: "Verteidigung" })).toBeTruthy();
   expect(screen.queryByRole("heading", { name: "Zauber" })).toBeNull();
 });
 
-test("Reiter Werte auf Englisch", async () => {
-  mockFetch(200, gelmarView({ attributes: { ...werte, resource: { id: 6, kind: "runic_power", name: "Runenmacht" } } }));
+test("stats tab in English", async () => {
+  mockFetch(200, gelmarView({ attributes: { ...stats, resource: { id: 6, kind: "runic_power", name: "Runenmacht" } } }));
   render(
     <SpracheProvider start="en">
       <MemoryRouter initialEntries={["/charakter/gelmar-soulvenn?reiter=werte"]}>
@@ -552,7 +552,8 @@ test("Reiter Werte auf Englisch", async () => {
   expect(screen.getByText("+32 from gear and buffs")).toBeTruthy();
 });
 
-test("Reiter Werte ohne Daten: Hinweis statt leerer Seite", async () => {
+test("stats tab without data: note instead of an empty page"
+, async () => {
   mockFetch(200, gelmarView());
   renderAt("/charakter/gelmar-soulvenn?reiter=werte");
   expect(await screen.findByText("Die Werte werden gerade zusammengetragen. Schau bald wieder vorbei.")).toBeTruthy();

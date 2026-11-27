@@ -2,13 +2,13 @@ import type { ReputationView } from "../../../src/api/types";
 import { useSprache, type Fassungen } from "../lib/sprache";
 
 const T = {
-  sammeln: {
+  gathering: {
     de: "Rufdaten werden gerade zusammengetragen. Schau bald wieder vorbei.",
     en: "Reputation data is being gathered right now. Check back soon.",
     schwaebisch: "D'Rufdaten werdet grad zammatraga. Schau bald wieder vorbei, gell.",
     bayrisch: "De Rufdatn wern grad zammtragn. Schau boid wieder vorbei, gell.",
   },
-  keinRuf: {
+  noReputation: {
     de: "Noch keinen Ruf bei einer Fraktion gesammelt.",
     en: "No reputation with any faction yet.",
     schwaebisch: "No koin Ruf bei ra Fraktion gsammlet.",
@@ -16,27 +16,28 @@ const T = {
   },
 } satisfies Record<string, Fassungen>;
 
-/** Farbe nach Stufe: bis Unfreundlich rot, Neutral gelb, ab Freundlich grün (Stufen-IDs 0 bis 7). */
+/** Color by standing: red up to Unfriendly, yellow for Neutral, green from Friendly on (standing ids 0 to 7). */
 function tierClass(tier: number): string {
   if (tier <= 2) return "reputation-hostile";
   if (tier === 3) return "reputation-neutral";
   return "reputation-friendly";
 }
 
-/** Ruf eines Charakters, nach Fraktionsgruppen. Nur der eigene Stand, kein Vergleich. */
+/** Reputation of a character, by faction group. Only its own standing, no comparison. */
+
 export function ReputationPanel({ view }: { view: ReputationView }) {
   const { t } = useSprache();
   if (!view.available) {
     return (
       <div className="state state-empty">
-        <p>{t(T.sammeln)}</p>
+        <p>{t(T.gathering)}</p>
       </div>
     );
   }
   if (view.groups.length === 0) {
     return (
       <div className="state state-empty">
-        <p>{t(T.keinRuf)}</p>
+        <p>{t(T.noReputation)}</p>
       </div>
     );
   }

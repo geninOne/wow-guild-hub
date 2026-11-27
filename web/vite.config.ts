@@ -41,7 +41,7 @@ export default defineConfig(({ mode }) => {
     plugins: [react(), siteDetails(env), errorPage()],
     define: {
       "import.meta.env.VITE_VERSION": JSON.stringify(version),
-      "import.meta.env.VITE_VERSION_DATUM": JSON.stringify(date),
+      "import.meta.env.VITE_VERSION_DATE": JSON.stringify(date),
     },
     build: {
       outDir: "../dist",

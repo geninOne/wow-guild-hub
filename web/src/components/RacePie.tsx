@@ -7,27 +7,27 @@ import { useSprache, type Fassungen } from "../lib/sprache";
 import { numberLocale } from "../lib/format";
 
 const T = {
-  titel: { de: "Völkerverteilung", en: "Race Distribution", schwaebisch: "Völkerverteilung", bayrisch: "Völkerverteilung" },
-  spruch: {
+  title: { de: "Völkerverteilung", en: "Race Distribution", schwaebisch: "Völkerverteilung", bayrisch: "Völkerverteilung" },
+  saying: {
     de: "Wer steckt in welcher Haut? Ein Klick auf ein Volk filtert Klassen und Level.",
     en: "Who's in whose skin? Click a race to filter classes and levels.",
     schwaebisch: "Wer steckt in welchere Haut? Klick auf a Volk, no siehsch seine Klasse ond Level.",
     bayrisch: "Wer steckt in wos für a Haut? Klick auf a Volk, nacha siagst seine Klassn und Level.",
   },
-  volk: { de: "Volk", en: "Race", schwaebisch: "Volk", bayrisch: "Volk" },
-  anzahl: { de: "Anzahl", en: "Count", schwaebisch: "Azahl", bayrisch: "Anzahl" },
-  anteil: { de: "Anteil", en: "Share", schwaebisch: "Anteil", bayrisch: "Anteil" },
-  leer: {
+  race: { de: "Volk", en: "Race", schwaebisch: "Volk", bayrisch: "Volk" },
+  count: { de: "Anzahl", en: "Count", schwaebisch: "Azahl", bayrisch: "Anzahl" },
+  share: { de: "Anteil", en: "Share", schwaebisch: "Anteil", bayrisch: "Anteil" },
+  empty: {
     de: "Niemand da. Selbst die Untoten sind heute im Grab geblieben.",
     en: "Nobody here. Even the Undead stayed in their graves today.",
     schwaebisch: "Koiner do. Sogar d'Untote sind heit im Grab bliebe.",
     bayrisch: "Koana do. Sogar de Untotn san heit im Grab bliebn.",
   },
-  torte: { de: "Völker als Torte", en: "Races as a pie chart", schwaebisch: "Völker als Torte", bayrisch: "Völker ois Tortn" },
+  pie: { de: "Völker als Torte", en: "Races as a pie chart", schwaebisch: "Völker als Torte", bayrisch: "Völker ois Tortn" },
 } satisfies Record<string, Fassungen>;
 
-/** Spruch zum häufigsten Volk, nach Volk-ID (Classic: 1 Mensch bis 8 Troll, Forever: 95 und 96 Himmelsgeborene). */
-const VORNE: Record<number, Fassungen> = {
+/** Saying for the most common race, by race ID (Classic: 1 Human to 8 Troll, Forever: 95 and 96 Skyborn). */
+const IN_THE_LEAD: Record<number, Fassungen> = {
   1: {
     de: "Menschen vorne. Durchschnitt ist auch eine Stärke.",
     en: "Humans in the lead. Being average is a strength too.",
@@ -90,14 +90,14 @@ const VORNE: Record<number, Fassungen> = {
   },
 };
 
-const VORNE_SONST: Fassungen<(name: string) => string> = {
+const IN_THE_LEAD_OTHER: Fassungen<(name: string) => string> = {
   de: (name) => `${name} vorne. Volk der Stunde!`,
   en: (name) => `${name} in the lead. Race of the hour!`,
   schwaebisch: (name) => `${name} vorne. Volk vo dr Stund!`,
   bayrisch: (name) => `${name} vorn. Volk vo da Stund!`,
 };
 
-const GLEICHSTAND: Fassungen<(a: string, b: string) => string> = {
+const TIE: Fassungen<(a: string, b: string) => string> = {
   de: (a, b) => `Gleichstand an der Spitze: ${a} und ${b} teilen sich das Treppchen.`,
   en: (a, b) => `Tied at the top: ${a} and ${b} share the podium.`,
   schwaebisch: (a, b) => `Gleichstand ganz vorne: ${a} ond ${b} teilet sich's Trepple.`,
@@ -105,20 +105,20 @@ const GLEICHSTAND: Fassungen<(a: string, b: string) => string> = {
 };
 
 /**
- * Feste Farbe je Volk, damit ein Volk beim Filtern seine Farbe behält. Helle, gesättigte Töne mit großem
- * Abstand im Farbkreis (Elfenbein und Limette für die Himmelsgeborenen), alle mit mindestens 3:1 gegen das Panel; die Stücke trennt eine Fuge in Panelfarbe.
+ * Fixed color per race, so a race keeps its color while filtering. Bright, saturated tones far apart on the
+ * color wheel (ivory and lime for the Skyborn), all at least 3:1 against the panel; a gap in panel color separates the slices.
  */
 export const RACE_COLORS: Record<number, string> = {
-  1: "#5b9cf5", // Mensch: Blau
-  2: "#e5533d", // Orc: Rot
-  3: "#e3a33b", // Zwerg: Bernstein
-  4: "#a77ef0", // Nachtelf: Violett
-  5: "#7fd18b", // Untoter: Grün
-  6: "#b98a62", // Tauren: Braun
-  7: "#f27fc4", // Gnom: Rosa
-  8: "#3fc1c9", // Troll: Türkis
-  95: "#ece3cf", // Himmelsgeborener des Hohen Ordens (Allianz): Elfenbein
-  96: "#c6e35a", // Himmelsgeborener der Windformer (Horde): Limette
+  1: "#5b9cf5", // Human: blue
+  2: "#e5533d", // Orc: red
+  3: "#e3a33b", // Dwarf: amber
+  4: "#a77ef0", // Night Elf: violet
+  5: "#7fd18b", // Undead: green
+  6: "#b98a62", // Tauren: brown
+  7: "#f27fc4", // Gnome: pink
+  8: "#3fc1c9", // Troll: turquoise
+  95: "#ece3cf", // Skyborn of the High Order (Alliance): ivory
+  96: "#c6e35a", // Skyborn of the Windshapers (Horde): lime
 };
 const FALLBACK_COLORS = ["#d8cfba", "#9fb3c8", "#c8b29f"];
 
@@ -130,25 +130,25 @@ function percent(share: number): string {
   return `${(share * 100).toLocaleString(numberLocale(), { maximumFractionDigits: 0 })} %`;
 }
 
-/** So weit rückt das gewählte Stück aus der Mitte (in SVG-Einheiten, Radius 92). */
+/** How far the selected slice moves out of the center (in SVG units, radius 92). */
 const PULL = 7;
 
 interface RacePieProps {
-  /** Aktive Mitglieder, schon nach Gilde, Klasse und Level gefiltert (Kreuzfilter ohne die Volksachse). */
+  /** Active members, already filtered by guild, class and level (crossfilter without the race axis). */
   members: MemberRow[];
-  /** Gewähltes Volk der gemeinsamen Auswahl; es wird hervorgehoben, die anderen Stücke gedimmt. */
+  /** Selected race of the shared selection; it is highlighted, the other slices dimmed. */
   raceId: number | null;
-  /** Klick auf ein Stück oder eine Legendenzeile: dasselbe Volk noch einmal hebt die Wahl auf. */
+  /** Click on a slice or legend row: the same race again clears the selection. */
   onRace(raceId: number): void;
-  /** Name eines Volks, falls das gewählte gerade herausgefiltert ist. */
+  /** Name of a race, in case the selected one is currently filtered out. */
   raceName(raceId: number): string | null;
-  /** Hinweis auf die Auswahlen der anderen Diagramme, ersetzt den Spruch im Kopf. */
+  /** Note about the selections in the other charts, replaces the saying in the header. */
   note?: string | null;
 }
 
 /**
- * Torte der Völker mit Tabelle als Legende und für Screenreader. Ein Klick auf ein Stück oder eine Legendenzeile
- * wählt das Volk für den Kreuzfilter; per Tastatur und Screenreader über die Schalter in der Legende.
+ * Pie of the races with a table as legend and for screen readers. A click on a slice or legend row
+ * selects the race for the crossfilter; via keyboard and screen reader through the buttons in the legend.
  */
 export function RacePie({ members, raceId, onRace, raceName, note }: RacePieProps) {
   const { t } = useSprache();
@@ -163,19 +163,19 @@ export function RacePie({ members, raceId, onRace, raceName, note }: RacePieProp
   );
   const total = slices.reduce((sum, s) => sum + s.count, 0);
   const arcs = pieArcs(slices.map((s) => s.count), 100, 100, 92);
-  // Gedimmt wird beim Überfahren alles außer dem überfahrenen Volk, sonst alles außer dem gewählten.
+  // On hover everything except the hovered race is dimmed, otherwise everything except the selected one.
   const focus = hover ?? raceId;
 
   return (
     <div className="panel race-panel">
       <header className="panel-header stat-theme-header">
-        <h2 className="panel-title">{t(T.titel)}</h2>
-        <p className="stat-theme-blurb">{note ?? t(T.spruch)}</p>
+        <h2 className="panel-title">{t(T.title)}</h2>
+        <p className="stat-theme-blurb">{note ?? t(T.saying)}</p>
       </header>
 
       {total === 0 ? (
         <div className="state state-empty race-empty" role="status">
-          {t(T.leer)}
+          {t(T.empty)}
         </div>
       ) : (
         <>
@@ -187,7 +187,7 @@ export function RacePie({ members, raceId, onRace, raceName, note }: RacePieProp
               className="race-pie"
               viewBox="0 0 200 200"
               role="img"
-              aria-label={`${t(T.torte)}: ${slices
+              aria-label={`${t(T.pie)}: ${slices
                 .filter((s) => s.count > 0)
                 .map((s) => `${s.raceName} ${s.count} (${percent(s.share)})`)
                 .join(", ")}`}
@@ -218,15 +218,15 @@ export function RacePie({ members, raceId, onRace, raceName, note }: RacePieProp
               })}
             </svg>
             <table className="race-legend" data-picked={raceId !== null ? "" : undefined}>
-              <caption className="sr-only">{t(T.titel)}</caption>
+              <caption className="sr-only">{t(T.title)}</caption>
               <thead>
                 <tr>
-                  <th scope="col">{t(T.volk)}</th>
+                  <th scope="col">{t(T.race)}</th>
                   <th scope="col" className="num">
-                    {t(T.anzahl)}
+                    {t(T.count)}
                   </th>
                   <th scope="col" className="num">
-                    {t(T.anteil)}
+                    {t(T.share)}
                   </th>
                 </tr>
               </thead>
@@ -246,7 +246,7 @@ export function RacePie({ members, raceId, onRace, raceName, note }: RacePieProp
                         className="race-pick"
                         aria-pressed={s.raceId === raceId}
                         onClick={(e) => {
-                          // Die Zeile selbst ist für die Maus auch klickbar; nicht doppelt umschalten.
+                          // The row itself is clickable for the mouse too; do not toggle twice.
                           e.stopPropagation();
                           onRace(s.raceId);
                         }}
@@ -271,7 +271,7 @@ export function RacePie({ members, raceId, onRace, raceName, note }: RacePieProp
 function TopSaying({ slices }: { slices: RaceSlice[] }) {
   const { t } = useSprache();
   const [first, second] = slices;
-  if (second && second.count === first.count) return <>{t(GLEICHSTAND)(first.raceName, second.raceName)}</>;
-  const fixed = VORNE[first.raceId];
-  return <>{fixed ? t(fixed) : t(VORNE_SONST)(first.raceName)}</>;
+  if (second && second.count === first.count) return <>{t(TIE)(first.raceName, second.raceName)}</>;
+  const fixed = IN_THE_LEAD[first.raceId];
+  return <>{fixed ? t(fixed) : t(IN_THE_LEAD_OTHER)(first.raceName)}</>;
 }

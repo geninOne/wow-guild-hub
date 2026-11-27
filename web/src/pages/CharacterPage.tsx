@@ -31,43 +31,43 @@ const TABS = [
 ] as const satisfies readonly { id: string; label: Fassungen }[];
 
 const T = {
-  ehemalig: { de: "Ehemaliges Mitglied", en: "Former member", schwaebisch: "Ehemaligs Mitglied", bayrisch: "Ehemaligs Mitglied" },
-  zuletztOnline: { de: "Zuletzt online", en: "Last online", schwaebisch: "Zletscht online", bayrisch: "Zletzt online" },
-  titelTooltip: {
-    de: (name: string, woche: string, wert: string) => `${name}, Titel der ${woche}: ${wert}`,
-    en: (name: string, woche: string, wert: string) => `${name}, title for the ${woche.charAt(0).toLowerCase()}${woche.slice(1)}: ${wert}`,
-    schwaebisch: (name: string, woche: string, wert: string) => `${name}, Titel vo dr ${woche}: ${wert}`,
-    bayrisch: (name: string, woche: string, wert: string) => `${name}, Titel vo da ${woche}: ${wert}`,
+  former: { de: "Ehemaliges Mitglied", en: "Former member", schwaebisch: "Ehemaligs Mitglied", bayrisch: "Ehemaligs Mitglied" },
+  lastOnline: { de: "Zuletzt online", en: "Last online", schwaebisch: "Zletscht online", bayrisch: "Zletzt online" },
+  titleTooltip: {
+    de: (name: string, week: string, value: string) => `${name}, Titel der ${week}: ${value}`,
+    en: (name: string, week: string, value: string) => `${name}, title for the ${week.charAt(0).toLowerCase()}${week.slice(1)}: ${value}`,
+    schwaebisch: (name: string, week: string, value: string) => `${name}, Titel vo dr ${week}: ${value}`,
+    bayrisch: (name: string, week: string, value: string) => `${name}, Titel vo da ${week}: ${value}`,
   },
-  talenteFehlen: {
+  talentsMissing: {
     de: "Talentbäume sind noch nicht geladen.",
     en: "Talent trees have not been loaded yet.",
     schwaebisch: "D'Talentbäum sin no net glada.",
     bayrisch: "De Talentbaam san no ned gladn.",
   },
-  keineBerufe: { de: "Keine Berufe erlernt", en: "No professions learned", schwaebisch: "Koine Berufe glernt", bayrisch: "Koane Berufe glernt" },
-  rezepte: {
+  noProfessions: { de: "Keine Berufe erlernt", en: "No professions learned", schwaebisch: "Koine Berufe glernt", bayrisch: "Koane Berufe glernt" },
+  recipes: {
     de: (n: number) => (n === 1 ? "1 Rezept" : `${n} Rezepte`),
     en: (n: number) => (n === 1 ? "1 recipe" : `${n} recipes`),
     schwaebisch: (n: number) => (n === 1 ? "1 Rezept" : `${n} Rezept`),
     bayrisch: (n: number) => (n === 1 ? "1 Rezept" : `${n} Rezepte`),
   },
-  ohneProfil: {
+  noProfile: {
     de: "Blizzard zeigt Details zu Charakteren erst ab Level 10.",
     en: "Blizzard only shows character details from level 10.",
     schwaebisch: "Blizzard zeigt Details zu de Charaktere erscht ab Level 10.",
     bayrisch: "Blizzard zoagt Details zu de Charaktere erst ab Level 10.",
   },
-  bereiche: { de: "Bereiche", en: "Sections", schwaebisch: "Bereiche", bayrisch: "Bereiche" },
-  nichtGefunden: { de: "Charakter nicht gefunden", en: "Character not found", schwaebisch: "Charakter net gfonda", bayrisch: "Charakter ned gfundn" },
-  unbekannt: {
+  sections: { de: "Bereiche", en: "Sections", schwaebisch: "Bereiche", bayrisch: "Bereiche" },
+  notFound: { de: "Charakter nicht gefunden", en: "Character not found", schwaebisch: "Charakter net gfonda", bayrisch: "Charakter ned gfundn" },
+  unknown: {
     de: "Diesen Charakter kennen wir nicht.",
     en: "We don't know this character.",
     schwaebisch: "Den Charakter kennet mr net.",
     bayrisch: "Den Charakter kennan mia ned.",
   },
   gs: { de: "GS", en: "iLvl" },
-  zurUebersicht: {
+  backToOverview: {
     de: "Zur Gildenübersicht",
     en: "Back to the guild overview",
     schwaebisch: "Zrück zur Gildenübersicht",
@@ -79,9 +79,9 @@ type TabId = (typeof TABS)[number]["id"];
 
 const DEFAULT_TAB: TabId = "ausruestung";
 
-/** Reiter der Erweiterungen, hinter denen des Kerns; je Erweiterung mit ihrer Kennung für die Zusatzdaten. */
-function erweiterungsReiter(): (CharakterReiter & { erweiterung: string })[] {
-  return OBERFLAECHEN_ERWEITERUNGEN.flatMap((e) => (e.charakterReiter ?? []).map((r) => ({ ...r, erweiterung: e.id }))).filter(
+/** Tabs of the extensions, after the core ones; each with its extension's id for the extra data. */
+function extensionTabs(): (CharakterReiter & { extension: string })[] {
+  return OBERFLAECHEN_ERWEITERUNGEN.flatMap((e) => (e.charakterReiter ?? []).map((r) => ({ ...r, extension: e.id }))).filter(
     (r) => !TABS.some((t) => t.id === r.id),
   );
 }
@@ -90,10 +90,10 @@ function isTabId(value: string | null): value is TabId {
   return TABS.some((tab) => tab.id === value);
 }
 
-/** Zusatzdaten einer Erweiterung aus der Antwort des Servers. */
-function zusatz(view: CharacterView, id: string): unknown {
-  const alle = view.erweiterungen;
-  return alle && Object.hasOwn(alle, id) ? alle[id] : undefined;
+/** Extra data of an extension from the server's response. */
+function extensionData(view: CharacterView, id: string): unknown {
+  const all = view.erweiterungen;
+  return all && Object.hasOwn(all, id) ? all[id] : undefined;
 }
 
 function CharacterHeader({ view }: { view: CharacterView }) {
@@ -121,27 +121,27 @@ function CharacterHeader({ view }: { view: CharacterView }) {
       <p className="character-facts">
         {c.equippedItemLevel !== null && <span className="badge">{t(T.gs)} {c.equippedItemLevel}</span>}
         {view.rankName && <span className="badge badge-muted">{view.rankName}</span>}
-        {OBERFLAECHEN_ERWEITERUNGEN.map(({ id, charakterKopf: Kopf }) => {
-          const daten = zusatz(view, id);
-          return Kopf && daten !== undefined && <Kopf key={id} daten={daten} view={view} />;
+        {OBERFLAECHEN_ERWEITERUNGEN.map(({ id, charakterKopf: Header }) => {
+          const data = extensionData(view, id);
+          return Header && data !== undefined && <Header key={id} daten={data} view={view} />;
         })}
-        {view.former && <span className="badge character-former">{t(T.ehemalig)}</span>}
-        {(view.titles ?? []).map((titel) => {
-          const name = t(titel.name);
-          const tooltip = t(T.titelTooltip)(name, weekLabel(titel.from, titel.to, sprache), t(titel.valueText));
-          return hasTitleBadge(titel.titleId) ? (
-            <Link key={titel.titleId} to="/titel" className="title-medal-link" aria-label={name}>
-              <TitleBadge titleId={titel.titleId} name={name} size={40} tooltip={tooltip} />
+        {view.former && <span className="badge character-former">{t(T.former)}</span>}
+        {(view.titles ?? []).map((title) => {
+          const name = t(title.name);
+          const tooltip = t(T.titleTooltip)(name, weekLabel(title.from, title.to, sprache), t(title.valueText));
+          return hasTitleBadge(title.titleId) ? (
+            <Link key={title.titleId} to="/titel" className="title-medal-link" aria-label={name}>
+              <TitleBadge titleId={title.titleId} name={name} size={40} tooltip={tooltip} />
             </Link>
           ) : (
-            <Link key={titel.titleId} to="/titel" className="badge-gold title-badge" title={tooltip}>
+            <Link key={title.titleId} to="/titel" className="badge-gold title-badge" title={tooltip}>
               {name}
             </Link>
           );
         })}
         {c.lastLoginAt && (
           <span className="muted small">
-            {t(T.zuletztOnline)}: {formatDateTime(c.lastLoginAt)}
+            {t(T.lastOnline)}: {formatDateTime(c.lastLoginAt)}
           </span>
         )}
       </p>
@@ -149,7 +149,7 @@ function CharacterHeader({ view }: { view: CharacterView }) {
   );
 }
 
-/* Inhalt je Reiter. */
+/* Content per tab. */
 
 function EquipmentTab({ view }: { view: CharacterView }) {
   return (
@@ -165,7 +165,7 @@ function TalentsTab({ view }: { view: CharacterView }) {
   if (error?.status === 404) {
     return (
       <div className="state state-empty">
-        <p>{t(T.talenteFehlen)}</p>
+        <p>{t(T.talentsMissing)}</p>
       </div>
     );
   }
@@ -181,7 +181,7 @@ function ProfessionsTab({ view }: { view: CharacterView }) {
   const professions = [...view.character.professions].sort(
     (a, b) => Number(b.primary) - Number(a.primary) || a.name.localeCompare(b.name, "de"),
   );
-  // Sprungziel aus der Adresse, z.B. #bergbau von der Berufe-Seite.
+  // Jump target from the address, e.g. #bergbau from the professions page.
   const target = decodeURIComponent(useLocation().hash.slice(1));
   const highlighted = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
@@ -190,7 +190,7 @@ function ProfessionsTab({ view }: { view: CharacterView }) {
   if (professions.length === 0) {
     return (
       <div className="state state-empty">
-        <p>{t(T.keineBerufe)}</p>
+        <p>{t(T.noProfessions)}</p>
       </div>
     );
   }
@@ -216,7 +216,7 @@ function ProfessionsTab({ view }: { view: CharacterView }) {
             </span>
             {p.recipes.length > 0 && (
               <span className="muted small profession-recipe-count">
-                {t(T.rezepte)(p.recipes.length)}
+                {t(T.recipes)(p.recipes.length)}
               </span>
             )}
           </div>
@@ -229,8 +229,8 @@ function ProfessionsTab({ view }: { view: CharacterView }) {
 }
 
 function TabContent({ tab, view }: { tab: string; view: CharacterView }) {
-  const zusatzReiter = erweiterungsReiter().find((r) => r.id === tab);
-  if (zusatzReiter) return <zusatzReiter.Komponente daten={zusatz(view, zusatzReiter.erweiterung)} view={view} />;
+  const extensionTab = extensionTabs().find((r) => r.id === tab);
+  if (extensionTab) return <extensionTab.Komponente daten={extensionData(view, extensionTab.extension)} view={view} />;
   if (!isTabId(tab)) return null;
   switch (tab) {
     case "ausruestung":
@@ -254,20 +254,20 @@ function CharacterContent({ view }: { view: CharacterView }) {
   const { t } = useSprache();
   const [params, setParams] = useSearchParams();
   const requested = params.get("reiter");
-  const alleReiter: { id: string; label: Fassungen }[] = [...TABS, ...erweiterungsReiter()];
-  const tab = alleReiter.find((r) => r.id === requested)?.id ?? DEFAULT_TAB;
+  const allTabs: { id: string; label: Fassungen }[] = [...TABS, ...extensionTabs()];
+  const tab = allTabs.find((r) => r.id === requested)?.id ?? DEFAULT_TAB;
 
   if (!view.character.hasProfile) {
     return (
       <>
         <CharacterHeader view={view} />
         <div className="state state-empty">
-          <p>{t(T.ohneProfil)}</p>
+          <p>{t(T.noProfile)}</p>
         </div>
-        {/* Ohne Profil gibt es keine Reiter; Reiter von Erweiterungen mit Daten stehen dann darunter. */}
-        {erweiterungsReiter().map((r) => {
-          const daten = zusatz(view, r.erweiterung);
-          return daten !== undefined && <r.Komponente key={r.id} daten={daten} view={view} />;
+        {/* Without a profile there are no tabs; extension tabs with data are then shown below. */}
+        {extensionTabs().map((r) => {
+          const data = extensionData(view, r.extension);
+          return data !== undefined && <r.Komponente key={r.id} daten={data} view={view} />;
         })}
       </>
     );
@@ -288,19 +288,20 @@ function CharacterContent({ view }: { view: CharacterView }) {
   return (
     <>
       <CharacterHeader view={view} />
-      <div className="tabs" role="tablist" aria-label={t(T.bereiche)}>
-        {alleReiter.map((reiter) => (
+      <div className="tabs" role="tablist" aria-label={t(T.sections)}>
+        {allTabs.map((entry) => (
           <button
-            key={reiter.id}
+            key={entry.id}
             type="button"
             role="tab"
-            id={`reiter-${reiter.id}`}
-            aria-selected={reiter.id === tab}
+            id={`reiter-${entry.id}`}
+            aria-selected={entry.id === tab}
             aria-controls="reiter-inhalt"
             className="tab"
-            onClick={() => select(reiter.id)}
+            onClick={() => select(entry.id)}
           >
-            {t(reiter.label)}
+            {t(entry.label)}
+
           </button>
         ))}
       </div>
@@ -316,12 +317,12 @@ function NotFound() {
   return (
     <>
       <header className="page-header">
-        <h1 className="page-title">{t(T.nichtGefunden)}</h1>
+        <h1 className="page-title">{t(T.notFound)}</h1>
       </header>
       <div className="panel">
-        <p>{t(T.unbekannt)}</p>
+        <p>{t(T.unknown)}</p>
         <p>
-          <Link to="/">{t(T.zurUebersicht)}</Link>
+          <Link to="/">{t(T.backToOverview)}</Link>
         </p>
       </div>
     </>

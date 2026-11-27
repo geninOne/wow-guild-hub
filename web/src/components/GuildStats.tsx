@@ -14,14 +14,14 @@ export const PERIODS: { id: StatsPeriodKind; label: Fassungen }[] = [
 ];
 
 const T = {
-  gesamt: { de: "Gesamt", en: "All Time", schwaebisch: "Gsamt", bayrisch: "Gsamt" },
-  gesamtSeit: {
-    de: (datum: string) => `Gesamt seit dem Serverstart am ${datum}`,
-    en: (datum: string) => `All time since the server launch on ${datum}`,
-    schwaebisch: (datum: string) => `Gsamt seit em Serverstart am ${datum}`,
-    bayrisch: (datum: string) => `Gsamt seit'm Serverstart am ${datum}`,
+  allTime: { de: "Gesamt", en: "All Time", schwaebisch: "Gsamt", bayrisch: "Gsamt" },
+  allTimeSince: {
+    de: (date: string) => `Gesamt seit dem Serverstart am ${date}`,
+    en: (date: string) => `All time since the server launch on ${date}`,
+    schwaebisch: (date: string) => `Gsamt seit em Serverstart am ${date}`,
+    bayrisch: (date: string) => `Gsamt seit'm Serverstart am ${date}`,
   },
-  keine: {
+  nothingYet: {
     de: "Noch nichts gesammelt. Der Sammler legt jede Woche einen Stand an, die ersten Zahlen erscheinen nach seinem nächsten Lauf.",
     en: "Nothing collected yet. The collector takes a snapshot every week; the first numbers appear after its next run.",
     schwaebisch:
@@ -29,7 +29,7 @@ const T = {
     bayrisch:
       "No nix gsammelt. Da Sammler legt jede Woch an Stand o, de erstn Zahln kemman nach seim nächstn Lauf.",
   },
-  wocheFehlt: {
+  weekMissing: {
     de: "Nur Geduld: Für diese Woche fehlt noch der Stand der Vorwoche, deshalb gibt es hier noch keinen Wochenvergleich.",
     en: "Patience: the snapshot from the previous week is still missing, so there is no weekly comparison yet.",
     schwaebisch:
@@ -37,19 +37,19 @@ const T = {
     bayrisch:
       "Obacht, ned so gschwind: Für de Woch fehlt no da Stand vo da Vorwoch, drum gibt's do no koan Wochnvergleich.",
   },
-  ersteWoche: {
-    de: (datum: string) => ` Die ersten Wochenzahlen gibt es in der Woche bis zum ${datum}`,
-    en: (datum: string) => ` The first weekly numbers arrive in the week ending ${datum}`,
-    schwaebisch: (datum: string) => ` Die erschte Wochezahle gibt's in dr Woch bis zum ${datum}`,
-    bayrisch: (datum: string) => ` De erstn Wochnzahln gibt's in da Woch bis zum ${datum}`,
+  firstWeek: {
+    de: (date: string) => ` Die ersten Wochenzahlen gibt es in der Woche bis zum ${date}`,
+    en: (date: string) => ` The first weekly numbers arrive in the week ending ${date}`,
+    schwaebisch: (date: string) => ` Die erschte Wochezahle gibt's in dr Woch bis zum ${date}`,
+    bayrisch: (date: string) => ` De erstn Wochnzahln gibt's in da Woch bis zum ${date}`,
   },
-  bisDahin: {
+  untilThen: {
     de: " Bis dahin zeigt Gesamt alles seit dem Serverstart.",
     en: " Until then, All Time shows everything since the server launch.",
     schwaebisch: " Bis dahin zeigt Gsamt alles seit em Serverstart.",
     bayrisch: " Bis dahi zeigt Gsamt ois seit'm Serverstart.",
   },
-  monatFehlt: {
+  monthMissing: {
     de: "Nur Geduld: Für diesen Monat fehlt noch der Stand vom Ende des Vormonats, deshalb gibt es hier noch keinen Monatsvergleich. Gesamt zeigt alles seit dem Serverstart.",
     en: "Patience: the snapshot from the end of last month is still missing, so there is no monthly comparison yet. All Time shows everything since the server launch.",
     schwaebisch:
@@ -57,9 +57,9 @@ const T = {
     bayrisch:
       "Obacht, ned so gschwind: Für den Monat fehlt no da Stand vom End vom Vormonat, drum gibt's do no koan Monatsvergleich. Gsamt zeigt ois seit'm Serverstart.",
   },
-  zeitraum: { de: "Zeitraum", en: "Period" },
-  stand: { de: "Stand", en: "As of", schwaebisch: "Stand", bayrisch: "Stand" },
-  charaktere: {
+  period: { de: "Zeitraum", en: "Period" },
+  asOf: { de: "Stand", en: "As of", schwaebisch: "Stand", bayrisch: "Stand" },
+  characters: {
     de: (n: number) => (n === 1 ? "1 Charakter" : `${n} Charaktere`),
     en: (n: number) => (n === 1 ? "1 character" : `${n} characters`),
     schwaebisch: (n: number) => (n === 1 ? "1 Charakter" : `${n} Charaktere`),
@@ -73,13 +73,13 @@ const T = {
     bayrisch:
       "Des Kuriositätnkabinett vo da Gilde: wer am meistn angelt, Brotzeit macht, winkt und leider a stirbt. Gscheid zählt, mit am Augnzwinkern dazählt.",
   },
-  nachgeholt: {
+  backfilled: {
     de: "In dieser Woche lief kein Sammler, die Werte stammen aus der Woche davor.",
     en: "The collector did not run this week; the values come from the week before.",
     schwaebisch: "In dere Woch isch koi Sammler gloffe, d'Werte stammet aus dr Woch davor.",
     bayrisch: "De Woch is koa Sammler glaffa, de Werte san aus da Woch davor.",
   },
-  herkunft: {
+  source: {
     de: "Zahlen aus der Charakterstatistik von Blizzard, als Zuwachs im gewählten Zeitraum. Der Sammler hält jede Woche von Sonntag bis Samstag einen Stand fest, der Serverstart zählt als Stand mit lauter Nullen. Wer neu in die Gilde kommt, zählt bei Woche und Monat ab seiner zweiten Woche. Horde gegen Allianz vergleicht immer beide Gilden.",
     en: "Numbers from Blizzard's character statistics, as growth within the chosen period. The collector records a snapshot every week from Sunday to Saturday; the server launch counts as a snapshot of all zeros. New guild members count toward week and month from their second week. Horde versus Alliance always compares both guilds.",
     schwaebisch:
@@ -89,7 +89,7 @@ const T = {
   },
 } satisfies Record<string, Fassungen<unknown>>;
 
-/** API-Pfad zu Zeitraum, optionaler Woche (Samstag) oder Monat und optionaler Gilde. */
+/** API path for a period, optional week (Saturday) or month and optional guild. */
 export function statsPath(kind: StatsPeriodKind, id: string | null, guild: string | null = null): string {
   const base = statsBase(kind, id);
   return guild === null ? base : `${base}?guild=${encodeURIComponent(guild)}`;
@@ -107,26 +107,26 @@ const nextSaturday = (saturday: string) => {
   return d.toISOString().slice(0, 10);
 };
 
-function periodLabel(view: StatsView, sprache: Sprache): string {
-  if (view.kind === "woche" && view.id) return weekLabel(sunday(view.id), view.id, sprache);
-  if (view.kind === "monat" && view.id) return monthLabel(view.id, sprache);
-  return view.serverStart ? T.gesamtSeit[sprache](formatPlainDate(view.serverStart)) : T.gesamt[sprache];
+function periodLabel(view: StatsView, language: Sprache): string {
+  if (view.kind === "woche" && view.id) return weekLabel(sunday(view.id), view.id, language);
+  if (view.kind === "monat" && view.id) return monthLabel(view.id, language);
+  return view.serverStart ? T.allTimeSince[language](formatPlainDate(view.serverStart)) : T.allTime[language];
 }
 
-/** Freundlicher Hinweis, wenn es für den Zeitraum noch keine belastbaren Zahlen gibt. */
+/** Friendly hint when there are no reliable numbers for the period yet. */
 function NotYet({ view }: { view: StatsView }) {
   const { t } = useSprache();
   let text: string;
   if (view.status === "keine") {
-    text = t(T.keine);
+    text = t(T.nothingYet);
   } else if (view.kind === "woche") {
     const latest = view.id !== null && view.id === view.weeks[0];
     text =
-      t(T.wocheFehlt) +
-      (latest && view.id ? t(T.ersteWoche)(formatPlainDayMonth(nextSaturday(view.id))) : "") +
-      t(T.bisDahin);
+      t(T.weekMissing) +
+      (latest && view.id ? t(T.firstWeek)(formatPlainDayMonth(nextSaturday(view.id))) : "") +
+      t(T.untilThen);
   } else {
-    text = t(T.monatFehlt);
+    text = t(T.monthMissing);
   }
   return (
     <div className="state state-empty" role="status">
@@ -147,7 +147,7 @@ function StatsContent({ view, onSelect, onGuild }: StatsProps & { view: StatsVie
     <>
       <div className="stats-period">
         <GuildFilter guilds={view.guilds} value={view.guild} onChange={onGuild} />
-        <div className="segmented" role="radiogroup" aria-label={t(T.zeitraum)}>
+        <div className="segmented" role="radiogroup" aria-label={t(T.period)}>
           {PERIODS.map((p) => (
             <button
               key={p.id}
@@ -178,18 +178,18 @@ function StatsContent({ view, onSelect, onGuild }: StatsProps & { view: StatsVie
       </div>
       <p className="page-subtitle muted">
         {periodLabel(view, sprache)}
-        {view.takenAt && ` · ${t(T.stand)}: ${formatDateTime(view.takenAt)}`}
-        {view.status === "ok" && ` · ${t(T.charaktere)(view.characters)}`}
+        {view.takenAt && ` · ${t(T.asOf)}: ${formatDateTime(view.takenAt)}`}
+        {view.status === "ok" && ` · ${t(T.characters)(view.characters)}`}
       </p>
       <p className="stat-intro">{t(T.intro)}</p>
-      {view.nachgeholt && <p className="muted small">{t(T.nachgeholt)}</p>}
+      {view.nachgeholt && <p className="muted small">{t(T.backfilled)}</p>}
       {view.status === "ok" ? <StatWall view={view} subtitle={periodLabel(view, sprache)} /> : <NotYet view={view} />}
-      <p className="muted small">{t(T.herkunft)}</p>
+      <p className="muted small">{t(T.source)}</p>
     </>
   );
 }
 
-/** Reiter Gildenstatistik: Kuriositäten-Wand aus den Wochenständen, je Zeitraum und Gilde. */
+/** Guild stats tab: wall of curiosities from the weekly snapshots, per period and guild. */
 export function GuildStats({
   kind,
   id,

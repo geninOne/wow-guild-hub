@@ -2,8 +2,8 @@ import { useState, type ReactNode } from "react";
 import { fallbackIconUrl } from "../lib/wow";
 
 /**
- * Liefert die aktuell zu ladende URL und einen Fehler-Handler. Ohne eigene Rückfälle wird nach einem Fehler
- * einmal `fallbackIconUrl` versucht, mit `fallbacks` der Reihe nach diese Adressen. Danach ist die URL null.
+ * Returns the URL to load right now and an error handler. Without own fallbacks, `fallbackIconUrl` is tried once
+ * after an error; with `fallbacks`, these addresses are tried in order. After that the URL is null.
  */
 export function useIconSource(src: string | null | undefined, fallbacks?: string[]): [string | null, () => void] {
   const key = [src ?? "", ...(fallbacks ?? [])].join("|");
@@ -22,18 +22,19 @@ interface IconProps {
   src: string | null | undefined;
   alt: string;
   size: number;
-  /** Rahmenfarbe, z. B. die Qualitätsfarbe eines Gegenstands. */
+  /** Border color, e.g. the quality color of an item. */
   tone?: string;
-  /** In Tooltips "eager", sonst lädt das Bild erst nach dem Einblenden. */
+  /** "eager" in tooltips, otherwise the image only loads once it is shown. */
   loading?: "lazy" | "eager";
-  /** Weitere Adressen, die nacheinander versucht werden, wenn `src` nicht lädt. */
+  /** Further addresses tried one after another when `src` does not load. */
   fallbacks?: string[];
-  /** Ersatz, wenn kein Bild lädt; ohne Angabe ein leeres dunkles Feld. */
+  /** Replacement when no image loads; if not given, an empty dark box. */
   placeholder?: ReactNode;
   className?: string;
 }
 
-/** Quadratisches Symbol mit Rahmen. Ohne Quelle oder bei Ladefehler ein Platzhalter. */
+/** Square icon with a border. A placeholder without a source or on a load error. */
+
 export function Icon({ src, alt, size, tone, loading = "lazy", fallbacks, placeholder, className }: IconProps) {
   const [url, onError] = useIconSource(src, fallbacks);
   const style = { width: size, height: size, borderColor: tone };

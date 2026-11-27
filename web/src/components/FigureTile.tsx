@@ -4,24 +4,24 @@ import { useSprache, type Fassungen } from "../lib/sprache";
 import { numberLocale } from "../lib/format";
 
 const T = {
-  kennzahlen: { de: "Kennzahlen", en: "Key Figures", schwaebisch: "Kennzahle", bayrisch: "Kennzahln" },
-  kennzahlenAuswahl: {
+  keyFigures: { de: "Kennzahlen", en: "Key Figures", schwaebisch: "Kennzahle", bayrisch: "Kennzahln" },
+  keyFiguresSelection: {
     de: "Kennzahlen der Auswahl",
     en: "Key figures for the selection",
     schwaebisch: "Kennzahle vo dr Auswahl",
     bayrisch: "Kennzahln vo da Auswahl",
   },
-  gefiltert: { de: "Gefiltert", en: "Filtered", schwaebisch: "Gfiltert", bayrisch: "Gfiltert" },
-  mitglieder: { de: "Mitglieder", en: "Members", schwaebisch: "Mitglieder", bayrisch: "Mitglieder" },
-  // Weicher Trennstrich an der Wortfuge: wird es eng, bricht "Durchschnitts-level" dort und nirgends sonst.
-  durchschnitt: { de: "Durchschnitts\u00adlevel", en: "Average level", schwaebisch: "Durchschnitts\u00adlevel", bayrisch: "Durchschnitts\u00adlevel" },
+  filtered: { de: "Gefiltert", en: "Filtered", schwaebisch: "Gfiltert", bayrisch: "Gfiltert" },
+  members: { de: "Mitglieder", en: "Members", schwaebisch: "Mitglieder", bayrisch: "Mitglieder" },
+  // Soft hyphen at the compound joint: when space is tight, "Durchschnitts-level" breaks there and nowhere else.
+  average: { de: "Durchschnitts\u00adlevel", en: "Average level", schwaebisch: "Durchschnitts\u00adlevel", bayrisch: "Durchschnitts\u00adlevel" },
   level60: { de: "Auf Level 60", en: "At Level 60", schwaebisch: "Auf Level 60", bayrisch: "Auf Level 60" },
-  klassen: { de: "Klassen", en: "Classes", schwaebisch: "Klasse", bayrisch: "Klassn" },
-  liste: { de: "Liste", en: "List", schwaebisch: "Lischt", bayrisch: "Listn" },
-  listeOeffnen: { de: "Liste öffnen", en: "Open list", schwaebisch: "Lischt aufmache", bayrisch: "Listn aufmacha" },
+  classes: { de: "Klassen", en: "Classes", schwaebisch: "Klasse", bayrisch: "Klassn" },
+  list: { de: "Liste", en: "List", schwaebisch: "Lischt", bayrisch: "Listn" },
+  openList: { de: "Liste öffnen", en: "Open list", schwaebisch: "Lischt aufmache", bayrisch: "Listn aufmacha" },
 } satisfies Record<string, Fassungen>;
 
-/* Eigene Symbole im Stil der Seite: schlicht, gefüllt, in currentColor (Gold). */
+/* Custom icons in the site's style: plain, filled, in currentColor (gold). */
 function PeopleGlyph() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -75,7 +75,7 @@ interface FigureProps {
   icon: ReactNode;
   label: string;
   value: ReactNode;
-  /** Öffnet die Mitgliederliste; ohne bleibt es eine reine Zahl. */
+  /** Opens the member list; without it, it stays a plain number. */
   onClick?: () => void;
 }
 
@@ -90,9 +90,9 @@ function Figure({ icon, label, value, onClick }: FigureProps) {
           <strong className="figure-value num">{value}</strong>
           {onClick && (
             <>
-              <span className="sr-only">, {t(T.listeOeffnen)}</span>
+              <span className="sr-only">, {t(T.openList)}</span>
               <span className="figure-hint" aria-hidden="true">
-                {t(T.liste)} ›
+                {t(T.list)} ›
               </span>
             </>
           )}
@@ -115,33 +115,33 @@ function Figure({ icon, label, value, onClick }: FigureProps) {
 
 interface FigureTileProps {
   figures: MemberFigures;
-  /** true, wenn eine Auswahl gilt; dann zeigt die Kachel das sichtbar. */
+  /** true when a selection applies; the tile then shows it visibly. */
   filtered: boolean;
   onMembers?: () => void;
   onCapped?: () => void;
 }
 
 /**
- * Eine Kachel mit den vier Kennzahlen der aktuellen Auswahl: Mitglieder, Durchschnittslevel, Auf Level 60 und
- * Klassen. Mitglieder und Level 60 öffnen die Mitgliederliste. Mit Auswahl goldener Rahmen und Marke "Gefiltert".
+ * One tile with the four key figures of the current selection: members, average level, at level 60 and
+ * classes. Members and level 60 open the member list. With a selection, gold border and a "Filtered" badge.
  */
 export function FigureTile({ figures, filtered, onMembers, onCapped }: FigureTileProps) {
   const { t } = useSprache();
   return (
-    <section className="figures" data-filtered={filtered ? "" : undefined} aria-label={t(filtered ? T.kennzahlenAuswahl : T.kennzahlen)}>
+    <section className="figures" data-filtered={filtered ? "" : undefined} aria-label={t(filtered ? T.keyFiguresSelection : T.keyFigures)}>
       <span className="figures-badge" aria-hidden={!filtered}>
         <FunnelGlyph />
-        {t(T.gefiltert)}
+        {t(T.filtered)}
       </span>
       <ul className="figures-list">
-        <Figure icon={<PeopleGlyph />} label={t(T.mitglieder)} value={figures.members} onClick={onMembers} />
+        <Figure icon={<PeopleGlyph />} label={t(T.members)} value={figures.members} onClick={onMembers} />
         <Figure
           icon={<AverageGlyph />}
-          label={t(T.durchschnitt)}
+          label={t(T.average)}
           value={figures.average.toLocaleString(numberLocale(), { maximumFractionDigits: 1 })}
         />
         <Figure icon={<CrownGlyph />} label={t(T.level60)} value={figures.capped} onClick={onCapped} />
-        <Figure icon={<ShieldGlyph />} label={t(T.klassen)} value={figures.classes} />
+        <Figure icon={<ShieldGlyph />} label={t(T.classes)} value={figures.classes} />
       </ul>
     </section>
   );

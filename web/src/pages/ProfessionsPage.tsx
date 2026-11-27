@@ -15,81 +15,81 @@ type Text = Fassungen;
 type Fn<A extends unknown[]> = Fassungen<(...a: A) => string>;
 
 const T = {
-  titel: { de: "Berufe", en: "Professions", schwaebisch: "Berufe", bayrisch: "Berufe" } as Text,
-  untertitel: {
+  title: { de: "Berufe", en: "Professions", schwaebisch: "Berufe", bayrisch: "Berufe" } as Text,
+  subtitle: {
     de: "Wer welchen Beruf beherrscht und welche Rezepte kennt.",
     en: "Who has mastered which profession and knows which recipes.",
     schwaebisch: "Wer welchen Beruf ko ond welche Rezept kennt.",
     bayrisch: "Wer wos fia an Beruf ko und wos fia Rezepte kennt.",
   } as Text,
-  charaktere: {
+  characters: {
     de: (n: number) => (n === 1 ? "1 Charakter" : `${n} Charaktere`),
     en: (n: number) => (n === 1 ? "1 character" : `${n} characters`),
     schwaebisch: (n: number) => (n === 1 ? "1 Charakter" : `${n} Charaktere`),
     bayrisch: (n: number) => (n === 1 ? "1 Charakter" : `${n} Charaktere`),
   } as Fn<[number]>,
-  inGilde: {
-    de: (wer: string, gilde: string) => `${wer} in ${gilde}`,
-    en: (wer: string, gilde: string) => `${wer} in ${gilde}`,
-    schwaebisch: (wer: string, gilde: string) => `${wer} in ${gilde}`,
-    bayrisch: (wer: string, gilde: string) => `${wer} in ${gilde}`,
+  inGuild: {
+    de: (who: string, guild: string) => `${who} in ${guild}`,
+    en: (who: string, guild: string) => `${who} in ${guild}`,
+    schwaebisch: (who: string, guild: string) => `${who} in ${guild}`,
+    bayrisch: (who: string, guild: string) => `${who} in ${guild}`,
   } as Fn<[string, string]>,
-  inBeiden: {
-    de: (wer: string) => `${wer} in beiden Gilden`,
-    en: (wer: string) => `${wer} across both guilds`,
-    schwaebisch: (wer: string) => `${wer} in boide Gilda`,
-    bayrisch: (wer: string) => `${wer} in de zwoa Gildn`,
+  inBothGuilds: {
+    de: (who: string) => `${who} in beiden Gilden`,
+    en: (who: string) => `${who} across both guilds`,
+    schwaebisch: (who: string) => `${who} in boide Gilda`,
+    bayrisch: (who: string) => `${who} in de zwoa Gildn`,
   } as Fn<[string]>,
-  inDerGilde: {
-    de: (wer: string) => `${wer} in der Gilde`,
-    en: (wer: string) => `${wer} in the guild`,
-    schwaebisch: (wer: string) => `${wer} in dr Gilde`,
-    bayrisch: (wer: string) => `${wer} in da Gilde`,
+  inTheGuild: {
+    de: (who: string) => `${who} in der Gilde`,
+    en: (who: string) => `${who} in the guild`,
+    schwaebisch: (who: string) => `${who} in dr Gilde`,
+    bayrisch: (who: string) => `${who} in da Gilde`,
   } as Fn<[string]>,
-  berufeNav: { de: "Berufe", en: "Professions", schwaebisch: "Berufe", bayrisch: "Berufe" } as Text,
-  berufWaehlen: { de: "Beruf wählen", en: "Choose profession", schwaebisch: "Beruf wähla", bayrisch: "Beruf wähln" } as Text,
-  rezeptSuchen: {
-    de: (beruf: string) => `Rezept in ${beruf} suchen`,
-    en: (beruf: string) => `Search ${beruf} recipes`,
-    schwaebisch: (beruf: string) => `Rezept in ${beruf} sucha`,
-    bayrisch: (beruf: string) => `Rezept in ${beruf} suachn`,
+  professionsNav: { de: "Berufe", en: "Professions", schwaebisch: "Berufe", bayrisch: "Berufe" } as Text,
+  chooseProfession: { de: "Beruf wählen", en: "Choose profession", schwaebisch: "Beruf wähla", bayrisch: "Beruf wähln" } as Text,
+  searchRecipes: {
+    de: (profession: string) => `Rezept in ${profession} suchen`,
+    en: (profession: string) => `Search ${profession} recipes`,
+    schwaebisch: (profession: string) => `Rezept in ${profession} sucha`,
+    bayrisch: (profession: string) => `Rezept in ${profession} suachn`,
   } as Fn<[string]>,
-  rezepteLaden: {
+  loadingRecipes: {
     de: "Rezepte werden geladen.",
     en: "Loading recipes.",
     schwaebisch: "D'Rezept werdet glada.",
     bayrisch: "De Rezepte wern gladn.",
   } as Text,
-  rezepteFehler: {
+  recipesError: {
     de: "Rezepte konnten nicht geladen werden.",
     en: "Recipes could not be loaded.",
     schwaebisch: "D'Rezept hen sich net lada lassa.",
     bayrisch: "De Rezepte ham se ned ladn lassn.",
   } as Text,
-  keinTreffer: { de: "Kein Rezept gefunden.", en: "No recipe found.", schwaebisch: "Koi Rezept gfonda.", bayrisch: "Koa Rezept gfundn." } as Text,
-  keineRezepte: {
+  noMatch: { de: "Kein Rezept gefunden.", en: "No recipe found.", schwaebisch: "Koi Rezept gfonda.", bayrisch: "Koa Rezept gfundn." } as Text,
+  noRecipes: {
     de: "Noch keine Rezepte bekannt.",
     en: "No recipes known yet.",
     schwaebisch: "No koine Rezept bekannt.",
     bayrisch: "No koane Rezepte bekannt.",
   } as Text,
-  treffer: { de: "Treffer", en: "Results", schwaebisch: "Treffer", bayrisch: "Treffer" } as Text,
-  rezepte: { de: "Rezepte", en: "Recipes", schwaebisch: "Rezepte", bayrisch: "Rezepte" } as Text,
-  personen: { de: "Personen", en: "People", schwaebisch: "Personen", bayrisch: "Personen" } as Text,
-  alleRezepte: { de: "Alle Rezepte", en: "All recipes", schwaebisch: "Älle Rezept", bayrisch: "Olle Rezepte" } as Text,
-  niemand: {
-    de: (beruf: string) => `Noch niemand hat ${beruf} erlernt.`,
-    en: (beruf: string) => `Nobody has learned ${beruf} yet.`,
-    schwaebisch: (beruf: string) => `No koiner hot ${beruf} glernt.`,
-    bayrisch: (beruf: string) => `No koana hod ${beruf} glernt.`,
+  results: { de: "Treffer", en: "Results", schwaebisch: "Treffer", bayrisch: "Treffer" } as Text,
+  recipes: { de: "Rezepte", en: "Recipes", schwaebisch: "Rezepte", bayrisch: "Rezepte" } as Text,
+  people: { de: "Personen", en: "People", schwaebisch: "Personen", bayrisch: "Personen" } as Text,
+  allRecipes: { de: "Alle Rezepte", en: "All recipes", schwaebisch: "Älle Rezept", bayrisch: "Olle Rezepte" } as Text,
+  nobody: {
+    de: (profession: string) => `Noch niemand hat ${profession} erlernt.`,
+    en: (profession: string) => `Nobody has learned ${profession} yet.`,
+    schwaebisch: (profession: string) => `No koiner hot ${profession} glernt.`,
+    bayrisch: (profession: string) => `No koana hod ${profession} glernt.`,
   } as Fn<[string]>,
-  niemandAus: {
-    de: (gilde: string, beruf: string) => `Noch niemand aus ${gilde} hat ${beruf} erlernt.`,
-    en: (gilde: string, beruf: string) => `Nobody from ${gilde} has learned ${beruf} yet.`,
-    schwaebisch: (gilde: string, beruf: string) => `No koiner aus ${gilde} hot ${beruf} glernt.`,
-    bayrisch: (gilde: string, beruf: string) => `No koana aus ${gilde} hod ${beruf} glernt.`,
+  nobodyFrom: {
+    de: (guild: string, profession: string) => `Noch niemand aus ${guild} hat ${profession} erlernt.`,
+    en: (guild: string, profession: string) => `Nobody from ${guild} has learned ${profession} yet.`,
+    schwaebisch: (guild: string, profession: string) => `No koiner aus ${guild} hot ${profession} glernt.`,
+    bayrisch: (guild: string, profession: string) => `No koana aus ${guild} hod ${profession} glernt.`,
   } as Fn<[string, string]>,
-  keineBerufe: {
+  noProfessions: {
     de: "Noch keine Berufe gesammelt.",
     en: "No professions collected yet.",
     schwaebisch: "No koine Berufe gsammlet.",
@@ -103,12 +103,12 @@ function fullName(c: CharacterRef): string {
   return c.surname ? `${c.name} ${c.surname}` : c.name;
 }
 
-/** Nur Charaktere der gewählten Gilde; null lässt alle durch. */
+/** Only characters of the chosen guild; null lets everyone through. */
 function inGuild(c: CharacterRef | undefined, guildSlug: string | null): c is CharacterRef {
   return c !== undefined && (guildSlug === null || c.guildSlug === guildSlug);
 }
 
-/** Link auf den Reiter "Berufe" des Charakters, mit dem Beruf als Sprungziel. */
+/** Link to the character's "Berufe" tab, with the profession as the jump target. */
 function CharacterLink({ character, profession }: { character: CharacterRef; profession: string }) {
   return (
     <Link to={`/charakter/${character.slug}?reiter=berufe#${profession}`} className="bench-person-link">
@@ -117,7 +117,7 @@ function CharacterLink({ character, profession }: { character: CharacterRef; pro
   );
 }
 
-/** Echtes Berufssymbol oder ein schlichtes Emblem mit dem Anfangsbuchstaben. */
+/** Real profession icon or a plain emblem with the initial letter. */
 function ProfessionEmblem({ profession, size }: { profession: Profession; size: number }) {
   if (profession.icon) return <Icon src={profession.icon} alt="" size={size} />;
   return (
@@ -133,10 +133,10 @@ function groupsOf(professions: Profession[]): [string, Profession[]][] {
   return [...groups];
 }
 
-function countText(n: number, guilds: GuildRef[], guildSlug: string | null, sprache: Sprache): string {
-  const who = fassungIn(T.charaktere, sprache)(n);
-  if (guildSlug !== null) return fassungIn(T.inGilde, sprache)(who, guilds.find((g) => g.slug === guildSlug)?.name ?? guildSlug);
-  return guilds.length > 1 ? fassungIn(T.inBeiden, sprache)(who) : fassungIn(T.inDerGilde, sprache)(who);
+function countText(n: number, guilds: GuildRef[], guildSlug: string | null, language: Sprache): string {
+  const who = fassungIn(T.characters, language)(n);
+  if (guildSlug !== null) return fassungIn(T.inGuild, language)(who, guilds.find((g) => g.slug === guildSlug)?.name ?? guildSlug);
+  return guilds.length > 1 ? fassungIn(T.inBothGuilds, language)(who) : fassungIn(T.inTheGuild, language)(who);
 }
 
 function ProfessionNav({
@@ -152,7 +152,7 @@ function ProfessionNav({
   const { t } = useSprache();
   return (
     <>
-      <nav className="bench-nav" aria-label={t(T.berufeNav)}>
+      <nav className="bench-nav" aria-label={t(T.professionsNav)}>
         {groups.map(([group, list]) => (
           <div key={group} className="bench-group">
             <h3 className="bench-group-title">{group}</h3>
@@ -174,7 +174,7 @@ function ProfessionNav({
       <div className="bench-select">
         <select
           className="filter-input"
-          aria-label={t(T.berufWaehlen)}
+          aria-label={t(T.chooseProfession)}
           value={active.slug}
           onChange={(e) => navigate(`/berufe/${e.target.value}`)}
         >
@@ -193,7 +193,7 @@ function ProfessionNav({
   );
 }
 
-type DetailMode = "personen" | "rezepte";
+type DetailMode = "people" | "recipes";
 
 function ProfessionDetail({
   view,
@@ -206,13 +206,13 @@ function ProfessionDetail({
 }) {
   const { t, sprache } = useSprache();
   const [query, setQuery] = useState("");
-  const [mode, setMode] = useState<DetailMode>("personen");
+  const [mode, setMode] = useState<DetailMode>("people");
   const recipesApi = useApi<ProfessionRecipesView>(`/api/professions/${encodeURIComponent(profession.slug)}`);
   const members = useMemo(() => profession.members.filter((m) => inGuild(m, guildSlug)), [profession, guildSlug]);
   const guildName = (slug: string) => view.guilds.find((g) => g.slug === slug)?.name ?? "";
   const faction = (slug: string) => view.guilds.find((g) => g.slug === slug)?.faction ?? "";
   const searching = query.trim().length >= MIN_QUERY;
-  // Rezepte mit den Personen der gewählten Gilde; Personen in der Reihenfolge des Berufs (Fertigkeit, dann Name).
+  // Recipes with the people of the chosen guild; people in the profession's order (skill, then name).
   const recipes = useMemo(
     () =>
       (recipesApi.data?.recipes ?? [])
@@ -227,12 +227,12 @@ function ProfessionDetail({
     () => (searching ? filterRecipes(recipes.map((r) => ({ ...r, name: r.entry.name })), query) : []),
     [recipes, query, searching],
   );
-  const label = t(T.rezeptSuchen)(profession.name);
+  const label = t(T.searchRecipes)(profession.name);
 
   const recipeList = (list: typeof recipes, listLabel: string) => {
-    if (recipesApi.loading) return <p className="muted">{t(T.rezepteLaden)}</p>;
-    if (recipesApi.error) return <p className="muted">{t(T.rezepteFehler)}</p>;
-    if (list.length === 0) return <p className="muted">{searching ? t(T.keinTreffer) : t(T.keineRezepte)}</p>;
+    if (recipesApi.loading) return <p className="muted">{t(T.loadingRecipes)}</p>;
+    if (recipesApi.error) return <p className="muted">{t(T.recipesError)}</p>;
+    if (list.length === 0) return <p className="muted">{searching ? t(T.noMatch) : t(T.noRecipes)}</p>;
     return (
       <ul className="recipe-cards" aria-label={listLabel}>
         {list.map((r) => (
@@ -256,7 +256,8 @@ function ProfessionDetail({
           <h2 className="bench-detail-title" id="beruf-titel">
             {profession.name}
           </h2>
-          <p className="muted small">{countText(members.length, view.guilds, guildSlug, sprache)}</p>
+          <p className="muted small">{countText(members.length, view.guilds, guildSlug, sprache)
+}</p>
         </div>
       </header>
 
@@ -270,37 +271,37 @@ function ProfessionDetail({
       />
 
       {searching ? (
-        recipeList(hits, t(T.treffer))
+        recipeList(hits, t(T.results))
       ) : (
         <>
           <div className="bench-modes">
             <button
               type="button"
               className="bench-mode"
-              aria-pressed={mode === "personen"}
-              onClick={() => setMode("personen")}
+              aria-pressed={mode === "people"}
+              onClick={() => setMode("people")}
             >
-              {t(T.personen)} ({members.length})
+              {t(T.people)} ({members.length})
             </button>
             <button
               type="button"
               className="bench-mode"
-              aria-pressed={mode === "rezepte"}
-              onClick={() => setMode("rezepte")}
+              aria-pressed={mode === "recipes"}
+              onClick={() => setMode("recipes")}
             >
-              {recipesApi.data ? `${t(T.alleRezepte)} (${recipes.length})` : t(T.alleRezepte)}
+              {recipesApi.data ? `${t(T.allRecipes)} (${recipes.length})` : t(T.allRecipes)}
             </button>
           </div>
-          {mode === "rezepte" ? (
-            recipeList(recipes, t(T.rezepte))
+          {mode === "recipes" ? (
+            recipeList(recipes, t(T.recipes))
           ) : members.length === 0 ? (
             <p className="muted bench-empty">
               {guildSlug === null
-                ? t(T.niemand)(profession.name)
-                : t(T.niemandAus)(guildName(guildSlug), profession.name)}
+                ? t(T.nobody)(profession.name)
+                : t(T.nobodyFrom)(guildName(guildSlug), profession.name)}
             </p>
           ) : (
-            <ul className="bench-people" aria-label={t(T.personen)}>
+            <ul className="bench-people" aria-label={t(T.people)}>
               {members.map((m) => (
                 <li key={m.id} className="bench-person">
                   <div className="bench-person-top">
@@ -335,7 +336,7 @@ function Workbench({ view, slug }: { view: ProfessionsView; slug: string | undef
   if (view.professions.length === 0) {
     return (
       <div className="state state-empty">
-        <p>{t(T.keineBerufe)}</p>
+        <p>{t(T.noProfessions)}</p>
       </div>
     );
   }
@@ -353,17 +354,17 @@ function Workbench({ view, slug }: { view: ProfessionsView; slug: string | undef
 }
 
 export function ProfessionsPage() {
-  const { beruf } = useParams();
+  const { beruf: slug } = useParams();
   const { t } = useSprache();
   const { data, error, loading } = useApi<ProfessionsView>("/api/professions");
   return (
     <section className="page">
       <header className="page-header">
-        <h1 className="page-title">{t(T.titel)}</h1>
-        <p className="page-subtitle muted">{t(T.untertitel)}</p>
+        <h1 className="page-title">{t(T.title)}</h1>
+        <p className="page-subtitle muted">{t(T.subtitle)}</p>
       </header>
       <DataState loading={loading} error={error}>
-        {data && <Workbench view={data} slug={beruf} />}
+        {data && <Workbench view={data} slug={slug} />}
       </DataState>
     </section>
   );

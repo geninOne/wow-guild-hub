@@ -1,18 +1,18 @@
 import { Link } from "react-router";
-import { Anschrift, EmailLink, impressum, RechtstextHinweis } from "../components/Kontakt";
+import { PostalAddress, EmailLink, imprintDetails, LegalTextNotice } from "../components/Contact";
 
 /**
- * Platzhalter für das Impressum. Name, Anschrift und E-Mail kommen aus `WEBSITE_IMPRINT_…`; die übrigen Texte muss
- * jeder Betreiber selbst verfassen. Eigene Rechtstexte setzt ein Modul über `impressumSeite` ein
+ * Placeholder for the imprint (Impressum). Name, address and email come from `WEBSITE_IMPRINT_…`; every operator has
+ * to write the remaining texts themselves. A module provides its own legal texts via `impressumSeite`
  * (docs/extensions.md).
  */
-export function ImpressumPage() {
-  const { name, email } = impressum();
+export function ImprintPage() {
+  const { name, email } = imprintDetails();
   return (
     <section className="page">
       <header className="page-header">
         <h1 className="page-title">Impressum</h1>
-        <RechtstextHinweis />
+        <LegalTextNotice />
       </header>
       <div className="panel legal">
         <p className="legal-platzhalter">
@@ -21,7 +21,7 @@ export function ImpressumPage() {
         </p>
 
         <h2>Angaben nach § 5 DDG</h2>
-        <Anschrift />
+        <PostalAddress />
 
         {email && (
           <>

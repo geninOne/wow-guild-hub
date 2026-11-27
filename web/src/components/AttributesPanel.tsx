@@ -4,26 +4,26 @@ import { formatDateTime, numberLocale } from "../lib/format";
 import { useSprache, type Fassungen } from "../lib/sprache";
 
 const T = {
-  sammeln: {
+  gathering: {
     de: "Die Werte werden gerade zusammengetragen. Schau bald wieder vorbei.",
     en: "Stats are being gathered right now. Check back soon.",
     schwaebisch: "D'Werte werdet grad zammatraga. Schau bald wieder vorbei, gell.",
     bayrisch: "De Werte wern grad zammtragn. Schau boid wieder vorbei, gell.",
   },
-  keine: {
+  noStats: {
     de: "Blizzard liefert für diesen Charakter keine Werte.",
     en: "Blizzard provides no stats for this character.",
     schwaebisch: "Blizzard liefert für den Charakter koine Werte.",
     bayrisch: "Blizzard liefert fia den Charakter koane Werte.",
   },
-  stand: { de: "Stand", en: "As of", schwaebisch: "Stand", bayrisch: "Stand" },
-  grundwert: {
+  asOf: { de: "Stand", en: "As of", schwaebisch: "Stand", bayrisch: "Stand" },
+  baseValue: {
     de: (base: string, plus: string) => `Grundwert ${base}, ${plus} durch Ausrüstung und Buffs`,
     en: (base: string, plus: string) => `Base ${base}, ${plus} from gear and buffs`,
     schwaebisch: (base: string, plus: string) => `Grondwert ${base}, ${plus} durch Ausrüschtung ond Buffs`,
     bayrisch: (base: string, plus: string) => `Grundwert ${base}, ${plus} durch Ausrüstung und Buffs`,
   },
-  /** Fußzeile jeder Kachel mit Zuwachs: sichtbar, damit sie auch auf dem Handy und für Screenreader erklärt ist. */
+  /** Footer of every tile with a gain: visible so it is explained on phones and for screen readers too. */
   bonus: {
     de: (plus: string) => `${plus} durch Ausrüstung und Buffs`,
     en: (plus: string) => `${plus} from gear and buffs`,
@@ -88,7 +88,7 @@ const LABELS: Record<string, Fassungen> = {
   holy_resistance: { de: "Heiligwiderstand", en: "Holy Resistance" },
 };
 
-/* Eigene Symbole im Stil der Seite: schlicht, gefüllt, in currentColor; die Farbe setzt die Kachel. */
+/* Own icons in the site's style: plain, filled, in currentColor; the tile sets the color. */
 type GlyphName =
   | "heart" | "drop" | "flame" | "bolt" | "rune" | "eye" | "fist" | "feather" | "book" | "mountain" | "spiral"
   | "sword" | "crosshair" | "hourglass" | "target" | "star" | "gem" | "sparkle" | "spear" | "shield" | "helm"
@@ -227,7 +227,7 @@ const GLYPHS: Record<GlyphName, ReactNode> = {
   ),
 };
 
-/** Symbol und Farbe je Wert. Die Farben sind nur Grafik; Zahlen und Beschriftungen bleiben in den Textfarben. */
+/** Icon and color per stat. The colors are only graphics; numbers and labels keep the text colors. */
 const LOOK: Record<string, { glyph: GlyphName; color: string }> = {
   health: { glyph: "heart", color: "#5fd068" },
   strength: { glyph: "fist", color: "#ec6a45" },
@@ -295,7 +295,7 @@ function formatValue(row: AttributeRow): string {
   return row.value.toLocaleString(numberLocale(), { maximumFractionDigits: 1 });
 }
 
-/** Beschriftung, Symbol und Farbe einer Zeile; die Ressource richtet sich nach ihrer Art. */
+/** Label, icon and color of a row; the resource follows its kind. */
 function useRowLook(row: AttributeRow, view: AttributesView): { label: string; glyph: GlyphName; color: string } {
   const { t } = useSprache();
   if (row.key === "power" && view.resource) {
@@ -306,13 +306,13 @@ function useRowLook(row: AttributeRow, view: AttributesView): { label: string; g
   return { label: LABELS[row.key] ? t(LABELS[row.key]) : row.key, ...look };
 }
 
-/** Hinweis zum Grundwert, wenn Ausrüstung und Buffs den Wert ändern. */
+/** Hint about the base value when gear and buffs change the value. */
 function useBaseTooltip(row: AttributeRow): string | undefined {
   const { t } = useSprache();
   if (row.base === undefined) return undefined;
   const diff = row.value - row.base;
   const plus = `${diff >= 0 ? "+" : "−"}${Math.abs(diff).toLocaleString(numberLocale(), { maximumFractionDigits: 1 })}`;
-  return t(T.grundwert)(row.base.toLocaleString(numberLocale()), plus);
+  return t(T.baseValue)(row.base.toLocaleString(numberLocale()), plus);
 }
 
 function AttributeTile({ row, view }: { row: AttributeRow; view: AttributesView }) {
@@ -322,8 +322,8 @@ function AttributeTile({ row, view }: { row: AttributeRow; view: AttributesView 
   const plus = row.base !== undefined && row.value > row.base
     ? `+${(row.value - row.base).toLocaleString(numberLocale(), { maximumFractionDigits: 1 })}`
     : null;
-  // Gleicher Aufbau für alle Kacheln: oben Symbol, Beschriftung und Wert auf einer Linie, unten eine Fußzeile
-  // fester Höhe, auch ohne Zuwachs. So sind alle Kacheln gleich hoch und die Werte stehen bündig.
+  // Same layout for all tiles: icon, label and value on one line at the top, a fixed-height footer below,
+  // even without a gain. That way all tiles have the same height and the values line up.
   return (
     <li className="attribute-tile" title={title} style={{ "--attribute-color": color } as CSSProperties}>
       <span className="attribute-head">
@@ -348,27 +348,28 @@ function AttributeLine({ row, view }: { row: AttributeRow; view: AttributesView 
   );
 }
 
-/** Grundwerte eines Charakters wie im Arsenal: oben die Grundwerte als Kacheln, darunter Angriff, Zauber, Verteidigung. */
+/** A character's stats as in the Armory: base stats as tiles at the top, attack, spells and defense below. */
 export function AttributesPanel({ view }: { view: AttributesView | undefined }) {
   const { t } = useSprache();
   if (!view?.available) {
     return (
       <div className="state state-empty">
-        <p>{t(view?.fetchedAt ? T.keine : T.sammeln)}</p>
+        <p>{t(view?.fetchedAt ? T.noStats : T.gathering)}</p>
       </div>
     );
   }
-  const basis = view.groups.find((g) => g.id === "basis");
+  const baseGroup = view.groups.find((g) => g.id === "basis");
   const rest = view.groups.filter((g) => g.id !== "basis");
   return (
     <div className="attributes">
-      {basis && (
+      {baseGroup && (
         <section className="panel" aria-labelledby="werte-basis">
           <h2 className="panel-title" id="werte-basis">
             {t(GROUPS.basis)}
           </h2>
           <ul className="attribute-tiles">
-            {basis.rows.map((row) => (
+            {baseGroup.rows.map(
+(row) => (
               <AttributeTile key={row.key} row={row} view={view} />
             ))}
           </ul>
@@ -392,7 +393,7 @@ export function AttributesPanel({ view }: { view: AttributesView | undefined }) 
       )}
       {view.fetchedAt && (
         <p className="muted small attributes-stand">
-          {t(T.stand)}: {formatDateTime(view.fetchedAt)}
+          {t(T.asOf)}: {formatDateTime(view.fetchedAt)}
         </p>
       )}
     </div>

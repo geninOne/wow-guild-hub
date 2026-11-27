@@ -5,66 +5,66 @@ import { useSprache, type Fassungen, type Sprache, fassungIn } from "../lib/spra
 import { classColor } from "../lib/wow";
 import { CharacterLink } from "./CharacterLink";
 import { FactionCrest } from "./FactionCrest";
-import { ALLE_ANSEHEN, MemberListDialog, MemberListTrigger, type MemberSet } from "./MemberList";
+import { VIEW_ALL, MemberListDialog, MemberListTrigger, type MemberSet } from "./MemberList";
 import { numberLocale } from "../lib/format";
 
 const fmt = (n: number) => n.toLocaleString(numberLocale());
 
 const T = {
-  fuer: { de: "für", en: "for", schwaebisch: "für", bayrisch: "fia" },
-  sonstiges: { de: "Sonstiges", en: "Other", schwaebisch: "Sonschtigs", bayrisch: "Sonstigs" },
-  fisch: { de: "Fisch", en: "fish", schwaebisch: "Fisch", bayrisch: "Fisch" },
-  flamme: { de: "Flamme", en: "flame", schwaebisch: "Flamm", bayrisch: "Flammerl" },
-  zusammen: { de: "Zusammen", en: "Together", schwaebisch: "Zamma", bayrisch: "Zamm" },
-  freundlicher: {
-    de: (name: string, mehr: string, weniger: string) => `Freundlicher war ${name}: ${mehr} gegen ${weniger} Gesten.`,
-    en: (name: string, mehr: string, weniger: string) => `${name} was friendlier: ${mehr} to ${weniger} emotes.`,
-    schwaebisch: (name: string, mehr: string, weniger: string) => `Freundlicher war ${name}: ${mehr} gege ${weniger} Geschte.`,
-    bayrisch: (name: string, mehr: string, weniger: string) => `Freindlicher war ${name}: ${mehr} gega ${weniger} Gestn.`,
+  honorFor: { de: "für", en: "for", schwaebisch: "für", bayrisch: "fia" },
+  other: { de: "Sonstiges", en: "Other", schwaebisch: "Sonschtigs", bayrisch: "Sonstigs" },
+  fish: { de: "Fisch", en: "fish", schwaebisch: "Fisch", bayrisch: "Fisch" },
+  flame: { de: "Flamme", en: "flame", schwaebisch: "Flamm", bayrisch: "Flammerl" },
+  together: { de: "Zusammen", en: "Together", schwaebisch: "Zamma", bayrisch: "Zamm" },
+  friendlier: {
+    de: (name: string, more: string, fewer: string) => `Freundlicher war ${name}: ${more} gegen ${fewer} Gesten.`,
+    en: (name: string, more: string, fewer: string) => `${name} was friendlier: ${more} to ${fewer} emotes.`,
+    schwaebisch: (name: string, more: string, fewer: string) => `Freundlicher war ${name}: ${more} gege ${fewer} Geschte.`,
+    bayrisch: (name: string, more: string, fewer: string) => `Freindlicher war ${name}: ${more} gega ${fewer} Gestn.`,
   },
-  unentschieden: {
+  tie: {
     de: (n: string) => `Unentschieden: beide ${n} Gesten.`,
     en: (n: string) => `It's a tie: ${n} emotes each.`,
     schwaebisch: (n: string) => `Unentschiede: beide ${n} Geschte. So isch's recht.`,
     bayrisch: (n: string) => `Unentschiedn: beide ${n} Gestn. Passt scho.`,
   },
-  niemand: { de: "niemand", en: "nobody", schwaebisch: "koiner", bayrisch: "koana" },
-  gesucht: { de: "Gesucht", en: "Wanted", schwaebisch: "Gsucht", bayrisch: "Gsuacht" },
-  weitere: {
+  nobody: { de: "niemand", en: "nobody", schwaebisch: "koiner", bayrisch: "koana" },
+  wanted: { de: "Gesucht", en: "Wanted", schwaebisch: "Gsucht", bayrisch: "Gsuacht" },
+  more: {
     de: (n: string) => `und ${n} weitere`,
     en: (n: string) => `and ${n} more`,
     schwaebisch: (n: string) => `ond ${n} weitere`,
     bayrisch: (n: string) => `und ${n} weitere`,
   },
-  opfer: { de: "Opfer:", en: "Victims:", schwaebisch: "Opfer:", bayrisch: "Opfer:" },
-  vorne: { de: "vorne:", en: "leading:", schwaebisch: "vorna:", bayrisch: "vorn:" },
-  schnitt: {
-    de: (n: string, was: string) => `Im Schnitt ${n} ${was} pro Charakter.`,
-    en: (n: string, was: string) => `On average ${n} ${was} per character.`,
-    schwaebisch: (n: string, was: string) => `Em Schnitt ${n} ${was} pro Charakter.`,
-    bayrisch: (n: string, was: string) => `Im Schnitt ${n} ${was} pro Charakter, gell.`,
+  victims: { de: "Opfer:", en: "Victims:", schwaebisch: "Opfer:", bayrisch: "Opfer:" },
+  leading: { de: "vorne:", en: "leading:", schwaebisch: "vorna:", bayrisch: "vorn:" },
+  average: {
+    de: (n: string, what: string) => `Im Schnitt ${n} ${what} pro Charakter.`,
+    en: (n: string, what: string) => `On average ${n} ${what} per character.`,
+    schwaebisch: (n: string, what: string) => `Em Schnitt ${n} ${what} pro Charakter.`,
+    bayrisch: (n: string, what: string) => `Im Schnitt ${n} ${what} pro Charakter, gell.`,
   },
-  werSteckt: {
+  viewAllN: {
     de: (n: string) => `Alle ${n} ansehen`,
     en: (n: string) => `View all ${n}`,
     schwaebisch: (n: string) => `Älle ${n} aagucke`,
     bayrisch: (n: string) => `Olle ${n} oschaun`,
   },
-  leer: {
+  empty: {
     de: "Noch niemand. Wer traut sich?",
     en: "Nobody yet. Who dares?",
     schwaebisch: "No koiner. Wer traut sich?",
     bayrisch: "No koana. Wer traut si?",
   },
-  spitzenreiter: { de: (was: string) => `Spitzenreiter: ${was}`, en: (was: string) => `Top ranks: ${was}` },
-  platz: { de: (n: number) => `Platz ${n}`, en: (n: number) => `Rank ${n}` },
-  nachUrsache: { de: (was: string) => `${was} nach Ursache`, en: (was: string) => `${was} by cause` },
-  gegen: { de: (a: string, b: string) => `${a} gegen ${b}`, en: (a: string, b: string) => `${a} versus ${b}` },
-  hitparade: { de: (was: string) => `Hitparade: ${was}`, en: (was: string) => `Chart: ${was}` },
-  prozent: { de: (was: string, n: number) => `${was} ${n} Prozent`, en: (was: string, n: number) => `${was} ${n} percent` },
+  topRanks: { de: (what: string) => `Spitzenreiter: ${what}`, en: (what: string) => `Top ranks: ${what}` },
+  rank: { de: (n: number) => `Platz ${n}`, en: (n: number) => `Rank ${n}` },
+  byCause: { de: (what: string) => `${what} nach Ursache`, en: (what: string) => `${what} by cause` },
+  versus: { de: (a: string, b: string) => `${a} gegen ${b}`, en: (a: string, b: string) => `${a} versus ${b}` },
+  chart: { de: (what: string) => `Hitparade: ${what}`, en: (what: string) => `Chart: ${what}` },
+  percent: { de: (what: string, n: number) => `${what} ${n} Prozent`, en: (what: string, n: number) => `${what} ${n} percent` },
 } satisfies Record<string, Fassungen<unknown>>;
 
-/** Englische Ordnungszahl: 1st, 2nd, 3rd, 4th, 11th, 21st. */
+/** English ordinal number: 1st, 2nd, 3rd, 4th, 11th, 21st. */
 export function ordinalEn(n: number): string {
   const tens = n % 100;
   if (tens >= 11 && tens <= 13) return `${n}th`;
@@ -72,24 +72,24 @@ export function ordinalEn(n: number): string {
   return `${n}${suffix}`;
 }
 
-/** Zahl mit Einheit in Einzahl oder Mehrzahl, ohne Einheit nur die Zahl. */
+/** Number with its unit in singular or plural; without a unit just the number. */
 export function withUnit(value: number, unit: [string, string] | null): string {
   return unit ? `${fmt(value)} ${value === 1 ? unit[0] : unit[1]}` : fmt(value);
 }
 
-/** Beschriftung einer Statistik: Kurzname in der gewählten Sprache, sonst der amtliche Name. */
-const labelIn = (sprache: Sprache) => (s: StatEntryView) => (s.short ? fassungIn(s.short, sprache) : s.name);
+/** Label of a statistic: short name in the selected language, otherwise the official name. */
+const labelIn = (language: Sprache) => (s: StatEntryView) => (s.short ? fassungIn(s.short, language) : s.name);
 
-/** Einheit einer Statistik in der gewählten Sprache. */
-const unitIn = (sprache: Sprache) => (s: StatEntryView) => (s.unit ? fassungIn(s.unit, sprache) : null);
+/** Unit of a statistic in the selected language. */
+const unitIn = (language: Sprache) => (s: StatEntryView) => (s.unit ? fassungIn(s.unit, language) : null);
 
-/** Beschriftung und Einheit in der aktuellen Sprache. */
+/** Label and unit in the current language. */
 function useStatText() {
   const { t, sprache } = useSprache();
   return { t, sprache, label: labelIn(sprache), unit: unitIn(sprache) };
 }
 
-/** Laufnummer für gestaffelte Animationen im CSS (`--i`). */
+/** Sequence number for staggered animations in CSS (`--i`). */
 const idx = (i: number) => ({ "--i": i }) as CSSProperties;
 
 function wantsMotion(): boolean {
@@ -97,7 +97,7 @@ function wantsMotion(): boolean {
     && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-/** Zählt beim Erscheinen von 0 auf den Wert hoch; ohne Bewegungswunsch steht sofort der Endwert da. */
+/** Counts up from 0 to the value on appearance; with reduced motion the final value shows right away. */
 function CountUp({ value, unit = null }: { value: number; unit?: [string, string] | null }) {
   const [shown, setShown] = useState(() => (wantsMotion() ? 0 : value));
   useEffect(() => {
@@ -126,7 +126,7 @@ function Honor({ stat }: { stat: StatEntryView }) {
   if (!stat.honor || !first) return null;
   return (
     <p className="stat-honor">
-      <span className="stat-honor-badge">{t(stat.honor)}</span> {t(T.fuer)} <CharacterLink character={first.character} />
+      <span className="stat-honor-badge">{t(stat.honor)}</span> {t(T.honorFor)} <CharacterLink character={first.character} />
     </p>
   );
 }
@@ -135,10 +135,10 @@ function MiniLeaders({ stat, limit = 3 }: { stat: StatEntryView; limit?: number 
   const { t } = useSprache();
   if (stat.leaders.length === 0) return null;
   return (
-    <ol className="fun-mini-leaders" aria-label={t(T.spitzenreiter)(stat.name)}>
+    <ol className="fun-mini-leaders" aria-label={t(T.topRanks)(stat.name)}>
       {stat.leaders.slice(0, limit).map((l, i) => (
         <li key={l.character.id}>
-          <span className={`stat-rank stat-rank-${i + 1}`} aria-label={t(T.platz)(i + 1)}>
+          <span className={`stat-rank stat-rank-${i + 1}`} aria-label={t(T.rank)(i + 1)}>
             {i + 1}
           </span>
           <CharacterLink character={l.character} />
@@ -149,7 +149,7 @@ function MiniLeaders({ stat, limit = 3 }: { stat: StatEntryView; limit?: number 
   );
 }
 
-/** Tortendiagramm aus SVG-Kreisen; `pathLength` 100 macht die Strichlängen zu Prozenten. */
+/** Pie chart from SVG circles; `pathLength` 100 turns the dash lengths into percentages. */
 function PieChart({ parts, label: ariaLabel }: { parts: { value: number; color: string }[]; label: string }) {
   const sum = parts.reduce((a, p) => a + p.value, 0) || 1;
   let offset = 0;
@@ -182,7 +182,7 @@ function PieChart({ parts, label: ariaLabel }: { parts: { value: number; color: 
   );
 }
 
-/** Grabsteinfeld: Summe mit den ersten drei, darunter je Ursache ein Grabstein, größer je mehr Tode. */
+/** Graveyard: total with the top three, below it one gravestone per cause, larger the more deaths. */
 function GraveField({ card }: { card: StatCardView }) {
   const { t, label, unit } = useStatText();
   const [main, ...causes] = card.stats;
@@ -197,7 +197,7 @@ function GraveField({ card }: { card: StatCardView }) {
         <MiniLeaders stat={main} />
         <Honor stat={main} />
       </div>
-      <ul className="fun-graves-field" aria-label={t(T.nachUrsache)(main.name)}>
+      <ul className="fun-graves-field" aria-label={t(T.byCause)(main.name)}>
         {sorted.map((s, i) => (
           <li key={s.id} className={`fun-gravestone${s.total === 0 ? " fun-gravestone-empty" : ""}`} style={idx(i)}>
             <span className="fun-gravestone-plot">
@@ -222,7 +222,7 @@ function GraveField({ card }: { card: StatCardView }) {
 
 const NICE = [1, 2, 5];
 
-/** Kleinster runder Schritt (1, 2, 5, 10, 20, 50 ...), mit dem höchstens `max` Symbole nötig sind. */
+/** Smallest round step (1, 2, 5, 10, 20, 50 ...) that needs at most `max` icons. */
 export function pictogramStep(total: number, max = 20): number {
   for (let exp = 0; ; exp++) {
     for (const n of NICE) {
@@ -250,11 +250,11 @@ function FlameIcon() {
 }
 
 const SYMBOLS: Record<string, { icon: () => ReactNode; one: Fassungen }> = {
-  fische: { icon: FishIcon, one: T.fisch },
-  lagerfeuer: { icon: FlameIcon, one: T.flamme },
+  fische: { icon: FishIcon, one: T.fish },
+  lagerfeuer: { icon: FlameIcon, one: T.flame },
 };
 
-/** Piktogramm-Reihe: ein Symbol steht für einen runden Schritt, das letzte ist nur so voll wie der Rest. */
+/** Pictogram row: one icon stands for a round step, the last one is only as full as the remainder. */
 function Pictogram({ card }: { card: StatCardView }) {
   const { t, unit } = useStatText();
   const stat = card.stats[0];
@@ -288,7 +288,7 @@ function Pictogram({ card }: { card: StatCardView }) {
   );
 }
 
-/** Waage: die schwerere Seite sinkt, höchstens um 14 Grad. */
+/** Scale: the heavier side sinks, by at most 14 degrees. */
 function Scale({ card }: { card: StatCardView }) {
   const { label } = useStatText();
   const [left, right] = card.stats;
@@ -329,16 +329,16 @@ function Scale({ card }: { card: StatCardView }) {
   );
 }
 
-function convert(stat: StatEntryView, sprache: Sprache): string | null {
+function convert(stat: StatEntryView, language: Sprache): string | null {
   if (!stat.conversion) return null;
   const value = stat.total / stat.conversion.per;
   const shown = value < 10 ? Math.round(value * 10) / 10 : Math.round(value);
-  const pair = fassungIn(stat.conversion.unit, sprache);
+  const pair = fassungIn(stat.conversion.unit, language);
   const unit = shown === 1 ? pair[0] : pair[1];
   return `${shown.toLocaleString(numberLocale())} ${unit}`;
 }
 
-/** Wusstest du? Jede Statistik mit Umrechnung in etwas Greifbares. */
+/** Did you know? Each statistic converted into something tangible. */
 function DidYouKnow({ card }: { card: StatCardView }) {
   const { t, sprache, unit } = useStatText();
   return (
@@ -357,36 +357,36 @@ function DidYouKnow({ card }: { card: StatCardView }) {
   );
 }
 
-/** Podium: Platz 2 links, Platz 1 in der Mitte und am höchsten, Platz 3 rechts. */
+/** Podium: rank 2 on the left, rank 1 in the middle and highest, rank 3 on the right. */
 function Podium({ card }: { card: StatCardView }) {
   const { t, unit } = useStatText();
   const stat = card.stats[0];
   const places = [1, 0, 2].map((i) => ({ place: i + 1, leader: stat.leaders[i] })).filter((p) => p.leader);
   return (
     <>
-      <ol className="fun-podium" aria-label={t(T.spitzenreiter)(stat.name)}>
+      <ol className="fun-podium" aria-label={t(T.topRanks)(stat.name)}>
         {places.map(({ place, leader }) => (
           <li key={place} className={`fun-podium-step fun-podium-${place}`} style={{ order: place === 1 ? 2 : place === 2 ? 1 : 3 }}>
             <CharacterLink character={leader!.character} />
             <span className="num muted small">{fmt(leader!.value)}</span>
-            <span className={`fun-podium-block stat-rank-${place}`} aria-label={t(T.platz)(place)} style={idx(4 - place)}>
+            <span className={`fun-podium-block stat-rank-${place}`} aria-label={t(T.rank)(place)} style={idx(4 - place)}>
               {place}
             </span>
           </li>
         ))}
       </ol>
       <p className="fun-podium-total">
-        {t(T.zusammen)} <strong className="num">{withUnit(stat.total, unit(stat))}</strong>
+        {t(T.together)} <strong className="num">{withUnit(stat.total, unit(stat))}</strong>
       </p>
       <Honor stat={stat} />
     </>
   );
 }
 
-/** Horde gegen Allianz: gegenüberliegende Balken; bei nur einer Gilde die Hitparade dieser Gilde. */
+/** Horde versus Alliance: opposing bars; with only one guild the chart of that guild. */
 function FactionDuel({ card, guilds, filtered }: { card: StatCardView; guilds: GuildRef[]; filtered: boolean }) {
   const { t, label } = useStatText();
-  if (filtered || guilds.length < 2) return <Hitparade card={card} />;
+  if (filtered || guilds.length < 2) return <TopChart card={card} />;
   const [a, b] = guilds;
   const max = Math.max(1, ...card.stats.flatMap((s) => [s.perGuild[a.slug] ?? 0, s.perGuild[b.slug] ?? 0]));
   const sumA = card.stats.reduce((x, s) => x + (s.perGuild[a.slug] ?? 0), 0);
@@ -402,7 +402,7 @@ function FactionDuel({ card, guilds, filtered }: { card: StatCardView; guilds: G
           {b.name} <FactionCrest faction={b.faction} size={20} decorative />
         </span>
       </div>
-      <ul className="fun-duel" aria-label={t(T.gegen)(a.name, b.name)}>
+      <ul className="fun-duel" aria-label={t(T.versus)(a.name, b.name)}>
         {card.stats.map((s, i) => {
           const va = s.perGuild[a.slug] ?? 0;
           const vb = s.perGuild[b.slug] ?? 0;
@@ -423,19 +423,19 @@ function FactionDuel({ card, guilds, filtered }: { card: StatCardView; guilds: G
       </ul>
       <p className="fun-duel-verdict">
         {winner
-          ? t(T.freundlicher)(winner.name, fmt(Math.max(sumA, sumB)), fmt(Math.min(sumA, sumB)))
-          : t(T.unentschieden)(fmt(sumA))}
+          ? t(T.friendlier)(winner.name, fmt(Math.max(sumA, sumB)), fmt(Math.min(sumA, sumB)))
+          : t(T.tie)(fmt(sumA))}
       </p>
     </>
   );
 }
 
-function Hitparade({ card }: { card: StatCardView }) {
+function TopChart({ card }: { card: StatCardView }) {
   const { t, label } = useStatText();
   const sorted = [...card.stats].sort((x, y) => y.total - x.total);
   const max = Math.max(1, sorted[0]?.total ?? 0);
   return (
-    <ol className="fun-hitparade" aria-label={t(T.hitparade)(t(card.title))}>
+    <ol className="fun-hitparade" aria-label={t(T.chart)(t(card.title))}>
       {sorted.map((s, i) => (
         <li key={s.id} className="fun-hit" style={idx(i)}>
           <span className="fun-hit-rank num">{i + 1}.</span>
@@ -445,7 +445,7 @@ function Hitparade({ card }: { card: StatCardView }) {
           </span>
           <span className="num">{fmt(s.total)}</span>
           <span className="fun-hit-who small">
-            {s.leaders[0] ? <CharacterLink character={s.leaders[0].character} /> : <span className="muted">{t(T.niemand)}</span>}
+            {s.leaders[0] ? <CharacterLink character={s.leaders[0].character} /> : <span className="muted">{t(T.nobody)}</span>}
           </span>
         </li>
       ))}
@@ -453,7 +453,7 @@ function Hitparade({ card }: { card: StatCardView }) {
   );
 }
 
-/** Torte mit Anteilen in Prozent. */
+/** Pie with shares in percent. */
 function Pie({ card }: { card: StatCardView }) {
   const { t, label } = useStatText();
   const sum = card.stats.reduce((a, s) => a + s.total, 0) || 1;
@@ -462,7 +462,7 @@ function Pie({ card }: { card: StatCardView }) {
     <div className="fun-pie-wrap">
       <PieChart
         parts={card.stats.map((s, i) => ({ value: s.total, color: colors[i % colors.length] }))}
-        label={card.stats.map((s) => t(T.prozent)(label(s), Math.round((s.total / sum) * 100))).join(", ")}
+        label={card.stats.map((s) => t(T.percent)(label(s), Math.round((s.total / sum) * 100))).join(", ")}
       />
       <ul className="fun-legend">
         {card.stats.map((s, i) => (
@@ -482,7 +482,7 @@ function Pie({ card }: { card: StatCardView }) {
   );
 }
 
-/** Große Zahl mit Spruch und kleiner Rangliste. */
+/** Big number with a saying and a small ranking. */
 function BigNumber({ card }: { card: StatCardView }) {
   const { label, unit } = useStatText();
   const stat = card.stats[0];
@@ -523,7 +523,7 @@ function Bottle({ fill, color }: { fill: number; color: string }) {
   );
 }
 
-/** Zwei Fläschle, gefüllt im Verhältnis ihrer Werte. */
+/** Two little bottles, filled in proportion to their values. */
 function Bottles({ card }: { card: StatCardView }) {
   const { label } = useStatText();
   const colors = ["#e0393f", "#2f6ae0", "#3fb58a"];
@@ -542,7 +542,7 @@ function Bottles({ card }: { card: StatCardView }) {
   );
 }
 
-/** Fahrplan: Reisearten als Haltestellen auf einer Linie. */
+/** Timetable: travel modes as stops on a line. */
 function Timetable({ card, characters }: { card: StatCardView; characters: number }) {
   const { t, label, unit } = useStatText();
   const first = card.stats[0];
@@ -557,7 +557,7 @@ function Timetable({ card, characters }: { card: StatCardView; characters: numbe
             <span className="small">{label(s)}</span>
             {s.leaders[0] && (
               <span className="muted small">
-                {t(T.vorne)} <CharacterLink character={s.leaders[0].character} />
+                {t(T.leading)} <CharacterLink character={s.leaders[0].character} />
               </span>
             )}
           </li>
@@ -565,7 +565,7 @@ function Timetable({ card, characters }: { card: StatCardView; characters: numbe
       </ol>
       {characters > 0 && first.total > 0 && (
         <p className="muted small">
-          {t(T.schnitt)((first.total / characters).toLocaleString(numberLocale(), { maximumFractionDigits: 1 }), u ? u[1] : label(first))}
+          {t(T.average)((first.total / characters).toLocaleString(numberLocale(), { maximumFractionDigits: 1 }), u ? u[1] : label(first))}
         </p>
       )}
       <Honor stat={first} />
@@ -574,26 +574,26 @@ function Timetable({ card, characters }: { card: StatCardView; characters: numbe
 }
 
 const N = {
-  papierkorb: {
+  trash: {
     de: (every: number, noun: string) => (every === 1 ? `Jede ${noun} landet im Papierkorb.` : `Jede ${every}. ${noun} landet im Papierkorb.`),
     en: (every: number, noun: string) => (every === 1 ? `Every ${noun} ends up in the trash.` : `Every ${ordinalEn(every)} ${noun} ends up in the trash.`),
     schwaebisch: (every: number, noun: string) => (every === 1 ? `Jede ${noun} landet im Papierkorb.` : `Jede ${every}. ${noun} landet im Papierkorb.`),
     bayrisch: (every: number, noun: string) => (every === 1 ? `Jede ${noun} landt im Papierkorb.` : `Jede ${every}. ${noun} landt im Papierkorb.`),
   },
-  erledigt: { de: "erledigt", en: "completed", schwaebisch: "erledigt", bayrisch: "erledigt" },
-  zuFuss: { de: "laufen zu Fuß", en: "on foot", schwaebisch: "laufet z'Fuß", bayrisch: "genga z'Fuaß" },
-  hochZuRoss: { de: "hoch zu Ross", en: "in the saddle", schwaebisch: "hoch zu Ross", bayrisch: "hoch zu Ross" },
+  completed: { de: "erledigt", en: "completed", schwaebisch: "erledigt", bayrisch: "erledigt" },
+  onFoot: { de: "laufen zu Fuß", en: "on foot", schwaebisch: "laufet z'Fuß", bayrisch: "genga z'Fuaß" },
+  inTheSaddle: { de: "hoch zu Ross", en: "in the saddle", schwaebisch: "hoch zu Ross", bayrisch: "hoch zu Ross" },
   symbol: {
     de: (n: string) => `1 Symbol = ${n} Charaktere`,
     en: (n: string) => `1 icon = ${n} characters`,
     schwaebisch: (n: string) => `1 Symbol = ${n} Charakter`,
     bayrisch: (n: string) => `1 Symbol = ${n} Charaktere`,
   },
-  gradMal: { de: "In der ganzen Gilde gerade einmal", en: "In the whole guild, a mere", schwaebisch: "In dr ganze Gilde grad mal", bayrisch: "In da ganzn Gilde grad amoi" },
-  zumBeispiel: { de: "zum Beispiel bei", en: "for example", schwaebisch: "zum Beispiel bei", bayrisch: "zum Beispiel bei" },
-  rein: { de: "hinein", en: "in", schwaebisch: "nei", bayrisch: "eini" },
-  raus: { de: "heraus", en: "out", schwaebisch: "raus", bayrisch: "ausse" },
-  schnitt: {
+  aMere: { de: "In der ganzen Gilde gerade einmal", en: "In the whole guild, a mere", schwaebisch: "In dr ganze Gilde grad mal", bayrisch: "In da ganzn Gilde grad amoi" },
+  forExample: { de: "zum Beispiel bei", en: "for example", schwaebisch: "zum Beispiel bei", bayrisch: "zum Beispiel bei" },
+  into: { de: "hinein", en: "in", schwaebisch: "nei", bayrisch: "eini" },
+  out: { de: "heraus", en: "out", schwaebisch: "raus", bayrisch: "ausse" },
+  average: {
     de: (n: string) => `Im Schnitt ${n} Materialien pro Teil.`,
     en: (n: string) => `On average ${n} materials per item.`,
     schwaebisch: (n: string) => `Im Schnitt ${n} Materialie pro Teil.`,
@@ -601,7 +601,7 @@ const N = {
   },
 } satisfies Record<string, Fassungen<unknown>>;
 
-/** "Jede 14. Quest": wie oft der erste Wert im Verhältnis zum zweiten vorkommt. */
+/** "Jede 14. Quest": how often the first value occurs relative to the second. */
 function Ratio({ part, whole }: { part: StatEntryView; whole: StatEntryView }) {
   const { t, label, unit } = useStatText();
   if (part.total === 0 || whole.total === 0) return null;
@@ -610,15 +610,15 @@ function Ratio({ part, whole }: { part: StatEntryView; whole: StatEntryView }) {
   const noun = u ? u[0] : label(part);
   return (
     <p className="fun-ratio">
-      {t(N.papierkorb)(every, noun)}{" "}
+      {t(N.trash)(every, noun)}{" "}
       <span className="muted small">
-        ({withUnit(whole.total, unit(whole))} {t(N.erledigt)})
+        ({withUnit(whole.total, unit(whole))} {t(N.completed)})
       </span>
     </p>
   );
 }
 
-/** EKG: je Statistik ein Herzschlag, so hoch wie ihr Wert, in Klassenfarbe. */
+/** ECG: one heartbeat per statistic, as high as its value, in class color. */
 function Heartbeat({ card }: { card: StatCardView }) {
   const { t, label } = useStatText();
   const stats = card.stats;
@@ -683,7 +683,7 @@ function BootIcon() {
   );
 }
 
-/** Stall: wie viele Charaktere reiten und wie viele laufen, dazu seltene Schätze. */
+/** Stable: how many characters ride and how many walk, plus rare treasures. */
 function Stable({ card, characters }: { card: StatCardView; characters: number }) {
   const { t, unit } = useStatText();
   const [mounts, ...extras] = card.stats;
@@ -698,7 +698,7 @@ function Stable({ card, characters }: { card: StatCardView; characters: number }
           <strong className="fun-big num">
             <CountUp value={walkers} />
           </strong>
-          <p className="small">{t(N.zuFuss)}</p>
+          <p className="small">{t(N.onFoot)}</p>
           <div className="fun-pictos fun-pictos-boots" aria-hidden="true">
             {Array.from({ length: icons(walkers) }, (_, i) => (
               <span key={i} className="fun-picto" style={idx(i)}>
@@ -711,7 +711,7 @@ function Stable({ card, characters }: { card: StatCardView; characters: number }
           <strong className="fun-big num">
             <CountUp value={riders} />
           </strong>
-          <p className="small">{t(N.hochZuRoss)}</p>
+          <p className="small">{t(N.inTheSaddle)}</p>
           <div className="fun-pictos fun-pictos-horses" aria-hidden="true">
             {Array.from({ length: icons(riders) }, (_, i) => (
               <span key={i} className="fun-picto" style={idx(i)}>
@@ -725,11 +725,11 @@ function Stable({ card, characters }: { card: StatCardView; characters: number }
       <ul className="fun-rarities">
         {extras.map((s) => (
           <li key={s.id}>
-            {t(N.gradMal)} <strong className="num">{withUnit(s.sum, unit(s))}</strong>
+            {t(N.aMere)} <strong className="num">{withUnit(s.sum, unit(s))}</strong>
             {s.leaders[0] && (
               <span className="muted small">
                 {" "}
-                ({t(N.zumBeispiel)} <CharacterLink character={s.leaders[0].character} />)
+                ({t(N.forExample)} <CharacterLink character={s.leaders[0].character} />)
               </span>
             )}
           </li>
@@ -739,7 +739,7 @@ function Stable({ card, characters }: { card: StatCardView; characters: number }
   );
 }
 
-/** Schredder: oben gehen Gegenstände rein, unten kommen Materialien raus. */
+/** Shredder: items go in at the top, materials come out at the bottom. */
 function Shredder({ card }: { card: StatCardView }) {
   const { t, unit } = useStatText();
   const [items, mats] = card.stats;
@@ -748,7 +748,7 @@ function Shredder({ card }: { card: StatCardView }) {
     <>
       <div className="fun-shredder">
         <p className="fun-shredder-in">
-          <strong className="num">{withUnit(items.total, unit(items))}</strong> {t(N.rein)}
+          <strong className="num">{withUnit(items.total, unit(items))}</strong> {t(N.into)}
         </p>
         <svg viewBox="0 0 120 90" aria-hidden="true" className="fun-shredder-svg">
           <rect x="44" y="2" width="32" height="24" rx="3" className="fun-shredder-item" />
@@ -761,13 +761,13 @@ function Shredder({ card }: { card: StatCardView }) {
         </svg>
         {mats && (
           <p className="fun-shredder-out">
-            <strong className="num">{withUnit(mats.total, unit(mats))}</strong> {t(N.raus)}
+            <strong className="num">{withUnit(mats.total, unit(mats))}</strong> {t(N.out)}
           </p>
         )}
       </div>
       {per > 0 && (
         <p className="muted small">
-          {t(N.schnitt)(per.toLocaleString(numberLocale(), { maximumFractionDigits: 1 }))}
+          {t(N.average)(per.toLocaleString(numberLocale(), { maximumFractionDigits: 1 }))}
         </p>
       )}
       <Honor stat={items} />
@@ -783,7 +783,7 @@ function MinsterIcon() {
   );
 }
 
-/** Verbandsrolle: Verbände als Mullbinde, umgerechnet in Kirchtürme, dazu die Gesundheitssteine. */
+/** Bandage roll: bandages as gauze, converted into church spires, plus the healthstones. */
 function Bandage({ card }: { card: StatCardView }) {
   const { t, sprache, label, unit } = useStatText();
   const [bandages, ...rest] = card.stats;
@@ -854,7 +854,7 @@ function CardBody({ card, view }: { card: StatCardView; view: StatsView }) {
   }
 }
 
-/** Pfad für die Mitglieder hinter einer Karte, passend zum Zeitraum der Ansicht (immer alle Gilden). */
+/** Path for the members behind a card, matching the view's period (always all guilds). */
 export function statMembersPath(view: Pick<StatsView, "kind" | "id">, slug: string): string {
   return `${statsBase(view.kind, view.id)}?card=${encodeURIComponent(slug)}`;
 }
@@ -869,12 +869,12 @@ export function statsBase(kind: StatsPeriodKind, id: string | null): string {
 }
 
 /**
- * Mengen für die Mitgliederliste einer Karte: je Statistik eine Menge, beschriftet wie auf der Karte, Wertspalte mit
- * der Einheit in Mehrzahl (sonst dem Namen der Statistik). Statistiken ohne Antwort fallen weg.
+ * Sets for a card's member list: one set per statistic, labeled as on the card, value column with the
+ * plural unit (otherwise the statistic's name). Statistics without an answer are dropped.
  */
-export function statMemberSets(card: StatCardView, data: StatCardMembersView, sprache: Sprache): MemberSet[] {
-  const label = labelIn(sprache);
-  const unit = unitIn(sprache);
+export function statMemberSets(card: StatCardView, data: StatCardMembersView, language: Sprache): MemberSet[] {
+  const label = labelIn(language);
+  const unit = unitIn(language);
   return card.stats.flatMap((s): MemberSet[] => {
     const found = data.stats.find((d) => d.id === s.id);
     if (!found) return [];
@@ -883,7 +883,7 @@ export function statMemberSets(card: StatCardView, data: StatCardMembersView, sp
   });
 }
 
-/** Lädt die Mitglieder einer Karte erst beim Öffnen und zeigt sie im Dialog. */
+/** Loads a card's members only on opening and shows them in the dialog. */
 function StatCardMembers({ card, view, subtitle, onClose }: { card: StatCardView; view: StatsView; subtitle?: string; onClose(): void }) {
   const { t, sprache } = useSprache();
   const { data, error } = useApi<StatCardMembersView>(statMembersPath(view, card.slug));
@@ -899,7 +899,7 @@ function StatCardMembers({ card, view, subtitle, onClose }: { card: StatCardView
   );
 }
 
-/** Klick irgendwo auf die Karte öffnet die Liste, außer auf Links und Knöpfen darin. */
+/** A click anywhere on the card opens the list, except on links and buttons inside it. */
 function onCardClick(open: () => void) {
   return (event: MouseEvent<HTMLElement>) => {
     if (event.target instanceof Element && event.target.closest("a, button, select, input, summary")) return;
@@ -909,8 +909,8 @@ function onCardClick(open: () => void) {
 }
 
 /**
- * Kuriositäten-Wand: jede Karte in ihrer eigenen Form, leere Karten mit Aufforderung. Karten mit Werten lassen sich
- * anklicken und zeigen alle Mitglieder dahinter; Tastatur über den Knopf "Alle n ansehen".
+ * Wall of curiosities: each card in its own form, empty cards with an invitation. Cards with values can be
+ * clicked and show all members behind them; keyboard via the "Alle n ansehen" button.
  */
 export function StatWall({ view, subtitle }: { view: StatsView; subtitle?: string }) {
   const { t } = useSprache();
@@ -921,10 +921,10 @@ export function StatWall({ view, subtitle }: { view: StatsView; subtitle?: strin
       <ul className="fun-wall">
         {view.cards.map((card, i) => {
           const empty = card.stats.every((s) => s.total === 0);
-          // Eine Zahl nur, wenn die erste Menge alle umfasst: eine Statistik, Summe vorne (Grabsteine) oder der Stall.
+          // A count only when the first set covers everyone: one statistic, total first (gravestones) or the stable.
           const counted = card.stats.length === 1 || card.form === "grabsteinfeld" || card.form === "stall";
           const holders = card.form === "stall" ? view.characters : (card.stats[0]?.holders ?? 0);
-          const triggerText = counted ? t(T.werSteckt)(fmt(holders)) : t(ALLE_ANSEHEN);
+          const triggerText = counted ? t(T.viewAllN)(fmt(holders)) : t(VIEW_ALL);
           const clickable = !empty && card.stats.some((s) => s.holders > 0);
           return (
             <li
@@ -940,7 +940,7 @@ export function StatWall({ view, subtitle }: { view: StatsView; subtitle?: strin
                 </h3>
                 {card.blurb && <p className="fun-card-blurb">{t(card.blurb)}</p>}
               </header>
-              {empty ? <p className="muted">{t(T.leer)}</p> : <CardBody card={card} view={view} />}
+              {empty ? <p className="muted">{t(T.empty)}</p> : <CardBody card={card} view={view} />}
               {clickable && (
                 <MemberListTrigger
                   className="fun-card-trigger"

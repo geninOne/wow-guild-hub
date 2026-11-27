@@ -72,7 +72,7 @@ function renderPage() {
   );
 }
 
-test("Tabelle zeigt Aktive und blendet Ehemalige erst nach Schalter ein", async () => {
+test("table shows active members and reveals former ones only after the toggle", async () => {
   mockFetch();
   renderPage();
   const link = await screen.findByRole("link", { name: "Gelmar Soulvenn" });
@@ -83,7 +83,7 @@ test("Tabelle zeigt Aktive und blendet Ehemalige erst nach Schalter ein", async 
   expect(screen.getByText("ehemalig")).toBeTruthy();
 });
 
-test("Kopf, Hinweis ohne Profil, k. A. und Standardsortierung nach Level", async () => {
+test("header, no-profile hint, n/a and default sort by level", async () => {
   mockFetch();
   renderPage();
   await screen.findByText("Gelmar Soulvenn");
@@ -96,7 +96,7 @@ test("Kopf, Hinweis ohne Profil, k. A. und Standardsortierung nach Level", async
   expect(within(bodyRows[1]).getAllByText("k. A.").length).toBeGreaterThan(0);
 });
 
-test("Klick auf Spaltenkopf sortiert, zweiter Klick dreht um", async () => {
+test("clicking a column header sorts, a second click reverses", async () => {
   mockFetch();
   renderPage();
   await screen.findByText("Gelmar Soulvenn");
@@ -108,16 +108,16 @@ test("Klick auf Spaltenkopf sortiert, zweiter Klick dreht um", async () => {
   expect(names()[0]).toContain("Neuling");
 });
 
-test("Kopf nennt beide Gilden, Bärenklaue zuerst, mit Wappen", async () => {
+test("header names both guilds, Bärenklaue first, with crests", async () => {
   mockFetch();
   renderPage();
   await screen.findByText("Gelmar Soulvenn");
-  const kopf = document.querySelector(".guild-heads")!;
-  expect(kopf.textContent).toMatch(/Bärenklaue.*Horde.*76 Mitglieder.*Goldene Bärenklaue.*Allianz.*19 Mitglieder/);
-  expect(within(kopf as HTMLElement).getAllByRole("img").map((i) => i.getAttribute("alt"))).toEqual(["Horde", "Allianz"]);
+  const header = document.querySelector(".guild-heads")!;
+  expect(header.textContent).toMatch(/Bärenklaue.*Horde.*76 Mitglieder.*Goldene Bärenklaue.*Allianz.*19 Mitglieder/);
+  expect(within(header as HTMLElement).getAllByRole("img").map((i) => i.getAttribute("alt"))).toEqual(["Horde", "Allianz"]);
 });
 
-test("Gildenspalte mit Wappen und Filter Alle / Bärenklaue / Goldene Bärenklaue", async () => {
+test("guild column with crest and filter All / Bärenklaue / Goldene Bärenklaue", async () => {
   mockFetch();
   renderPage();
   await screen.findByText("Gelmar Soulvenn");
@@ -133,32 +133,32 @@ test("Gildenspalte mit Wappen und Filter Alle / Bärenklaue / Goldene Bärenklau
   expect(within(filter).getByRole("radio", { name: "Goldene Bärenklaue" }).getAttribute("aria-checked")).toBe("true");
   expect(screen.queryByText("Gelmar Soulvenn")).toBeNull();
   expect(screen.getByText("Neuling")).toBeTruthy();
-  // Klassenverteilung ist auf die Statistikseite umgezogen
+  // The class distribution moved to the stats page
   expect(document.querySelector(".class-bars")).toBeNull();
   expect(screen.queryByText("Klassenverteilung")).toBeNull();
 });
 
-test("Rang-Filter: bei Alle nach Gilde gruppiert, bei gewählter Gilde nur deren Namen", async () => {
+test("rank filter: grouped by guild for All, only that guild's names when a guild is selected", async () => {
   mockFetch();
   renderPage();
   await screen.findByText("Gelmar Soulvenn");
-  const rang = screen.getByLabelText("Rang") as HTMLSelectElement;
-  const gruppen = () => [...rang.querySelectorAll("optgroup")].map((g) => `${g.label}: ${[...g.querySelectorAll("option")].map((o) => o.textContent).join(", ")}`);
-  expect(gruppen()).toEqual(["Bärenklaue: Gildenleitung", "Goldene Bärenklaue: Rang 1"]);
+  const rankSelect = screen.getByLabelText("Rang") as HTMLSelectElement;
+  const groups = () => [...rankSelect.querySelectorAll("optgroup")].map((g) => `${g.label}: ${[...g.querySelectorAll("option")].map((o) => o.textContent).join(", ")}`);
+  expect(groups()).toEqual(["Bärenklaue: Gildenleitung", "Goldene Bärenklaue: Rang 1"]);
 
-  fireEvent.change(rang, { target: { value: "goldene-bärenklaue:1" } });
+  fireEvent.change(rankSelect, { target: { value: "goldene-bärenklaue:1" } });
   expect(screen.queryByText("Gelmar Soulvenn")).toBeNull();
   expect(screen.getByText("Neuling")).toBeTruthy();
 
   fireEvent.click(screen.getByRole("radio", { name: "Bärenklaue" }));
-  expect(rang.value).toBe("");
-  expect(rang.querySelectorAll("optgroup")).toHaveLength(0);
-  expect([...rang.options].map((o) => o.textContent)).toEqual(["Alle Ränge", "Gildenleitung"]);
+  expect(rankSelect.value).toBe("");
+  expect(rankSelect.querySelectorAll("optgroup")).toHaveLength(0);
+  expect([...rankSelect.options].map((o) => o.textContent)).toEqual(["Alle Ränge", "Gildenleitung"]);
 });
 
-function renderIn(sprache: Sprache) {
+function renderIn(language: Sprache) {
   render(
-    <SpracheProvider start={sprache}>
+    <SpracheProvider start={language}>
       <MemoryRouter>
         <GuildPage />
       </MemoryRouter>
@@ -166,7 +166,7 @@ function renderIn(sprache: Sprache) {
   );
 }
 
-test("Gildenseite auf Schwäbisch: Bedienelemente leicht gefärbt, amtliche Namen unverändert", async () => {
+test("guild page in Swabian: controls lightly colored, official names unchanged", async () => {
   mockFetch();
   renderIn("schwaebisch");
   await screen.findByText("Gelmar Soulvenn");
@@ -179,7 +179,7 @@ test("Gildenseite auf Schwäbisch: Bedienelemente leicht gefärbt, amtliche Name
   expect(screen.getByText("Koine Mitglieder gfonda.")).toBeTruthy();
 });
 
-test("Gildenseite auf Bayrisch", async () => {
+test("guild page in Bavarian", async () => {
   mockFetch();
   renderIn("bayrisch");
   await screen.findByText("Gelmar Soulvenn");

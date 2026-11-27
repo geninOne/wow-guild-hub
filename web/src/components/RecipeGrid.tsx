@@ -7,32 +7,33 @@ import { RecipeIcon, RecipeTooltip } from "./RecipeTooltip";
 import { Tooltip } from "./Tooltip";
 
 const T = {
-  filtern: {
-    de: (beruf: string) => `Rezepte in ${beruf} filtern`,
-    en: (beruf: string) => `Filter ${beruf} recipes`,
-    schwaebisch: (beruf: string) => `Rezept in ${beruf} filtera`,
-    bayrisch: (beruf: string) => `Rezepte in ${beruf} filtern`,
+  filter: {
+    de: (profession: string) => `Rezepte in ${profession} filtern`,
+    en: (profession: string) => `Filter ${profession} recipes`,
+    schwaebisch: (profession: string) => `Rezept in ${profession} filtera`,
+    bayrisch: (profession: string) => `Rezepte in ${profession} filtern`,
   },
-  keinTreffer: { de: "Kein Rezept gefunden.", en: "No recipe found.", schwaebisch: "Koi Rezept gfonda.", bayrisch: "Koa Rezept gfundn." },
-  rezepte: {
-    de: (beruf: string) => `Rezepte ${beruf}`,
-    en: (beruf: string) => `${beruf} recipes`,
-    schwaebisch: (beruf: string) => `Rezepte ${beruf}`,
-    bayrisch: (beruf: string) => `Rezepte ${beruf}`,
+  noMatch: { de: "Kein Rezept gefunden.", en: "No recipe found.", schwaebisch: "Koi Rezept gfonda.", bayrisch: "Koa Rezept gfundn." },
+  recipes: {
+    de: (profession: string) => `Rezepte ${profession}`,
+    en: (profession: string) => `${profession} recipes`,
+    schwaebisch: (profession: string) => `Rezepte ${profession}`,
+    bayrisch: (profession: string) => `Rezepte ${profession}`,
   },
-} satisfies Record<string, Fassungen | Fassungen<(beruf: string) => string>>;
+} satisfies Record<string, Fassungen | Fassungen<(profession: string) => string>>;
 
-/** Ab so vielen Rezepten erscheint ein Filterfeld. */
+/** From this many recipes on, a filter field appears. */
 const FILTER_FROM = 24;
 
-/** Raster der Rezept-Icons eines Berufs am Charakter, Tooltip beim Darüberfahren, Fokus oder Antippen. */
+/** Grid of a character's recipe icons for one profession, tooltip on hover, focus or tap. */
+
 export function RecipeGrid({ profession, recipes }: { profession: CharacterProfession; recipes: Record<string, RecipeView> }) {
   const [query, setQuery] = useState("");
   const { t } = useSprache();
   const entries = recipeEntries(profession, recipes);
   if (entries.length === 0) return null;
   const shown = filterRecipes(entries, query);
-  const label = t(T.filtern)(profession.name);
+  const label = t(T.filter)(profession.name);
   return (
     <div className="recipe-grid-wrap">
       {entries.length >= FILTER_FROM && (
@@ -46,9 +47,9 @@ export function RecipeGrid({ profession, recipes }: { profession: CharacterProfe
         />
       )}
       {shown.length === 0 ? (
-        <p className="muted small">{t(T.keinTreffer)}</p>
+        <p className="muted small">{t(T.noMatch)}</p>
       ) : (
-        <ul className="recipe-grid" aria-label={t(T.rezepte)(profession.name)}>
+        <ul className="recipe-grid" aria-label={t(T.recipes)(profession.name)}>
           {shown.map((e) => (
             <li key={e.key}>
               <Tooltip content={<RecipeTooltip name={e.name} recipe={e.recipe} />} className="recipe-grid-trigger">

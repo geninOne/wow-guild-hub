@@ -35,7 +35,7 @@ const view: ProfessionsView = {
   characters: { "1647409": gelmar, "7": gold },
 };
 
-const ballen: ProfessionRecipe = {
+const bolt: ProfessionRecipe = {
   id: 2963, name: "Leinenstoffballen", characterIds: [7, 1647409],
   recipe: {
     id: 2963, name: "Leinenstoffballen", description: null, icon: "https://render.worldofwarcraft.com/forever-eu/icons/56/132889.jpg",
@@ -44,7 +44,7 @@ const ballen: ProfessionRecipe = {
     reagents: [{ id: 2589, name: "Leinenstoff", quantity: 2, icon: null }],
   },
 };
-const hose: ProfessionRecipe = {
+const pants: ProfessionRecipe = {
   id: 2408, name: "Braune Leinenhose", characterIds: [1647409],
   recipe: {
     id: 2408, name: "Braune Leinenhose", description: null, icon: null, craftedQuantity: 1,
@@ -54,7 +54,7 @@ const hose: ProfessionRecipe = {
 };
 
 const recipesBy: Record<string, ProfessionRecipesView> = {
-  schneiderei: { professionId: 197, slug: "schneiderei", recipes: [hose, ballen, { id: null, name: "Old Recipe", characterIds: [7], recipe: null }] },
+  schneiderei: { professionId: 197, slug: "schneiderei", recipes: [pants, bolt, { id: null, name: "Old Recipe", characterIds: [7], recipe: null }] },
   bergbau: {
     professionId: 186, slug: "bergbau",
     recipes: [
@@ -93,7 +93,7 @@ const nav = () => screen.getByRole("navigation", { name: "Berufe" });
 const entry = (link: HTMLElement) =>
   `${link.querySelector(".bench-nav-name")?.textContent}${link.querySelector(".bench-nav-count")?.textContent}`;
 
-test("Liste aller Berufe in Gruppen mit Anzahl, ohne Angabe ist der erste gewählt", async () => {
+test("list of all professions in groups with counts, the first is chosen when none is given", async () => {
   renderAt("/berufe");
   await screen.findByRole("heading", { name: "Alchemie", level: 2 });
   expect(within(nav()).getAllByRole("heading").map((h) => h.textContent)).toEqual(["Handwerk", "Sammeln", "Nebenberufe"]);
@@ -108,7 +108,7 @@ test("Liste aller Berufe in Gruppen mit Anzahl, ohne Angabe ist der erste gewäh
   expect(screen.getByText("Noch niemand hat Alchemie erlernt.")).toBeTruthy();
 });
 
-test("gewählter Beruf aus der URL mit Kopf, Symbol und Personenkarten", async () => {
+test("profession chosen from the URL with header, icon and people cards", async () => {
   renderAt("/berufe/schneiderei");
   const detail = (await screen.findByRole("heading", { name: "Schneiderei", level: 2 })).closest("section")!;
   expect(detail.textContent).toContain("2 Charaktere in beiden Gilden");
@@ -127,7 +127,7 @@ test("gewählter Beruf aus der URL mit Kopf, Symbol und Personenkarten", async (
 
 const cards = (list: HTMLElement) => [...list.querySelectorAll<HTMLElement>(":scope > li")];
 
-test("Rezeptsuche zeigt Karten mit Icon, Ergebnis und Personen-Chips, leere Suche die Personen", async () => {
+test("recipe search shows cards with icon, result and people chips, an empty search the people", async () => {
   renderAt("/berufe/schneiderei");
   const input = await screen.findByLabelText("Rezept in Schneiderei suchen");
   fireEvent.change(input, { target: { value: "leinen" } });
@@ -152,7 +152,7 @@ test("Rezeptsuche zeigt Karten mit Icon, Ergebnis und Personen-Chips, leere Such
   expect(screen.getByRole("list", { name: "Personen" })).toBeTruthy();
 });
 
-test("Rezeptsuche nur im gewählten Beruf", async () => {
+test("recipe search only in the chosen profession", async () => {
   renderAt("/berufe/bergbau");
   fireEvent.change(await screen.findByLabelText("Rezept in Bergbau suchen"), { target: { value: "verh" } });
   const hits = await screen.findByRole("list", { name: "Treffer" });
@@ -160,7 +160,7 @@ test("Rezeptsuche nur im gewählten Beruf", async () => {
   expect(cards(hits)[0].textContent).toContain("Details folgen");
 });
 
-test("Umschalter zeigt alle Rezepte des Berufs", async () => {
+test("toggle shows all recipes of the profession", async () => {
   renderAt("/berufe/schneiderei");
   const toggle = await screen.findByRole("button", { name: "Alle Rezepte (3)" });
   expect(screen.getByRole("button", { name: "Personen (2)" }).getAttribute("aria-pressed")).toBe("true");
@@ -172,7 +172,7 @@ test("Umschalter zeigt alle Rezepte des Berufs", async () => {
   ]);
 });
 
-test("Gildenfilter wirkt auf Anzahl, Karten, Treffer und Chips", async () => {
+test("guild filter applies to count, cards, results and chips", async () => {
   renderAt("/berufe/schneiderei");
   await screen.findByRole("heading", { name: "Schneiderei", level: 2 });
   fireEvent.click(within(screen.getByRole("radiogroup", { name: "Gilde" })).getByRole("radio", { name: "Bärenklaue" }));
@@ -187,7 +187,7 @@ test("Gildenfilter wirkt auf Anzahl, Karten, Treffer und Chips", async () => {
   expect(within(hit).queryByText("Goldi")).toBeNull();
 });
 
-test("Viele Personen sind eingeklappt, alle anzeigen klappt auf", async () => {
+test("many people are collapsed, show all expands them", async () => {
   const people = Array.from({ length: 20 }, (_, i) => ({
     id: 100 + i, name: `Person${String(i).padStart(2, "0")}`, surname: null, slug: `person${i}`, classId: 1,
     className: "Krieger", former: false, guildSlug: "bärenklaue", skill: 50 - i, max: 75,
@@ -197,8 +197,8 @@ test("Viele Personen sind eingeklappt, alle anzeigen klappt auf", async () => {
     professions: view.professions.map((p) => (p.id === 197 ? { ...p, members: people } : p)),
     characters: Object.fromEntries(people.map((p) => [String(p.id), p])),
   };
-  const tasche: ProfessionRecipe = { id: 3755, name: "Leinentasche", characterIds: people.map((p) => p.id), recipe: null };
-  renderAt("/berufe/schneiderei", base, { schneiderei: { professionId: 197, slug: "schneiderei", recipes: [tasche] } });
+  const bag: ProfessionRecipe = { id: 3755, name: "Leinentasche", characterIds: people.map((p) => p.id), recipe: null };
+  renderAt("/berufe/schneiderei", base, { schneiderei: { professionId: 197, slug: "schneiderei", recipes: [bag] } });
   fireEvent.change(await screen.findByLabelText("Rezept in Schneiderei suchen"), { target: { value: "tasche" } });
   await screen.findByRole("list", { name: "Treffer" });
   const chips = () => within(screen.getByRole("list", { name: "Wer kennt Leinentasche" })).getAllByRole("link");
@@ -210,7 +210,7 @@ test("Viele Personen sind eingeklappt, alle anzeigen klappt auf", async () => {
   expect(chips()).toHaveLength(6);
 });
 
-test("Auswahlfeld für schmale Bildschirme wechselt den Beruf über die URL", async () => {
+test("select field for narrow screens switches the profession via the URL", async () => {
   renderAt("/berufe/schneiderei");
   await screen.findByRole("heading", { name: "Schneiderei", level: 2 });
   fireEvent.change(screen.getByLabelText("Beruf wählen"), { target: { value: "kochkunst" } });
@@ -218,7 +218,8 @@ test("Auswahlfeld für schmale Bildschirme wechselt den Beruf über die URL", as
   expect(await screen.findByRole("heading", { name: "Kochkunst", level: 2 })).toBeTruthy();
 });
 
-test("unbekannter Beruf in der URL zeigt den ersten", async () => {
+test("unknown profession in the URL shows the first one"
+, async () => {
   renderAt("/berufe/gibtsnicht");
   expect(await screen.findByRole("heading", { name: "Alchemie", level: 2 })).toBeTruthy();
 });

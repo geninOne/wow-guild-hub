@@ -20,31 +20,31 @@ import { ClassName } from "./ClassName";
 import { DataState } from "./DataState";
 import { FigureTile } from "./FigureTile";
 import { GuildFilter } from "./GuildFilter";
-import { bandLabel, fullLabel, LEVEL_BIS, LevelColumns } from "./LevelColumns";
+import { bandLabel, fullLabel, LEVEL_TO, LevelColumns } from "./LevelColumns";
 import { useMemberList } from "./MemberList";
 import { RacePie } from "./RacePie";
 import { SelectionBar } from "./SelectionBar";
 
 const T = {
-  aktive: { de: "Aktive Mitglieder", en: "Active Members", schwaebisch: "Aktive Mitglieder", bayrisch: "Aktive Mitglieder" },
-  stand: { de: "Stand", en: "As of", schwaebisch: "Stand", bayrisch: "Stand" },
-  mitglieder: { de: "Mitglieder", en: "Members", schwaebisch: "Mitglieder", bayrisch: "Mitglieder" },
+  active: { de: "Aktive Mitglieder", en: "Active Members", schwaebisch: "Aktive Mitglieder", bayrisch: "Aktive Mitglieder" },
+  asOf: { de: "Stand", en: "As of", schwaebisch: "Stand", bayrisch: "Stand" },
+  members: { de: "Mitglieder", en: "Members", schwaebisch: "Mitglieder", bayrisch: "Mitglieder" },
   level60: { de: "Auf Level 60", en: "At Level 60", schwaebisch: "Auf Level 60", bayrisch: "Auf Level 60" },
-  klassenverteilung: { de: "Klassenverteilung", en: "Class Distribution", schwaebisch: "Klasseverteilung", bayrisch: "Klassnverteilung" },
-  klassenSpruch: {
+  classDistribution: { de: "Klassenverteilung", en: "Class Distribution", schwaebisch: "Klasseverteilung", bayrisch: "Klassnverteilung" },
+  classSaying: {
     de: "Wer schwingt was? Ein Klick auf eine Klasse filtert Level und Völker.",
     en: "Who wields what? Click a class to filter levels and races.",
     schwaebisch: "Wer schwingt was? Klick auf a Klass, no siehsch ihre Level ond Völker.",
     bayrisch: "Wer schwingt wos? Klick auf a Klass, nacha siagst eana Level und Völker.",
   },
-  levelverteilung: { de: "Levelverteilung", en: "Level Distribution", schwaebisch: "Levelverteilung", bayrisch: "Levelverteilung" },
-  levelSpruch: {
+  levelDistribution: { de: "Levelverteilung", en: "Level Distribution", schwaebisch: "Levelverteilung", bayrisch: "Levelverteilung" },
+  levelSaying: {
     de: "Vom Frischling bis zur Sechzig. Ein Klick auf eine Säule filtert Klassen und Völker.",
     en: "From fresh recruit to sixty. Click a column to filter classes and races.",
     schwaebisch: "Vom Frischling bis zur Sechzge. Klick auf a Säule, no siehsch d'Klasse ond Völker drzua.",
     bayrisch: "Vom Frischling bis zur Sechzg. Klick auf a Säuln, nacha siagst de Klassn und Völker dazua.",
   },
-  gipfel60: {
+  peak60: {
     de: "Die meisten stehen schon auf der Sechzig. Respekt vor so viel Sitzfleisch.",
     en: "Most are already at sixty. Respect for that kind of stamina.",
     schwaebisch: "D'meischte send scho auf Sechzge. Respekt vor so viel Sitzfleisch.",
@@ -52,50 +52,50 @@ const T = {
   },
 } satisfies Record<string, Fassungen>;
 
-const GIPFEL: Fassungen<(stufe: string) => string> = {
-  de: (stufe) => `Die meisten tummeln sich bei ${stufe}. Weiterleveln, die Sechzig wartet!`,
-  en: (stufe) => `Most are hanging out at ${stufe}. Keep leveling, sixty awaits!`,
-  schwaebisch: (stufe) => `D'meischte hocket bei ${stufe}. Weiterlevla, d'Sechzge wartet!`,
-  bayrisch: (stufe) => `De meistn hocka bei ${stufe}. Weiterlevln, de Sechzg wart scho!`,
+const PEAK: Fassungen<(range: string) => string> = {
+  de: (range) => `Die meisten tummeln sich bei ${range}. Weiterleveln, die Sechzig wartet!`,
+  en: (range) => `Most are hanging out at ${range}. Keep leveling, sixty awaits!`,
+  schwaebisch: (range) => `D'meischte hocket bei ${range}. Weiterlevla, d'Sechzge wartet!`,
+  bayrisch: (range) => `De meistn hocka bei ${range}. Weiterlevln, de Sechzg wart scho!`,
 };
 
-const LEER_KLASSEN: Fassungen = {
+const EMPTY_CLASSES: Fassungen = {
   de: "Hier schwingt keiner was. Diese Mischung gibt es noch nicht.",
   en: "Nobody wields anything here. This combination does not exist yet.",
   schwaebisch: "Do schwingt koiner ebbes. Die Mischung gibt's no net.",
   bayrisch: "Do schwingt koana wos. De Mischung gibt's no ned.",
 };
 
-const LEER_LEVEL: Fassungen = {
+const EMPTY_LEVELS: Fassungen = {
   de: "Leere Säulen. Für diese Auswahl hat noch niemand gelevelt.",
   en: "Empty columns. Nobody has leveled for this selection yet.",
   schwaebisch: "Leere Säule. Für die Auswahl hot no koiner glevelt.",
   bayrisch: "Laare Säuln. Für de Auswahl hod no koana glevelt.",
 };
 
-/** Hinweis im Kopf eines Diagramms, nach welchen Auswahlen der anderen es gefiltert ist. */
-const NUR: Fassungen<(teile: string) => string> = {
-  de: (teile) => `Nur ${teile}.`,
-  en: (teile) => `Only ${teile}.`,
-  schwaebisch: (teile) => `Bloß ${teile}.`,
-  bayrisch: (teile) => `Bloß ${teile}.`,
+/** Note in a chart's header saying which selections of the other charts filter it. */
+const ONLY: Fassungen<(parts: string) => string> = {
+  de: (parts) => `Nur ${parts}.`,
+  en: (parts) => `Only ${parts}.`,
+  schwaebisch: (parts) => `Bloß ${parts}.`,
+  bayrisch: (parts) => `Bloß ${parts}.`,
 };
 
-const JE_KLASSE: Fassungen = { de: "Mitglieder je Klasse", en: "Members per class" };
+const PER_CLASS: Fassungen = { de: "Mitglieder je Klasse", en: "Members per class" };
 
-/** Beschriftung einer Levelstufe: "10 bis 19" oder "Level 60". */
-function bandName(bandIndex: number, bis: string): string {
-  return bandLabel(LEVEL_BANDS[bandIndex], bis);
+/** Label of a level range: "10 bis 19" or "Level 60". */
+function bandName(bandIndex: number, toWord: string): string {
+  return bandLabel(LEVEL_BANDS[bandIndex], toWord);
 }
 
 function DistributionContent({ guild }: { guild: GuildView }) {
   const { t } = useSprache();
   const [guildSlug, setGuildSlug] = useState<string | null>(null);
-  // Gemeinsame Auswahl aus Volk, Klasse und Levelstufe für den Kreuzfilter.
+  // Shared selection of race, class and level range for the crossfilter.
   const [selection, setSelection] = useState<Selection>(EMPTY_SELECTION);
   const toggle = (axis: Axis, value: number | null) => setSelection((s) => toggleSelection(s, axis, value));
 
-  // Namen für Volk und Klasse aus allen Mitgliedern, auch wenn die Auswahl sie gerade herausfiltert.
+  // Names for race and class from all members, even if the selection currently filters them out.
   const names = useMemo(() => {
     const races = new Map<number, string>();
     const classes = new Map<number, string>();
@@ -123,22 +123,22 @@ function DistributionContent({ guild }: { guild: GuildView }) {
   const levels = useMemo(() => levelDistribution(filtered.forLevels), [filtered.forLevels]);
   const figures = memberFigures(filtered.selected);
   const maxClass = Math.max(1, ...classes.map((d) => d.count));
-  // Höchste Säule; bei Gleichstand die höhere Stufe.
+  // Highest column; on a tie the higher range.
   const peak = levels.reduce<(typeof levels)[number] | null>((best, d) => (d.count > 0 && d.count >= (best?.count ?? 0) ? d : best), null);
 
   const parts = {
     race: selection.raceId === null ? null : (names.races.get(selection.raceId) ?? null),
     class: selection.classId === null ? null : (names.classes.get(selection.classId) ?? null),
-    level: selection.bandIndex === null ? null : bandName(selection.bandIndex, t(LEVEL_BIS)),
+    level: selection.bandIndex === null ? null : bandName(selection.bandIndex, t(LEVEL_TO)),
   };
-  /** Hinweis für das Diagramm einer Achse aus den Auswahlen der beiden anderen; null ohne Filter. */
+  /** Note for one axis' chart from the selections of the other two; null without a filter. */
   const note = (skip: Axis): string | null => {
     const others = (["race", "class", "level"] as const).filter((a) => a !== skip).map((a) => parts[a]).filter((p) => p !== null);
-    return others.length === 0 ? null : t(NUR)(others.join(" · "));
+    return others.length === 0 ? null : t(ONLY)(others.join(" · "));
   };
   const pickedClass = classes.find((d) => d.classId === selection.classId) ?? null;
 
-  // Listen enthalten alle Gilden (gefiltert nach der Auswahl); der Umschalter im Dialog startet mit der Wahl hier.
+  // Lists contain all guilds (filtered by the selection); the switcher in the dialog starts with the choice made here.
   const list = useMemberList(guildSlug, guild);
   const filteredTitle = (label: string) => {
     const chosen = [parts.race, parts.class, parts.level].filter((p) => p !== null);
@@ -147,13 +147,13 @@ function DistributionContent({ guild }: { guild: GuildView }) {
   const openList = (label: string, minLevel: number) => {
     const title = filteredTitle(label);
     const entries = guild.members.filter((m) => !m.former && m.level >= minLevel && matchesSelection(m, selection)).map((m) => m.id);
-    list.open({ title, sets: [{ key: "alle", label: title, valueLabel: null, entries }] });
+    list.open({ title, sets: [{ key: "all", label: title, valueLabel: null, entries }] });
   };
 
   return (
     <>
       <p className="page-subtitle muted">
-        {t(T.aktive)} · {t(T.stand)}: {formatDateTime(guild.fetchedAt)}
+        {t(T.active)} · {t(T.asOf)}: {formatDateTime(guild.fetchedAt)}
       </p>
       <div className="dist-top">
         <div className="dist-guild">
@@ -170,7 +170,7 @@ function DistributionContent({ guild }: { guild: GuildView }) {
         <FigureTile
           filtered={!isEmptySelection(selection)}
           figures={figures}
-          onMembers={figures.members > 0 ? () => openList(t(T.mitglieder), 1) : undefined}
+          onMembers={figures.members > 0 ? () => openList(t(T.members), 1) : undefined}
           onCapped={figures.capped > 0 ? () => openList(t(T.level60), 60) : undefined}
         />
       </div>
@@ -178,15 +178,15 @@ function DistributionContent({ guild }: { guild: GuildView }) {
       <div className="stats-columns dist-grid">
         <div className="panel dist-class">
           <header className="panel-header stat-theme-header">
-            <h2 className="panel-title">{t(T.klassenverteilung)}</h2>
-            <p className="stat-theme-blurb">{note("class") ?? t(T.klassenSpruch)}</p>
+            <h2 className="panel-title">{t(T.classDistribution)}</h2>
+            <p className="stat-theme-blurb">{note("class") ?? t(T.classSaying)}</p>
           </header>
           {filtered.forClasses.length === 0 && (
             <p className="state state-empty dist-empty" role="status">
-              {t(LEER_KLASSEN)}
+              {t(EMPTY_CLASSES)}
             </p>
           )}
-          <ul className="class-bars" aria-label={t(JE_KLASSE)} data-picked={pickedClass ? "" : undefined}>
+          <ul className="class-bars" aria-label={t(PER_CLASS)} data-picked={pickedClass ? "" : undefined}>
             {classes.map((d) => (
               <li key={d.classId}>
                 <button
@@ -213,11 +213,11 @@ function DistributionContent({ guild }: { guild: GuildView }) {
 
         <div className="panel dist-level">
           <header className="panel-header stat-theme-header">
-            <h2 className="panel-title">{t(T.levelverteilung)}</h2>
-            <p className="stat-theme-blurb">{note("level") ?? t(T.levelSpruch)}</p>
+            <h2 className="panel-title">{t(T.levelDistribution)}</h2>
+            <p className="stat-theme-blurb">{note("level") ?? t(T.levelSaying)}</p>
           </header>
           <p className="level-top" aria-live="polite">
-            {peak ? (peak.from === 60 ? t(T.gipfel60) : t(GIPFEL)(fullLabel(peak, t(LEVEL_BIS)))) : t(LEER_LEVEL)}
+            {peak ? (peak.from === 60 ? t(T.peak60) : t(PEAK)(fullLabel(peak, t(LEVEL_TO)))) : t(EMPTY_LEVELS)}
           </p>
           <LevelColumns
             columns={levels}
@@ -240,7 +240,7 @@ function DistributionContent({ guild }: { guild: GuildView }) {
   );
 }
 
-/** Reiter Allgemein der Statistikseite: Klassen-, Level- und Völkerverteilung der aktiven Mitglieder. */
+/** General tab of the stats page: class, level and race distribution of the active members. */
 export function GuildDistribution() {
   const { data, error, loading } = useApi<GuildView>("/api/guild");
   return (

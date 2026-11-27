@@ -4,13 +4,13 @@ import { useSprache, type Fassungen } from "../lib/sprache";
 import { classColor } from "../lib/wow";
 
 const T = {
-  keinBild: {
+  noPortrait: {
     de: "Kein Charakterbild verfügbar",
     en: "No character portrait available",
     schwaebisch: "Koi Charakterbild do",
     bayrisch: "Koa Charakterbild do",
   },
-  bildVon: {
+  portraitOf: {
     de: (name: string) => `Charakterbild von ${name}`,
     en: (name: string) => `Portrait of ${name}`,
     schwaebisch: (name: string) => `Charakterbild vo ${name}`,
@@ -18,7 +18,8 @@ const T = {
   },
 } satisfies Record<string, Fassungen | Fassungen<(name: string) => string>>;
 
-/** Ganzkörperbild des Charakters, direkt von render.worldofwarcraft.com geladen. */
+/** Full-body image of the character, loaded directly from render.worldofwarcraft.com. */
+
 export function Portrait({ character }: { character: CharacterRecord }) {
   const src = character.media?.["main-raw"] ?? null;
   const [url, onError] = useIconSource(src);
@@ -28,13 +29,13 @@ export function Portrait({ character }: { character: CharacterRecord }) {
   if (!url) {
     return (
       <div className="portrait portrait-empty" style={{ ["--portrait-tone" as string]: color }}>
-        <p>{t(T.keinBild)}</p>
+        <p>{t(T.noPortrait)}</p>
       </div>
     );
   }
   return (
     <div className="portrait" style={{ ["--portrait-tone" as string]: color }}>
-      <img src={url} alt={t(T.bildVon)(character.name)} onError={onError} />
+      <img src={url} alt={t(T.portraitOf)(character.name)} onError={onError} />
     </div>
   );
 }

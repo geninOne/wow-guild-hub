@@ -11,7 +11,7 @@ import App from "../../../web/src/App";
 import type { CharakterDatenProps, OberflaechenErweiterung } from "../../../web/src/erweiterungen/typen";
 import { SPRACH_SCHLUESSEL } from "../../../web/src/lib/sprache";
 import { CharacterPage } from "../../../web/src/pages/CharacterPage";
-import { DatenschutzPage } from "../../../web/src/pages/DatenschutzPage";
+import { PrivacyPage } from "../../../web/src/pages/PrivacyPage";
 
 const registry = vi.hoisted(() => ({ liste: [] as OberflaechenErweiterung[] }));
 vi.mock("../../../web/src/erweiterungen", () => ({
@@ -117,7 +117,7 @@ describe("ohne Erweiterungen", () => {
   test("Datenschutz ohne zusätzliche Abschnitte", () => {
     render(
       <MemoryRouter>
-        <DatenschutzPage />
+        <PrivacyPage />
       </MemoryRouter>,
     );
     const titel = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
@@ -181,7 +181,7 @@ describe("mit Test-Erweiterung", () => {
   test("Datenschutz-Abschnitt vor den Links zu anderen Seiten", () => {
     render(
       <MemoryRouter>
-        <DatenschutzPage />
+        <PrivacyPage />
       </MemoryRouter>,
     );
     const titel = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);

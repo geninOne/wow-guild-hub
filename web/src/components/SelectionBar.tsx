@@ -4,21 +4,21 @@ import { useSprache, type Fassungen } from "../lib/sprache";
 import { ClassName } from "./ClassName";
 
 const T = {
-  auswahl: { de: "Auswahl", en: "Selection", schwaebisch: "Auswahl", bayrisch: "Auswahl" },
-  hinweis: {
+  selection: { de: "Auswahl", en: "Selection", schwaebisch: "Auswahl", bayrisch: "Auswahl" },
+  hint: {
     de: "Alle Mitglieder. Ein Klick in ein Diagramm filtert die anderen.",
     en: "All members. Click a chart to filter the others.",
     schwaebisch: "Älle Mitglieder. Klick ins Diagramm, no wird gfiltert.",
     bayrisch: "Olle Mitglieder. Klick ins Diagramm, nacha werd gfiltert.",
   },
-  zuruecksetzen: { de: "Alles zurücksetzen", en: "Reset all", schwaebisch: "Älles zrucksetza", bayrisch: "Ois zruckstelln" },
+  resetAll: { de: "Alles zurücksetzen", en: "Reset all", schwaebisch: "Älles zrucksetza", bayrisch: "Ois zruckstelln" },
 } satisfies Record<string, Fassungen>;
 
-const ENTFERNEN: Fassungen<(was: string) => string> = {
-  de: (was) => `${was} entfernen`,
-  en: (was) => `Remove ${was}`,
-  schwaebisch: (was) => `${was} weglasse`,
-  bayrisch: (was) => `${was} weglassn`,
+const REMOVE: Fassungen<(what: string) => string> = {
+  de: (what) => `${what} entfernen`,
+  en: (what) => `Remove ${what}`,
+  schwaebisch: (what) => `${what} weglasse`,
+  bayrisch: (what) => `${what} weglassn`,
 };
 
 interface SelectionBarProps {
@@ -39,8 +39,8 @@ function Cross() {
 }
 
 /**
- * Zeile mit der aktiven Auswahl des Kreuzfilters: je Volk, Klasse und Levelstufe ein Schalter zum Entfernen,
- * dazu "Alles zurücksetzen". Ohne Auswahl ein kurzer Hinweis. Die Zeile hält ihre Höhe, damit nichts springt.
+ * Row with the active crossfilter selection: one remove button per race, class and level range,
+ * plus "Reset all". Without a selection a short hint. The row keeps its height so nothing jumps.
  */
 export function SelectionBar({ race, classId, classLabel, level, onRemove, onReset }: SelectionBarProps) {
   const { t } = useSprache();
@@ -54,12 +54,12 @@ export function SelectionBar({ race, classId, classLabel, level, onRemove, onRes
   return (
     <div className="dist-selection" aria-live="polite">
       {chips.length === 0 ? (
-        <p className="dist-selection-hint">{t(T.hinweis)}</p>
+        <p className="dist-selection-hint">{t(T.hint)}</p>
       ) : (
-        <ul className="dist-chips" aria-label={t(T.auswahl)}>
+        <ul className="dist-chips" aria-label={t(T.selection)}>
           {chips.map((c) => (
             <li key={c.axis}>
-              <button type="button" className="dist-chip" aria-label={t(ENTFERNEN)(c.label)} onClick={() => onRemove(c.axis)}>
+              <button type="button" className="dist-chip" aria-label={t(REMOVE)(c.label)} onClick={() => onRemove(c.axis)}>
                 <span className="dist-chip-text">{c.node}</span>
                 <Cross />
               </button>
@@ -67,7 +67,7 @@ export function SelectionBar({ race, classId, classLabel, level, onRemove, onRes
           ))}
           <li>
             <button type="button" className="dist-reset" onClick={onReset}>
-              {t(T.zuruecksetzen)}
+              {t(T.resetAll)}
             </button>
           </li>
         </ul>

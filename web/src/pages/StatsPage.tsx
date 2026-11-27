@@ -16,17 +16,17 @@ const TABS = [
   { id: "dungeons", label: { de: "Dungeons und Raids", en: "Dungeons and Raids", schwaebisch: "Dungeons ond Raids", bayrisch: "Dungeons und Raids" }, path: "/statistik/dungeons" },
 ] as const satisfies readonly { id: string; label: Fassungen; path: string }[];
 
-type Reiter = { id: string; label: Fassungen; path: string; Komponente?: StatistikReiter["Komponente"] };
+type Tab = { id: string; label: Fassungen; path: string; Komponente?: StatistikReiter["Komponente"] };
 
-/** Reiter des Kerns, dahinter die der Erweiterungen. */
-function alleReiter(): Reiter[] {
-  const zusatz = OBERFLAECHEN_ERWEITERUNGEN.flatMap((e) => e.statistikReiter ?? []).filter((r) => !TABS.some((t) => t.id === r.id));
-  return [...TABS, ...zusatz.map((r) => ({ id: r.id, label: r.label, path: `/statistik/${r.id}`, Komponente: r.Komponente }))];
+/** Tabs of the core, followed by those of the extensions. */
+function allTabs(): Tab[] {
+  const extra = OBERFLAECHEN_ERWEITERUNGEN.flatMap((e) => e.statistikReiter ?? []).filter((r) => !TABS.some((t) => t.id === r.id));
+  return [...TABS, ...extra.map((r) => ({ id: r.id, label: r.label, path: `/statistik/${r.id}`, Komponente: r.Komponente }))];
 }
 
-const BEREICHE: Fassungen = { de: "Bereiche", en: "Sections" };
+const SECTIONS: Fassungen = { de: "Bereiche", en: "Sections" };
 
-const TITEL: Fassungen = { de: "Statistik", en: "Statistics", schwaebisch: "Statistik", bayrisch: "Statistik" };
+const TITLE: Fassungen = { de: "Statistik", en: "Statistics", schwaebisch: "Statistik", bayrisch: "Statistik" };
 
 const DEFAULT_PERIOD: StatsPeriodKind = "gesamt";
 
@@ -34,14 +34,14 @@ function isPeriod(value: string | null): value is StatsPeriodKind {
   return PERIODS.some((p) => p.id === value);
 }
 
-/** Statistikseite mit Reitern: Allgemein unter `/statistik`, sonst `/statistik/<reiter>`. */
+/** Stats page with tabs: General at `/statistik`, otherwise `/statistik/<reiter>`. */
 export function StatsPage() {
   const { t: text } = useSprache();
-  const { reiter } = useParams();
+  const { reiter: tabId } = useParams();
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
-  const tabs = alleReiter();
-  const tab = tabs.find((t) => t.id === (reiter ?? "allgemein"));
+  const tabs = allTabs();
+  const tab = tabs.find((t) => t.id === (tabId ?? "allgemein"));
   if (!tab) return <NotFoundPage />;
 
   const requested = params.get("zeitraum");
@@ -67,9 +67,9 @@ export function StatsPage() {
   return (
     <section className="page">
       <header className="page-header">
-        <h1 className="page-title">{text(TITEL)}</h1>
+        <h1 className="page-title">{text(TITLE)}</h1>
       </header>
-      <div className="tabs" role="tablist" aria-label={text(BEREICHE)}>
+      <div className="tabs" role="tablist" aria-label={text(SECTIONS)}>
         {tabs.map((t) => (
           <button
             key={t.id}

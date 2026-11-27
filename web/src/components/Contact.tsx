@@ -1,39 +1,39 @@
 import { site, type Imprint } from "../lib/site";
 import { useSprache, type Fassungen } from "../lib/sprache";
 
-/** Hinweis über Rechtstexten: In den anderen Sprachen bleibt der Rechtstext Deutsch. */
-export const RECHTSTEXT_HINWEIS: Fassungen<string | null> = {
+/** Notice above legal texts: in the other languages the legal text stays German. */
+export const LEGAL_TEXT_NOTICE: Fassungen<string | null> = {
   de: null,
   en: "The legal notice is in German on purpose, as German law requires.",
   schwaebisch: "Des Rechtliche schtoht do mit Absicht auf Hochdeutsch, gell.",
   bayrisch: "Des Rechtliche steht do mit Absicht auf Hochdeitsch, gell.",
 };
 
-/** Kurzer Hinweis, nur in den anderen Sprachen sichtbar. */
-export function RechtstextHinweis() {
+/** Short notice, only visible in the other languages. */
+export function LegalTextNotice() {
   const { t } = useSprache();
-  const text = t(RECHTSTEXT_HINWEIS);
+  const text = t(LEGAL_TEXT_NOTICE);
   return text ? <p className="muted small">{text}</p> : null;
 }
 
-/** Angaben aus `WEBSITE_IMPRINT_…`; die Rechtsseiten erscheinen nur, wenn ein Name gesetzt ist. */
-export function impressum(): Imprint {
+/** Details from `WEBSITE_IMPRINT_…`; the legal pages only appear when a name is set. */
+export function imprintDetails(): Imprint {
   return site().imprint ?? { name: "", address: [], email: null };
 }
 
-/** Name und Anschrift, auf Wunsch mit E-Mail. */
-export function Anschrift({ mitEmail = false }: { mitEmail?: boolean }) {
-  const { name, address, email } = impressum();
+/** Name and address, optionally with email. */
+export function PostalAddress({ withEmail = false }: { withEmail?: boolean }) {
+  const { name, address, email } = imprintDetails();
   return (
     <address className="legal-address">
       {name}
-      {address.map((zeile) => (
-        <span key={zeile}>
+      {address.map((line) => (
+        <span key={line}>
           <br />
-          {zeile}
+          {line}
         </span>
       ))}
-      {mitEmail && email && (
+      {withEmail && email && (
         <>
           <br />
           E-Mail: <EmailLink />
@@ -43,8 +43,8 @@ export function Anschrift({ mitEmail = false }: { mitEmail?: boolean }) {
   );
 }
 
-/** E-Mail-Adresse als mailto-Link. */
+/** Email address as a mailto link. */
 export function EmailLink() {
-  const { email } = impressum();
+  const { email } = imprintDetails();
   return email ? <a href={`mailto:${email}`}>{email}</a> : null;
 }
