@@ -81,7 +81,7 @@ is done. Tests need no credentials; never add tests that call the real Blizzard 
   gets vitest tests; components get Testing Library tests.
 - **Commits and pull requests.** `main` is protected: work on a branch and open a pull request. Pull requests are
   squash-merged, so the **title** must follow Conventional Commits in English
-  (`feat(professions): filter by recipe rank`, `fix: footer version`); `.github/workflows/pr-titel.yml` checks it.
+  (`feat(professions): filter by recipe rank`, `fix: footer version`); a workflow checks it.
   Use `!` for changes operators must act on and fill in "Upgrade notes" in the description. Never edit
   `CHANGELOG.md`, the version in `package.json` or `.release-please-manifest.json`: release-please does that.
   Use the pull request template.
