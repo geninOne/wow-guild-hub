@@ -61,6 +61,10 @@ npm run lint
 ```
 
 ```bash
+npm run check:english -- --all --strict
+```
+
+```bash
 npm test
 ```
 
@@ -75,8 +79,9 @@ npm run build
 ## Code-Stil
 
 - TypeScript, React mit Funktionskomponenten, keine neuen Abhängigkeiten ohne guten Grund.
-- Neuer Code, Bezeichner, Kommentare, Tests und Logmeldungen sind englisch. Älterer Code ist noch teils deutsch und
-  wird in eigenen Pull Requests umgestellt; Felder der Blizzard-API bleiben, wie sie sind. Hinweise für
+- Code, Bezeichner, Kommentare, Tests und Logmeldungen sind englisch; `npm run check:english` prüft das. Deutsch
+  bleibt in sichtbaren Texten (Übersetzungen) und in wenigen gespeicherten Namen aus
+  `scripts/check-english-frozen.txt`; Felder der Blizzard-API bleiben, wie sie sind. Hinweise für
   KI-Coding-Agenten: [AGENTS.md](AGENTS.md).
 - Jeder sichtbare Text hat eine deutsche und eine englische Fassung (`Translations` aus `src/language.ts`).
   Schwäbisch und Bayrisch sind freiwillig.

@@ -165,6 +165,10 @@ npm run lint
 ```
 
 ```bash
+npm run check:english -- --all --strict
+```
+
+```bash
 npm test
 ```
 

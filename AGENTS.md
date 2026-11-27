@@ -57,19 +57,21 @@ Requires Node.js 22 (or Docker). Install with `npm ci`.
 | Rebuild the container after `package.json` changes | `docker compose up -d --build --renew-anon-volumes` |
 | UI only with hot reload, no `/api` (http://127.0.0.1:5173) | `npm run dev:web` |
 | Lint (must have zero findings) | `npm run lint` |
+| English check (as in CI; without `--all` only lines changed against `origin/main`) | `npm run check:english -- --all --strict` |
 | Tests | `npm test` (single file: `npx vitest run test/api/router.test.ts`) |
 | Type check (server and web) | `npm run typecheck` |
 | Production build | `npm run build` |
 
-CI (`.github/workflows/ci.yml`) runs `npm ci`, lint, test, typecheck and build. Run all four before you say a change
+CI (`.github/workflows/ci.yml`) runs `npm ci`, lint, the English check, test, typecheck and build. Run all five before you say a change
 is done. Tests need no credentials; never add tests that call the real Blizzard API.
 
 ## Conventions
 
 - **Language.** Write new code, identifiers, comments, test names, log and error messages, scripts, workflows and
-  docs in English. Some existing code and comments are still German; they are migrated area by area in dedicated
-  pull requests. Do not mix renames into feature or fix pull requests, and do not rename German identifiers you merely
-  touch. Fields from the Blizzard API keep their original names.
+  docs in English. CI enforces this with `npm run check:english -- --all --strict`. German stays only in UI texts
+  (translations), `*.de.md` docs, fixtures and the names listed with their reason in
+  `scripts/check-english-frozen.txt` (stored data, API and model contracts). Do not add to that list to silence the
+  check; rename instead. Fields from the Blizzard API keep their original names.
 - **UI texts are translations, not code.** Every visible text is a `Translations` object with `de` and `en`
   (required) and optionally `schwaebisch` and `bayrisch`. Add or change all languages you can; missing dialects fall
   back to German. Do not remove dialects.
@@ -133,4 +135,5 @@ is done. Tests need no credentials; never add tests that call the real Blizzard 
   desktop and phone width, in German and English, not only in tests.
 - Collector changes: run the collector in the container and read the JSON report line in the log; check that it
   finishes inside the budget and makes progress across runs.
-- Before declaring done: `npm run lint && npm test && npm run typecheck && npm run build`, all green.
+- Before declaring done: `npm run lint && npm run check:english -- --all --strict && npm test && npm run typecheck && npm run build`,
+  all green.
