@@ -8,7 +8,7 @@ import type { ServerErweiterung } from "../erweiterungen/typen";
 import { issueExtras } from "./issue-extras";
 import { RECENT_ISSUES } from "./phrases";
 import { collectFacts, factKey, type RecentFacts } from "./newspaper-facts";
-import { DIALEKTE } from "../sprache";
+import { DIALECTS } from "../language";
 import { storedTranslationIn, type OtherLanguage, type RecentIssue, type TextGenerator } from "./newspaper-text";
 import { generatorFromEnv } from "./claude-text";
 import { weekMetrics } from "./metrics";
@@ -109,7 +109,7 @@ export function recentOf(records: WeeklyRecord[]): { facts: RecentFacts[]; issue
         motto: r.zeitung.motto,
         // English and dialects; older issues without a translation provide the Standard German texts instead.
         dialekte: Object.fromEntries(
-          (["en", ...DIALEKTE] as OtherLanguage[]).map((d) => [
+          (["en", ...DIALECTS] as OtherLanguage[]).map((d) => [
             d,
             {
               headlines: all.map((a) => storedTranslationIn(a.dialekte, d)?.headline ?? a.headline),

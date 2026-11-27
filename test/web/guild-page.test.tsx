@@ -4,7 +4,7 @@ import { MemoryRouter } from "react-router";
 import { afterEach, expect, test, vi } from "vitest";
 import { GuildPage } from "../../web/src/pages/GuildPage";
 import type { GuildView, MemberRow } from "../../src/api/types";
-import { SpracheProvider, type Sprache } from "../../web/src/lib/sprache";
+import { LanguageProvider, type Language } from "../../web/src/lib/language";
 
 afterEach(() => {
   cleanup();
@@ -156,13 +156,13 @@ test("rank filter: grouped by guild for All, only that guild's names when a guil
   expect([...rankSelect.options].map((o) => o.textContent)).toEqual(["Alle Ränge", "Gildenleitung"]);
 });
 
-function renderIn(language: Sprache) {
+function renderIn(language: Language) {
   render(
-    <SpracheProvider start={language}>
+    <LanguageProvider start={language}>
       <MemoryRouter>
         <GuildPage />
       </MemoryRouter>
-    </SpracheProvider>,
+    </LanguageProvider>,
   );
 }
 

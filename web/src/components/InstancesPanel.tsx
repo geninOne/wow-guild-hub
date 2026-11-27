@@ -1,7 +1,7 @@
 import { useState, type CSSProperties, type ReactNode } from "react";
 import type { InstancesView, KillRef, LevelRange } from "../../../src/api/types";
 import { formatDate, formatDayMonth } from "../lib/format";
-import { fassungIn, useSprache, type Fassungen, type Sprache } from "../lib/sprache";
+import { translationIn, useLanguage, type Translations, type Language } from "../lib/language";
 
 const T = {
   defeatedTimes: {
@@ -52,7 +52,7 @@ const T = {
   dungeons: { de: "Dungeons", en: "Dungeons", schwaebisch: "Dungeons", bayrisch: "Dungeons" },
   raids: { de: "Raids", en: "Raids", schwaebisch: "Raids", bayrisch: "Raids" },
   otherKills: { de: "Weitere Boss-Siege", en: "Other boss kills", schwaebisch: "No meh Boss-Siege", bayrisch: "Weitere Boss-Sieg" },
-} satisfies Record<string, Fassungen | Fassungen<(...a: never[]) => string>>;
+} satisfies Record<string, Translations | Translations<(...a: never[]) => string>>;
 
 type Dungeon = InstancesView["dungeonTiers"][number]["dungeons"][number];
 type Raid = InstancesView["raids"][number];
@@ -67,18 +67,18 @@ type CardStatus =
   | { kind: "account"; tracked: boolean }
   | { kind: "open" };
 
-function killText(k: KillRef, language: Sprache): string {
+function killText(k: KillRef, language: Language): string {
   const when = k.lastAt ? formatDate(k.lastAt) : null;
   if (k.quantity > 1) {
-    return `${fassungIn(T.defeatedTimes, language)(k.boss, k.quantity)}${when ? ` (${fassungIn(T.last, language)} ${when})` : ""}`;
+    return `${translationIn(T.defeatedTimes, language)(k.boss, k.quantity)}${when ? ` (${translationIn(T.last, language)} ${when})` : ""}`;
   }
-  return `${fassungIn(T.defeated, language)(k.boss)}${when ? ` (${when})` : ""}`;
+  return `${translationIn(T.defeated, language)(k.boss)}${when ? ` (${when})` : ""}`;
 }
 
-function levelText(levels: LevelRange | null, language: Sprache): string | null {
+function levelText(levels: LevelRange | null, language: Language): string | null {
   if (!levels) return null;
-  const label = fassungIn(T.level, language);
-  return levels.min === levels.max ? `${label} ${levels.min}` : `${label} ${levels.min} ${fassungIn(T.to, language)} ${levels.max}`;
+  const label = translationIn(T.level, language);
+  return levels.min === levels.max ? `${label} ${levels.min}` : `${label} ${levels.min} ${translationIn(T.to, language)} ${levels.max}`;
 }
 
 /** Calm tones for places without an image, matching the crest palette (gold, Horde, Alliance, verdigris, arcane). */
@@ -101,7 +101,7 @@ function CardArt({ image, name }: { image: string | null; name: string }) {
 
 /** Fixed spot at the top right: a golden pennant when completed, otherwise a small, calm note. */
 function StatusMark({ status }: { status: CardStatus }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   if (status.kind === "done") {
     const title = [
       t(T.completed),
@@ -148,8 +148,8 @@ function InstanceCard({
   className?: string;
   children?: ReactNode;
 }) {
-  const { sprache } = useSprache();
-  const level = levelText(levels, sprache);
+  const { language } = useLanguage();
+  const level = levelText(levels, language);
   return (
     <li className={["instance-card", `instance-card-${status.kind}`, className].filter(Boolean).join(" ")}>
       <CardArt image={image} name={name} />
@@ -173,7 +173,7 @@ function dungeonStatus(d: Dungeon): CardStatus {
 
 /** Dungeon card: bosses for information only, the final boss subtly highlighted. */
 function DungeonCard({ dungeon: d }: { dungeon: Dungeon }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const finals = new Set(d.finalBosses);
   return (
     <InstanceCard name={d.name} image={d.image} levels={d.levels} status={dungeonStatus(d)} className="instance-card-dungeon">
@@ -209,7 +209,7 @@ function bossText(b: Raid["bosses"][number]): string {
 
 /** Raid card: bosses as chips, defeated ones green; no chips for single-boss raids like Onyxia. */
 function RaidCard({ raid }: { raid: Raid }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const single = raid.bosses.length === 1 && raid.bosses[0].name === raid.name;
   return (
     <InstanceCard name={raid.name} image={raid.image} levels={raid.levels} status={raidStatus(raid)} className="instance-card-raid">
@@ -245,7 +245,7 @@ function sortedDungeons(view: InstancesView): Dungeon[] {
 /** A character's "Dungeons & Raids" as image cards: only its own progress, no comparison. */
 
 export function InstancesPanel({ view }: { view: InstancesView }) {
-  const { t, sprache } = useSprache();
+  const { t, language } = useLanguage();
   if (!view.available) {
     return (
       <div className="state state-empty">
@@ -270,7 +270,7 @@ export function InstancesPanel({ view }: { view: InstancesView }) {
             <ul className="instance-list">
               {view.otherKills.map((k, i) => (
                 <li key={i} className="instance-row small">
-                  ✔ {killText({ ...k, boss: k.instance ? `${k.boss} (${k.instance})` : k.boss }, sprache)}
+                  ✔ {killText({ ...k, boss: k.instance ? `${k.boss} (${k.instance})` : k.boss }, language)}
                 </li>
               ))}
             </ul>

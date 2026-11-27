@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 import type { GuildDungeonsView, GuildDungeonView, GuildRaidView } from "../../../src/api/types";
 import { useApi } from "../lib/api";
 import { formatPlainDate } from "../lib/fun";
-import { fassungIn, useSprache, type Fassungen, type Sprache } from "../lib/sprache";
+import { translationIn, useLanguage, type Translations, type Language } from "../lib/language";
 import { CharacterLink } from "./CharacterLink";
 import { DataState } from "./DataState";
 import { GuildFilter } from "./GuildFilter";
@@ -117,7 +117,7 @@ const T = {
     schwaebisch: 'Aus dr Boss-Statistik vo älle aktive Mitglieder mit Profil. "Durch" hoißt: Dr Charakter hot den Endboss selber bsiegt. Blizzards Dungeon-Erfolg gelten fürs ganze Account ond zählet deshalb net, sonscht dät jeder Twink mitzähle. Gegestück vo beide Fraktiona wie Flammenschlund ond Halle der Thanen zählet zamme.',
     bayrisch: 'Aus da Boss-Statistik vo olle aktivn Mitglieder mit Profil. "Durch" hoaßt: Da Charakter hod an Endboss söiba bsiegt. Blizzards Dungeon-Erfolge geltn fürs ganze Account und zähln deshoib ned, sonst dad jeda Twink mitzähln. Gegnstückl vo boade Fraktionen wia Flammenschlund und Halle der Thanen zähln zamm.',
   },
-} satisfies Record<string, Fassungen<unknown>>;
+} satisfies Record<string, Translations<unknown>>;
 const L = {
   finalBossKills: { de: "Endboss-Siege", en: "Final boss kills", schwaebisch: "Endboss-Sieg", bayrisch: "Endboss-Siege" },
   bossesDefeated: { de: "Bosse besiegt", en: "Bosses defeated", schwaebisch: "Bosse bsiegt", bayrisch: "Bosse bsiegt" },
@@ -127,13 +127,13 @@ const L = {
     schwaebisch: (n: string) => `Älle ${n} aagucke`,
     bayrisch: (n: string) => `Olle ${n} oschaun`,
   },
-} satisfies Record<string, Fassungen<unknown>>;
+} satisfies Record<string, Translations<unknown>>;
 
 const idx = (i: number) => ({ "--i": i }) as CSSProperties;
 
-function levelText(d: { levels: { min: number; max: number } | null }, language: Sprache = "de"): string | null {
+function levelText(d: { levels: { min: number; max: number } | null }, language: Language = "de"): string | null {
   if (!d.levels) return null;
-  return d.levels.min === d.levels.max ? `Level ${d.levels.min}` : `Level ${d.levels.min} ${fassungIn(T.to, language)} ${d.levels.max}`;
+  return d.levels.min === d.levels.max ? `Level ${d.levels.min}` : `Level ${d.levels.min} ${translationIn(T.to, language)} ${d.levels.max}`;
 }
 
 /** Round image; without an image, the initial letter on stone. */
@@ -149,7 +149,7 @@ function Medallion({ name, image, className }: { name: string; image: string | n
 
 /** Adventure map: dungeons as stops by level, brighter the more have cleared them, unvisited ones in fog. */
 function AdventureMap({ view, onOpen }: { view: GuildDungeonsView; onOpen(request: MemberListRequest): void }) {
-  const { t, sprache } = useSprache();
+  const { t, language } = useLanguage();
   const max = Math.max(1, ...view.dungeons.map((d) => d.completed));
   return (
     <ol className="dungeon-map" aria-label={t(T.byLevel)}>
@@ -169,7 +169,7 @@ function AdventureMap({ view, onOpen }: { view: GuildDungeonsView; onOpen(reques
                 onClick={() =>
                   onOpen({
                     title: d.name,
-                    subtitle: levelText(d, sprache) ?? undefined,
+                    subtitle: levelText(d, language) ?? undefined,
                     sets: [{ key: d.key, label: d.name, valueLabel: t(L.finalBossKills), entries: d.who }],
                     fixedGuild: true,
                   })
@@ -177,7 +177,7 @@ function AdventureMap({ view, onOpen }: { view: GuildDungeonsView; onOpen(reques
               >
                 <Medallion name={d.name} image={d.image} className="dungeon-stop-img" />
                 <span className="dungeon-stop-name">{d.name}</span>
-                {levelText(d, sprache) && <span className="dungeon-stop-level muted small">{levelText(d, sprache)}</span>}
+                {levelText(d, language) && <span className="dungeon-stop-level muted small">{levelText(d, language)}</span>}
                 <span className="dungeon-stop-count small">
                   <PeopleIcon />
                   {t(T.cleared)(fmt(d.completed))}
@@ -188,7 +188,7 @@ function AdventureMap({ view, onOpen }: { view: GuildDungeonsView; onOpen(reques
               <>
                 <Medallion name={d.name} image={d.image} className="dungeon-stop-img" />
                 <span className="dungeon-stop-name">{d.name}</span>
-                {levelText(d, sprache) && <span className="dungeon-stop-level muted small">{levelText(d, sprache)}</span>}
+                {levelText(d, language) && <span className="dungeon-stop-level muted small">{levelText(d, language)}</span>}
                 {d.tracked ? (
                   <span className="dungeon-stop-count small">
                     {d.completed === 0 ? t(T.nobodyYet) : t(T.cleared)(fmt(d.completed))}
@@ -234,7 +234,7 @@ function Highlight({ kicker, dungeon, children }: { kicker: string; dungeon: Gui
 
 /** Favorite dungeon, next guild goal and regular. */
 function Highlights({ view }: { view: GuildDungeonsView }) {
-  const { t, sprache } = useSprache();
+  const { t, language } = useLanguage();
   // Dungeons without statistics say nothing about the guild: neither favorite nor next goal.
   const tracked = view.dungeons.filter((d) => d.tracked);
   const favourite = [...tracked].sort((a, b) => b.completed - a.completed)[0] ?? null;
@@ -258,7 +258,7 @@ function Highlights({ view }: { view: GuildDungeonsView }) {
             <strong>{next.name}</strong>
             <span className="muted small">
               {t(T.nobodyInside)}
-              {levelText(next, sprache) ? `, ${levelText(next, sprache)}` : ""}.
+              {levelText(next, language) ? `, ${levelText(next, language)}` : ""}.
             </span>
           </>
         ) : (
@@ -284,7 +284,7 @@ function Highlights({ view }: { view: GuildDungeonsView }) {
 }
 
 function Raid({ raid, characters, onOpen }: { raid: GuildRaidView; characters: number; onOpen(request: MemberListRequest): void }) {
-  const { t, sprache } = useSprache();
+  const { t, language } = useLanguage();
   const any = raid.bosses.some((b) => b.defeated > 0);
   return (
     <li className={`dungeon-raid${any ? "" : " dungeon-raid-locked"}`}>
@@ -294,7 +294,7 @@ function Raid({ raid, characters, onOpen }: { raid: GuildRaidView; characters: n
         <span className="dungeon-raid-img dungeon-noimg" aria-hidden="true" />
       )}
       <h3 className="dungeon-raid-name">{raid.name}</h3>
-      {levelText(raid, sprache) && <p className="muted small">{levelText(raid, sprache)}</p>}
+      {levelText(raid, language) && <p className="muted small">{levelText(raid, language)}</p>}
       <ul className="dungeon-bosses" aria-label={`${t(T.bosses)}: ${raid.name}`}>
         {raid.bosses.map((b) => (
           <li key={b.name} className={b.defeated > 0 ? "dungeon-boss-down" : ""}>
@@ -319,7 +319,7 @@ function Raid({ raid, characters, onOpen }: { raid: GuildRaidView; characters: n
           onClick={() =>
             onOpen({
               title: raid.name,
-              subtitle: levelText(raid, sprache) ?? undefined,
+              subtitle: levelText(raid, language) ?? undefined,
               sets: [{ key: raid.name, label: raid.name, valueLabel: t(L.bossesDefeated), entries: raid.who }],
               fixedGuild: true,
             })
@@ -333,7 +333,7 @@ function Raid({ raid, characters, onOpen }: { raid: GuildRaidView; characters: n
 }
 
 function Content({ view, onGuild }: { view: GuildDungeonsView; onGuild(slug: string | null): void }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   // The response is already filtered by guild, so no own switch in the dialog.
   const list = useMemberList(view.guild);
   const last = view.dungeons.map((d) => d.lastAt).filter((x): x is string => x !== null).sort().at(-1);

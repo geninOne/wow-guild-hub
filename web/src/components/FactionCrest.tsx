@@ -1,5 +1,5 @@
 import { useId } from "react";
-import { useSprache } from "../lib/sprache";
+import { useLanguage } from "../lib/language";
 import { factionName } from "../lib/wow";
 import { Icon } from "./Icon";
 
@@ -31,8 +31,8 @@ const FIELDS: Record<string, [string, string]> = {
 /** Colored pennant as a fallback when the faction icon does not load, and for unknown factions. */
 function Pennant({ faction, size }: { faction: string; size: number }) {
   const id = useId();
-  const { sprache } = useSprache();
-  const en = sprache === "en";
+  const { language } = useLanguage();
+  const en = language === "en";
   const [light, dark] = FIELDS[faction] ?? ["#6b6f7a", "#3a3d46"];
   const label = faction ? factionName(faction, en) : en ? "Unknown faction" : "Fraktion unbekannt";
   return (
@@ -53,7 +53,7 @@ function Pennant({ faction, size }: { faction: string; size: number }) {
 /** Horde or Alliance faction icon with a border in the faction color; the colored pennant on a load error. */
 
 export function FactionCrest({ faction, size = 18, decorative = false }: { faction: string; size?: number; decorative?: boolean }) {
-  const { sprache } = useSprache();
+  const { language } = useLanguage();
   const sources = FACTION_ICONS[faction];
   if (decorative) {
     return (
@@ -68,7 +68,7 @@ export function FactionCrest({ faction, size = 18, decorative = false }: { facti
     <Icon
       src={src}
       fallbacks={fallbacks}
-      alt={factionName(faction, sprache === "en")}
+      alt={factionName(faction, language === "en")}
       size={size}
       tone={FIELDS[faction][1]}
       className="faction-crest faction-icon"

@@ -8,11 +8,11 @@ import { GuildFilter } from "../components/GuildFilter";
 import { useApi } from "../lib/api";
 import { formatDateTime } from "../lib/format";
 import { filterMembers, parseRankValue, rankGroups, sortMembers, type SortKey } from "../lib/members";
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 import { factionName } from "../lib/wow";
 
 /** Placeholder for missing values; in the dialects the same as in German, so the table stays calm. */
-const NA: Fassungen = { de: "k. A.", en: "n/a" };
+const NA: Translations = { de: "k. A.", en: "n/a" };
 
 const T = {
   title: { de: "Gildenübersicht", en: "Guild Overview", schwaebisch: "Gildenübersicht", bayrisch: "Gildnübersicht" },
@@ -42,15 +42,15 @@ const T = {
     schwaebisch: "Koine Mitglieder gfonda.",
     bayrisch: "Koane Mitglieder gfundn.",
   },
-} satisfies Record<string, Fassungen | Fassungen<(n: number) => string>>;
+} satisfies Record<string, Translations | Translations<(n: number) => string>>;
 
 /** Faction names; German and dialects via factionName, English as in the game client. */
-const FACTION: Fassungen<(faction: string) => string> = {
+const FACTION: Translations<(faction: string) => string> = {
   de: factionName,
   en: (faction) => (faction === "HORDE" ? "Horde" : faction === "ALLIANCE" ? "Alliance" : faction),
 };
 
-const COLUMNS: { key: SortKey; label: Fassungen; numeric: boolean }[] = [
+const COLUMNS: { key: SortKey; label: Translations; numeric: boolean }[] = [
   { key: "name", label: { de: "Name", en: "Name", schwaebisch: "Name", bayrisch: "Nam" }, numeric: false },
   { key: "guildName", label: { de: "Gilde", en: "Guild", schwaebisch: "Gilde", bayrisch: "Gilde" }, numeric: false },
   { key: "className", label: { de: "Klasse", en: "Class", schwaebisch: "Klasse", bayrisch: "Klass" }, numeric: false },
@@ -65,7 +65,7 @@ const COLUMNS: { key: SortKey; label: Fassungen; numeric: boolean }[] = [
 ];
 
 function GuildContent({ guild }: { guild: GuildView }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const [text, setText] = useState("");
   const [classId, setClassId] = useState<number | null>(null);
   const [rankValue, setRankValue] = useState("");
@@ -226,7 +226,7 @@ function GuildContent({ guild }: { guild: GuildView }) {
 }
 
 export function GuildPage() {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const { data, error, loading } = useApi<GuildView>("/api/guild");
   return (
     <section className="page">

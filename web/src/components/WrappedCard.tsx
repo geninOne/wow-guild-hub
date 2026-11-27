@@ -3,7 +3,7 @@ import type { WrappedView } from "../../../src/api/types";
 import { useApi } from "../lib/api";
 import { formatPlainDate, formatPlainDayMonth, hourRange, monthLabel, weekLabel, weekdayNames } from "../lib/fun";
 import { site } from "../lib/site";
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 import { DataState } from "./DataState";
 import { TitleBadge } from "./TitleBadge";
 import { SampleDataNotice } from "./SampleDataNotice";
@@ -87,10 +87,10 @@ const T = {
     de: (name: string) => `${name}-Rückblick`,
     en: (name: string) => `${name} Wrapped`,
   },
-} satisfies Record<string, Fassungen<unknown>>;
+} satisfies Record<string, Translations<unknown>>;
 
 function Stat({ label, value, note }: { label: string; value: string | null; note?: string }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   return (
     <li className="wrapped-stat">
       <span className="wrapped-stat-label">{label}</span>
@@ -106,7 +106,7 @@ function Stat({ label, value, note }: { label: string; value: string | null; not
 const count = (n: number | null, plus = true) => (n === null ? null : `${plus && n > 0 ? "+" : ""}${n}`);
 
 function Card({ view, onMonth }: { view: WrappedView; onMonth(month: string): void }) {
-  const { t, sprache } = useSprache();
+  const { t, language } = useLanguage();
   const c = view.character;
   const brand = t(T.wrapped)(site().name);
   return (
@@ -117,19 +117,19 @@ function Card({ view, onMonth }: { view: WrappedView; onMonth(month: string): vo
           <select className="filter-input" value={view.month} onChange={(e) => onMonth(e.target.value)} aria-label={t(T.month)}>
             {view.months.map((m) => (
               <option key={m} value={m}>
-                {monthLabel(m, sprache)}
+                {monthLabel(m, language)}
               </option>
             ))}
           </select>
         </label>
       </div>
       <SampleDataNotice show={view.testdaten} />
-      <article className="wrapped-card" aria-label={`${brand} ${monthLabel(view.month, sprache)} ${t(T.for)} ${c.name}`}>
+      <article className="wrapped-card" aria-label={`${brand} ${monthLabel(view.month, language)} ${t(T.for)} ${c.name}`}>
         <header className="wrapped-head">
           <span className="wrapped-brand">{brand}</span>
           <h2 className="wrapped-name">{c.name}</h2>
           <p className="wrapped-month-label">
-            {monthLabel(view.month, sprache)}
+            {monthLabel(view.month, language)}
             {view.running && ` · ${t(T.interim)}`}
           </p>
         </header>
@@ -187,7 +187,7 @@ function Card({ view, onMonth }: { view: WrappedView; onMonth(month: string): vo
           <span className="wrapped-stat-label">{t(T.favoriteTime)}</span>
           {view.favoriteHour !== null && view.favoriteWeekday !== null ? (
             <strong>
-              {weekdayNames(sprache)[view.favoriteWeekday]}s, {hourRange(view.favoriteHour, sprache)}
+              {weekdayNames(language)[view.favoriteWeekday]}s, {hourRange(view.favoriteHour, language)}
             </strong>
           ) : (
             <strong className="wrapped-stat-none">{t(T.noData)}</strong>
@@ -204,7 +204,7 @@ function Card({ view, onMonth }: { view: WrappedView; onMonth(month: string): vo
                   <span>
                     <span className="badge-gold">{t(title.name)}</span>{" "}
                     <span className="muted small">
-                      {weekLabel(title.from, title.to, sprache)}, {t(title.valueText)}
+                      {weekLabel(title.from, title.to, language)}, {t(title.valueText)}
                     </span>
                   </span>
                 </li>

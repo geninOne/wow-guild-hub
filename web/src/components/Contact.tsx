@@ -1,8 +1,8 @@
 import { site, type Imprint } from "../lib/site";
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 
 /** Notice above legal texts: in the other languages the legal text stays German. */
-export const LEGAL_TEXT_NOTICE: Fassungen<string | null> = {
+export const LEGAL_TEXT_NOTICE: Translations<string | null> = {
   de: null,
   en: "The legal notice is in German on purpose, as German law requires.",
   schwaebisch: "Des Rechtliche schtoht do mit Absicht auf Hochdeutsch, gell.",
@@ -11,7 +11,7 @@ export const LEGAL_TEXT_NOTICE: Fassungen<string | null> = {
 
 /** Short notice, only visible in the other languages. */
 export function LegalTextNotice() {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const text = t(LEGAL_TEXT_NOTICE);
   return text ? <p className="muted small">{text}</p> : null;
 }

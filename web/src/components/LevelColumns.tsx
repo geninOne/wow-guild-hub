@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 
 export interface LevelColumn {
   label: string;
@@ -10,9 +10,9 @@ export interface LevelColumn {
 
 const T = {
   list: { de: "Mitglieder je Levelstufe", en: "Members per level range", schwaebisch: "Mitglieder je Levelstufe", bayrisch: "Mitglieder je Levelstufe" },
-} satisfies Record<string, Fassungen>;
+} satisfies Record<string, Translations>;
 
-const COLUMN: Fassungen<(label: string, n: number) => string> = {
+const COLUMN: Translations<(label: string, n: number) => string> = {
   de: (label, n) => `${label}: ${n} ${n === 1 ? "Mitglied" : "Mitglieder"}`,
   en: (label, n) => `${label}: ${n} ${n === 1 ? "member" : "members"}`,
   schwaebisch: (label, n) => `${label}: ${n} ${n === 1 ? "Mitglied" : "Mitglieder"}`,
@@ -25,7 +25,7 @@ function shortLabel(c: LevelColumn): string {
 }
 
 /** "bis" between two level bounds, per language. */
-export const LEVEL_TO: Fassungen = { de: "bis", en: "to", schwaebisch: "bis", bayrisch: "bis" };
+export const LEVEL_TO: Translations = { de: "bis", en: "to", schwaebisch: "bis", bayrisch: "bis" };
 
 /** Label of a range in the language: "10 bis 19" or "10 to 19", a single level as "Level 60". */
 export function bandLabel(c: Pick<LevelColumn, "from" | "to">, toWord = "bis"): string {
@@ -53,7 +53,7 @@ interface LevelColumnsProps {
  * above it), so the chart fits any panel height and the columns end flush on desktop.
  */
 export function LevelColumns({ columns, selected, onSelect, color }: LevelColumnsProps) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const toWord = t(LEVEL_TO);
   const max = Math.max(1, ...columns.map((c) => c.count));
   return (

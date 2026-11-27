@@ -1,6 +1,6 @@
 // Alle Datentypen, die in Netlify Blobs abgelegt werden. Vertrag für Lese-API und Frontend.
 
-import type { Dialekte } from "./sprache";
+import type { OtherTranslations } from "./language";
 
 export interface ItemTooltip {
   binding: string | null;
@@ -377,7 +377,7 @@ export interface NewspaperArticle {
   headline: string;
   text: string;
   /** Schwäbische und bayrische Fassung; fehlt in Ausgaben vor den Sprachvarianten. */
-  dialekte?: Dialekte<{ headline: string; text: string }>;
+  dialekte?: OtherTranslations<{ headline: string; text: string }>;
   /** Beteiligte Charaktere, damit die Oberfläche verlinken kann. */
   characterIds: number[];
 }
@@ -388,7 +388,7 @@ export interface NewspaperIssue {
   /** Spruch der Woche, hochdeutsch. */
   motto: string;
   /** Spruch der Woche auf Schwäbisch und Bayrisch; fehlt in Ausgaben vor den Sprachvarianten. */
-  mottoDialekte?: Dialekte<string>;
+  mottoDialekte?: OtherTranslations<string>;
   /** Wer die Texte geschrieben hat: `bausteine` oder `claude`; fehlt in älteren Ausgaben. */
   generator?: string;
   /** Modell, falls ein Sprachmodell geschrieben hat. */
@@ -402,7 +402,7 @@ export interface NewspaperIssue {
   /** Wetterbericht für Azeroth, hochdeutsch, gedichtet aus den Wochenzahlen; fehlt in Ausgaben davor. */
   wetter?: string;
   /** Wetterbericht auf Schwäbisch und Bayrisch. */
-  wetterDialekte?: Dialekte<string>;
+  wetterDialekte?: OtherTranslations<string>;
   /** Schlagzeile der Ausgabe von vor vier Wochen; fehlt, wenn es sie nicht gibt, und in Ausgaben davor. */
   rueckblick?: NewspaperLookback;
 }
@@ -413,7 +413,7 @@ export interface NewspaperLookback {
   from: string;
   to: string;
   headline: string;
-  dialekte?: Dialekte<string>;
+  dialekte?: OtherTranslations<string>;
   characterIds: number[];
 }
 
@@ -465,7 +465,7 @@ export interface WeeklyIndex {
    * Je Woche die Schlagzeile des Aufmachers und der gewertete Zeitraum; fehlt für Wochen vor dem Archiv.
    * Der Zeitraum fehlt in Einträgen vor der Umstellung auf Wertungswochen.
    */
-  entries?: Record<string, { headline: string; dialekte?: Dialekte<string>; from?: string; to?: string; testdaten?: boolean }>;
+  entries?: Record<string, { headline: string; dialekte?: OtherTranslations<string>; from?: string; to?: string; testdaten?: boolean }>;
 }
 
 /**

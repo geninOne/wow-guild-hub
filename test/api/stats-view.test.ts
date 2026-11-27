@@ -7,7 +7,7 @@ import type { GuildRecord, MemberSummary } from "../../src/model";
 import { statDefinition } from "../../src/stats/definitions";
 import type { StatsSnapshot } from "../../src/stats/snapshot";
 import { createMemoryStore } from "../../src/store";
-import { fassungIn, SPRACHEN, ueberall } from "../../src/sprache";
+import { translationIn, LANGUAGES, sameInAll } from "../../src/language";
 
 /** Config text: a string for all languages or an object with at least `de`, only known languages. */
 function expectConfigText(text: unknown, where: string) {
@@ -16,7 +16,7 @@ function expectConfigText(text: unknown, where: string) {
   const obj = text as Record<string, unknown>;
   expect(obj.de, where).toBeTypeOf("string");
   for (const [language, value] of Object.entries(obj)) {
-    expect(SPRACHEN as readonly string[], where).toContain(language);
+    expect(LANGUAGES as readonly string[], where).toContain(language);
     expect(value, where).toBeTypeOf("string");
   }
 }
@@ -30,7 +30,7 @@ function expectConfigUnit(unit: unknown, where: string) {
   const obj = unit as Record<string, unknown>;
   expect(obj.de, where).toHaveLength(2);
   for (const [language, pair] of Object.entries(obj)) {
-    expect(SPRACHEN as readonly string[], where).toContain(language);
+    expect(LANGUAGES as readonly string[], where).toContain(language);
     expect(pair, where).toHaveLength(2);
   }
 }
@@ -110,9 +110,9 @@ describe("statCards", () => {
 
   test("titles and blurbs come in all languages, English translated separately", () => {
     for (const card of statCards()) {
-      for (const language of SPRACHEN) {
-        expect(fassungIn(card.title, language), `${card.slug} ${language}`).toBeTypeOf("string");
-        expect(fassungIn(card.blurb!, language), `${card.slug} ${language}`).toBeTypeOf("string");
+      for (const language of LANGUAGES) {
+        expect(translationIn(card.title, language), `${card.slug} ${language}`).toBeTypeOf("string");
+        expect(translationIn(card.blurb!, language), `${card.slug} ${language}`).toBeTypeOf("string");
       }
       expect(card.title.en, card.slug).not.toBe(card.title.de);
       expect(card.blurb!.en, card.slug).not.toBe(card.blurb!.de);
@@ -181,13 +181,13 @@ describe("buildStatCards", () => {
     const deaths = stat(cards, 60);
     // Anna +2, Bodo +0; Cleo and the unknown one are missing from the earlier snapshot and do not count
     expect(deaths).toMatchObject({ art: "zaehler", total: 2 });
-    // Texts are `Fassungen` with German and English; missing dialects fall back to German
+    // Texts are `Translations` with German and English; missing dialects fall back to German
     expect(deaths.short).toEqual({ de: "Tode", en: "Deaths" });
     expect(deaths.unit!.de).toEqual(["Tod", "Tode"]);
     expect(deaths.unit!.en).toEqual(["death", "deaths"]);
     expect(deaths.honor!.de).toBe("Goldener Grabstein");
     expect(deaths.honor!.en).toBe("Golden Gravestone");
-    for (const language of SPRACHEN) expect(fassungIn(deaths.unit!, language)).toHaveLength(2);
+    for (const language of LANGUAGES) expect(translationIn(deaths.unit!, language)).toHaveLength(2);
     expect(deaths.leaders.map((l) => [l.character.name, l.value])).toEqual([["Anna", 2]]);
     expect(deaths.perGuild).toEqual({ "bärenklaue": 2, "goldene-bärenklaue": 0 });
     expect(stat(cards, 1065).perGuild).toEqual({ "bärenklaue": 3, "goldene-bärenklaue": 2 });
@@ -196,12 +196,12 @@ describe("buildStatCards", () => {
     expect(conversion.per).toBe(100);
     expect(conversion.unit.de).toEqual(["Fass", "Fässer"]);
     expect(conversion.unit.en).toEqual(["barrel", "barrels"]);
-    for (const language of SPRACHEN) expect(fassungIn(conversion.text, language)).toBeTypeOf("string");
+    for (const language of LANGUAGES) expect(translationIn(conversion.text, language)).toBeTypeOf("string");
     // How many characters have a value at all (for the stable), class color for the ECG
     expect(stat(cards, 1065).holders).toBe(2);
     expect(stat(cards, 60).holders).toBe(1);
     expect(stat(cards, 60).sum).toBe(2);
-    expect(stat(cards, 800)).toMatchObject({ classId: 2, short: ueberall("Paladin"), holders: 0 });
+    expect(stat(cards, 800)).toMatchObject({ classId: 2, short: sameInAll("Paladin"), holders: 0 });
   });
 
   test("newcomers: left out for week and month, included from the server start for total", () => {

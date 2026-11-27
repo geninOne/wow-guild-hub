@@ -25,13 +25,13 @@ test("Schwäbische Satzbausteine sagen net, nicht das bayrische ned", () => {
 });
 
 /** Alle Texte einer Fassung aus config/statistik-karten.json. */
-function kartenTexte(sprache: "schwaebisch" | "bayrisch"): string[] {
+function kartenTexte(language: "schwaebisch" | "bayrisch"): string[] {
   const out: string[] = [];
   const walk = (v: unknown): void => {
     if (Array.isArray(v)) v.forEach(walk);
     else if (v && typeof v === "object") {
       for (const [k, w] of Object.entries(v)) {
-        if (k === sprache) out.push(...(Array.isArray(w) ? w : [w]).filter((x): x is string => typeof x === "string"));
+        if (k === language) out.push(...(Array.isArray(w) ? w : [w]).filter((x): x is string => typeof x === "string"));
         else walk(w);
       }
     }

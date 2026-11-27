@@ -6,12 +6,12 @@ import {
   phraseGenerator, writeWeather, languagesFor, storedTranslationIn, WEEKDAY_NAMES, type OtherLanguage, type TextContext, type TextGenerator,
   type TextResult, type StoredTranslations,
 } from "./newspaper-text";
-import { list, Picker, type Alle } from "./phrases";
+import { list, Picker, type AllLanguages } from "./phrases";
 import { RECORD_KIND, newspaperName } from "./phrases-extras";
 import { WEATHER_MEANING } from "./weather";
 import { sentencePatterns } from "./repetition";
 import { titleDef } from "./titles";
-import { DIALEKTE, fassungIn, type Sprache } from "../sprache";
+import { DIALECTS, translationIn, type Language } from "../language";
 
 /** Router name in our own AI gateway; the gateway picks the model behind it. */
 export const DEFAULT_MODEL = "anthropic-router";
@@ -23,7 +23,7 @@ export interface MessagesClient {
   messages: { create(params: Anthropic.MessageCreateParamsNonStreaming): Promise<Anthropic.Message> };
 }
 
-const TONE: Alle<string> = {
+const TONE: AllLanguages<string> = {
   de: "Ton: freche Lokalzeitung mit Augenzwinkern, in sauberem Hochdeutsch ganz ohne Dialekt.",
   en: 'Schreibe alles auf Englisch: Schlagzeilen, Texte, Spruch und Wetterbericht. Ton: freche Lokalzeitung mit Augenzwinkern, in natürlichem, gut lesbarem Englisch. Verwende die Begriffe des englischen WoW-Clients (zum Beispiel "Guild Master", "item level", "Dungeons & Raids", "reputation", "Spirit Healer", "achievement"). Wortspiele sinngemäß, nicht wörtlich aus dem Deutschen übersetzt. Uhrzeiten schreibst du genau so, wie sie im Fakt stehen (zum Beispiel "20:00").',
   schwaebisch:
@@ -32,14 +32,14 @@ const TONE: Alle<string> = {
     'Ton: freche Lokalzeitung mit Augenzwinkern, auf Bayrisch. Gut lesbar, mit typischen Wörtern und Wendungen (zum Beispiel "Servus", "a bisserl", "gell", "fei", "ned", "scho", "Obacht", "mei", "koa", "Gaudi", "schee"). Kein Kauderwelsch und nicht in jedem Wort Dialekt.',
 };
 
-const MOTTO_RULE: Alle<string> = {
+const MOTTO_RULE: AllLanguages<string> = {
   de: "Dazu ein kurzer Spruch der Woche auf Hochdeutsch (Redensart oder Lebensweisheit), ohne Namen und ohne Zahlen, anders als die Sprüche der letzten Ausgaben.",
   en: "Dazu ein kurzer Spruch der Woche auf Englisch (eine englische Redensart oder Lebensweisheit), ohne Namen und ohne Zahlen, anders als die Sprüche der letzten Ausgaben.",
   schwaebisch: "Dazu ein kurzer schwäbischer Spruch der Woche ohne Namen und ohne Zahlen, anders als die Sprüche der letzten Ausgaben.",
   bayrisch: "Dazu ein kurzer bayrischer Spruch der Woche ohne Namen und ohne Zahlen, anders als die Sprüche der letzten Ausgaben.",
 };
 
-const WEATHER_LANGUAGE: Alle<string> = {
+const WEATHER_LANGUAGE: AllLanguages<string> = {
   de: "auf Hochdeutsch",
   en: "auf Englisch",
   schwaebisch: "auf Schwäbisch",
@@ -56,7 +56,7 @@ export interface PromptFrame {
  * System prompt for one language version of the weekly newspaper; `withWeather` adds the weather report. Newspaper
  * name and guilds come from the frame; without guild names the prompt speaks neutrally of a guild.
  */
-export function systemPrompt(language: Sprache, withWeather = false, frame: PromptFrame = {}): string {
+export function systemPrompt(language: Language, withWeather = false, frame: PromptFrame = {}): string {
   const newspaper = newspaperName(language, frame.zeitung);
   const guilds = (frame.gilden ?? []).filter((g) => g.trim() !== "");
   const who =
@@ -93,7 +93,7 @@ Regeln:
 export const SYSTEM_PROMPT = systemPrompt("de");
 
 /** Context for an English or dialect version: earlier issues in that language, where available. */
-export function contextFor(ctx: TextContext, language: Sprache): TextContext {
+export function contextFor(ctx: TextContext, language: Language): TextContext {
   if (language === "de") return ctx;
   return {
     ...ctx,
@@ -146,10 +146,10 @@ const SCHEMA = {
 const SCHEMA_WITH_WEATHER = { ...SCHEMA, required: ["artikel", "spruch", "wetter"] } as const;
 
 /** Facts as the model sees them: names instead of ids, with section and a readable description. */
-export function factsForModel(facts: NewspaperFact[], ctx: TextContext, language: Sprache = "de"): unknown[] {
+export function factsForModel(facts: NewspaperFact[], ctx: TextContext, language: Language = "de"): unknown[] {
   const titleName = (id: string | null) => {
     const def = id ? titleDef(id) : undefined;
-    return id ? (def ? fassungIn(def.name, language) : id) : null;
+    return id ? (def ? translationIn(def.name, language) : id) : null;
   };
   return facts.map((f, nr) => {
     const base = { nr, rubrik: nr === 0 ? "Aufmacher" : sectionOf(f), art: factKindOf(f) };
@@ -166,9 +166,9 @@ export function factsForModel(facts: NewspaperFact[], ctx: TextContext, language
         return {
           ...base,
           titel: titleName(f.titleId),
-          regel: def ? fassungIn(def.description, language) : undefined,
+          regel: def ? translationIn(def.description, language) : undefined,
           charakter: n(f.characterId),
-          wert: def ? fassungIn(def.valueText(f.value), language) : f.value,
+          wert: def ? translationIn(def.valueText(f.value), language) : f.value,
         };
       }
       case "neuzugang":
@@ -331,7 +331,7 @@ export function createClaudeGenerator(options: ClaudeGeneratorOptions): TextGene
   const log = options.log ?? ((m: string) => console.warn(m));
 
   /** Requests one language version from the model and validates it; throws with a reason if something is off. */
-  async function writeVersion(facts: NewspaperFact[], context: TextContext, language: Sprache) {
+  async function writeVersion(facts: NewspaperFact[], context: TextContext, language: Language) {
     const ctx = contextFor(context, language);
     // Deliberately only fields every Anthropic-compatible interface knows: no betas and no server fallback,
     // since those exist only at Anthropic itself. output_config only when explicitly switched on.
@@ -374,7 +374,7 @@ export function createClaudeGenerator(options: ClaudeGeneratorOptions): TextGene
   return async (facts, context): Promise<TextResult> => {
     const languages = languagesFor(context);
     const ctx: TextContext = { ...context, sprachen: languages };
-    const others: OtherLanguage[] = ["en", ...DIALEKTE.filter((d) => languages.includes(d))];
+    const others: OtherLanguage[] = ["en", ...DIALECTS.filter((d) => languages.includes(d))];
     const [de, ...rest] = await Promise.allSettled([writeVersion(facts, ctx, "de"), ...others.map((s) => writeVersion(facts, ctx, s))]);
     if (de.status === "rejected") {
       const reason = reasonOf(de.reason);

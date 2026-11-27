@@ -2,12 +2,12 @@ import type { StatsPeriodKind, StatsView } from "../../../src/api/types";
 import { useApi } from "../lib/api";
 import { formatDateTime } from "../lib/format";
 import { formatPlainDate, formatPlainDayMonth, monthLabel, weekLabel } from "../lib/fun";
-import { useSprache, type Fassungen, type Sprache } from "../lib/sprache";
+import { useLanguage, type Translations, type Language } from "../lib/language";
 import { DataState } from "./DataState";
 import { GuildFilter } from "./GuildFilter";
 import { StatWall, statsBase } from "./StatCards";
 
-export const PERIODS: { id: StatsPeriodKind; label: Fassungen }[] = [
+export const PERIODS: { id: StatsPeriodKind; label: Translations }[] = [
   { id: "woche", label: { de: "Woche", en: "Week", schwaebisch: "Woch", bayrisch: "Woch" } },
   { id: "monat", label: { de: "Monat", en: "Month", schwaebisch: "Monat", bayrisch: "Monat" } },
   { id: "gesamt", label: { de: "Gesamt", en: "All Time", schwaebisch: "Gsamt", bayrisch: "Gsamt" } },
@@ -87,7 +87,7 @@ const T = {
     bayrisch:
       "Zahln aus da Charakterstatistik vo Blizzard, als Zuwachs im gwählten Zeitraum. Da Sammler hoit jede Woch vo Sonntag bis Samstag an Stand fest, da Serverstart zählt ois Stand mit lauter Nuller. Wer neu in d'Gilde kimmt, zählt bei Woch und Monat erst ab seina zwoatn Woch. Horde gega Allianz vergleicht oiwei beide Gildn.",
   },
-} satisfies Record<string, Fassungen<unknown>>;
+} satisfies Record<string, Translations<unknown>>;
 
 /** API path for a period, optional week (Saturday) or month and optional guild. */
 export function statsPath(kind: StatsPeriodKind, id: string | null, guild: string | null = null): string {
@@ -107,7 +107,7 @@ const nextSaturday = (saturday: string) => {
   return d.toISOString().slice(0, 10);
 };
 
-function periodLabel(view: StatsView, language: Sprache): string {
+function periodLabel(view: StatsView, language: Language): string {
   if (view.kind === "woche" && view.id) return weekLabel(sunday(view.id), view.id, language);
   if (view.kind === "monat" && view.id) return monthLabel(view.id, language);
   return view.serverStart ? T.allTimeSince[language](formatPlainDate(view.serverStart)) : T.allTime[language];
@@ -115,7 +115,7 @@ function periodLabel(view: StatsView, language: Sprache): string {
 
 /** Friendly hint when there are no reliable numbers for the period yet. */
 function NotYet({ view }: { view: StatsView }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   let text: string;
   if (view.status === "keine") {
     text = t(T.nothingYet);
@@ -141,7 +141,7 @@ interface StatsProps {
 }
 
 function StatsContent({ view, onSelect, onGuild }: StatsProps & { view: StatsView }) {
-  const { t, sprache } = useSprache();
+  const { t, language } = useLanguage();
   const options = view.kind === "woche" ? view.weeks : view.kind === "monat" ? view.months : [];
   return (
     <>
@@ -170,20 +170,20 @@ function StatsContent({ view, onSelect, onGuild }: StatsProps & { view: StatsVie
           >
             {options.map((o) => (
               <option key={o} value={o}>
-                {view.kind === "woche" ? weekLabel(sunday(o), o, sprache) : monthLabel(o, sprache)}
+                {view.kind === "woche" ? weekLabel(sunday(o), o, language) : monthLabel(o, language)}
               </option>
             ))}
           </select>
         )}
       </div>
       <p className="page-subtitle muted">
-        {periodLabel(view, sprache)}
+        {periodLabel(view, language)}
         {view.takenAt && ` · ${t(T.asOf)}: ${formatDateTime(view.takenAt)}`}
         {view.status === "ok" && ` · ${t(T.characters)(view.characters)}`}
       </p>
       <p className="stat-intro">{t(T.intro)}</p>
       {view.nachgeholt && <p className="muted small">{t(T.backfilled)}</p>}
-      {view.status === "ok" ? <StatWall view={view} subtitle={periodLabel(view, sprache)} /> : <NotYet view={view} />}
+      {view.status === "ok" ? <StatWall view={view} subtitle={periodLabel(view, language)} /> : <NotYet view={view} />}
       <p className="muted small">{t(T.source)}</p>
     </>
   );

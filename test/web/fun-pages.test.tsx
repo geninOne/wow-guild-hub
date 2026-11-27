@@ -5,9 +5,9 @@ import { afterEach, expect, test, vi } from "vitest";
 import type { ActivityView, NewspaperView, CharacterRef, TitlesView, WrappedView } from "../../src/api/types";
 import { TitleBadge } from "../../web/src/components/TitleBadge";
 import { WrappedPanel } from "../../web/src/components/WrappedCard";
-import { ueberall, type Fassungen } from "../../src/sprache";
+import { sameInAll, type Translations } from "../../src/language";
 import { dayTotals, heatLevel, monthLabel, peak, splitByNames, weekLabel, weekRangeLabel } from "../../web/src/lib/fun";
-import { SpracheProvider, type Sprache } from "../../web/src/lib/sprache";
+import { LanguageProvider, type Language } from "../../web/src/lib/language";
 import { StatsPage } from "../../web/src/pages/StatsPage";
 import { NewspaperArchivePage, NewspaperPage } from "../../web/src/pages/NewspaperPage";
 import { TitlesPage } from "../../web/src/pages/TitlesPage";
@@ -32,12 +32,12 @@ function mockFetch(routes: Record<string, unknown>) {
   return fn;
 }
 
-function renderAt(path: string, routes: React.ReactNode, language?: Sprache) {
+function renderAt(path: string, routes: React.ReactNode, language?: Language) {
   const site = <MemoryRouter initialEntries={[path]}><Routes>{routes}</Routes></MemoryRouter>;
-  render(language ? <SpracheProvider start={language}>{site}</SpracheProvider> : site);
+  render(language ? <LanguageProvider start={language}>{site}</LanguageProvider> : site);
 }
 
-const f = (de: string, schwaebisch = de, bayrisch = de, en = de): Fassungen => ({ de, en, schwaebisch, bayrisch });
+const f = (de: string, schwaebisch = de, bayrisch = de, en = de): Translations => ({ de, en, schwaebisch, bayrisch });
 
 test("helpers: heat levels, peak, day totals, names in text, labels", () => {
   expect([0, 1, 5, 10].map((v) => heatLevel(v, 10))).toEqual([0, 1, 3, 5]);
@@ -427,7 +427,7 @@ test("archive: list newest first with number, week and headline; empty state", a
   mockFetch({
     "/api/newspaper/archive": {
       issues: [
-        { issue: 3, week: "2026-11-21", from: "2026-11-16", to: "2026-11-21", headline: ueberall("Übergang"), testdaten: true },
+        { issue: 3, week: "2026-11-21", from: "2026-11-16", to: "2026-11-21", headline: sameInAll("Übergang"), testdaten: true },
         { issue: 2, week: "2026-W46", from: "2026-11-09", to: "2026-11-15", headline: f("Anna gibt Gas"), testdaten: true },
         { issue: 1, week: "2026-W45", from: "2026-11-02", to: "2026-11-08", headline: f("Ruhige Woche", "A ruhigs Wöchle", "A ruhige Woch"), testdaten: false },
       ],
@@ -604,7 +604,7 @@ test("titles in English: page header, tiles and newspaper without guild names", 
 test("wrapped in English: brand from WEBSITE_NAME, key figures and favorite time", async () => {
   vi.stubEnv("WEBSITE_NAME", "Die Tapferen");
   mockFetch({ "/api/wrapped/anna": wrapped });
-  render(<SpracheProvider start="en"><MemoryRouter><WrappedPanel slug="anna" /></MemoryRouter></SpracheProvider>);
+  render(<LanguageProvider start="en"><MemoryRouter><WrappedPanel slug="anna" /></MemoryRouter></LanguageProvider>);
   expect(await screen.findByText(/Levels gained, from 20 to 25/)).toBeTruthy();
   expect(document.querySelector(".wrapped-brand")?.textContent).toBe("Die Tapferen Wrapped");
   expect(screen.getByText(/Rank 2 of 9 in the community/)).toBeTruthy();
@@ -621,14 +621,14 @@ test("wrapped in English: brand from WEBSITE_NAME, key figures and favorite time
 
 test("wrapped in dialect: key figures, favorite time and titles", async () => {
   mockFetch({ "/api/wrapped/anna": wrapped });
-  render(<SpracheProvider start="schwaebisch"><MemoryRouter><WrappedPanel slug="anna" /></MemoryRouter></SpracheProvider>);
+  render(<LanguageProvider start="schwaebisch"><MemoryRouter><WrappedPanel slug="anna" /></MemoryRouter></LanguageProvider>);
   expect(await screen.findByText(/Level gwonne, vo 20 auf 25/)).toBeTruthy();
   expect(screen.getByText("Dienschdigs, 21 bis 22 Uhr")).toBeTruthy();
   expect(screen.getByText("no koine Date")).toBeTruthy();
   expect(screen.getByText("net kaputt z'kriege!")).toBeTruthy();
   cleanup();
   mockFetch({ "/api/wrapped/anna": wrapped });
-  render(<SpracheProvider start="bayrisch"><MemoryRouter><WrappedPanel slug="anna" /></MemoryRouter></SpracheProvider>);
+  render(<LanguageProvider start="bayrisch"><MemoryRouter><WrappedPanel slug="anna" /></MemoryRouter></LanguageProvider>);
   expect(await screen.findByText(/Platz 2 vo 9 in da Gmoaschaft/)).toBeTruthy();
   expect(screen.getByText("Pechvogerl")).toBeTruthy();
   expect(screen.getByText("ned umzbringa!")).toBeTruthy();

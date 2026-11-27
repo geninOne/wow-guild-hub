@@ -1,10 +1,10 @@
 import type { ItemTooltip as ItemTooltipData } from "../../../src/model";
-import { fassungIn, useSprache, type Fassungen, type Sprache } from "../lib/sprache";
+import { translationIn, useLanguage, type Translations, type Language } from "../lib/language";
 import { qualityColor } from "../lib/wow";
 
 type Coin = "gold" | "silver" | "copper";
 
-const COIN_NAMES: Fassungen<Record<Coin, string>> = {
+const COIN_NAMES: Translations<Record<Coin, string>> = {
   de: { gold: "Gold", silver: "Silber", copper: "Kupfer" },
   en: { gold: "Gold", silver: "Silver", copper: "Copper" },
 };
@@ -12,7 +12,7 @@ const COIN_NAMES: Fassungen<Record<Coin, string>> = {
 const T = {
   sellPrice: { de: "Verkaufspreis", en: "Sell Price" },
   itemLevel: { de: "Gegenstandsstufe", en: "Item Level" },
-} satisfies Record<string, Fassungen>;
+} satisfies Record<string, Translations>;
 
 /** Coin values from the first nonzero place on. Empty without a value. */
 function sellPriceParts(price: ItemTooltipData["sellPrice"]): { value: number; coin: Coin }[] {
@@ -27,17 +27,17 @@ function sellPriceParts(price: ItemTooltipData["sellPrice"]): { value: number; c
 }
 
 /** "{g} Gold {s} Silber {k} Kupfer", leading zero places are dropped. `null` without a value. */
-export function formatSellPrice(price: ItemTooltipData["sellPrice"], language: Sprache = "de"): string | null {
+export function formatSellPrice(price: ItemTooltipData["sellPrice"], language: Language = "de"): string | null {
   const parts = sellPriceParts(price);
   if (parts.length === 0) return null;
-  const names = fassungIn(COIN_NAMES, language);
+  const names = translationIn(COIN_NAMES, language);
   return parts.map((p) => `${p.value} ${names[p.coin]}`).join(" ");
 }
 
 /** Sell price with coins instead of words; screen readers read the text from the label. */
 function SellPrice({ price }: { price: ItemTooltipData["sellPrice"] }) {
-  const { t, sprache } = useSprache();
-  const text = formatSellPrice(price, sprache);
+  const { t, language } = useLanguage();
+  const text = formatSellPrice(price, language);
   if (!text) return null;
   return (
     <p aria-label={`${t(T.sellPrice)}: ${text}`}>
@@ -81,7 +81,7 @@ export interface TooltipItem {
 /** Content of an item tooltip. Old data without `tooltip` only shows the essentials. */
 
 export function ItemTooltip({ item }: { item: TooltipItem }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const tip = item.tooltip;
   const enchantments = (item.enchantments ?? []).map((text, i) => (
     <p key={`e${i}`} className="item-tip-green">

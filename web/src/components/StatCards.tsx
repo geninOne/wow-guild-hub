@@ -1,7 +1,7 @@
 import { useEffect, useState, type CSSProperties, type MouseEvent, type ReactNode } from "react";
 import type { GuildRef, StatCardMembersView, StatCardView, StatEntryView, StatsPeriodKind, StatsView } from "../../../src/api/types";
 import { useApi } from "../lib/api";
-import { useSprache, type Fassungen, type Sprache, fassungIn } from "../lib/sprache";
+import { useLanguage, type Translations, type Language, translationIn } from "../lib/language";
 import { classColor } from "../lib/wow";
 import { CharacterLink } from "./CharacterLink";
 import { FactionCrest } from "./FactionCrest";
@@ -62,7 +62,7 @@ const T = {
   versus: { de: (a: string, b: string) => `${a} gegen ${b}`, en: (a: string, b: string) => `${a} versus ${b}` },
   chart: { de: (what: string) => `Hitparade: ${what}`, en: (what: string) => `Chart: ${what}` },
   percent: { de: (what: string, n: number) => `${what} ${n} Prozent`, en: (what: string, n: number) => `${what} ${n} percent` },
-} satisfies Record<string, Fassungen<unknown>>;
+} satisfies Record<string, Translations<unknown>>;
 
 /** English ordinal number: 1st, 2nd, 3rd, 4th, 11th, 21st. */
 export function ordinalEn(n: number): string {
@@ -78,15 +78,15 @@ export function withUnit(value: number, unit: [string, string] | null): string {
 }
 
 /** Label of a statistic: short name in the selected language, otherwise the official name. */
-const labelIn = (language: Sprache) => (s: StatEntryView) => (s.short ? fassungIn(s.short, language) : s.name);
+const labelIn = (language: Language) => (s: StatEntryView) => (s.short ? translationIn(s.short, language) : s.name);
 
 /** Unit of a statistic in the selected language. */
-const unitIn = (language: Sprache) => (s: StatEntryView) => (s.unit ? fassungIn(s.unit, language) : null);
+const unitIn = (language: Language) => (s: StatEntryView) => (s.unit ? translationIn(s.unit, language) : null);
 
 /** Label and unit in the current language. */
 function useStatText() {
-  const { t, sprache } = useSprache();
-  return { t, sprache, label: labelIn(sprache), unit: unitIn(sprache) };
+  const { t, language } = useLanguage();
+  return { t, language, label: labelIn(language), unit: unitIn(language) };
 }
 
 /** Sequence number for staggered animations in CSS (`--i`). */
@@ -121,7 +121,7 @@ function CountUp({ value, unit = null }: { value: number; unit?: [string, string
 const REST_COLOR = "#5b5547";
 
 function Honor({ stat }: { stat: StatEntryView }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const first = stat.leaders[0];
   if (!stat.honor || !first) return null;
   return (
@@ -132,7 +132,7 @@ function Honor({ stat }: { stat: StatEntryView }) {
 }
 
 function MiniLeaders({ stat, limit = 3 }: { stat: StatEntryView; limit?: number }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   if (stat.leaders.length === 0) return null;
   return (
     <ol className="fun-mini-leaders" aria-label={t(T.topRanks)(stat.name)}>
@@ -249,7 +249,7 @@ function FlameIcon() {
   );
 }
 
-const SYMBOLS: Record<string, { icon: () => ReactNode; one: Fassungen }> = {
+const SYMBOLS: Record<string, { icon: () => ReactNode; one: Translations }> = {
   fische: { icon: FishIcon, one: T.fish },
   lagerfeuer: { icon: FlameIcon, one: T.flame },
 };
@@ -329,23 +329,23 @@ function Scale({ card }: { card: StatCardView }) {
   );
 }
 
-function convert(stat: StatEntryView, language: Sprache): string | null {
+function convert(stat: StatEntryView, language: Language): string | null {
   if (!stat.conversion) return null;
   const value = stat.total / stat.conversion.per;
   const shown = value < 10 ? Math.round(value * 10) / 10 : Math.round(value);
-  const pair = fassungIn(stat.conversion.unit, language);
+  const pair = translationIn(stat.conversion.unit, language);
   const unit = shown === 1 ? pair[0] : pair[1];
   return `${shown.toLocaleString(numberLocale())} ${unit}`;
 }
 
 /** Did you know? Each statistic converted into something tangible. */
 function DidYouKnow({ card }: { card: StatCardView }) {
-  const { t, sprache, unit } = useStatText();
+  const { t, language, unit } = useStatText();
   return (
     <ul className="fun-facts-list">
       {card.stats.map((s) => (
         <li key={s.id}>
-          <strong className="fun-big num">{convert(s, sprache) ?? withUnit(s.total, unit(s))}</strong>
+          <strong className="fun-big num">{convert(s, language) ?? withUnit(s.total, unit(s))}</strong>
           <p className="muted small">
             {withUnit(s.total, unit(s))}
             {s.conversion ? `, ${t(s.conversion.text)}.` : "."}
@@ -599,7 +599,7 @@ const N = {
     schwaebisch: (n: string) => `Im Schnitt ${n} Materialie pro Teil.`,
     bayrisch: (n: string) => `Im Schnitt ${n} Materialien pro Trumm.`,
   },
-} satisfies Record<string, Fassungen<unknown>>;
+} satisfies Record<string, Translations<unknown>>;
 
 /** "Jede 14. Quest": how often the first value occurs relative to the second. */
 function Ratio({ part, whole }: { part: StatEntryView; whole: StatEntryView }) {
@@ -785,14 +785,14 @@ function MinsterIcon() {
 
 /** Bandage roll: bandages as gauze, converted into church spires, plus the healthstones. */
 function Bandage({ card }: { card: StatCardView }) {
-  const { t, sprache, label, unit } = useStatText();
+  const { t, language, label, unit } = useStatText();
   const [bandages, ...rest] = card.stats;
   const minsters = bandages.conversion ? bandages.total / bandages.conversion.per : 0;
   const shown = Math.min(30, Math.round(minsters));
   return (
     <div className="fun-bandage">
       <div>
-        <strong className="fun-big num">{convert(bandages, sprache) ?? withUnit(bandages.total, unit(bandages))}</strong>
+        <strong className="fun-big num">{convert(bandages, language) ?? withUnit(bandages.total, unit(bandages))}</strong>
         <p className="muted small">
           {withUnit(bandages.total, unit(bandages))}
           {bandages.conversion ? `, ${t(bandages.conversion.text)}.` : "."}
@@ -872,7 +872,7 @@ export function statsBase(kind: StatsPeriodKind, id: string | null): string {
  * Sets for a card's member list: one set per statistic, labeled as on the card, value column with the
  * plural unit (otherwise the statistic's name). Statistics without an answer are dropped.
  */
-export function statMemberSets(card: StatCardView, data: StatCardMembersView, language: Sprache): MemberSet[] {
+export function statMemberSets(card: StatCardView, data: StatCardMembersView, language: Language): MemberSet[] {
   const label = labelIn(language);
   const unit = unitIn(language);
   return card.stats.flatMap((s): MemberSet[] => {
@@ -885,13 +885,13 @@ export function statMemberSets(card: StatCardView, data: StatCardMembersView, la
 
 /** Loads a card's members only on opening and shows them in the dialog. */
 function StatCardMembers({ card, view, subtitle, onClose }: { card: StatCardView; view: StatsView; subtitle?: string; onClose(): void }) {
-  const { t, sprache } = useSprache();
+  const { t, language } = useLanguage();
   const { data, error } = useApi<StatCardMembersView>(statMembersPath(view, card.slug));
   return (
     <MemberListDialog
       title={t(card.title)}
       subtitle={subtitle}
-      sets={data ? statMemberSets(card, data, sprache) : null}
+      sets={data ? statMemberSets(card, data, language) : null}
       error={error}
       guild={view.guild}
       onClose={onClose}
@@ -913,7 +913,7 @@ function onCardClick(open: () => void) {
  * clicked and show all members behind them; keyboard via the "Alle n ansehen" button.
  */
 export function StatWall({ view, subtitle }: { view: StatsView; subtitle?: string }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const [openSlug, setOpenSlug] = useState<string | null>(null);
   const openCard = view.cards.find((c) => c.slug === openSlug) ?? null;
   return (

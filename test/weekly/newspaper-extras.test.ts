@@ -11,7 +11,7 @@ import { createClaudeGenerator, factsForModel, systemPrompt, validateWeather, ty
 import { findRecords, buildLookback } from "../../src/weekly/records";
 import { weatherSituation, type WeatherSituation } from "../../src/weekly/weather";
 import { weeklySums, buildWeeklyNumbers } from "../../src/weekly/numbers";
-import { SPRACHEN } from "../../src/sprache";
+import { LANGUAGES } from "../../src/language";
 import { member } from "../helpers/members";
 
 const guild: GuildRecord = {
@@ -175,7 +175,7 @@ describe("weather report", () => {
   });
 
   const situation: WeatherSituation = { elemente: [{ art: "sturm", strength: 3, ueber: "Goldene Bärenklaue" }, { art: "sternklar", strength: 2 }] };
-  const ctx = { week: "2026-11-21", name: (id: number) => ["", "Anna", "Bodo"][id], allNames: ["Anna", "Bodo"], wetter: situation, sprachen: SPRACHEN };
+  const ctx = { week: "2026-11-21", name: (id: number) => ["", "Anna", "Bodo"][id], allNames: ["Anna", "Bodo"], wetter: situation, sprachen: LANGUAGES };
 
   test("phrases write the weather report in all languages, without numbers and without em dashes", async () => {
     const r = await phraseGenerator([{ kind: "ruhig" }], ctx);
@@ -240,7 +240,7 @@ describe("new articles in the newspaper", () => {
     { kind: "rekord", entries: [{ art: "tode", characterId: null, value: 31, previous: 30 }, { art: "level", characterId: 1, value: 12, previous: 9 }] },
   ];
   const names: Record<number, string> = { 1: "Anna", 2: "Bodo", 3: "Cleo" };
-  const ctx = { week: "2026-11-21", name: (id: number) => names[id], allNames: Object.values(names), sprachen: SPRACHEN };
+  const ctx = { week: "2026-11-21", name: (id: number) => names[id], allNames: Object.values(names), sprachen: LANGUAGES };
 
   test("sections, numbers and phrases", async () => {
     expect(facts.map(sectionOf)).toEqual(["Rekorde"]);

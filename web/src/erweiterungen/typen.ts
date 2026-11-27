@@ -2,12 +2,12 @@
 // Kerns zeigen dann seine Reiter, Abzeichen, Routen und Datenschutz-Abschnitte. Anleitung: docs/extensions.md.
 import type { ComponentType } from "react";
 import type { CharacterView } from "../../../src/api/types";
-import type { Fassungen } from "../lib/sprache";
+import type { Translations } from "../lib/language";
 
 /** Ein Reiter der Statistikseite unter `/statistik/<id>`, hinter den Reitern des Kerns. */
 export interface StatistikReiter {
   id: string;
-  label: Fassungen;
+  label: Translations;
   /** Inhalt; `guild` ist die gewählte Gilde aus `?gilde=`, `onGuild` ändert sie. */
   Komponente: ComponentType<{ guild: string | null; onGuild: (guild: string | null) => void }>;
 }
@@ -21,7 +21,7 @@ export interface CharakterDatenProps {
 /** Ein Reiter der Charakterseite (`?reiter=<id>`), hinter den Reitern des Kerns. */
 export interface CharakterReiter {
   id: string;
-  label: Fassungen;
+  label: Translations;
   /**
    * Inhalt des Reiters, auch ohne Zusatzdaten (dann am besten ein Hinweis). Charaktere ohne Profil haben keine Reiter;
    * dort steht die Komponente unter dem Hinweis, aber nur mit Zusatzdaten.

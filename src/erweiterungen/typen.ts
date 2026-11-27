@@ -2,7 +2,7 @@
 // an feste Stellen: eigene API-Routen, Zusatzdaten für die Charakterseite und Meldungen für die Wochenzeitung.
 // Anleitung: docs/extensions.md.
 import type { GuildRecord, MemberSummary } from "../model";
-import type { Fassungen } from "../sprache";
+import type { Translations } from "../language";
 import type { JsonStore } from "../store";
 import type { ErweiterungsFakt } from "../weekly/newspaper-facts";
 
@@ -52,5 +52,5 @@ export interface ServerErweiterung {
   /** Meldungen für die Wochenzeitung; sie konkurrieren mit den eigenen um die Plätze. */
   wochenArtikel?(kontext: WochenKontext): Promise<ErweiterungsFakt[]>;
   /** Namen eigener Rubriken je Sprache, Schlüssel ist der deutsche Name aus `ErweiterungsFakt.rubrik`. */
-  rubriken?: Record<string, Fassungen>;
+  rubriken?: Record<string, Translations>;
 }

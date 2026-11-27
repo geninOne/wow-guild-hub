@@ -5,7 +5,7 @@ import {
   jsonFromText, validateModelOutput, type MessagesClient,
 } from "../../src/weekly/claude-text";
 import { phraseGenerator } from "../../src/weekly/newspaper-text";
-import { SPRACHEN } from "../../src/sprache";
+import { LANGUAGES } from "../../src/language";
 
 const FACTS: NewspaperFact[] = [
   { kind: "sprung", characterId: 1, levels: 7, from: 20, to: 27, title: null },
@@ -15,7 +15,7 @@ const FACTS: NewspaperFact[] = [
 const names: Record<number, string> = { 1: "Anna", 2: "Bodo", 3: "Cleo" };
 const ctx = { week: "2026-W46", name: (id: number) => names[id], allNames: ["Anna", "Bodo", "Cleo"] };
 /** Like an installation with all languages (WEBSITE_LANGUAGES=de,schwaebisch,bayrisch,en). */
-const ctxAll = { ...ctx, sprachen: SPRACHEN };
+const ctxAll = { ...ctx, sprachen: LANGUAGES };
 
 const good = {
   artikel: [

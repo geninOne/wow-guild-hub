@@ -7,12 +7,12 @@ import type { ActivityView, NewspaperView, CharacterView, TitleRankingView, Titl
 import type { DaySnapshot, GuildRecord, WeeklyRecord } from "../../src/model";
 import { createMemoryStore } from "../../src/store";
 import { member } from "../helpers/members";
-import { ueberall } from "../../src/sprache";
+import { sameInAll } from "../../src/language";
 
 const CORPSE_RUNNER = { de: "Pechvogel", en: "Corpse Runner", schwaebisch: "Pechvogel", bayrisch: "Pechvogl" };
 /** Value of a title: the same in all German versions, English of its own. */
-const value = (de: string, en: string) => ({ ...ueberall(de), en });
-const MARATHON_RUNNER = { ...ueberall("Dauerläufer"), en: "Marathon Runner" };
+const value = (de: string, en: string) => ({ ...sameInAll(de), en });
+const MARATHON_RUNNER = { ...sameInAll("Dauerläufer"), en: "Marathon Runner" };
 
 const guild: GuildRecord = {
   fetchedAt: "2026-11-16T08:00:00.000Z", id: 1, name: "Bärenklaue", faction: "HORDE", memberCount: 3, rulesetName: "Normal",

@@ -12,7 +12,7 @@ import { Icon } from "../../web/src/components/Icon";
 import { factionName, fallbackIconUrl } from "../../web/src/lib/wow";
 import { ItemTooltip } from "../../web/src/components/ItemTooltip";
 import { CharacterPage } from "../../web/src/pages/CharacterPage";
-import { SpracheProvider, type Sprache } from "../../web/src/lib/sprache";
+import { LanguageProvider, type Language } from "../../web/src/lib/language";
 import { QUALITY_COLORS } from "../../web/src/lib/wow";
 
 afterEach(() => {
@@ -446,15 +446,15 @@ test("title without a badge file still appears as a golden text badge", async ()
   expect(badge.querySelector("img")).toBeNull();
 });
 
-function renderIn(language: Sprache, url: string) {
+function renderIn(language: Language, url: string) {
   render(
-    <SpracheProvider start={language}>
+    <LanguageProvider start={language}>
       <MemoryRouter initialEntries={[url]}>
         <Routes>
           <Route path="/charakter/:key" element={<CharacterPage />} />
         </Routes>
       </MemoryRouter>
-    </SpracheProvider>,
+    </LanguageProvider>,
   );
 }
 
@@ -537,13 +537,13 @@ test("stats tab shows base stats as tiles, resource by kind and groups", async (
 test("stats tab in English", async () => {
   mockFetch(200, gelmarView({ attributes: { ...stats, resource: { id: 6, kind: "runic_power", name: "Runenmacht" } } }));
   render(
-    <SpracheProvider start="en">
+    <LanguageProvider start="en">
       <MemoryRouter initialEntries={["/charakter/gelmar-soulvenn?reiter=werte"]}>
         <Routes>
           <Route path="/charakter/:key" element={<CharacterPage />} />
         </Routes>
       </MemoryRouter>
-    </SpracheProvider>,
+    </LanguageProvider>,
   );
   expect(await screen.findByText("Health")).toBeTruthy();
   expect(screen.getByRole("tab", { name: "Stats" })).toBeTruthy();

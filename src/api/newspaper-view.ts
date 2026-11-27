@@ -2,7 +2,7 @@ import { SERVER_ERWEITERUNGEN } from "../erweiterungen";
 import type { ServerErweiterung } from "../erweiterungen/typen";
 import { weekBounds } from "../lib/time";
 import type { NewspaperArticle, CharacterRecord, GuildRecord, WeeklyIndex, WeeklyRecord, WeeklySums, WeeklyNumbers } from "../model";
-import { mitDialekten, ueberall, type Dialekte, type Fassungen } from "../sprache";
+import { withDialects, sameInAll, type OtherTranslations, type Translations } from "../language";
 import type { JsonStore } from "../store";
 import { storedTranslationIn } from "../weekly/newspaper-text";
 import { titleDef } from "../weekly/titles";
@@ -15,7 +15,7 @@ import type { NewspaperArchiveView, NewspaperArticleView, NewspaperLookbackView,
  * Sections of the weekly newspaper in all languages; the standard German name is what gets stored. "Erfolge" is
  * listed here because stored issues carry it, even though its articles come from an extension today.
  */
-export const SECTIONS: Record<string, Fassungen> = {
+export const SECTIONS: Record<string, Translations> = {
   Aufsteiger: { de: "Aufsteiger", en: "Rising Stars", schwaebisch: "Aufsteiger", bayrisch: "Aufsteiger" },
   Handwerk: { de: "Handwerk", en: "Crafting", schwaebisch: "Handwerk", bayrisch: "Handwerk" },
   Friedhof: { de: "Friedhof", en: "Graveyard", schwaebisch: "Kirchhof", bayrisch: "Friedhof" },
@@ -27,23 +27,23 @@ export const SECTIONS: Record<string, Fassungen> = {
 };
 
 /** Section in all languages: from the core, else from the extensions' sections, else the German name everywhere. */
-export function rubrik(name: string, erweiterungen: readonly ServerErweiterung[] = SERVER_ERWEITERUNGEN): Fassungen {
+export function rubrik(name: string, erweiterungen: readonly ServerErweiterung[] = SERVER_ERWEITERUNGEN): Translations {
   if (Object.hasOwn(SECTIONS, name)) return SECTIONS[name];
   for (const e of erweiterungen) if (e.rubriken && Object.hasOwn(e.rubriken, name)) return e.rubriken[name];
-  return ueberall(name);
+  return sameInAll(name);
 }
 
 /**
- * Stored text with its translations as `Fassungen`. English sits in the field `dialekte` under `en`; older issues
+ * Stored text with its translations as `Translations`. English sits in the field `dialekte` under `en`; older issues
  * lack it, then German applies.
  */
-function versions<T>(de: T, stored: Dialekte<T> | undefined): Fassungen<T> {
-  return mitDialekten(de, stored, storedTranslationIn(stored, "en") ?? de);
+function versions<T>(de: T, stored: OtherTranslations<T> | undefined): Translations<T> {
+  return withDialects(de, stored, storedTranslationIn(stored, "en") ?? de);
 }
 
-/** One field from `Fassungen` of objects, e.g. the headlines from headline and text. */
-function field<T, K extends keyof T>(f: Fassungen<T>, key: K): Fassungen<T[K]> {
-  return Object.fromEntries(Object.entries(f).map(([s, v]) => [s, (v as T)[key]])) as Fassungen<T[K]>;
+/** One field from `Translations` of objects, e.g. the headlines from headline and text. */
+function field<T, K extends keyof T>(f: Translations<T>, key: K): Translations<T[K]> {
+  return Object.fromEntries(Object.entries(f).map(([s, v]) => [s, (v as T)[key]])) as Translations<T[K]>;
 }
 
 function article(guild: GuildRecord, a: NewspaperArticle): NewspaperArticleView {
@@ -156,7 +156,7 @@ export async function loadNewspaperArchive(store: JsonStore): Promise<NewspaperA
         : leadDialects &&
             (Object.fromEntries(
               Object.entries(leadDialects).flatMap(([s, t]) => (t?.headline === undefined ? [] : [[s, t.headline]])),
-            ) as Dialekte<string>),
+            ) as OtherTranslations<string>),
     );
     const bounds = weekBounds(week);
     const from = entry?.from ?? record?.from ?? bounds.from;

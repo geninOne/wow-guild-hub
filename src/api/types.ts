@@ -1,4 +1,4 @@
-import type { Fassungen } from "../sprache";
+import type { Translations } from "../language";
 import type { CharacterRecord, RecipeDetail, RecipeReagent, TalentNode, WeeklyNumberKind } from "../model";
 
 export interface TalentFix {
@@ -280,10 +280,10 @@ export interface ActivityView {
 /** An awarded title for display. */
 export interface TitleAwardView {
   titleId: string;
-  name: Fassungen;
-  description: Fassungen;
+  name: Translations;
+  description: Translations;
   value: number;
-  valueText: Fassungen;
+  valueText: Translations;
   /** Title holder on the card. */
   character: CharacterRef;
   /** How many others also hold the title (tie); 0 for a single winner. */
@@ -304,7 +304,7 @@ export interface TitlesView {
   /** Guilds of the community, for the faction icon of the winners. */
   guilds: GuildRef[];
   /** All titles with a rule, also without winners. */
-  titles: { id: string; name: Fassungen; description: Fassungen }[];
+  titles: { id: string; name: Translations; description: Translations }[];
   /** Last evaluated week, null before the first evaluation. */
   current: TitleWeekView | null;
   /** Previous weeks, newest first. */
@@ -323,7 +323,7 @@ export interface TitleRankingView {
   /** [character ID, value], best first. */
   entries: MemberValue[];
   /** Value as text as on the tile, per occurring value (the key is the value). */
-  valueTexts: Record<string, Fassungen>;
+  valueTexts: Record<string, Translations>;
   /** false for weeks before the ranking: then only the winner is in it. */
   complete: boolean;
 }
@@ -331,23 +331,23 @@ export interface TitleRankingView {
 /** Title of a character from the last evaluated week, for the badges. */
 export interface CharacterTitle {
   titleId: string;
-  name: Fassungen;
+  name: Translations;
   week: string;
   /** First and last scored day of the week. */
   from: string;
   to: string;
-  valueText: Fassungen;
+  valueText: Translations;
 }
 
 export interface NewspaperArticleView {
   kind: string;
   /** Section; "Vermischtes" for issues from before sections. */
-  section: Fassungen;
+  section: Translations;
   /** Fun title of the article with its name, for the badge; null without a title. */
-  title: { id: string; name: Fassungen } | null;
+  title: { id: string; name: Translations } | null;
   /** Issues from before the language variants have only one version, which then applies everywhere. */
-  headline: Fassungen;
-  text: Fassungen;
+  headline: Translations;
+  text: Translations;
   characters: CharacterRef[];
 }
 
@@ -360,7 +360,7 @@ export interface NewspaperView {
   to: string;
   lead: NewspaperArticleView;
   articles: NewspaperArticleView[];
-  motto: Fassungen;
+  motto: Translations;
   /** `claude` if a language model wrote it, else `bausteine`. */
   generator: string;
   /** Character image (avatar) per character ID of the issue, null without an image. */
@@ -372,7 +372,7 @@ export interface NewspaperView {
   /** Week in numbers; null in issues from before. */
   zahlen?: NewspaperNumbersView | null;
   /** Weather report; null in issues from before. */
-  wetter?: Fassungen | null;
+  wetter?: Translations | null;
   /** Headline from four weeks ago; null if that issue does not exist. */
   rueckblick?: NewspaperLookbackView | null;
 }
@@ -398,7 +398,7 @@ export interface NewspaperLookbackView {
   issue: number | null;
   from: string;
   to: string;
-  headline: Fassungen;
+  headline: Translations;
   characters: CharacterRef[];
 }
 
@@ -438,7 +438,7 @@ export interface WrappedView {
 
 /** Response of `/api/newspaper/archive`: all issues, newest first. */
 export interface NewspaperArchiveView {
-  issues: { issue: number; week: string; from: string; to: string; headline: Fassungen; testdaten: boolean }[];
+  issues: { issue: number; week: string; from: string; to: string; headline: Translations; testdaten: boolean }[];
 }
 
 /** A leader of a statistic. */
@@ -450,9 +450,9 @@ export interface StatLeaderView {
 /** Conversion for the did-you-know card: `total / per` gives the amount in `unit`. */
 export interface StatConversionView {
   per: number;
-  unit: Fassungen<[string, string]>;
+  unit: Translations<[string, string]>;
   /** Explanation of the conversion, such as "wenn ein Fass hundert Krüge hergibt". */
-  text: Fassungen;
+  text: Translations;
 }
 
 /** A statistic in the chosen period and for the chosen guild. */
@@ -473,11 +473,11 @@ export interface StatEntryView {
   /** Class for the color, such as Paladin for redemptions; null without. */
   classId: number | null;
   /** Short label in the chart; null, then the official name. */
-  short: Fassungen | null;
+  short: Translations | null;
   /** Unit as [singular, plural], null without. */
-  unit: Fassungen<[string, string]> | null;
+  unit: Translations<[string, string]> | null;
   /** Honor for the leader, null without. */
-  honor: Fassungen | null;
+  honor: Translations | null;
   conversion: StatConversionView | null;
 }
 
@@ -502,9 +502,9 @@ export type StatCardForm =
 export interface StatCardView {
   slug: string;
   form: StatCardForm;
-  title: Fassungen;
+  title: Translations;
   /** Casual subtitle, null without. */
-  blurb: Fassungen | null;
+  blurb: Translations | null;
   /** Width in columns of the wall, 1 to 3. */
   span: 1 | 2 | 3;
   stats: StatEntryView[];

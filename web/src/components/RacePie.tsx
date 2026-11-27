@@ -3,7 +3,7 @@ import type { MemberRow } from "../../../src/api/types";
 import { keepSelected } from "../lib/crossfilter";
 import { raceDistribution, type RaceSlice } from "../lib/members";
 import { pieArcs } from "../lib/pie";
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 import { numberLocale } from "../lib/format";
 
 const T = {
@@ -24,10 +24,10 @@ const T = {
     bayrisch: "Koana do. Sogar de Untotn san heit im Grab bliebn.",
   },
   pie: { de: "Völker als Torte", en: "Races as a pie chart", schwaebisch: "Völker als Torte", bayrisch: "Völker ois Tortn" },
-} satisfies Record<string, Fassungen>;
+} satisfies Record<string, Translations>;
 
 /** Saying for the most common race, by race ID (Classic: 1 Human to 8 Troll, Forever: 95 and 96 Skyborn). */
-const IN_THE_LEAD: Record<number, Fassungen> = {
+const IN_THE_LEAD: Record<number, Translations> = {
   1: {
     de: "Menschen vorne. Durchschnitt ist auch eine Stärke.",
     en: "Humans in the lead. Being average is a strength too.",
@@ -90,14 +90,14 @@ const IN_THE_LEAD: Record<number, Fassungen> = {
   },
 };
 
-const IN_THE_LEAD_OTHER: Fassungen<(name: string) => string> = {
+const IN_THE_LEAD_OTHER: Translations<(name: string) => string> = {
   de: (name) => `${name} vorne. Volk der Stunde!`,
   en: (name) => `${name} in the lead. Race of the hour!`,
   schwaebisch: (name) => `${name} vorne. Volk vo dr Stund!`,
   bayrisch: (name) => `${name} vorn. Volk vo da Stund!`,
 };
 
-const TIE: Fassungen<(a: string, b: string) => string> = {
+const TIE: Translations<(a: string, b: string) => string> = {
   de: (a, b) => `Gleichstand an der Spitze: ${a} und ${b} teilen sich das Treppchen.`,
   en: (a, b) => `Tied at the top: ${a} and ${b} share the podium.`,
   schwaebisch: (a, b) => `Gleichstand ganz vorne: ${a} ond ${b} teilet sich's Trepple.`,
@@ -151,7 +151,7 @@ interface RacePieProps {
  * selects the race for the crossfilter; via keyboard and screen reader through the buttons in the legend.
  */
 export function RacePie({ members, raceId, onRace, raceName, note }: RacePieProps) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const [hover, setHover] = useState<number | null>(null);
   const slices = useMemo(
     () =>
@@ -269,7 +269,7 @@ export function RacePie({ members, raceId, onRace, raceName, note }: RacePieProp
 }
 
 function TopSaying({ slices }: { slices: RaceSlice[] }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const [first, second] = slices;
   if (second && second.count === first.count) return <>{t(TIE)(first.raceName, second.raceName)}</>;
   const fixed = IN_THE_LEAD[first.raceId];

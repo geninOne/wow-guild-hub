@@ -1,42 +1,42 @@
 import type { NewspaperArticle } from "../model";
 import {
-  alle, hash, list, MILESTONE_HEADLINE, MILESTONE_TEXT, MILESTONES_HEADLINE, MILESTONES_TEXT, MOTTOS, NEWCOMER_HEADLINE, NEWCOMER_TEXT,
+  allLanguages, hash, list, MILESTONE_HEADLINE, MILESTONE_TEXT, MILESTONES_HEADLINE, MILESTONES_TEXT, MOTTOS, NEWCOMER_HEADLINE, NEWCOMER_TEXT,
   NEWCOMERS_HEADLINE, NEWCOMERS_TEXT, Picker, GENERIC_PUNCHLINE, RECIPES_HEADLINE, RECIPES_TEXT, QUIET_HEADLINE, QUIET_TEXT, JUMP_HEADLINE,
   JUMP_TEXT, RUSH_HOUR_HEADLINE, RUSH_HOUR_TEXT, TITLE_BONUS, TITLE_HEADLINE, TITLE_HEADLINE_OWN, TITLE_PUNCHLINE, OVERTAKE_HEADLINE, OVERTAKE_TEXT,
-  OVERTAKES_HEADLINE, OVERTAKES_TEXT, VALUE_FRAME, NUMBER_TEXT, type Alle,
+  OVERTAKES_HEADLINE, OVERTAKES_TEXT, VALUE_FRAME, NUMBER_TEXT, type AllLanguages,
 } from "./phrases";
 import { RECORD_KIND, RECORD_ENTRY, RECORD_HEADLINE, RECORD_TEXT, WEATHER, WEATHER_CLOSING, WEATHER_OPENING, WEATHER_PLACE } from "./phrases-extras";
 import { factKindOf, factCharacters, factTitle, sectionOf, type NewspaperFact } from "./newspaper-facts";
 import type { WeatherSituation } from "./weather";
 import { titleDef } from "./titles";
-import { aktiveSprachen, DIALEKTE, fassungIn, type Dialekte, type Sprache } from "../sprache";
+import { activeLanguages, DIALECTS, translationIn, type OtherTranslations, type Language } from "../language";
 
 export { list } from "./phrases";
 
 /** Languages besides standard German that an issue can store as well. */
-export type OtherLanguage = Exclude<Sprache, "de">;
+export type OtherLanguage = Exclude<Language, "de">;
 
 /**
- * Translations of a standard German value. They are stored in the existing field `dialekte` (or `mottoDialekte`,
+ * Fassungen of a standard German value. They are stored in the existing field `dialekte` (or `mottoDialekte`,
  * `wetterDialekte`), English under `en`; older issues have no English there.
  */
 export type StoredTranslations<T> = Partial<Record<OtherLanguage, T>>;
 
 /** Reads a translation from a stored `dialekte` field; undefined if there is none. */
-export function storedTranslationIn<T>(stored: Dialekte<T> | StoredTranslations<T> | undefined, language: OtherLanguage): T | undefined {
+export function storedTranslationIn<T>(stored: OtherTranslations<T> | StoredTranslations<T> | undefined, language: OtherLanguage): T | undefined {
   return (stored as StoredTranslations<T> | undefined)?.[language];
 }
 
 /** English always, dialects only when they are offered. */
-export function storedTranslations<T>(f: Alle<T>, languages: readonly Sprache[]): StoredTranslations<T> {
+export function storedTranslations<T>(f: AllLanguages<T>, languages: readonly Language[]): StoredTranslations<T> {
   const out: StoredTranslations<T> = { en: f.en };
-  for (const d of DIALEKTE) if (languages.includes(d)) out[d] = f[d];
+  for (const d of DIALECTS) if (languages.includes(d)) out[d] = f[d];
   return out;
 }
 
 /** Languages offered by a generator: from the context or from WEBSITE_LANGUAGES (read at runtime). */
-export function languagesFor(context: Pick<TextContext, "sprachen">): Sprache[] {
-  return context.sprachen ? [...context.sprachen] : aktiveSprachen(process.env.WEBSITE_LANGUAGES);
+export function languagesFor(context: Pick<TextContext, "sprachen">): Language[] {
+  return context.sprachen ? [...context.sprachen] : activeLanguages(process.env.WEBSITE_LANGUAGES);
 }
 
 /** An earlier issue, as far as a generator needs to know it to avoid repeating itself. */
@@ -65,7 +65,7 @@ export interface TextContext {
   /** Weather situation of the week; without it there is no weather report. */
   wetter?: WeatherSituation;
   /** Offered languages; defaults to WEBSITE_LANGUAGES. Dialects are only written when they are listed here. */
-  sprachen?: readonly Sprache[];
+  sprachen?: readonly Language[];
   /** Guild names, main guild first, so a language model can name them. */
   gilden?: string[];
   /** Newspaper name from WEBSITE_NEWSPAPER; defaults to the standard name per language. */
@@ -101,7 +101,7 @@ export interface TextResult {
 export type TextGenerator = (facts: NewspaperFact[], context: TextContext) => Promise<TextResult>;
 
 export const WEEKDAYS = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"];
-export const WEEKDAY_NAMES: Alle<string[]> = {
+export const WEEKDAY_NAMES: AllLanguages<string[]> = {
   de: WEEKDAYS,
   en: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
   schwaebisch: ["Mendig", "Dienschdig", "Mittwoch", "Donnerschdig", "Freidig", "Samschdig", "Sonndig"],
@@ -118,7 +118,7 @@ interface Text {
   text: string;
 }
 
-const AMOUNT: Alle<{ dat(n: number): string; akk(n: number): string }> = {
+const AMOUNT: AllLanguages<{ dat(n: number): string; akk(n: number): string }> = {
   de: {
     dat: (n) => (n === 1 ? "einem neuen Rezept" : `${n} neuen Rezepten`),
     akk: (n) => (n === 1 ? "ein neues Rezept" : `${n} neue Rezepte`),
@@ -137,32 +137,32 @@ const AMOUNT: Alle<{ dat(n: number): string; akk(n: number): string }> = {
   },
 };
 
-const NOW_LEVEL: Alle<(level: number) => string> = {
+const NOW_LEVEL: AllLanguages<(level: number) => string> = {
   de: (l) => `jetzt Level ${l}`,
   en: (l) => `now level ${l}`,
   schwaebisch: (l) => `jetzt Level ${l}`,
   bayrisch: (l) => `jetzad Level ${l}`,
 };
-const PASSED: Alle<string> = { de: "an", en: "past", schwaebisch: "an", bayrisch: "an" };
+const PASSED: AllLanguages<string> = { de: "an", en: "past", schwaebisch: "an", bayrisch: "an" };
 
 /** Builds the texts of all languages from the chosen phrases and the arguments per language. */
-function apply<A>(made: Alle<(a: A) => string>, args: (s: Sprache) => A): Alle<string> {
-  return alle((s) => made[s](args(s)));
+function apply<A>(made: AllLanguages<(a: A) => string>, args: (s: Language) => A): AllLanguages<string> {
+  return allLanguages((s) => made[s](args(s)));
 }
 
-function texts(headline: Alle<string>, text: Alle<string>): Alle<Text> {
-  return alle((s) => ({ headline: headline[s], text: text[s] }));
+function texts(headline: AllLanguages<string>, text: AllLanguages<string>): AllLanguages<Text> {
+  return allLanguages((s) => ({ headline: headline[s], text: text[s] }));
 }
 
-function write(fact: NewspaperFact, ctx: TextContext, p: Picker, seed: string): Alle<Text> {
+function write(fact: NewspaperFact, ctx: TextContext, p: Picker, seed: string): AllLanguages<Text> {
   const n = (id: number) => ctx.name(id);
-  const bonus = (titleId: string | null): Alle<string> => {
-    if (!titleId) return alle(() => "");
+  const bonus = (titleId: string | null): AllLanguages<string> => {
+    if (!titleId) return allLanguages(() => "");
     const def = titleDef(titleId);
     const made = p.chooseAll(`bonus-${titleId}`, TITLE_BONUS, seed, (i) => `bonus:${i}`);
-    return alle((s) => ` ${made[s]({ t: def ? fassungIn(def.name, s) : titleId })}`);
+    return allLanguages((s) => ` ${made[s]({ t: def ? translationIn(def.name, s) : titleId })}`);
   };
-  const plus = (a: Alle<string>, b: Alle<string>): Alle<string> => alle((s) => a[s] + b[s]);
+  const plus = (a: AllLanguages<string>, b: AllLanguages<string>): AllLanguages<string> => allLanguages((s) => a[s] + b[s]);
   switch (fact.kind) {
     case "sprung": {
       const a = { n: n(fact.characterId), levels: fact.levels, from: fact.from, to: fact.to };
@@ -179,7 +179,7 @@ function write(fact: NewspaperFact, ctx: TextContext, p: Picker, seed: string): 
           apply(p.chooseAll("meilenstein-text", MILESTONE_TEXT, seed), () => a),
         );
       }
-      const a = (s: Sprache) => ({ l: list(fact.entries.map((e) => `${n(e.characterId)} (${e.level})`), s), k: fact.entries.length });
+      const a = (s: Language) => ({ l: list(fact.entries.map((e) => `${n(e.characterId)} (${e.level})`), s), k: fact.entries.length });
       return texts(
         apply(p.chooseAll("meilensteine-kopf", MILESTONES_HEADLINE, seed), a),
         apply(p.chooseAll("meilensteine-text", MILESTONES_TEXT, seed), a),
@@ -194,7 +194,7 @@ function write(fact: NewspaperFact, ctx: TextContext, p: Picker, seed: string): 
           apply(p.chooseAll("ueberholung-text", OVERTAKE_TEXT, seed), () => a),
         );
       }
-      const a = (s: Sprache) => ({
+      const a = (s: Language) => ({
         l: list(fact.entries.map((e) => `${n(e.characterId)} ${PASSED[s]} ${n(e.passedId)} (${NOW_LEVEL[s](e.level)})`), s),
       });
       return texts(
@@ -205,8 +205,8 @@ function write(fact: NewspaperFact, ctx: TextContext, p: Picker, seed: string): 
     case "titel": {
       const who = n(fact.characterId);
       const def = titleDef(fact.titleId);
-      const t = (s: Sprache) => (def ? fassungIn(def.name, s) : fact.titleId);
-      const v = (s: Sprache) => (def ? fassungIn(def.valueText(fact.value), s) : String(fact.value));
+      const t = (s: Language) => (def ? translationIn(def.name, s) : fact.titleId);
+      const v = (s: Language) => (def ? translationIn(def.valueText(fact.value), s) : String(fact.value));
       // Frames and headlines are remembered per title, but used only once within an issue.
       const own = TITLE_HEADLINE_OWN[fact.titleId];
       const headline = own
@@ -214,18 +214,18 @@ function write(fact: NewspaperFact, ctx: TextContext, p: Picker, seed: string): 
         : apply(p.chooseAll(`titel-kopf-${fact.titleId}`, TITLE_HEADLINE, seed, (i) => `titel-kopf:${i}`), (s) => ({ t: t(s), n: who }));
       const frame = apply(p.chooseAll(`wert-${fact.titleId}`, VALUE_FRAME, seed, (i) => `wert:${i}`), (s) => ({ v: v(s) }));
       const punchline = apply(p.chooseAll(`pointe-${fact.titleId}`, TITLE_PUNCHLINE[fact.titleId] ?? GENERIC_PUNCHLINE, seed), () => ({ n: who }));
-      return texts(headline, alle((s) => `${frame[s]} ${punchline[s]}`));
+      return texts(headline, allLanguages((s) => `${frame[s]} ${punchline[s]}`));
     }
     case "neuzugang": {
       if (fact.characterIds.length === 1) {
         const a = { n: n(fact.characterIds[0]) };
         return texts(apply(p.chooseAll("neu-kopf", NEWCOMER_HEADLINE, seed), () => a), apply(p.chooseAll("neu-text", NEWCOMER_TEXT, seed), () => a));
       }
-      const a = (s: Sprache) => ({ l: list(fact.characterIds.map(n), s), k: fact.characterIds.length });
+      const a = (s: Language) => ({ l: list(fact.characterIds.map(n), s), k: fact.characterIds.length });
       return texts(apply(p.chooseAll("neue-kopf", NEWCOMERS_HEADLINE, seed), a), apply(p.chooseAll("neue-text", NEWCOMERS_TEXT, seed), a));
     }
     case "rezepte": {
-      const a = (s: Sprache) => ({
+      const a = (s: Language) => ({
         n: n(fact.characterId),
         total: fact.total,
         dat: AMOUNT[s].dat(fact.count),
@@ -237,15 +237,15 @@ function write(fact: NewspaperFact, ctx: TextContext, p: Picker, seed: string): 
       );
     }
     case "stosszeit": {
-      const a = (s: Sprache) => ({ day: WEEKDAY_NAMES[s][fact.weekday], hour: fact.hour, next: (fact.hour + 1) % 24, count: fact.count });
+      const a = (s: Language) => ({ day: WEEKDAY_NAMES[s][fact.weekday], hour: fact.hour, next: (fact.hour + 1) % 24, count: fact.count });
       return texts(apply(p.chooseAll("stoss-kopf", RUSH_HOUR_HEADLINE, seed), a), apply(p.chooseAll("stoss-text", RUSH_HOUR_TEXT, seed), a));
     }
     case "zahl":
-      return texts(alle(() => String(fact.value)), p.chooseAll(`zahl-${fact.what}`, NUMBER_TEXT[fact.what] ?? NUMBER_TEXT.level, seed));
+      return texts(allLanguages(() => String(fact.value)), p.chooseAll(`zahl-${fact.what}`, NUMBER_TEXT[fact.what] ?? NUMBER_TEXT.level, seed));
     case "ruhig":
       return texts(p.chooseAll("ruhig-kopf", QUIET_HEADLINE, seed), p.chooseAll("ruhig-text", QUIET_TEXT, seed));
     case "rekord": {
-      const a = (s: Sprache) => ({
+      const a = (s: Language) => ({
         l: list(
           fact.entries.map((e) =>
             RECORD_ENTRY[s]({ n: e.characterId === null ? null : n(e.characterId), v: e.value, art: RECORD_KIND[s][e.art], p: e.previous }),
@@ -258,20 +258,20 @@ function write(fact: NewspaperFact, ctx: TextContext, p: Picker, seed: string): 
     case "erweiterung": {
       // Missing dialects fall back to German.
       const f = fact.schreibe({ name: n, picker: p, seed });
-      return alle((s) => fassungIn(f, s));
+      return allLanguages((s) => translationIn(f, s));
     }
   }
 }
 
 /** Weather report from phrases in all languages: opening, one sentence per weather element, closing. */
-export function writeWeather(situation: WeatherSituation, p: Picker): Alle<string> {
+export function writeWeather(situation: WeatherSituation, p: Picker): AllLanguages<string> {
   const opening = p.chooseAll("wetter-einstieg", WEATHER_OPENING, "wetter");
   const sentences = situation.elemente.map((el, i) => {
     const made = p.chooseAll(`wetter-${el.art}`, WEATHER[el.art], `wetter:${i}`);
-    return alle((s) => made[s]({ u: WEATHER_PLACE[s](el.ueber) }));
+    return allLanguages((s) => made[s]({ u: WEATHER_PLACE[s](el.ueber) }));
   });
   const closing = p.chooseAll("wetter-ausklang", WEATHER_CLOSING, "wetter");
-  return alle((s) => [opening[s], ...sentences.map((x) => x[s]), closing[s]].join(" "));
+  return allLanguages((s) => [opening[s], ...sentences.map((x) => x[s]), closing[s]].join(" "));
 }
 
 /**
@@ -280,8 +280,8 @@ export function writeWeather(situation: WeatherSituation, p: Picker): Alle<strin
  */
 export function articleOf(
   base: Omit<NewspaperArticle, "headline" | "text" | "dialekte">,
-  f: Alle<Text>,
-  languages: readonly Sprache[] = languagesFor({}),
+  f: AllLanguages<Text>,
+  languages: readonly Language[] = languagesFor({}),
 ): NewspaperArticle {
   return { ...base, headline: f.de.headline, text: f.de.text, dialekte: storedTranslations(f, languages) };
 }
@@ -293,7 +293,7 @@ export function articleOf(
 export function writeIssue(
   facts: NewspaperFact[],
   context: TextContext,
-): { articles: NewspaperArticle[]; motto: string; mottoDialekte: StoredTranslations<string>; bausteine: string[]; wetter?: Alle<string> } {
+): { articles: NewspaperArticle[]; motto: string; mottoDialekte: StoredTranslations<string>; bausteine: string[]; wetter?: AllLanguages<string> } {
   const languages = languagesFor(context);
   const picker = new Picker(context.week, (context.recent ?? []).map((r) => r.bausteine));
   const articles = facts.map((fact, i) => {

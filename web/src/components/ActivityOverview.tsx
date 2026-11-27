@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { ActivityView } from "../../../src/api/types";
 import { useApi } from "../lib/api";
 import { dayTotals, formatRange, hourRange, peak, weekdayNames } from "../lib/fun";
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 import { DataState } from "./DataState";
 import { GuildFilter } from "./GuildFilter";
 import { Heatmap } from "./Heatmap";
@@ -42,11 +42,11 @@ const T = {
     bayrisch:
       "Zählt wern Anmeldungen, ned de Spielzeit: Blizzard verrat bloß, wann si a Charakter zletzt ogmeldt hod. Wer si in oana Stund öfter omeldt, zählt oamoi. Zeitn in deutscher Zeit.",
   },
-} satisfies Record<string, Fassungen<unknown>>;
+} satisfies Record<string, Translations<unknown>>;
 
 function ActivityContent({ view }: { view: ActivityView }) {
-  const { t, sprache } = useSprache();
-  const days = weekdayNames(sprache);
+  const { t, language } = useLanguage();
+  const days = weekdayNames(language);
   const [guildSlug, setGuildSlug] = useState<string | null>(null);
   const data = guildSlug === null ? view.all : (view.byGuild[guildSlug] ?? view.all);
   const hourPeak = peak(data.cells);
@@ -56,14 +56,14 @@ function ActivityContent({ view }: { view: ActivityView }) {
   const openList = () =>
     list.open({
       title: t(T.characters),
-      subtitle: `${t(T.lastWeeks)(view.weeks.length)}, ${formatRange(view.from, view.to, sprache)}`,
+      subtitle: `${t(T.lastWeeks)(view.weeks.length)}, ${formatRange(view.from, view.to, language)}`,
       sets: [{ key: "logins", label: t(T.characters), valueLabel: t(T.logins), entries: view.logins ?? [] }],
     });
 
   return (
     <>
       <p className="page-subtitle muted">
-        {t(T.lastWeeks)(view.weeks.length)}, {formatRange(view.from, view.to, sprache)}
+        {t(T.lastWeeks)(view.weeks.length)}, {formatRange(view.from, view.to, language)}
         {view.weeksWithData < view.weeks.length && ` · ${t(T.records)(view.weeksWithData)}`}
       </p>
       <SampleDataNotice show={view.testdaten} />
@@ -79,7 +79,7 @@ function ActivityContent({ view }: { view: ActivityView }) {
             <li className="fun-fact">
               <span className="fun-fact-label">{t(T.busiestHour)}</span>
               <strong className="fun-fact-value">
-                {hourPeak ? `${days[Math.floor(hourPeak.index / 24)]}, ${hourRange(hourPeak.index % 24, sprache)}` : t(T.notAvailable)}
+                {hourPeak ? `${days[Math.floor(hourPeak.index / 24)]}, ${hourRange(hourPeak.index % 24, language)}` : t(T.notAvailable)}
               </strong>
             </li>
             <li className="fun-fact">

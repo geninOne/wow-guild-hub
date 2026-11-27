@@ -9,7 +9,7 @@ import { TitleBadge } from "../components/TitleBadge";
 import { SampleDataNotice } from "../components/SampleDataNotice";
 import { useApi } from "../lib/api";
 import { PUBLISHED_WHEN, formatPlainDayMonth, weekRangeLabel, newspaperName } from "../lib/fun";
-import { useSprache, type Fassungen } from "../lib/sprache";
+import { useLanguage, type Translations } from "../lib/language";
 import { numberLocale } from "../lib/format";
 
 const T = {
@@ -81,7 +81,7 @@ const T = {
     schwaebisch: ", gwertet wird Sonndig bis Samschdig.",
     bayrisch: ", gwertet werd Sonntag bis Samstag.",
   },
-} satisfies Record<string, Fassungen<unknown>>;
+} satisfies Record<string, Translations<unknown>>;
 
 /** Page size of the hall of fame: 5 weeks, 3 on narrow screens. */
 function useWeeksPerPage(): number {
@@ -118,7 +118,7 @@ export function titleRankingPath(titleId: string, week: string): string {
 }
 
 /** Set for the member list: value as text like on the tile, all holders highlighted equally. */
-export function titleRankingSet(title: Title, data: TitleRankingView, t: <V>(f: Fassungen<V>) => V): MemberSet {
+export function titleRankingSet(title: Title, data: TitleRankingView, t: <V>(f: Translations<V>) => V): MemberSet {
   return {
     key: title.id,
     label: t(title.name),
@@ -135,9 +135,9 @@ export function titleRankingSet(title: Title, data: TitleRankingView, t: <V>(f: 
 
 /** Loads the ranking only when opened and shows it in the member list. */
 function TitleRankingDialog({ title, week, onClose }: { title: Title; week: TitleWeekView; onClose(): void }) {
-  const { t, sprache } = useSprache();
+  const { t, language } = useLanguage();
   const { data, error } = useApi<TitleRankingView>(titleRankingPath(title.id, week.week));
-  const range = weekRangeLabel(week.from, week.to, sprache);
+  const range = weekRangeLabel(week.from, week.to, language);
   return (
     <MemberListDialog
       title={t(title.name)}
@@ -163,7 +163,7 @@ function Tile({
   view: TitlesView;
   onOpen(): void;
 }) {
-  const { t } = useSprache();
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const ruleId = `regel-${title.id}`;
   const clickable = hasRanking(week, award);
@@ -216,7 +216,7 @@ function Tile({
 
 /** Hall of fame: one row per title, one column per week, newest on the left; pages through weeks. */
 function HonorTable({ view, onOpen }: { view: TitlesView; onOpen(title: Title, week: TitleWeekView): void }) {
-  const { t, sprache } = useSprache();
+  const { t, language } = useLanguage();
   const perPage = useWeeksPerPage();
   const [start, setStart] = useState(0);
   const weeks = view.history;
@@ -251,7 +251,7 @@ function HonorTable({ view, onOpen }: { view: TitlesView; onOpen(title: Title, w
             <th scope="col">{t(T.title)}</th>
             {shown.map((w) => (
               <th key={w.week} scope="col" className="honor-week">
-                <Link to={`/zeitung/${w.week}`} aria-label={weekRangeLabel(w.from, w.to, sprache)}>
+                <Link to={`/zeitung/${w.week}`} aria-label={weekRangeLabel(w.from, w.to, language)}>
                   {formatPlainDayMonth(w.from)}
                 </Link>
                 <span className="honor-week-date">
@@ -288,7 +288,7 @@ function HonorTable({ view, onOpen }: { view: TitlesView; onOpen(title: Title, w
                           type="button"
                           className="honor-ranking"
                           aria-haspopup="dialog"
-                          aria-label={t(T.rankingOf)(t(title.name), weekRangeLabel(w.from, w.to, sprache))}
+                          aria-label={t(T.rankingOf)(t(title.name), weekRangeLabel(w.from, w.to, language))}
                           title={t(T.ranking)}
                           onClick={() => onOpen(title, w)}
                         >
@@ -308,7 +308,7 @@ function HonorTable({ view, onOpen }: { view: TitlesView; onOpen(title: Title, w
 }
 
 function TitlesContent({ view }: { view: TitlesView }) {
-  const { t, sprache } = useSprache();
+  const { t, language } = useLanguage();
   const [ranking, setRanking] = useState<{ title: Title; week: TitleWeekView } | null>(null);
   const current = view.current;
   if (!current) {
@@ -321,8 +321,8 @@ function TitlesContent({ view }: { view: TitlesView }) {
   return (
     <>
       <p className="page-subtitle muted">
-        {weekRangeLabel(current.from, current.to, sprache)} ·{" "}
-        <Link to={`/zeitung/${current.week}`}>{t(T.toNewspaper)(newspaperName(sprache))}</Link>
+        {weekRangeLabel(current.from, current.to, language)} ·{" "}
+        <Link to={`/zeitung/${current.week}`}>{t(T.toNewspaper)(newspaperName(language))}</Link>
       </p>
       <SampleDataNotice show={view.testdaten} />
       <ul className="title-tiles">
@@ -345,14 +345,14 @@ function TitlesContent({ view }: { view: TitlesView }) {
 }
 
 export function TitlesPage() {
-  const { t, sprache } = useSprache();
+  const { t, language } = useLanguage();
   const { data, error, loading } = useApi<TitlesView>("/api/titles");
   return (
     <section className="page">
       <header className="page-header">
         <h1 className="page-title">{t(T.pageTitle)}</h1>
         <p className="erscheint-hint">
-          {t(T.publishedBefore)(newspaperName(sprache))}
+          {t(T.publishedBefore)(newspaperName(language))}
           <strong>{t(PUBLISHED_WHEN)}</strong>
           {t(T.publishedAfter)}
         </p>

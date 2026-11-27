@@ -4,7 +4,7 @@ import type { GuildRecord } from "../model";
 import { statDefinition } from "../stats/definitions";
 import { pickSnapshots, statDiff, type StatsPeriod } from "../stats/diff";
 import type { StatsSnapshot, StatValues } from "../stats/snapshot";
-import { ausKonfig, type Fassungen, type KonfigText } from "../sprache";
+import { fromConfig, type Translations, type ConfigText } from "../language";
 import type { JsonStore } from "../store";
 import { refOf } from "./fun-common";
 import { guildRefs } from "./guild-view";
@@ -26,8 +26,8 @@ export const STAT_LEADERS = 5;
 export interface StatCard {
   slug: string;
   form: StatCardForm;
-  title: Fassungen;
-  blurb: Fassungen | null;
+  title: Translations;
+  blurb: Translations | null;
   span: 1 | 2 | 3;
   ids: number[];
 }
@@ -39,18 +39,18 @@ type ConfigUnit = string[] | ({ de: string[]; en?: string[]; schwaebisch?: strin
 interface CardConfig {
   slug: string;
   form: string;
-  titel: KonfigText;
-  spruch?: KonfigText;
+  titel: ConfigText;
+  spruch?: ConfigText;
   breite?: number;
   statistiken: number[];
 }
 
 interface StatText {
-  kurz?: KonfigText;
+  kurz?: ConfigText;
   einheit?: ConfigUnit;
-  ehrung?: KonfigText;
+  ehrung?: ConfigText;
   klasse?: number;
-  umrechnung?: { je: number; einheit: ConfigUnit; satz: KonfigText };
+  umrechnung?: { je: number; einheit: ConfigUnit; satz: ConfigText };
 }
 
 const FORMS: StatCardForm[] = [
@@ -65,7 +65,7 @@ const twoOf = (unit: string[] | undefined): [string, string] | null =>
   unit && unit.length === 2 ? [unit[0], unit[1]] : null;
 
 /** Unit in all language versions; missing or incomplete versions fall back to standard German. */
-function pair(unit: ConfigUnit | undefined): Fassungen<[string, string]> | null {
+function pair(unit: ConfigUnit | undefined): Translations<[string, string]> | null {
   if (unit === undefined) return null;
   if (Array.isArray(unit)) {
     const p = twoOf(unit);
@@ -92,7 +92,7 @@ export function statCards(): StatCard[] {
   };
   return CARDS_CONFIG.flatMap((c): StatCard[] =>
     isForm(c.form)
-      ? [{ slug: c.slug, form: c.form, title: ausKonfig(c.titel), blurb: ausKonfig(c.spruch), span: spanOf(c.breite), ids: c.statistiken.filter(shown) }]
+      ? [{ slug: c.slug, form: c.form, title: fromConfig(c.titel), blurb: fromConfig(c.spruch), span: spanOf(c.breite), ids: c.statistiken.filter(shown) }]
       : [],
   );
 }
@@ -100,7 +100,7 @@ export function statCards(): StatCard[] {
 function conversionOf(text: StatText): StatConversionView | null {
   const u = text.umrechnung;
   const unit = pair(u?.einheit);
-  return u && unit && u.je > 0 ? { per: u.je, unit, text: ausKonfig(u.satz) } : null;
+  return u && unit && u.je > 0 ? { per: u.je, unit, text: fromConfig(u.satz) } : null;
 }
 
 /** Last Saturday before the first of the month, i.e. the snapshot that ends the previous month. */
@@ -189,7 +189,7 @@ export function buildStatCards(
       return {
         id, name: def.name, art: kind, total: aggregate(rows, key, kind), perGuild, leaders: leadersOf(rows, key),
         holders: rows.filter((r) => (r.values[key] ?? 0) > 0).length, sum: aggregate(rows, key, "zaehler"), classId: text.klasse ?? null,
-        short: ausKonfig(text.kurz), unit: pair(text.einheit), honor: ausKonfig(text.ehrung), conversion: conversionOf(text),
+        short: fromConfig(text.kurz), unit: pair(text.einheit), honor: fromConfig(text.ehrung), conversion: conversionOf(text),
       };
     }),
   }));
