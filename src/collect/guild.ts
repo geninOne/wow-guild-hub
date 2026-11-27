@@ -2,8 +2,9 @@ import { BlizzardError, type BlizzardClient } from "../blizzard/client";
 import type { Config } from "../config";
 import { runPool } from "../lib/pool";
 import { berlinDate } from "../lib/time";
-import type { CharacterRecord, GuildInfo, GuildRecord, LevelUpEvent, LevelUpLog, MemberSummary } from "../model";
+import type { CharacterIndex, CharacterRecord, GuildInfo, GuildRecord, LevelUpEvent, LevelUpLog, MemberSummary } from "../model";
 import type { JsonStore } from "../store";
+import { CHARACTER_INDEX_KEY, toCharacterIndexEntry } from "./character-index";
 import { detectLogin, recordActivity, type LoginSeen } from "./activity";
 import { fetchCharacter } from "./fetch-character";
 import { appendLevelUps, detectLevelUps } from "./levelups";
@@ -34,6 +35,8 @@ export interface GuildRunReport {
   statsWeek: string;
   /** Wochen ohne Lauf, deren Statistik-Stand mit dem letzten bekannten aufgefüllt wurde. */
   statsFilled: string[];
+  /** Dauer je Phase in Millisekunden: Gildenabruf, Charaktere, Schreiben am Ende. */
+  phases: { guild: number; characters: number; write: number };
 }
 
 function errorMessage(error: unknown): string {
@@ -88,7 +91,14 @@ export async function runGuildCollection(deps: CollectDeps): Promise<GuildRunRep
   }
   const unavailable = guildErrors.map((e) => e.slug);
 
-  const prev = await store.get<GuildRecord>("guild");
+  const tGuild = Date.now() - started;
+  const tCharacters = Date.now();
+  const [prev, characterIndex] = await Promise.all([
+    store.get<GuildRecord>("guild"),
+    store.get<CharacterIndex>(CHARACTER_INDEX_KEY),
+  ]);
+  // Was collect-static aus den Charakteren braucht; ersetzt dort das Lesen aller Datensätze.
+  const nextIndex: CharacterIndex = { ...characterIndex };
   // Basislinie nur für Mitglieder, die schon einmal erfolgreich geholt wurden: Das Rosterlevel eines
   // neuen Mitglieds kann hinter dem echten Level liegen und würde sonst Aufstiege vor dem Beitritt erfinden.
   const prevLevels = new Map(
@@ -108,6 +118,7 @@ export async function runGuildCollection(deps: CollectDeps): Promise<GuildRunRep
         throw new Error("Profil nicht mehr abrufbar, letzter Stand bleibt");
       }
       await store.set(`characters/${member.id}`, record);
+      nextIndex[String(member.id)] = toCharacterIndexEntry(record);
       if (record.statValues) statUpdates[String(member.id)] = record.statValues;
       const login = detectLogin(previous, record);
       if (login) seen.push(login);
@@ -119,13 +130,6 @@ export async function runGuildCollection(deps: CollectDeps): Promise<GuildRunRep
   const events: LevelUpEvent[] = members
     .filter((m) => !m.former && prevLevels.has(m.id))
     .flatMap((m) => detectLevelUps(m.id, prevLevels.get(m.id), m.level, at));
-  let levelUps = 0;
-  if (events.length > 0) {
-    const log = (await store.get<LevelUpLog>("levelups")) ?? { events: [] };
-    const next = appendLevelUps(log, events);
-    levelUps = next.events.length - log.events.length;
-    if (levelUps > 0) await store.set("levelups", next);
-  }
 
   // Für ausgefallene Nebengilden bleibt der Eintrag des vorigen Laufs stehen.
   const guilds = config.guildSlugs.flatMap((slug): GuildInfo[] => {
@@ -145,14 +149,31 @@ export async function runGuildCollection(deps: CollectDeps): Promise<GuildRunRep
     members,
     guilds,
   };
-  await store.set("guild", guild);
-  await store.set(`history/${berlinDate(at)}`, buildSnapshot(members, at));
-  const logins = await recordActivity(store, seen);
-  const stats = await saveStatsStand(store, {
-    at,
-    active: members.filter((m) => !m.former).map((m) => m.id),
-    updates: statUpdates,
-  });
+
+  // Die Blobs am Ende hängen nicht voneinander ab und werden gleichzeitig geschrieben; das hält den Lauf
+  // sicher unter der Wartezeit des Planers von Netlify (etwa 15 s).
+  const tWrite = Date.now();
+  const appendEvents = async (): Promise<number> => {
+    if (events.length === 0) return 0;
+    const log = (await store.get<LevelUpLog>("levelups")) ?? { events: [] };
+    const next = appendLevelUps(log, events);
+    const added = next.events.length - log.events.length;
+    if (added > 0) await store.set("levelups", next);
+    return added;
+  };
+  const [levelUps, , , logins, stats] = await Promise.all([
+    appendEvents(),
+    store.set("guild", guild),
+    store.set(`history/${berlinDate(at)}`, buildSnapshot(members, at)),
+    recordActivity(store, seen),
+    saveStatsStand(store, {
+      at,
+      active: members.filter((m) => !m.former).map((m) => m.id),
+      updates: statUpdates,
+    }),
+    pool.completed.length > 0 ? store.set(CHARACTER_INDEX_KEY, nextIndex) : null,
+  ]);
+  const phases = { guild: tGuild, characters: tWrite - tCharacters, write: Date.now() - tWrite };
 
   return {
     at,
@@ -166,5 +187,6 @@ export async function runGuildCollection(deps: CollectDeps): Promise<GuildRunRep
     guildErrors,
     statsWeek: stats.week,
     statsFilled: stats.filled,
+    phases,
   };
 }

@@ -5,6 +5,8 @@ import { PROFESSION_NAMES_DE } from "../transform/professions";
 import { runPool } from "../lib/pool";
 import type {
   AttributesIndex,
+  CharacterIndex,
+  CharacterIndexEntry,
   CharacterRecord,
   GuildRecord,
   InstanceAchievement,
@@ -19,6 +21,7 @@ import type { JsonStore } from "../store";
 import { toRecipeDetail } from "../transform/recipes";
 import { toAttributes } from "../transform/attributes";
 import { buildTalentTree, treeIdFromHref } from "../transform/talent-tree";
+import { CHARACTER_INDEX_KEY, toCharacterIndexEntry } from "./character-index";
 import type { CollectDeps } from "./guild";
 
 export interface StaticRunReport {
@@ -38,6 +41,16 @@ export interface StaticRunReport {
   /** Charaktere, deren Werte veraltet sind, aber im Budget keinen Platz mehr hatten; sie folgen im nächsten Lauf. */
   attributesPending: number;
   skipped: number;
+  /** Charaktere ohne Eintrag in `character-index`, die dieser Lauf selbst gelesen hat. */
+  charactersRead: number;
+  /** Charaktere ohne Indexeintrag, für die das Zeitlimit der Vorarbeit nicht reichte. */
+  charactersUnread: number;
+  /** Phasen, die wegen des Zeitbudgets gar nicht begonnen haben. */
+  notStarted: string[];
+  /** Dauer je Phase in Millisekunden (prep, attributes, trees, spells, ... , finish). */
+  phases: Record<string, number>;
+  /** Ein anderer Lauf hielt die Sperre; dieser hat nichts getan. */
+  busy?: true;
   durationMs: number;
 }
 
@@ -100,13 +113,20 @@ async function fillMap<T>(
   deadline: number,
   opts: { ns?: Namespace; at: string; seed?: Record<string, T>; maxNew?: number },
 ): Promise<{ added: number; skipped: number }> {
-  const map = (await deps.store.get<Record<string, T | null>>(key)) ?? {};
   const checkedKey = `${key}-checked`;
-  const checked = (await deps.store.get<Record<string, string>>(checkedKey)) ?? {};
+  const [stored, storedChecked] = await Promise.all([
+    deps.store.get<Record<string, T | null>>(key),
+    deps.store.get<Record<string, string>>(checkedKey),
+  ]);
+  const map = stored ?? {};
+  const checked = storedChecked ?? {};
+  // Neu angelegte Tabellen werden auch leer geschrieben, danach nur noch bei Änderungen.
+  let mapChanged = stored === null;
   let checkedChanged = false;
   for (const [id, value] of Object.entries(opts.seed ?? {})) {
     if (map[id] !== undefined && map[id] !== null) continue;
     map[id] = value;
+    mapChanged = true;
     if (Object.hasOwn(checked, id)) {
       delete checked[id];
       checkedChanged = true;
@@ -129,8 +149,10 @@ async function fillMap<T>(
     },
     { concurrency: deps.config.concurrency, deadline },
   );
-  await deps.store.set(key, map);
-  if (checkedChanged) await deps.store.set(checkedKey, checked);
+  await Promise.all([
+    mapChanged || added > 0 ? deps.store.set(key, map) : null,
+    checkedChanged ? deps.store.set(checkedKey, checked) : null,
+  ]);
   return { added, skipped: pool.skipped.length };
 }
 
@@ -154,8 +176,12 @@ async function fillRecipes(
 ): Promise<{ map: RecipeDetails; added: number; skipped: number }> {
   const key = "static/recipes";
   const checkedKey = `${key}-checked`;
-  const map = (await deps.store.get<RecipeDetails>(key)) ?? {};
-  const checked = (await deps.store.get<Record<string, string>>(checkedKey)) ?? {};
+  const [storedMap, storedChecked] = await Promise.all([
+    deps.store.get<RecipeDetails>(key),
+    deps.store.get<Record<string, string>>(checkedKey),
+  ]);
+  const map = storedMap ?? {};
+  const checked = storedChecked ?? {};
   const missing = [...new Set(ids)].filter((id) => id > 0 && !Object.hasOwn(map, String(id)));
   const retries = retriesDue(
     ids,
@@ -194,10 +220,7 @@ async function fillRecipes(
     },
     { concurrency: deps.config.concurrency, deadline },
   );
-  if (added > 0) {
-    await deps.store.set(key, map);
-    await deps.store.set(checkedKey, checked);
-  }
+  if (added > 0) await Promise.all([deps.store.set(key, map), deps.store.set(checkedKey, checked)]);
   return { map, added, skipped: pool.skipped.length };
 }
 
@@ -215,14 +238,19 @@ function toInstanceAchievement(raw: any, kind: InstanceAchievement["kind"], orde
 /** Lädt fehlende Definitionen der Dungeon- und Raid-Erfolge; die Kategorien selbst jedes Mal (zwei Anfragen). */
 async function fillInstanceAchievements(deps: CollectDeps, deadline: number): Promise<{ added: number; skipped: number }> {
   const key = "static/instance-achievements";
-  const stored = (await deps.store.get<InstanceAchievementsRecord>(key))?.achievements ?? [];
+  const categories = Object.entries(INSTANCE_CATEGORIES);
+  const [record, ...responses] = await Promise.all([
+    deps.store.get<InstanceAchievementsRecord>(key),
+    ...categories.map(([categoryId]) => deps.client.get(`/data/wow/achievement-category/${categoryId}`, "static")),
+  ]);
+  const stored = (record as InstanceAchievementsRecord | null)?.achievements ?? [];
   const known = new Map(stored.map((a) => [a.id, a]));
   const wanted: { id: number; kind: InstanceAchievement["kind"]; order: number }[] = [];
-  for (const [categoryId, kind] of Object.entries(INSTANCE_CATEGORIES)) {
-    const res = await deps.client.get(`/data/wow/achievement-category/${categoryId}`, "static");
-    if (res.status !== 200) continue;
+  categories.forEach(([, kind], i) => {
+    const res = responses[i] as { status: number; data: any };
+    if (res.status !== 200) return;
     (res.data?.achievements ?? []).forEach((a: any, order: number) => wanted.push({ id: a.id, kind, order }));
-  }
+  });
   let added = 0;
   const pool = await runPool(
     wanted.filter((w) => !known.has(w.id)),
@@ -246,9 +274,11 @@ async function fillInstanceAchievements(deps: CollectDeps, deadline: number): Pr
 /** Fraktionsnamen bei jedem Lauf aus dem Verzeichnis (eine Anfrage), Gruppen inkrementell aus den Wurzelfraktionen. */
 async function fillReputationFactions(deps: CollectDeps, deadline: number): Promise<{ checked: number; skipped: number }> {
   const key = "static/reputation-factions";
-  const res = await deps.client.get("/data/wow/reputation-faction/index", "static");
+  const [res, prev] = await Promise.all([
+    deps.client.get("/data/wow/reputation-faction/index", "static"),
+    deps.store.get<ReputationFactionsRecord>(key),
+  ]);
   if (res.status !== 200) return { checked: 0, skipped: 0 };
-  const prev = await deps.store.get<ReputationFactionsRecord>(key);
   const names: Record<string, string> = {};
   for (const f of res.data?.factions ?? []) if (typeof f?.name === "string") names[String(f.id)] = f.name;
   const roots: number[] = (res.data?.root_factions ?? []).map((f: any) => f.id);
@@ -274,7 +304,9 @@ async function fillReputationFactions(deps: CollectDeps, deadline: number): Prom
     ...roots.flatMap((id) => (groups.has(id) ? [groups.get(id)!] : [])),
     ...[...groups.values()].filter((g) => !roots.includes(g.id)),
   ];
-  await deps.store.set(key, { names, groups: ordered, checkedRoots: [...checked] } satisfies ReputationFactionsRecord);
+  const next: ReputationFactionsRecord = { names, groups: ordered, checkedRoots: [...checked] };
+  // Das Verzeichnis kommt jedes Mal; geschrieben wird nur, was sich geändert hat.
+  if (JSON.stringify(next) !== JSON.stringify(prev)) await deps.store.set(key, next);
   return { checked: added, skipped: pool.skipped.length };
 }
 
@@ -300,18 +332,41 @@ export function attributesDue(candidates: AttributeCandidate[], index: Attribute
 }
 
 /**
- * Anteil des Zeitbudgets, der den Charakterwerten vorbehalten ist, solange Werte fällig sind.
- * Die Nachholaufgaben davor (Icons, Rezepte, Gegenstandsstufen, Leereinträge) enden entsprechend früher;
- * was die Werte nicht brauchen, bleibt ungenutzt, die Werte selbst dürfen aber jede übrige Zeit nutzen.
+ * Anteil der Arbeitszeit, der zuerst den Charakterwerten gehört, solange Werte fällig sind.
+ * Danach kommen die Nachholaufgaben (Icons, Rezepte, Gegenstandsstufen, Leereinträge) mit allem, was übrig ist,
+ * und zum Schluss die Werte noch einmal mit dem Rest. So kommen die Werte in jedem Lauf voran.
  */
 export const ATTRIBUTES_BUDGET_SHARE = 0.4;
 
+/**
+ * Anteil des Budgets, in dem der Lauf nichts Neues mehr beginnt (2 s bei den üblichen 12 s). Der Rest gehört den
+ * Anfragen, die noch unterwegs sind, und dem Schreiben am Ende. Der Planer von Netlify wartet höchstens etwa 15 s
+ * auf die Antwort und startet den Lauf sonst ein zweites Mal; der Start der Function kostet davon schon bis zu 1 s.
+ */
+export const END_RESERVE_SHARE = 1 / 6;
+
+/** Anteil des Budgets, den das Nachlesen von Charakteren ohne Indexeintrag höchstens bekommt. */
+export const BOOTSTRAP_SHARE = 0.25;
+/** Gleichzeitige Blob-Zugriffe beim Nachlesen der Charaktere. */
+const BOOTSTRAP_CONCURRENCY = 20;
+
 const ATTRIBUTES_INDEX_KEY = "attributes/index";
+
+/** Sperre gegen sich überlappende Läufe, wenn Netlify einen langsamen Lauf ein zweites Mal startet. */
+export const LOCK_KEY = "locks/collect-static";
+/** Nach dieser Zeit gilt eine Sperre als verwaist (abgestürzter Lauf) und wird übergangen. */
+export const LOCK_TTL_MS = 60_000;
+
+interface RunLock {
+  startedAt: string;
+  until: string;
+}
 
 /**
  * Werte (`/statistics`) je Charakter in eigene Blobs `attributes/<id>`, gestaffelt über die Läufe alle vier Stunden.
  * 404 wird als Datensatz ohne Felder gespeichert, damit der Charakter erst nach dem nächsten Login wieder dran ist.
  * `due` kommt aus `attributesDue`: Charaktere ohne Werte zuerst, dann die ältesten fälligen Aktualisierungen.
+ * Gibt zurück, wie viele geholt wurden und welche wegen der Deadline offen blieben.
  */
 async function fillAttributes(
   deps: CollectDeps,
@@ -319,9 +374,9 @@ async function fillAttributes(
   index: AttributesIndex,
   deadline: number,
   at: string,
-): Promise<{ fetched: number; pending: number }> {
+): Promise<{ fetched: number; open: AttributeCandidate[] }> {
   let fetched = 0;
-  await runPool(
+  const pool = await runPool(
     due,
     async (c) => {
       const path = `/profile/wow/character/${encodeURIComponent(c.slug)}/statistics`;
@@ -341,131 +396,275 @@ async function fillAttributes(
     },
     { concurrency: deps.config.concurrency, deadline },
   );
-  if (fetched > 0) await deps.store.set(ATTRIBUTES_INDEX_KEY, index);
-  return { fetched, pending: due.length - fetched };
+  return { fetched, open: pool.skipped };
 }
+
+/** Was der Lauf aus den Charakteren braucht: Gegenstände, Stufen, Rezepte und Kandidaten für die Werte. */
+interface CharacterScan {
+  itemIds: number[];
+  equippedIds: number[];
+  knownLevels: Record<string, number>;
+  recipeIds: number[];
+  attributeCandidates: AttributeCandidate[];
+  /** Charaktere ohne Indexeintrag, die dieser Lauf selbst gelesen hat. */
+  read: number;
+  /** Charaktere ohne Indexeintrag, für die die Zeit nicht reichte; sie fehlen in diesem Lauf. */
+  unread: number;
+}
+
+/**
+ * Sammelt die Angaben aus `character-index` (von `collect-guild` gepflegt). Nur Charaktere ohne Eintrag, etwa direkt
+ * nach dem Update, werden aus `characters/<id>` gelesen, parallel und mit eigenem Zeitlimit.
+ */
+async function scanCharacters(
+  deps: CollectDeps,
+  keys: string[],
+  index: CharacterIndex,
+  active: Set<number>,
+  deadline: number,
+): Promise<CharacterScan> {
+  const entries: [number, CharacterIndexEntry][] = [];
+  const missing: string[] = [];
+  for (const key of keys) {
+    const id = Number(key.slice("characters/".length));
+    const entry = index[String(id)];
+    if (entry) entries.push([id, entry]);
+    else missing.push(key);
+  }
+  const pool = await runPool(
+    missing,
+    async (key) => {
+      const rec = await deps.store.get<CharacterRecord>(key);
+      if (rec) entries.push([rec.id, toCharacterIndexEntry(rec)]);
+    },
+    { concurrency: BOOTSTRAP_CONCURRENCY, deadline },
+  );
+  const scan: CharacterScan = {
+    itemIds: [],
+    equippedIds: [],
+    knownLevels: {},
+    recipeIds: [],
+    attributeCandidates: [],
+    read: pool.completed.length,
+    unread: pool.skipped.length + pool.failed.length,
+  };
+  // Feste Reihenfolge, damit parallel gelesene Charaktere die Ergebnisse nicht umsortieren.
+  entries.sort((a, b) => a[0] - b[0]);
+  for (const [id, e] of entries) {
+    scan.itemIds.push(...e.itemIds);
+    scan.equippedIds.push(...e.itemIds);
+    Object.assign(scan.knownLevels, e.itemLevels);
+    scan.recipeIds.push(...e.recipeIds);
+    if (e.hasProfile && active.has(id)) scan.attributeCandidates.push({ id, slug: e.slug, lastLoginAt: e.lastLoginAt });
+  }
+  return scan;
+}
+
+const emptyReport = (at: string): StaticRunReport => ({
+  at,
+  treesAdded: 0,
+  spellIconsAdded: 0,
+  itemIconsAdded: 0,
+  itemLevelsAdded: 0,
+  instanceAchievementsAdded: 0,
+  recipesAdded: 0,
+  reputationGroupsChecked: 0,
+  instanceImagesAdded: 0,
+  professionIconsAdded: 0,
+  attributesFetched: 0,
+  attributesPending: 0,
+  skipped: 0,
+  charactersRead: 0,
+  charactersUnread: 0,
+  notStarted: [],
+  phases: {},
+  durationMs: 0,
+});
 
 export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunReport> {
   const { client, store, config } = deps;
   const started = Date.now();
-  const deadline = started + config.budgetMs;
+  /** Ab hier beginnt nichts Neues mehr; danach nur noch laufende Anfragen und das Schreiben am Ende. */
+  const workEnd = started + Math.floor(config.budgetMs * (1 - END_RESERVE_SHARE));
   const at = deps.now().toISOString();
-  let skipped = 0;
+  const report = emptyReport(at);
+  const phases = report.phases;
 
-  // Gespeicherte Charaktere durchgehen (nur Blobs, keine Anfragen): Gegenstände, Rezepte und Kandidaten für die Werte.
-  const itemIds: number[] = [];
-  const equippedIds: number[] = [];
-  /** Gegenstandsstufen, die Blizzard noch in der Ausrüstung mitliefert; sie hängen nur an der Gegenstands-ID. */
-  const knownLevels: Record<string, number> = {};
-  const recipeIds: number[] = [];
-  const active = new Set(((await store.get<GuildRecord>("guild"))?.members ?? []).filter((m) => !m.former).map((m) => m.id));
-  const attributeCandidates: AttributeCandidate[] = [];
-  for (const key of await store.list("characters/")) {
-    const rec = await store.get<CharacterRecord>(key);
-    for (const item of rec?.equipment ?? []) {
-      if (!item.itemId) continue;
-      itemIds.push(item.itemId);
-      equippedIds.push(item.itemId);
-      if (typeof item.itemLevel === "number") knownLevels[String(item.itemId)] = item.itemLevel;
+  /** Misst eine Phase; beginnt sie erst nach `deadline`, wird sie übersprungen und in `notStarted` vermerkt. */
+  async function phase<T>(name: string, deadline: number, fallback: T, fn: () => Promise<T>): Promise<T> {
+    if (Date.now() >= deadline) {
+      report.notStarted.push(name);
+      return fallback;
     }
-    for (const p of rec?.professions ?? []) recipeIds.push(...(p.recipeIds ?? []));
-    if (rec?.hasProfile && active.has(rec.id)) attributeCandidates.push({ id: rec.id, slug: rec.slug, lastLoginAt: rec.lastLoginAt });
+    const t = Date.now();
+    try {
+      return await fn();
+    } finally {
+      phases[name] = Date.now() - t;
+    }
   }
-  const attributesIndex = (await store.get<AttributesIndex>(ATTRIBUTES_INDEX_KEY)) ?? {};
-  const attributesToFetch = attributesDue(attributeCandidates, attributesIndex);
-  // Sind Werte fällig, enden die übrigen Aufgaben früher; der Rest des Budgets gehört den Werten.
-  const catchUpDeadline =
-    attributesToFetch.length > 0 ? started + Math.floor(config.budgetMs * (1 - ATTRIBUTES_BUDGET_SHARE)) : deadline;
 
-  await ensureList(client, store, "static/classes", "/data/wow/playable-class/index", "classes");
-  await ensureList(client, store, "static/races", "/data/wow/playable-race/index", "races");
+  // Vorarbeit: alles, was der Lauf aus dem Speicher braucht, in einem Zug.
+  let t = Date.now();
+  const [lock, guild, characterIndex, attributesIndexStored, characterKeys, treeIndexStored] = await Promise.all([
+    store.get<RunLock>(LOCK_KEY),
+    store.get<GuildRecord>("guild"),
+    store.get<CharacterIndex>(CHARACTER_INDEX_KEY),
+    store.get<AttributesIndex>(ATTRIBUTES_INDEX_KEY),
+    store.list("characters/"),
+    store.get<Record<string, number>>("static/talent-trees/index"),
+  ]);
+  if (lock && Date.parse(lock.until) > Date.now()) {
+    // Ein anderer Lauf arbeitet noch (Netlify hat neu gestartet); dieser endet sofort, ohne etwas zu schreiben.
+    phases.prep = Date.now() - t;
+    return { ...report, busy: true, durationMs: Date.now() - started };
+  }
+  await store.set(LOCK_KEY, { startedAt: at, until: new Date(Date.now() + LOCK_TTL_MS).toISOString() } satisfies RunLock);
+  try {
+    const active = new Set((guild?.members ?? []).filter((m) => !m.former).map((m) => m.id));
+    const scan = await scanCharacters(
+      deps,
+      characterKeys,
+      characterIndex ?? {},
+      active,
+      started + Math.floor(config.budgetMs * BOOTSTRAP_SHARE),
+    );
+    report.charactersRead = scan.read;
+    report.charactersUnread = scan.unread;
+    const { itemIds, equippedIds, knownLevels, recipeIds } = scan;
+    const attributesIndex = attributesIndexStored ?? {};
+    const attributesToFetch = attributesDue(scan.attributeCandidates, attributesIndex);
+    phases.prep = Date.now() - t;
 
-  // Talentbäume: je Klassenbaum einmal, mit allen zugehörigen Spec-Bäumen.
-  let treesAdded = 0;
-  const treeIndex = (await store.get<Record<string, number>>("static/talent-trees/index")) ?? {};
-  const indexRes = await client.get("/data/wow/talent-tree/index", "static");
-  if (indexRes.status === 200) {
-    const specHrefs: string[] = (indexRes.data?.spec_talent_trees ?? []).map((s: any) => s.key?.href ?? "");
-    for (const t of indexRes.data?.class_talent_trees ?? []) {
-      const treeId = treeIdFromHref(t.key?.href ?? "");
-      if (await store.get(`static/talent-trees/${treeId}`)) continue;
-      if (Date.now() >= catchUpDeadline) {
-        skipped++;
-        continue;
-      }
-      const classRes = await client.get(`/data/wow/talent-tree/${treeId}`, "static");
-      const specResults = await Promise.all(
-        specHrefs.filter((h) => treeIdFromHref(h) === treeId).map((h) => client.get(h, "static")),
+    // Zuerst die Werte mit ihrem Anteil an der verbleibenden Arbeitszeit.
+    let attributesFetched = 0;
+    let attributesOpen = attributesToFetch;
+    if (attributesToFetch.length > 0) {
+      const share = started + Math.floor((workEnd - started) * ATTRIBUTES_BUDGET_SHARE);
+      const first = await phase("attributes", workEnd, null, () =>
+        fillAttributes(deps, attributesToFetch, attributesIndex, Math.min(share, workEnd), at),
       );
-      if (classRes.status !== 200 || specResults.length === 0 || specResults.some((r) => r.status !== 200)) continue;
-      const tree = buildTalentTree(classRes.data, specResults.map((r) => r.data));
-      await store.set(`static/talent-trees/${treeId}`, tree);
-      treeIndex[String(tree.classId)] = treeId;
-      treesAdded++;
+      if (first) {
+        attributesFetched += first.fetched;
+        attributesOpen = first.open;
+      }
     }
-    if (treesAdded > 0) await store.set("static/talent-trees/index", treeIndex);
-  }
 
-  // Zauber-Icons für alle Talente aller gespeicherten Bäume.
-  const spellIds: number[] = [];
-  for (const treeId of Object.values(treeIndex)) {
-    const tree = await store.get<TalentTreeRecord>(`static/talent-trees/${treeId}`);
-    for (const spec of tree?.specs ?? []) for (const n of spec.nodes) if (n.spellId) spellIds.push(n.spellId);
-  }
-  const spells = await fillMap(deps, "static/spell-icons", spellIds, (id) => `/data/wow/media/spell/${id}`, iconOf, catchUpDeadline, { at });
+    // Klassen, Völker und Talentbäume: je Klassenbaum einmal, mit allen zugehörigen Spec-Bäumen.
+    const treeIndex = treeIndexStored ?? {};
+    let treesSkipped = 0;
+    await phase("trees", workEnd, null, async () => {
+      const [, , indexRes] = await Promise.all([
+        ensureList(client, store, "static/classes", "/data/wow/playable-class/index", "classes"),
+        ensureList(client, store, "static/races", "/data/wow/playable-race/index", "races"),
+        client.get("/data/wow/talent-tree/index", "static"),
+      ]);
+      if (indexRes.status !== 200) return null;
+      const specHrefs: string[] = (indexRes.data?.spec_talent_trees ?? []).map((s: any) => s.key?.href ?? "");
+      const treeIds: number[] = (indexRes.data?.class_talent_trees ?? []).map((tr: any) => treeIdFromHref(tr.key?.href ?? ""));
+      const stored = await Promise.all(treeIds.map((id) => store.get(`static/talent-trees/${id}`)));
+      for (const [i, treeId] of treeIds.entries()) {
+        if (stored[i]) continue;
+        if (Date.now() >= workEnd) {
+          treesSkipped++;
+          continue;
+        }
+        const classRes = await client.get(`/data/wow/talent-tree/${treeId}`, "static");
+        const specResults = await Promise.all(
+          specHrefs.filter((h) => treeIdFromHref(h) === treeId).map((h) => client.get(h, "static")),
+        );
+        if (classRes.status !== 200 || specResults.length === 0 || specResults.some((r) => r.status !== 200)) continue;
+        const tree = buildTalentTree(classRes.data, specResults.map((r) => r.data));
+        await store.set(`static/talent-trees/${treeId}`, tree);
+        treeIndex[String(tree.classId)] = treeId;
+        report.treesAdded++;
+      }
+      if (report.treesAdded > 0) await store.set("static/talent-trees/index", treeIndex);
+      return null;
+    });
 
-  // Rezeptdetails und Gegenstands-Icons für alles, was Gildenmitglieder tragen, kennen und verarbeiten.
-  const recipes = await fillRecipes(deps, recipeIds, catchUpDeadline, at);
-  for (const r of Object.values(recipes.map)) for (const reagent of r?.reagents ?? []) itemIds.push(reagent.id);
-  const items = await fillMap(deps, "static/item-icons", itemIds, (id) => `/data/wow/media/item/${id}`, iconOf, catchUpDeadline, { at });
-  // Seit dem 25.11.2026 fehlt die Stufe in der Ausrüstung frisch eingeloggter Charaktere; Ersatz aus dem Gegenstand selbst.
-  const levels = await fillMap(
-    deps,
-    "static/item-levels",
-    equippedIds.filter((id) => !Object.hasOwn(knownLevels, String(id))),
-    (id) => `/data/wow/item/${id}`,
-    (data) => (typeof data?.level === "number" ? data.level : null),
-    catchUpDeadline,
-    { at, seed: knownLevels, maxNew: MAX_NEW_ITEM_LEVELS_PER_RUN },
-  );
-  const instances = await fillInstanceAchievements(deps, catchUpDeadline);
-  const reputation = await fillReputationFactions(deps, catchUpDeadline);
-  const professionIcons = await fillMap(
-    deps,
-    "static/profession-icons",
-    Object.keys(PROFESSION_NAMES_DE).map(Number),
-    (id) => `/data/wow/media/profession/${id}`,
-    iconOf,
-    catchUpDeadline,
-    { at },
-  );
-  const images = await fillMap(
-    deps,
-    "static/instance-images",
-    INSTANCE_IMAGE_IDS,
-    (id) => `/data/wow/media/journal-instance/${id}`,
-    tileOf,
-    catchUpDeadline,
-    { at, ns: "static-retail" },
-  );
-  // Zuletzt, mit dem vorbehaltenen Rest des Budgets und allem, was die Aufgaben davor übrig lassen.
-  const attributes = await fillAttributes(deps, attributesToFetch, attributesIndex, deadline, at);
+    const none = { added: 0, skipped: 0 };
+    // Zauber-Icons für alle Talente aller gespeicherten Bäume.
+    const spells = await phase("spells", workEnd, none, async () => {
+      const trees = await Promise.all(
+        Object.values(treeIndex).map((treeId) => store.get<TalentTreeRecord>(`static/talent-trees/${treeId}`)),
+      );
+      const spellIds: number[] = [];
+      for (const tree of trees) for (const spec of tree?.specs ?? []) for (const n of spec.nodes) if (n.spellId) spellIds.push(n.spellId);
+      return fillMap(deps, "static/spell-icons", spellIds, (id) => `/data/wow/media/spell/${id}`, iconOf, workEnd, { at });
+    });
 
-  return {
-    at,
-    treesAdded,
-    spellIconsAdded: spells.added,
-    itemIconsAdded: items.added,
-    itemLevelsAdded: levels.added,
-    instanceAchievementsAdded: instances.added,
-    recipesAdded: recipes.added,
-    reputationGroupsChecked: reputation.checked,
-    instanceImagesAdded: images.added,
-    professionIconsAdded: professionIcons.added,
-    attributesFetched: attributes.fetched,
-    attributesPending: attributes.pending,
-    skipped:
-      skipped +
+    // Rezeptdetails und Gegenstands-Icons für alles, was Gildenmitglieder tragen, kennen und verarbeiten.
+    const recipes = await phase("recipes", workEnd, { map: {} as RecipeDetails, ...none }, () =>
+      fillRecipes(deps, recipeIds, workEnd, at),
+    );
+    for (const r of Object.values(recipes.map)) for (const reagent of r?.reagents ?? []) itemIds.push(reagent.id);
+    const items = await phase("items", workEnd, none, () =>
+      fillMap(deps, "static/item-icons", itemIds, (id) => `/data/wow/media/item/${id}`, iconOf, workEnd, { at }),
+    );
+    // Seit dem 25.11.2026 fehlt die Stufe in der Ausrüstung frisch eingeloggter Charaktere; Ersatz aus dem Gegenstand selbst.
+    const levels = await phase("levels", workEnd, none, () =>
+      fillMap(
+        deps,
+        "static/item-levels",
+        equippedIds.filter((id) => !Object.hasOwn(knownLevels, String(id))),
+        (id) => `/data/wow/item/${id}`,
+        (data) => (typeof data?.level === "number" ? data.level : null),
+        workEnd,
+        { at, seed: knownLevels, maxNew: MAX_NEW_ITEM_LEVELS_PER_RUN },
+      ),
+    );
+    const instances = await phase("instances", workEnd, none, () => fillInstanceAchievements(deps, workEnd));
+    const reputation = await phase("reputation", workEnd, { checked: 0, skipped: 0 }, () => fillReputationFactions(deps, workEnd));
+    const professionIcons = await phase("professions", workEnd, none, () =>
+      fillMap(
+        deps,
+        "static/profession-icons",
+        Object.keys(PROFESSION_NAMES_DE).map(Number),
+        (id) => `/data/wow/media/profession/${id}`,
+        iconOf,
+        workEnd,
+        { at },
+      ),
+    );
+    const images = await phase("images", workEnd, none, () =>
+      fillMap(
+        deps,
+        "static/instance-images",
+        INSTANCE_IMAGE_IDS,
+        (id) => `/data/wow/media/journal-instance/${id}`,
+        tileOf,
+        workEnd,
+        { at, ns: "static-retail" },
+      ),
+    );
+
+    // Zum Schluss die übrigen Werte mit allem, was die Nachholaufgaben übrig lassen.
+    if (attributesOpen.length > 0) {
+      const rest = await phase("attributesRest", workEnd, null, () =>
+        fillAttributes(deps, attributesOpen, attributesIndex, workEnd, at),
+      );
+      if (rest) {
+        attributesFetched += rest.fetched;
+        attributesOpen = rest.open;
+      }
+    }
+    t = Date.now();
+    if (attributesFetched > 0) await store.set(ATTRIBUTES_INDEX_KEY, attributesIndex);
+    phases.finish = Date.now() - t;
+
+    report.spellIconsAdded = spells.added;
+    report.itemIconsAdded = items.added;
+    report.itemLevelsAdded = levels.added;
+    report.instanceAchievementsAdded = instances.added;
+    report.recipesAdded = recipes.added;
+    report.reputationGroupsChecked = reputation.checked;
+    report.instanceImagesAdded = images.added;
+    report.professionIconsAdded = professionIcons.added;
+    report.attributesFetched = attributesFetched;
+    report.attributesPending = attributesToFetch.length - attributesFetched;
+    report.skipped =
+      treesSkipped +
       spells.skipped +
       items.skipped +
       levels.skipped +
@@ -473,7 +672,10 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
       instances.skipped +
       reputation.skipped +
       images.skipped +
-      professionIcons.skipped,
-    durationMs: Date.now() - started,
-  };
+      professionIcons.skipped;
+  } finally {
+    await store.delete(LOCK_KEY).catch(() => undefined);
+  }
+  report.durationMs = Date.now() - started;
+  return report;
 }
