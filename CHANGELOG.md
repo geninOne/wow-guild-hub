@@ -8,6 +8,13 @@ This file is maintained by [release-please](https://github.com/googleapis/releas
 [Conventional Commits](https://www.conventionalcommits.org/) on `main`. Please do not edit it by hand; see
 [CONTRIBUTING.md](CONTRIBUTING.md#commits-and-versions).
 
+## [2.1.5](https://github.com/geninOne/wow-guild-hub/compare/v2.1.4...v2.1.5) (2026-11-27)
+
+
+### Bug Fixes
+
+* account-wide achievements count for the main character only ([#14](https://github.com/geninOne/wow-guild-hub/issues/14)) ([76f6ac3](https://github.com/geninOne/wow-guild-hub/commit/76f6ac334a5d90d9fc599ca21e75ac7adc3057f7))
+
 ## [2.1.4](https://github.com/geninOne/wow-guild-hub/compare/v2.1.3...v2.1.4) (2026-11-27)
 
 
