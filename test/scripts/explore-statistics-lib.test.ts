@@ -43,13 +43,13 @@ test("kindOf classifies counters, levels, texts and averages", () => {
 });
 
 test("updateList keeps known entries, adds new ones and takes over new names", () => {
-  const old = { _hinweis: "h", kategorien: [{ id: 122, name: "Tode", ober: null }], statistiken: [{ id: 112, name: "Tode durch Ertrinken", kategorie: 122, art: "zaehler" }] };
+  const old = { _note: "h", categories: [{ id: 122, name: "Tode", parent: null }], statistics: [{ id: 112, name: "Tode durch Ertrinken", category: 122, kind: "zaehler" }] };
   const a = evaluate([{ member: { id: 1, name: "A", level: 1 }, data: response({ 60: 1 }) }]);
   const updated = updateList(old, a);
-  expect(updated._hinweis).toBe("h");
-  expect(updated.kategorien.map((k: { id: number }) => k.id)).toEqual([122, 132, 178]);
-  expect(updated.kategorien.find((k: { id: number }) => k.id === 178)).toEqual({ id: 178, name: "Sekundäre Fertigkeiten", ober: 132 });
-  expect(updated.statistiken.map((s: { id: number }) => s.id)).toEqual([60, 112, 1524]);
-  expect(updated.statistiken.find((s: { id: number }) => s.id === 1524)).toEqual({ id: 1524, name: "Kochfertigkeit", kategorie: 178, art: "stand" });
-  expect(updateList(null, a)._hinweis).toMatch(/stats:explore/);
+  expect(updated._note).toBe("h");
+  expect(updated.categories.map((k: { id: number }) => k.id)).toEqual([122, 132, 178]);
+  expect(updated.categories.find((k: { id: number }) => k.id === 178)).toEqual({ id: 178, name: "Sekundäre Fertigkeiten", parent: 132 });
+  expect(updated.statistics.map((s: { id: number }) => s.id)).toEqual([60, 112, 1524]);
+  expect(updated.statistics.find((s: { id: number }) => s.id === 1524)).toEqual({ id: 1524, name: "Kochfertigkeit", category: 178, kind: "stand" });
+  expect(updateList(null, a)._note).toMatch(/stats:explore/);
 });

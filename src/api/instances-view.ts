@@ -52,7 +52,7 @@ function pickSeries(
 }
 
 function levels(info: DungeonInfo | undefined): LevelRange | null {
-  return info?.stufe ? { min: info.stufe[0], max: info.stufe[1] } : null;
+  return info?.levels ? { min: info.levels[0], max: info.levels[1] } : null;
 }
 
 /**
@@ -79,14 +79,14 @@ function completion(kills: KillRef[], groups: string[][]): { at: string | null; 
 
 /** Final boss names that count for a dungeon: last entry of the boss list and the maintained statistics names. */
 function finalGroup(info: DungeonInfo): string[] {
-  return [...info.bosse.slice(-1), ...info.statistik.map((s) => s.endboss)];
+  return [...info.bosses.slice(-1), ...info.statisticEntries.map((s) => s.finalBoss)];
 }
 
 /** Whether a kill belongs to this alternative: same instance name or a maintained statistics entry. */
 function killMatches(k: BossKill, alternative: string, info: DungeonInfo | undefined): boolean {
   if (k.instance === null) return false;
   if (norm(k.instance) === norm(alternative)) return true;
-  return (info?.statistik ?? []).some((s) => norm(s.instanz) === norm(k.instance!) && norm(s.endboss) === norm(k.boss));
+  return (info?.statisticEntries ?? []).some((s) => norm(s.instance) === norm(k.instance!) && norm(s.finalBoss) === norm(k.boss));
 }
 
 function killRef(k: BossKill): KillRef {
@@ -145,8 +145,8 @@ export function buildInstancesView(
       const name = shown.length > 0 ? shown.join(" oder ") : c.description;
       // With kills in several alternatives the data of all shown ones, otherwise the first alternative with data.
       const infos = shown.length > 1 ? infosOf(shown) : infosOf(shown.length > 0 ? shown : alternatives).slice(0, 1);
-      const bossNames = [...new Set(infos.flatMap((i) => i.bosse))];
-      const finals = infos.flatMap((i) => (i.bosse.length > 0 ? [i.bosse[i.bosse.length - 1]] : []));
+      const bossNames = [...new Set(infos.flatMap((i) => i.bosses))];
+      const finals = infos.flatMap((i) => (i.bosses.length > 0 ? [i.bosses[i.bosses.length - 1]] : []));
       const result = completion(kills, infos.map(finalGroup));
       const completed = result.times > 0 || (finals.length === 0 && kills.length > 0);
       return {
@@ -155,10 +155,10 @@ export function buildInstancesView(
         description: c.description,
         completed,
         onAccount: !completed && onAccount(def, c.id),
-        tracked: infos.length === 0 || infos.some((i) => !i.ohneStatistik),
+        tracked: infos.length === 0 || infos.some((i) => !i.withoutStatistic),
         kills,
         image: instanceImage(name, tiles),
-        levels: levels(infos.find((i) => i.stufe)),
+        levels: levels(infos.find((i) => i.levels)),
         bosses: bossNames.length > 0 ? bossNames : null,
         finalBosses: finals,
         completedAt: result.at,
@@ -192,7 +192,7 @@ export function buildInstancesView(
       kills,
       image: instanceImage(extra.name, tiles),
       levels: levels(extra.info),
-      bosses: extra.info.bosse.length > 0 ? extra.info.bosse : null,
+      bosses: extra.info.bosses.length > 0 ? extra.info.bosses : null,
       finalBosses: finals,
       completedAt: result.at,
       timesCompleted: result.times,

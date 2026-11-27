@@ -3,15 +3,15 @@ import { parseServerStart, serverStartSnapshot, sinceServerStart, startsWithin }
 import { SERVER_START } from "../../src/server-start";
 
 test("parseServerStart reads the date, null means no server start, garbage throws", () => {
-  expect(parseServerStart({ _hinweis: "x", datum: "2026-11-05" })).toBe("2026-11-05");
-  expect(parseServerStart({ datum: null })).toBeNull();
+  expect(parseServerStart({ _note: "x", date: "2026-11-05" })).toBe("2026-11-05");
+  expect(parseServerStart({ date: null })).toBeNull();
   expect(parseServerStart({})).toBeNull();
   for (const date of ["05.11.2026", "2026-11-5", "2026-02-30", "", 20261105]) {
-    expect(() => parseServerStart({ datum: date })).toThrow("config/serverstart.json");
+    expect(() => parseServerStart({ date })).toThrow("config/server-start.json");
   }
 });
 
-test("config/serverstart.json contains a valid server start", () => {
+test("config/server-start.json contains a valid server start", () => {
   expect(SERVER_START).toBe("2026-11-05");
 });
 

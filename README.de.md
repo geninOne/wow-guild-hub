@@ -2,6 +2,8 @@
 
 🇬🇧 [English](README.md)
 
+> Übersetzung von [README.md](README.md). Bei Abweichungen gilt die englische Fassung.
+
 Eine Webseite für deine World-of-Warcraft-Gilde: Mitglieder, Charaktere, Berufe, Dungeons und Raids, Statistiken,
 Spaßtitel der Woche und eine eigene Wochenzeitung. Die Daten kommen stündlich aus der Blizzard-API, gespeichert
 wird in Netlify Blobs, eine Datenbank braucht es nicht. Fork, Schlüssel eintragen, fertig.
@@ -18,11 +20,11 @@ Alle Screenshots zeigen eine erfundene Demo-Gilde mit Beispieldaten (Oberfläche
 
 | Gildenübersicht | Charakterseite |
 |---|---|
-| ![Gildenübersicht: Mitgliederliste mit Klasse, Stufe, Gegenstandsstufe, Hauptspezialisierung und Rang, mit Suche und Filtern](docs/bilder/gilde.webp) | ![Charakterseite: Ausrüstung mit Symbolen und Gegenstandsstufen, Titelabzeichen und Reiter für Talente, Berufe, Dungeons und Ruf](docs/bilder/charakter.webp) |
+| ![Gildenübersicht: Mitgliederliste mit Klasse, Stufe, Gegenstandsstufe, Hauptspezialisierung und Rang, mit Suche und Filtern](docs/images/guild.webp) | ![Charakterseite: Ausrüstung mit Symbolen und Gegenstandsstufen, Titelabzeichen und Reiter für Talente, Berufe, Dungeons und Ruf](docs/images/character.webp) |
 | **Statistik** | **Titel der Woche** |
-| ![Statistik: Klassenverteilung, Völkertorte und Levelverteilung der Gilde](docs/bilder/statistik.webp) | ![Titel der Woche: zwölf Spaßtitel wie Nachteule und Frühaufsteher mit Gewinnern und die Ehrentafel der Vorwochen](docs/bilder/titel.webp) |
+| ![Statistik: Klassenverteilung, Völkertorte und Levelverteilung der Gilde](docs/images/stats.webp) | ![Titel der Woche: zwölf Spaßtitel wie Nachteule und Frühaufsteher mit Gewinnern und die Ehrentafel der Vorwochen](docs/images/titles.webp) |
 | **Wochenzeitung** | **Auf dem Handy** |
-| ![Wochenzeitung: Schlagzeile, die Woche in Zahlen, Aufsteiger und Klatsch](docs/bilder/zeitung.webp) | <img src="docs/bilder/handy-zeitung.webp" alt="Die Wochenzeitung in Handybreite" width="260"> |
+| ![Wochenzeitung: Schlagzeile, die Woche in Zahlen, Aufsteiger und Klatsch](docs/images/newspaper.webp) | <img src="docs/images/phone-newspaper.webp" alt="Die Wochenzeitung in Handybreite" width="260"> |
 
 ## Funktionen
 

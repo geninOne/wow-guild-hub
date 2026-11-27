@@ -7,12 +7,12 @@ test("static list: unique IDs, every statistic in a known category, German names
   const ids = STAT_DEFINITIONS.map((s) => s.id);
   expect(new Set(ids).size).toBe(ids.length);
   const categories = new Set(STAT_CATEGORIES.map((c) => c.id));
-  for (const s of STAT_DEFINITIONS) expect(categories.has(s.kategorie)).toBe(true);
-  for (const c of STAT_CATEGORIES) if (c.ober !== null) expect(categories.has(c.ober)).toBe(true);
-  expect(statDefinition(60)).toEqual({ id: 60, name: "Tode insgesamt", kategorie: 122, art: "zaehler" });
+  for (const s of STAT_DEFINITIONS) expect(categories.has(s.category)).toBe(true);
+  for (const c of STAT_CATEGORIES) if (c.parent !== null) expect(categories.has(c.parent)).toBe(true);
+  expect(statDefinition(60)).toEqual({ id: 60, name: "Tode insgesamt", category: 122, kind: "zaehler" });
   expect(statDefinition("353")?.name).toBe("Anzahl der Nutzungen des Ruhesteins");
-  expect(statDefinition(1524)?.art).toBe("stand");
-  expect(statDefinition(1336)?.art).toBe("text");
+  expect(statDefinition(1524)?.kind).toBe("stand");
+  expect(statDefinition(1336)?.kind).toBe("text");
   expect(statDefinition(999999)).toBeUndefined();
 });
 

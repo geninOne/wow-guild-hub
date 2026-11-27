@@ -130,26 +130,26 @@ export function kindOf(stat) {
 /**
  * Updates the static list: new categories and statistics are added, known ones keep their details (even if they are
  * missing from this evaluation, because Blizzard omits zero values), names are updated. The list is stored in
- * config/statistiken.json, so its field names (kategorien, statistiken, ober, kategorie, art, _hinweis) stay German.
+ * config/statistics.json.
  */
 export function updateList(list, evaluation) {
-  const categories = new Map((list?.kategorien ?? []).map((k) => [k.id, k]));
-  for (const k of evaluation.categories) categories.set(k.id, { id: k.id, name: k.name, ober: k.parent });
-  const statistics = new Map((list?.statistiken ?? []).map((s) => [s.id, s]));
+  const categories = new Map((list?.categories ?? []).map((k) => [k.id, k]));
+  for (const k of evaluation.categories) categories.set(k.id, { id: k.id, name: k.name, parent: k.parent });
+  const statistics = new Map((list?.statistics ?? []).map((s) => [s.id, s]));
   for (const s of evaluation.statistics) {
     const old = statistics.get(s.id);
-    statistics.set(s.id, { id: s.id, name: s.name, kategorie: s.category, art: old?.art ?? kindOf(s) });
+    statistics.set(s.id, { id: s.id, name: s.name, category: s.category, kind: old?.kind ?? kindOf(s) });
   }
   const order = [...categories.keys()];
   return {
-    _hinweis: list?._hinweis ?? NOTE,
-    kategorien: [...categories.values()],
-    statistiken: [...statistics.values()].sort(
-      (a, b) => order.indexOf(a.kategorie) - order.indexOf(b.kategorie) || a.id - b.id,
+    _note: list?._note ?? NOTE,
+    categories: [...categories.values()],
+    statistics: [...statistics.values()].sort(
+      (a, b) => order.indexOf(a.category) - order.indexOf(b.category) || a.id - b.id,
     ),
   };
 }
 
-// Stored as _hinweis in config/statistiken.json, which is German data like the statistic names.
+// Stored as _note in config/statistics.json.
 const NOTE =
-  "Namen und Kategorien der Charakterstatistik (Blizzard-Endpunkt achievements/statistics, deutsch). Einen Endpunkt mit allen Definitionen gibt es für WoW Forever nicht, deshalb wird die Liste aus den gesehenen Antworten fortgeschrieben: npm run stats:explore. Die Wochenstände unter stats/<Samstag> enthalten nur Statistik-ID und Wert. art: zaehler (Ereignisse, Differenz sinnvoll), stand (aktueller Stand oder Höchstwert), text (Häufigstes einer Sorte, Name im Charakterdatensatz unter statTexts), schnitt (Durchschnitt, Differenz sinnlos).";
+  "Names and categories of the character statistics (Blizzard endpoint achievements/statistics, German). WoW Forever has no endpoint with all definitions, so the list is extended from the responses seen: npm run stats:explore. The weekly snapshots under stats/<Saturday> contain only statistic ID and value. kind: zaehler (events, the difference is meaningful), stand (current value or maximum), text (most frequent of a sort, name in the character record under statTexts), schnitt (average, the difference is meaningless).";

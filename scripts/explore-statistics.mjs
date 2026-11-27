@@ -6,7 +6,7 @@
 // Run from the project folder:  npm run stats:explore
 // Credentials come from the local .env and are never printed.
 // Raw responses and the evaluation go to .explore/ (not versioned, EXPLORE_DIR overrides it); the static name list
-// config/statistiken.json is updated (new statistics are added, known ones stay).
+// config/statistics.json is updated (new statistics are added, known ones stay).
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { createBlizzardClient } from "../src/blizzard/client.ts";
@@ -87,11 +87,11 @@ const evaluation = evaluate(responses);
 await save("evaluation.json", { status, ...evaluation });
 await writeFile(join(target, "tables.md"), markdownTables(evaluation));
 log(`${evaluation.statistics.length} distinct statistics in ${evaluation.categories.length} categories`);
-const listPath = resolve("config/statistiken.json");
+const listPath = resolve("config/statistics.json");
 const oldList = await readFile(listPath, "utf-8").then(JSON.parse, () => null);
 const list = updateList(oldList, evaluation);
 await writeFile(listPath, `${JSON.stringify(list, null, 2)}\n`);
-log(`config/statistiken.json: ${list.statistiken.length} statistics (before ${oldList?.statistiken?.length ?? 0})`);
+log(`config/statistics.json: ${list.statistics.length} statistics (before ${oldList?.statistics?.length ?? 0})`);
 
 // 4. Samples of further endpoints
 const probe = async (name, path, ns) => {

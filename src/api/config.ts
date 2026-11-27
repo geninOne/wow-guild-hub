@@ -1,10 +1,10 @@
-import data from "../../config/talent-korrekturen.json";
+import data from "../../config/talent-fixes.json";
 import type { TalentFix } from "./types";
 
 /** Rank names per guild: guild slug, below it rank number to name. */
 export type RankNames = Record<string, Record<string, string>>;
 
-export const TALENT_FIXES: TalentFix[] = data.korrekturen;
+export const TALENT_FIXES: TalentFix[] = data.fixes;
 
 /**
  * Rank names from the environment variable `GUILD_RANKS` (JSON). Per guild slug either a list whose position is

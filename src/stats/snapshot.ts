@@ -6,7 +6,7 @@ export type StatValues = Record<string, number>;
 
 /**
  * Weekly statistics snapshot under `stats/<Saturday>`: for each active character the complete statistic values
- * at the end of the scoring week. Names and categories are stored once in `config/statistiken.json`.
+ * at the end of the scoring week. Names and categories are stored once in `config/statistics.json`.
  */
 export interface StatsSnapshot {
   /** Saturday of the scoring week. */

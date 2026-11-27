@@ -1,0 +1,4 @@
+{
+  "_note": "Day the game started (YYYY-MM-DD). Before it there were no characters: in the month and the calendar week of the server start, Wrapped and the weekly report count everyone from level 1 and counter 0, and day snapshots with an earlier date are never used for comparison. Without a date (null), the comparison of two day snapshots applies everywhere.",
+  "date": "2026-11-05"
+}

@@ -2,6 +2,8 @@
 
 🇬🇧 [English](SECURITY.md)
 
+> Übersetzung von [SECURITY.md](SECURITY.md). Bei Abweichungen gilt die englische Fassung.
+
 ## Unterstützte Versionen
 
 Sicherheitskorrekturen gibt es für die jeweils neueste Version auf `main`. Wer die Seite geforkt hat, übernimmt

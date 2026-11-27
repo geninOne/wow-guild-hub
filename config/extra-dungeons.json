@@ -1,0 +1,50 @@
+{
+  "_note": "Dungeons outside the Blizzard achievements \"Dungeonerforscher\": those that are in no achievement, and the halves of a criterion for counterparts of both factions. They appear in the tab \"Dungeons und Raids\" and on the character page, sorted by minimum level into their achievement tier. Fields: name (German, as displayed), tier (achievement tier: Novize, Erfahren or Meister), levels [min, max] and bosses (if missing, those from config/dungeons.json apply), source (completion: victories over the final boss according to the boss kill statistic \"Siege über ENDBOSS (INSTANZ)\", with finalBoss as ENDBOSS and instance as the name in parentheses), image (retail journal-instance ID or image URL; if missing, config/instance-images.json applies), faction (HORDE or ALLIANCE, optional: only characters of this faction count, because Blizzard mirrors the statistic of counterparts onto the other faction), replaces (optional: achievement criteria this entry replaces; if the criterion is done, it counts as completion for characters of their own faction). \"_check\" names uncertainties.",
+  "dungeons": [
+    {
+      "name": "Flammenschlund",
+      "tier": "Novize",
+      "source": {
+        "instance": "Flammenschlund",
+        "finalBoss": "Bazzalan"
+      },
+      "faction": "HORDE",
+      "replaces": [
+        "Flammenschlund oder Halle der Thanen",
+        "Ragefireabgrund oder Halle der Thanen"
+      ],
+      "_check": "Am 2026-11-20 lokal geprüft: Bei allen 35 Allianz-Charakteren mit Sieg über Durgen Dirgehammer steht Bazzalan mit gleicher Zahl und gleichem Zeitpunkt in der Statistik (gespiegelt), Horde-Charaktere haben nur Bazzalan."
+    },
+    {
+      "name": "Halle der Thanen",
+      "tier": "Novize",
+      "source": {
+        "instance": "Halle der Thanen",
+        "finalBoss": "Durgen Dirgehammer"
+      },
+      "faction": "ALLIANCE",
+      "replaces": [
+        "Flammenschlund oder Halle der Thanen",
+        "Ragefireabgrund oder Halle der Thanen"
+      ]
+    },
+    {
+      "name": "Das Verlies",
+      "tier": "Novize",
+      "levels": [24, 32],
+      "bosses": [
+        "Targorr der Schreckliche",
+        "Kam Tiefenzorn",
+        "Hamhock",
+        "Bazil Thredd",
+        "Dextren Ward"
+      ],
+      "source": {
+        "instance": "Verlies von Stormwind",
+        "finalBoss": "Bazil Thredd"
+      },
+      "image": "https://render.worldofwarcraft.com/eu/zones/the-stockade-small.jpg",
+      "_check": "Stufe 24 bis 32 laut mmonster.co (wie die anderen Einträge), Wowheads Dungeon-Journal für WoW Forever nennt 22 bis 32. Statistik \"Siege über Bazil Thredd (Verlies von Stormwind)\" (ID 15029) am 2026-11-20 gegen alle lokalen Charaktere geprüft. Bild: Blizzard-Journalkachel des Retail-Dungeons The Stockade. Deutsche Namen von Kam Deepfury, Hamhock und Dextren Ward unbelegt."
+    }
+  ]
+}

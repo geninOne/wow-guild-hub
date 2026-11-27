@@ -2,6 +2,8 @@
 
 🇬🇧 [English](CODE_OF_CONDUCT.md)
 
+> Übersetzung von [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). Bei Abweichungen gilt die englische Fassung.
+
 Dieser Verhaltenskodex folgt dem [Contributor Covenant](https://www.contributor-covenant.org/de/version/2/1/code_of_conduct/),
 Version 2.1. Maßgeblich ist der vollständige Text dort bzw. die [englische Fassung](CODE_OF_CONDUCT.md) in diesem
 Repository; hier steht das Wichtigste.

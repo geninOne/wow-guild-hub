@@ -191,7 +191,7 @@ export function mapStats(raw: any | null): CharacterStats | null {
 
 /**
  * All statistics in compact form: statistic ID to value, plus the texts of the "most often" statistics
- * (e.g. the most killed creature type). Names and categories are stored in `config/statistiken.json`.
+ * (e.g. the most killed creature type). Names and categories are stored in `config/statistics.json`.
  */
 export function mapStatValues(raw: any | null): { values: Record<string, number>; texts: Record<string, string> } | null {
   if (raw === null || raw === undefined) return null;

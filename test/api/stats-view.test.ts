@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import cardsConfig from "../../config/statistik-karten.json";
+import cardsConfig from "../../config/stat-cards.json";
 import { handleApi } from "../../src/api/router";
 import { buildStatCardMembers, buildStatCards, resolveStatsPeriod, STAT_LEADERS, statCards } from "../../src/api/stats-view";
 import type { StatCardMembersView, StatsView } from "../../src/api/types";
@@ -73,21 +73,21 @@ const newer = snapshot("2026-11-21", {
 
 describe("statCards", () => {
   test("config: only known counters and current values, texts only for used statistics, no dashes", () => {
-    const ids = cardsConfig.karten.flatMap((k) => k.statistiken);
-    for (const id of ids) expect(["zaehler", "stand"], `statistic ${id}`).toContain(statDefinition(id)?.art);
+    const ids = cardsConfig.cards.flatMap((k) => k.statistics);
+    for (const id of ids) expect(["zaehler", "stand"], `statistic ${id}`).toContain(statDefinition(id)?.kind);
     const used = new Set(ids.map(String));
-    for (const card of cardsConfig.karten as { slug: string; titel: unknown; spruch?: unknown }[]) {
-      expectConfigText(card.titel, `title of ${card.slug}`);
-      if (card.spruch !== undefined) expectConfigText(card.spruch, `blurb of ${card.slug}`);
+    for (const card of cardsConfig.cards as { slug: string; title: unknown; blurb?: unknown }[]) {
+      expectConfigText(card.title, `title of ${card.slug}`);
+      if (card.blurb !== undefined) expectConfigText(card.blurb, `blurb of ${card.slug}`);
     }
-    for (const [id, text] of Object.entries(cardsConfig.texte as Record<string, Record<string, unknown>>)) {
+    for (const [id, text] of Object.entries(cardsConfig.texts as Record<string, Record<string, unknown>>)) {
       expect(used.has(id), `text for ${id}`).toBe(true);
-      for (const field of ["kurz", "ehrung"]) if (field in text) expectConfigText(text[field], `${field} of ${id}`);
-      if ("einheit" in text) expectConfigUnit(text.einheit, `unit of ${id}`);
-      const conversion = text.umrechnung as { einheit: unknown; satz: unknown } | undefined;
+      for (const field of ["short", "honor"]) if (field in text) expectConfigText(text[field], `${field} of ${id}`);
+      if ("unit" in text) expectConfigUnit(text.unit, `unit of ${id}`);
+      const conversion = text.conversion as { unit: unknown; sentence: unknown } | undefined;
       if (conversion) {
-        expectConfigUnit(conversion.einheit, `conversion of ${id}`);
-        expectConfigText(conversion.satz, `conversion sentence of ${id}`);
+        expectConfigUnit(conversion.unit, `conversion of ${id}`);
+        expectConfigText(conversion.sentence, `conversion sentence of ${id}`);
       }
     }
     expect(JSON.stringify(cardsConfig)).not.toMatch(/[\u2013\u2014]/);
@@ -130,8 +130,8 @@ describe("statCards", () => {
         for (const [k, v] of Object.entries(value)) collect(v, k === "schwaebisch" || k === "bayrisch" ? k : language);
       }
     };
-    collect(cardsConfig.karten);
-    collect(cardsConfig.texte);
+    collect(cardsConfig.cards);
+    collect(cardsConfig.texts);
     for (const text of texts) expect(text).not.toMatch(/Bärenklaue|Ulm|Schwab|Schwäb|Vesper|Fläschle/);
   });
 });

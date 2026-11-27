@@ -184,10 +184,10 @@ describe("instance images", () => {
 });
 
 const INFO: Record<string, DungeonInfo> = {
-  Flammenschlund: { stufe: [13, 18], bosse: ["Oggleflint", "Taragaman der Hungerleider", "Jergosh der Herbeirufer", "Bazzalan"], statistik: [], ohneStatistik: false },
-  "Halle der Thanen": { stufe: [15, 20], bosse: ["Faldrim Anvilmar", "Durgen Dirgehammer"], statistik: [], ohneStatistik: false },
-  Todesminen: { stufe: [17, 26], bosse: ["Rhahk'Zor", "Edwin van Cleef"], statistik: [], ohneStatistik: false },
-  Hyjalgipfel: { stufe: [60, 60], bosse: [], statistik: [], ohneStatistik: false },
+  Flammenschlund: { levels: [13, 18], bosses: ["Oggleflint", "Taragaman der Hungerleider", "Jergosh der Herbeirufer", "Bazzalan"], statisticEntries: [], withoutStatistic: false },
+  "Halle der Thanen": { levels: [15, 20], bosses: ["Faldrim Anvilmar", "Durgen Dirgehammer"], statisticEntries: [], withoutStatistic: false },
+  Todesminen: { levels: [17, 26], bosses: ["Rhahk'Zor", "Edwin van Cleef"], statisticEntries: [], withoutStatistic: false },
+  Hyjalgipfel: { levels: [60, 60], bosses: [], statisticEntries: [], withoutStatistic: false },
 };
 
 describe("boss lists and levels from the maintained file", () => {
@@ -281,28 +281,28 @@ describe("boss lists and levels from the maintained file", () => {
 });
 
 test("maintained file is validated on load", () => {
-  expect(toDungeonInfo({ stufe: [13, 18], bosse: ["A", 3] })).toEqual({ stufe: [13, 18], bosse: ["A"], statistik: [], ohneStatistik: false });
-  expect(toDungeonInfo({ stufe: [13], bosse: "x" })).toEqual({ stufe: null, bosse: [], statistik: [], ohneStatistik: false });
-  expect(toDungeonInfo({})).toEqual({ stufe: null, bosse: [], statistik: [], ohneStatistik: false });
-  expect(toDungeonInfo({ statistik: [{ instanz: "I", endboss: "E" }, { instanz: 1 }, null] })).toEqual({
-    stufe: null, bosse: [], statistik: [{ instanz: "I", endboss: "E" }], ohneStatistik: false,
+  expect(toDungeonInfo({ levels: [13, 18], bosses: ["A", 3] })).toEqual({ levels: [13, 18], bosses: ["A"], statisticEntries: [], withoutStatistic: false });
+  expect(toDungeonInfo({ levels: [13], bosses: "x" })).toEqual({ levels: null, bosses: [], statisticEntries: [], withoutStatistic: false });
+  expect(toDungeonInfo({})).toEqual({ levels: null, bosses: [], statisticEntries: [], withoutStatistic: false });
+  expect(toDungeonInfo({ statisticEntries: [{ instance: "I", finalBoss: "E" }, { instance: 1 }, null] })).toEqual({
+    levels: null, bosses: [], statisticEntries: [{ instance: "I", finalBoss: "E" }], withoutStatistic: false,
   });
-  expect(DUNGEON_INFO["Todesminen"].stufe).toEqual([17, 26]);
-  expect(DUNGEON_INFO["Todesminen"].bosse).toContain("Edwin van Cleef");
-  expect(DUNGEON_INFO["Flammenschlund"].bosse).toContain("Bazzalan");
+  expect(DUNGEON_INFO["Todesminen"].levels).toEqual([17, 26]);
+  expect(DUNGEON_INFO["Todesminen"].bosses).toContain("Edwin van Cleef");
+  expect(DUNGEON_INFO["Flammenschlund"].bosses).toContain("Bazzalan");
 });
 
 describe("extra dungeons without an achievement", () => {
   const stockade: ExtraDungeon = {
     name: "Das Verlies",
     tier: "Novize",
-    info: { stufe: [24, 32], bosse: ["Targorr der Schreckliche", "Bazil Thredd"], statistik: [], ohneStatistik: false },
+    info: { levels: [24, 32], bosses: ["Targorr der Schreckliche", "Bazil Thredd"], statisticEntries: [], withoutStatistic: false },
     source: { instance: "Verlies von Stormwind", finalBoss: "Bazil Thredd" },
     image: null, faction: null, replaces: [],
   };
   const info: Record<string, DungeonInfo> = {
-    "Burg Shadowfang": { stufe: [22, 30], bosse: [], statistik: [], ohneStatistik: false },
-    "Ausgrabungsstätte: Sumpfland": { stufe: [24, 29], bosse: [], statistik: [], ohneStatistik: false },
+    "Burg Shadowfang": { levels: [22, 30], bosses: [], statisticEntries: [], withoutStatistic: false },
+    "Ausgrabungsstätte: Sumpfland": { levels: [24, 29], bosses: [], statisticEntries: [], withoutStatistic: false },
   };
 
   test("appears in its tier, sorted by minimum level", () => {
@@ -337,15 +337,15 @@ describe("extra dungeons without an achievement", () => {
 
   test("configuration: Das Verlies is listed with level, source and Blizzard image", () => {
     const v = EXTRA_DUNGEONS.find((d) => d.name === "Das Verlies");
-    expect(v).toMatchObject({ tier: "Novize", info: { stufe: [24, 32] }, source: { instance: "Verlies von Stormwind", finalBoss: "Bazil Thredd" } });
+    expect(v).toMatchObject({ tier: "Novize", info: { levels: [24, 32] }, source: { instance: "Verlies von Stormwind", finalBoss: "Bazil Thredd" } });
     expect(instanceImage("Das Verlies", null)).toBe("https://render.worldofwarcraft.com/eu/zones/the-stockade-small.jpg");
-    expect(toExtraDungeon({ name: "Ohne Quelle", rang: "Novize" })).toBeNull();
+    expect(toExtraDungeon({ name: "Ohne Quelle", tier: "Novize" })).toBeNull();
   });
 });
 
 test("extra dungeon lands before the first dungeon with a higher minimum level", () => {
   const extra: ExtraDungeon = {
-    name: "Das Verlies", tier: "Novize", info: { stufe: [16, 20], bosse: [], statistik: [], ohneStatistik: false },
+    name: "Das Verlies", tier: "Novize", info: { levels: [16, 20], bosses: [], statisticEntries: [], withoutStatistic: false },
     source: { instance: "Verlies von Stormwind", finalBoss: "Bazil Thredd" }, image: null, faction: null, replaces: [],
   };
   const v = buildInstancesView(defs, undefined, null, DUNGEON_INFO, [extra]);
@@ -410,9 +410,9 @@ describe("counterparts of both factions separate", () => {
 
   test("configuration: both separate, level and images from the maintained data", () => {
     const byName = new Map(EXTRA_DUNGEONS.map((d) => [d.name, d]));
-    expect(byName.get("Flammenschlund")).toMatchObject({ faction: "HORDE", replaces: replaced, info: { stufe: [13, 18] } });
-    expect(byName.get("Halle der Thanen")).toMatchObject({ faction: "ALLIANCE", replaces: replaced, info: { stufe: [13, 18] } });
-    expect(byName.get("Halle der Thanen")?.info.bosse.at(-1)).toBe("Durgen Dirgehammer");
+    expect(byName.get("Flammenschlund")).toMatchObject({ faction: "HORDE", replaces: replaced, info: { levels: [13, 18] } });
+    expect(byName.get("Halle der Thanen")).toMatchObject({ faction: "ALLIANCE", replaces: replaced, info: { levels: [13, 18] } });
+    expect(byName.get("Halle der Thanen")?.info.bosses.at(-1)).toBe("Durgen Dirgehammer");
     expect(instanceImage("Halle der Thanen", null)).toBe("/dungeons/halle-der-thanen.jpg");
   });
 });

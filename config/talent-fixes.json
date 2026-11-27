@@ -1,5 +1,5 @@
 {
-  "korrekturen": [
+  "fixes": [
     { "nodeId": 104982, "hide": true, "reason": "Jäger/Überleben: 'Blitzartige Reflexe' doppelt mit Spalte 170. Gültig ist Knoten 110859 (Zeile 6, Spalte 16)." },
     { "nodeId": 105865, "hide": true, "reason": "Priester/Heilig: 'Heiligspezialisierung' doppelt mit Zeile 33, Spalte 14. Gültig ist Knoten 110855 (Zeile 1, Spalte 9)." },
     { "nodeId": 105003, "row": 6, "col": 10, "reason": "Jäger/Treffsicherheit: 'Verbesserter Schlangenbiss' mit Zeile 63, vermutlich 6. Im Spiel prüfen." }
