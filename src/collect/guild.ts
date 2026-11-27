@@ -4,6 +4,7 @@ import { runPool } from "../lib/pool";
 import { berlinDate } from "../lib/time";
 import type { CharacterIndex, CharacterRecord, GuildInfo, GuildRecord, LevelUpEvent, LevelUpLog, MemberSummary } from "../model";
 import type { JsonStore } from "../store";
+import { workEndOf } from "./budget";
 import { CHARACTER_INDEX_KEY, toCharacterIndexEntry } from "./character-index";
 import { detectLogin, recordActivity, type LoginSeen } from "./activity";
 import { fetchCharacter } from "./fetch-character";
@@ -71,7 +72,8 @@ function guildInfo(slug: string, g: RawGuild, members: MemberSummary[], main: bo
 export async function runGuildCollection(deps: CollectDeps): Promise<GuildRunReport> {
   const { client, store, config } = deps;
   const started = Date.now();
-  const deadline = started + config.budgetMs;
+  // Neue Charaktere nur bis kurz vor Budgetende; der Rest gehört den laufenden Abrufen und dem Schreiben am Ende.
+  const deadline = workEndOf(started, config.budgetMs);
   const at = deps.now().toISOString();
 
   // Die Hauptgilde muss gelingen, sonst scheitert der Lauf ohne zu schreiben. Nebengilden dürfen ausfallen.
