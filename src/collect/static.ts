@@ -540,7 +540,9 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
     let attributesFetched = 0;
     let attributesOpen = attributesToFetch;
     if (attributesToFetch.length > 0) {
-      const share = started + Math.floor((workEnd - started) * ATTRIBUTES_BUDGET_SHARE);
+      // Gemessen ab jetzt, damit eine lange Vorarbeit den Anteil der Werte nicht auffrisst.
+      const from = Date.now();
+      const share = from + Math.floor((workEnd - from) * ATTRIBUTES_BUDGET_SHARE);
       const first = await phase("attributes", workEnd, null, () =>
         fillAttributes(deps, attributesToFetch, attributesIndex, Math.min(share, workEnd), at),
       );
