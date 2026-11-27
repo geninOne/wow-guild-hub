@@ -8,6 +8,14 @@ This file is maintained by [release-please](https://github.com/googleapis/releas
 [Conventional Commits](https://www.conventionalcommits.org/) on `main`. Please do not edit it by hand; see
 [CONTRIBUTING.md](CONTRIBUTING.md#commits-and-versions).
 
+## [2.1.3](https://github.com/geninOne/wow-guild-hub/compare/v2.1.2...v2.1.3) (2026-11-27)
+
+
+### Bug Fixes
+
+* guild collector stops fetching new characters before the end of its budget ([#11](https://github.com/geninOne/wow-guild-hub/issues/11)) ([4ecbc06](https://github.com/geninOne/wow-guild-hub/commit/4ecbc061a6fc6fad1835ee1b24f86738bcd06b50))
+* static collector makes progress again ([#10](https://github.com/geninOne/wow-guild-hub/issues/10)) ([06d255e](https://github.com/geninOne/wow-guild-hub/commit/06d255edb3199e58fdc6cb160d195f132550de6c))
+
 ## [2.1.2](https://github.com/geninOne/wow-guild-hub/compare/v2.1.1...v2.1.2) (2026-11-26)
 
 
