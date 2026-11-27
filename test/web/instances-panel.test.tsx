@@ -163,3 +163,15 @@ test("nur accountweit erledigt: kein Wimpel, sondern der Hinweis \"Auf diesem Ac
   }
   expect(card("Scholomance").querySelector(".instance-card-note")?.textContent).toBe("Noch nicht besucht");
 });
+
+test("ohne Statistik: der Hinweis erklärt, dass der Abschluss je Charakter unbekannt ist", () => {
+  const sumpf: InstancesView = {
+    ...view,
+    dungeonTiers: [{ achievementId: 62031, tier: "Novize", dungeons: [dungeon({ criterionId: 7, name: "Ausgrabungsstätte: Sumpfland", onAccount: true, tracked: false })] }],
+    raids: [],
+  };
+  render(<InstancesPanel view={sumpf} />);
+  const note = card("Ausgrabungsstätte: Sumpfland").querySelector(".instance-card-note-account")!;
+  expect(note.textContent).toBe("Auf diesem Account");
+  expect(note.getAttribute("title")).toContain("nicht bekannt");
+});
