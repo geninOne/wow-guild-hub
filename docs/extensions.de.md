@@ -316,6 +316,23 @@ export const polls: UiExtension = {
 
 Vor jedem Commit: `npm run lint`, `npm test`, `npm run typecheck` und `npm run build`.
 
+### Die Englisch-Prüfung im eigenen Fork
+
+Die CI führt `npm run check:english -- --all --strict` aus und schlägt bei deutschen Namen, Kommentaren,
+Testnamen und Meldungen fehl. Die Ordner der Module unter `src/extensions/<id>/`, `web/src/extensions/<id>/` (und
+die Ordner `erweiterungen/<id>/` aus 2.x) bleiben außen vor, eigene Module dürfen also jede Sprache nutzen. Für
+andere eigene Dateien, die bleiben sollen, wie sie sind, etwa Skripte oder Workflows, gibt es
+`.check-english-ignore` im Wurzelverzeichnis (dieses Repository hat keine, sie macht beim Update also nie
+Konflikte): ein Pfadmuster je Zeile, `#` für Kommentare, `*` innerhalb eines Namens, `**` über Ordner hinweg, ein `/`
+am Ende für einen ganzen Ordner.
+
+```
+# eigene Skripte und Workflow dieses Forks
+scripts/my-module-*.mjs
+.github/workflows/my-sync.yml
+test/scripts/my-module-lib.test.ts
+```
+
 ## Upgrade von 2.x
 
 Version 3.0 benennt die Schnittstelle für Erweiterungen auf Englisch um. Sofort ändern muss man nichts, aber die

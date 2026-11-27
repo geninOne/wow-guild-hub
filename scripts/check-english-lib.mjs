@@ -110,6 +110,28 @@ export function splitName(name) {
     .map((part) => part.toLowerCase());
 }
 
+/**
+ * Reads a fork's own exceptions (`.check-english-ignore` in the repository root, not part of this repository):
+ * one path pattern per line, `#` starts a comment. `*` matches within one folder or file name, `**` across folders,
+ * and a pattern ending in `/` covers everything below that folder. Returns a test for paths.
+ * @param {string} text
+ * @returns {(path: string) => boolean}
+ */
+export function parseIgnoreList(text) {
+  const patterns = text
+    .split("\n")
+    .map((line) => line.replace(/#.*/, "").trim())
+    .filter(Boolean)
+    .map((pattern) => {
+      const source = pattern
+        .split("**")
+        .map((part) => part.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, "[^/]*"))
+        .join(".*");
+      return new RegExp(`^${source}${pattern.endsWith("/") ? "" : "$"}`);
+    });
+  return (path) => patterns.some((re) => re.test(path));
+}
+
 /** Reads the list of frozen names: one name per line, case-sensitive, `#` starts a comment. */
 export function parseNameList(text) {
   return text

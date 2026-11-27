@@ -315,6 +315,22 @@ export const polls: UiExtension = {
 
 Before every commit: `npm run lint`, `npm test`, `npm run typecheck` and `npm run build`.
 
+### The English check in your fork
+
+CI runs `npm run check:english -- --all --strict`, which fails on German names, comments, test names and messages.
+Module folders below `src/extensions/<id>/`, `web/src/extensions/<id>/` (and the 2.x folders `erweiterungen/<id>/`)
+are left out, so your modules may use any language. For other files of your own that should stay as they are, such
+as scripts or workflows, create `.check-english-ignore` in the repository root (this repository has none, so it
+never conflicts when you update): one path pattern per line, `#` for comments, `*` within a name, `**` across
+folders, a trailing `/` for a whole folder.
+
+```
+# own scripts and workflow of this fork
+scripts/my-module-*.mjs
+.github/workflows/my-sync.yml
+test/scripts/my-module-lib.test.ts
+```
+
 ## Upgrading from 2.x
 
 Version 3.0 renames the extension interface to English. Nothing has to change right away, but the 2.x names are
