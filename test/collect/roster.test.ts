@@ -1,5 +1,5 @@
-import { expect, test } from "vitest";
-import { applyRecord, fetchOrder, mergeRoster, parseRoster } from "../../src/collect/roster";
+import { describe, expect, test } from "vitest";
+import { applyRecord, fetchOrder, mergeRoster, ownAchievementCount, parseRoster } from "../../src/collect/roster";
 import { buildCharacterRecord } from "../../src/transform/character";
 import { loadFixture } from "../helpers/fixtures";
 import { entry, member } from "../helpers/members";
@@ -114,4 +114,32 @@ test("applyRecord ohne Profil übernimmt nur das Rosterlevel", () => {
   );
   const m = applyRecord(member({ id: 9, level: 7, name: "Gespeichert" }), rec, "t5");
   expect([m.level, m.name, m.hasProfile, m.lastFetchedAt]).toEqual([8, "Gespeichert", false, "t5"]);
+});
+
+describe("eigene Erfolge", () => {
+  const withAchievements = (raw: unknown[] | null) =>
+    buildCharacterRecord(
+      entry({ id: 9, level: 20 }),
+      { profile: loadFixture("luvia-profile").data, specializations: null, equipment: null, media: null, professions: null, raids: null,
+        statistics: null, reputations: null, achievements: raw === null ? null : { achievements: raw } },
+      "t5",
+    );
+  const done = (id: number) => ({ id, criteria: { is_completed: true } });
+
+  test("accountweite Erfolge zählen nicht, nicht accountweite und noch unbekannte schon", () => {
+    const rec = withAchievements([done(62031), done(627), done(1176), { id: 5, criteria: { is_completed: false, child_criteria: [{ id: 1, is_completed: true }] } }]);
+    expect(ownAchievementCount(rec, { "62031": true, "627": false })).toBe(2);
+    expect(applyRecord(member({ id: 9 }), rec, "t5", { "62031": true, "627": false }).achievementCount).toBe(2);
+  });
+
+  test("ohne bekannte Angaben zählt jeder abgeschlossene Erfolg, Leereinträge auch", () => {
+    const rec = withAchievements([done(62031), done(627)]);
+    expect(ownAchievementCount(rec)).toBe(2);
+    expect(ownAchievementCount(rec, { "62031": null })).toBe(2);
+  });
+
+  test("ohne Erfolgsdaten bleibt die Zahl offen", () => {
+    expect(ownAchievementCount(withAchievements(null))).toBeNull();
+    expect(applyRecord(member({ id: 9 }), withAchievements(null), "t5", { "62031": true }).achievementCount).toBeNull();
+  });
 });

@@ -158,7 +158,11 @@ export interface MemberSummary {
   dungeonsEntered?: number | null;
   /** Anzahl bekannter Rezepte über alle Berufe. */
   recipeCount?: number | null;
-  /** Abgeschlossene Erfolge laut Erfolgsliste; null ohne Daten. */
+  /**
+   * Abgeschlossene Erfolge des Charakters selbst; accountweite (`static/achievement-account-wide`) zählen nicht mit,
+   * weil Twinks sie vom Hauptcharakter erben. Erfolge ohne bekannte Angabe zählen, bis der statische Sammler sie kennt.
+   * null ohne Daten.
+   */
   achievementCount?: number | null;
   /** Summe der Rufstufen über alle Fraktionen; null ohne Daten. */
   reputationTiers?: number | null;
@@ -494,7 +498,15 @@ export interface CharacterIndexEntry {
   itemLevels: Record<string, number>;
   /** Bekannte Rezepte über alle Berufe. */
   recipeIds: number[];
+  /** Abgeschlossene Erfolge; fehlt in Einträgen vor der Erkennung accountweiter Erfolge. */
+  achievementIds?: number[];
 }
+
+/**
+ * Blob `static/achievement-account-wide`: Erfolgs-ID auf `is_account_wide` aus `/data/wow/achievement/{id}`,
+ * null bei 404 oder fehlender Angabe.
+ */
+export type AchievementAccountWide = Record<string, boolean | null>;
 
 /** Blob `character-index`: Charakter-ID auf `CharacterIndexEntry`. */
 export type CharacterIndex = Record<string, CharacterIndexEntry>;

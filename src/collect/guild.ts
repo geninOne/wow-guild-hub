@@ -2,14 +2,14 @@ import { BlizzardError, type BlizzardClient } from "../blizzard/client";
 import type { Config } from "../config";
 import { runPool } from "../lib/pool";
 import { berlinDate } from "../lib/time";
-import type { CharacterIndex, CharacterRecord, GuildInfo, GuildRecord, LevelUpEvent, LevelUpLog, MemberSummary } from "../model";
+import type { AchievementAccountWide, CharacterIndex, CharacterRecord, GuildInfo, GuildRecord, LevelUpEvent, LevelUpLog, MemberSummary } from "../model";
 import type { JsonStore } from "../store";
 import { workEndOf } from "./budget";
 import { CHARACTER_INDEX_KEY, toCharacterIndexEntry } from "./character-index";
 import { detectLogin, recordActivity, type LoginSeen } from "./activity";
 import { fetchCharacter } from "./fetch-character";
 import { appendLevelUps, detectLevelUps } from "./levelups";
-import { applyRecord, fetchOrder, mergeRoster, parseRoster, type GuildRosterEntry } from "./roster";
+import { ACCOUNT_WIDE_KEY, applyRecord, fetchOrder, mergeRoster, parseRoster, type GuildRosterEntry } from "./roster";
 import { buildSnapshot } from "./snapshot";
 import { saveStatsStand, type StatValues } from "../stats/stand";
 
@@ -95,10 +95,12 @@ export async function runGuildCollection(deps: CollectDeps): Promise<GuildRunRep
 
   const tGuild = Date.now() - started;
   const tCharacters = Date.now();
-  const [prev, characterIndex] = await Promise.all([
+  const [prev, characterIndex, accountWideStored] = await Promise.all([
     store.get<GuildRecord>("guild"),
     store.get<CharacterIndex>(CHARACTER_INDEX_KEY),
+    store.get<AchievementAccountWide>(ACCOUNT_WIDE_KEY),
   ]);
+  const accountWide = accountWideStored ?? {};
   // Was collect-static aus den Charakteren braucht; ersetzt dort das Lesen aller Datensätze.
   const nextIndex: CharacterIndex = { ...characterIndex };
   // Basislinie nur für Mitglieder, die schon einmal erfolgreich geholt wurden: Das Rosterlevel eines
@@ -124,7 +126,7 @@ export async function runGuildCollection(deps: CollectDeps): Promise<GuildRunRep
       if (record.statValues) statUpdates[String(member.id)] = record.statValues;
       const login = detectLogin(previous, record);
       if (login) seen.push(login);
-      members[index.get(member.id)!] = applyRecord(member, record, at);
+      members[index.get(member.id)!] = applyRecord(member, record, at, accountWide);
     },
     { concurrency: config.concurrency, deadline },
   );

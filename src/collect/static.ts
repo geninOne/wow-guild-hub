@@ -23,6 +23,7 @@ import { toAttributes } from "../transform/attributes";
 import { buildTalentTree, treeIdFromHref } from "../transform/talent-tree";
 import { workEndOf } from "./budget";
 import { CHARACTER_INDEX_KEY, toCharacterIndexEntry } from "./character-index";
+import { ACCOUNT_WIDE_KEY } from "./roster";
 import type { CollectDeps } from "./guild";
 
 export interface StaticRunReport {
@@ -33,6 +34,8 @@ export interface StaticRunReport {
   /** Gegenstandsstufen aus `/data/wow/item/{id}`, Ersatz für die fehlende Stufe in der Ausrüstung. */
   itemLevelsAdded: number;
   instanceAchievementsAdded: number;
+  /** Erfolge, deren `is_account_wide` dieser Lauf geholt hat. */
+  accountWideAdded: number;
   recipesAdded: number;
   reputationGroupsChecked: number;
   instanceImagesAdded: number;
@@ -71,6 +74,8 @@ const tileOf = (data: any): string | null => (data?.assets ?? []).find((a: any) 
 
 /** Neue Gegenstandsstufen je Lauf; beim ersten Lauf sind es fast tausend, das Budget gehört auch den übrigen Tabellen. */
 const MAX_NEW_ITEM_LEVELS_PER_RUN = 300;
+/** Neue Erfolgsangaben je Lauf; die Gilde kennt gut 80 Erfolge, die Grenze schützt nur das übrige Budget. */
+const MAX_NEW_ACCOUNT_WIDE_PER_RUN = 200;
 
 /** Leereinträge werden frühestens nach dieser Zeit erneut abgefragt. */
 export const RETRY_AFTER_MS = 7 * 24 * 60 * 60 * 1000;
@@ -399,6 +404,8 @@ interface CharacterScan {
   equippedIds: number[];
   knownLevels: Record<string, number>;
   recipeIds: number[];
+  /** Abgeschlossene Erfolge aller Charaktere, für `is_account_wide`. */
+  achievementIds: number[];
   attributeCandidates: AttributeCandidate[];
   /** Charaktere ohne Indexeintrag, die dieser Lauf selbst gelesen hat. */
   read: number;
@@ -438,6 +445,7 @@ async function scanCharacters(
     equippedIds: [],
     knownLevels: {},
     recipeIds: [],
+    achievementIds: [],
     attributeCandidates: [],
     read: pool.completed.length,
     unread: pool.skipped.length + pool.failed.length,
@@ -449,6 +457,7 @@ async function scanCharacters(
     scan.equippedIds.push(...e.itemIds);
     Object.assign(scan.knownLevels, e.itemLevels);
     scan.recipeIds.push(...e.recipeIds);
+    scan.achievementIds.push(...(e.achievementIds ?? []));
     if (e.hasProfile && active.has(id)) scan.attributeCandidates.push({ id, slug: e.slug, lastLoginAt: e.lastLoginAt });
   }
   return scan;
@@ -461,6 +470,7 @@ const emptyReport = (at: string): StaticRunReport => ({
   itemIconsAdded: 0,
   itemLevelsAdded: 0,
   instanceAchievementsAdded: 0,
+  accountWideAdded: 0,
   recipesAdded: 0,
   reputationGroupsChecked: 0,
   instanceImagesAdded: 0,
@@ -611,6 +621,18 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
       ),
     );
     const instances = await phase("instances", workEnd, none, () => fillInstanceAchievements(deps, workEnd));
+    // Accountweite Erfolge erbt jeder Twink; der Gildensammler zählt sie deshalb nicht als eigene Erfolge.
+    const accountWide = await phase("accountWide", workEnd, none, () =>
+      fillMap(
+        deps,
+        ACCOUNT_WIDE_KEY,
+        scan.achievementIds,
+        (id) => `/data/wow/achievement/${id}`,
+        (data) => (typeof data?.is_account_wide === "boolean" ? data.is_account_wide : null),
+        workEnd,
+        { at, maxNew: MAX_NEW_ACCOUNT_WIDE_PER_RUN },
+      ),
+    );
     const reputation = await phase("reputation", workEnd, { checked: 0, skipped: 0 }, () => fillReputationFactions(deps, workEnd));
     const professionIcons = await phase("professions", workEnd, none, () =>
       fillMap(
@@ -653,6 +675,7 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
     report.itemIconsAdded = items.added;
     report.itemLevelsAdded = levels.added;
     report.instanceAchievementsAdded = instances.added;
+    report.accountWideAdded = accountWide.added;
     report.recipesAdded = recipes.added;
     report.reputationGroupsChecked = reputation.checked;
     report.instanceImagesAdded = images.added;
@@ -666,6 +689,7 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
       levels.skipped +
       recipes.skipped +
       instances.skipped +
+      accountWide.skipped +
       reputation.skipped +
       images.skipped +
       professionIcons.skipped;

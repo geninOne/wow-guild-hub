@@ -18,5 +18,6 @@ export function toCharacterIndexEntry(rec: CharacterRecord): CharacterIndexEntry
     itemIds,
     itemLevels,
     recipeIds: (rec.professions ?? []).flatMap((p) => p.recipeIds ?? []),
+    achievementIds: (rec.instances?.achievements ?? []).filter((a) => a.completed).map((a) => a.id),
   };
 }

@@ -214,6 +214,7 @@ test("Charakterindex für collect-static: Gegenstände, Stufen, Rezepte und Logi
   expect(index?.[String(LUVIA)]).toMatchObject({ slug: "luvia-stav", hasProfile: true, lastLoginAt: luvia?.lastLoginAt });
   expect(index?.[String(LUVIA)].itemIds).toEqual(luvia?.equipment.filter((e) => e.itemId).map((e) => e.itemId));
   expect(index?.[String(LUVIA)].recipeIds).toEqual(luvia?.professions.flatMap((p) => p.recipeIds ?? []));
+  expect(index?.[String(LUVIA)].achievementIds).toEqual(luvia?.instances?.achievements.filter((a) => a.completed).map((a) => a.id));
   expect(index?.[String(SEEROTH)]).toMatchObject({ hasProfile: false, itemIds: [] });
 });
 
@@ -431,6 +432,18 @@ test("Tode, betretene Dungeons und Rezeptanzahl landen im Datensatz und im Tages
   routes[`${LUVIA_BASE}/achievements/statistics`] = { status: 404, data: null };
   await run(T11);
   expect((await store.get<CharacterRecord>(`characters/${LUVIA}`))?.stats).toEqual({ deaths: 4, dungeonsEntered: 2 });
+});
+
+test("Erfolgszahl ohne accountweite Erfolge aus static/achievement-account-wide", async () => {
+  const done = (id: number) => ({ id, criteria: { id: 1, is_completed: true } });
+  routes[`${LUVIA_BASE}/achievements`] = { status: 200, data: { achievements: [done(62031), done(627), done(1176)] } };
+  await run(T10);
+  const count = async () => (await store.get<GuildRecord>("guild"))?.members.find((m) => m.id === LUVIA)?.achievementCount;
+  expect(await count()).toBe(3);
+  await store.set("static/achievement-account-wide", { "62031": true, "627": false });
+  await run(T11);
+  expect(await count()).toBe(2);
+  expect((await store.get<DaySnapshot>("history/2026-11-06"))?.characters[String(LUVIA)].achievements).toBe(2);
 });
 
 test("Vollständige Statistik im Datensatz, 404 behält den vorigen Stand", async () => {
