@@ -8,6 +8,22 @@ This file is maintained by [release-please](https://github.com/googleapis/releas
 [Conventional Commits](https://www.conventionalcommits.org/) on `main`. Please do not edit it by hand; see
 [CONTRIBUTING.md](CONTRIBUTING.md#commits-and-versions).
 
+## [3.0.0](https://github.com/geninOne/wow-guild-hub/compare/v2.1.5...v3.0.0) (2026-11-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* English extension API with 2.x compatibility ([#29](https://github.com/geninOne/wow-guild-hub/issues/29))
+
+### Bug Fixes
+
+* **deps:** Bump the minor-and-patch group with 2 updates ([#20](https://github.com/geninOne/wow-guild-hub/issues/20)) ([fa7e7fb](https://github.com/geninOne/wow-guild-hub/commit/fa7e7fb99428acc33d864538929ddc578b9613c4))
+
+
+### Code Refactoring
+
+* English extension API with 2.x compatibility ([#29](https://github.com/geninOne/wow-guild-hub/issues/29)) ([8005ed4](https://github.com/geninOne/wow-guild-hub/commit/8005ed4e06b1da36f97693caad9d073646973164))
+
 ## [2.1.5](https://github.com/geninOne/wow-guild-hub/compare/v2.1.4...v2.1.5) (2026-11-27)
 
 
