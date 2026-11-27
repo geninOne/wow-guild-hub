@@ -1,17 +1,17 @@
-# Veröffentlichung einer eigenen Seite auf Netlify, gedacht für Forks (jeder Produktions-Deploy kostet Credits).
-# Im öffentlichen Repo geninOne/wow-guild-hub läuft er nie: Das Repo hat keine eigene Seite, dort entstehen nur
-# Versionen und GitHub-Releases (release-please.yml).
+# Publishes a site of your own on Netlify, meant for forks (every production deploy costs credits).
+# It never runs in the public repo geninOne/wow-guild-hub: that repo has no site of its own, it only produces
+# versions and GitHub releases (release-please.yml).
 #
-# Auslöser:
-# 1. Knopf: Actions, Release, Run workflow, Zweig wählen (meist main). Deployt genau diesen Stand.
-# 2. Tag v* pushen, zum Beispiel nach "git pull upstream vX.Y.Z". Das Tag muss zur Version in package.json passen.
-# Versionen werden hier nicht erhöht; sie kommen mit jedem Update aus dem öffentlichen Repo.
+# Triggers:
+# 1. Button: Actions, Release, Run workflow, choose a branch (usually main). Deploys exactly that state.
+# 2. Push a tag v*, for example after "git pull upstream vX.Y.Z". The tag must match the version in package.json.
+# Versions are not bumped here; they come with every update from the public repo.
 #
-# Ohne die Secrets NETLIFY_AUTH_TOKEN und NETLIFY_SITE_ID deployt nichts: Beim Tag endet der Lauf mit einem
-# Hinweis, beim Knopf mit einem Fehler.
+# Without the secrets NETLIFY_AUTH_TOKEN and NETLIFY_SITE_ID nothing is deployed: for a tag the run ends with a
+# notice, for the button with an error.
 # Secrets: NETLIFY_AUTH_TOKEN, NETLIFY_SITE_ID, BNET_CLIENT_ID, BNET_CLIENT_SECRET.
-# Variables: GUILD_SLUGS (Pflicht), optional GUILD_RANKS, TWINK_RANKS, TITLE_OPT_OUTS, WOW_VERSION, BNET_REGION, BNET_LOCALE,
-# COLLECT_CONCURRENCY, COLLECT_BUDGET_MS (sonst Standardwert, siehe .env.example).
+# Variables: GUILD_SLUGS (required), optional GUILD_RANKS, TWINK_RANKS, TITLE_OPT_OUTS, WOW_VERSION, BNET_REGION,
+# BNET_LOCALE, COLLECT_CONCURRENCY, COLLECT_BUDGET_MS (otherwise the default, see .env.example).
 name: Release
 
 on:
@@ -23,19 +23,19 @@ permissions:
   contents: read
 
 concurrency:
-  group: netlify-produktion
+  group: netlify-production
   cancel-in-progress: false
 
 jobs:
-  voraussetzungen:
-    name: Voraussetzungen
+  prerequisites:
+    name: Prerequisites
     if: github.repository != 'geninOne/wow-guild-hub'
     runs-on: ubuntu-latest
     timeout-minutes: 2
     outputs:
-      bereit: ${{ steps.secrets.outputs.bereit }}
+      ready: ${{ steps.secrets.outputs.ready }}
     steps:
-      - name: Secrets vorhanden
+      - name: Secrets present
         id: secrets
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
@@ -43,30 +43,30 @@ jobs:
           BNET_CLIENT_ID: ${{ secrets.BNET_CLIENT_ID }}
           BNET_CLIENT_SECRET: ${{ secrets.BNET_CLIENT_SECRET }}
         run: |
-          fehlt=""
+          missing=""
           for name in NETLIFY_AUTH_TOKEN NETLIFY_SITE_ID BNET_CLIENT_ID BNET_CLIENT_SECRET; do
-            if [ -z "${!name}" ]; then fehlt="$fehlt $name"; fi
+            if [ -z "${!name}" ]; then missing="$missing $name"; fi
           done
-          if [ -z "$fehlt" ]; then
-            echo "bereit=true" >> "$GITHUB_OUTPUT"
+          if [ -z "$missing" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
           elif [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
-            echo "::error::Secrets fehlen:$fehlt"
+            echo "::error::Missing secrets:$missing"
             exit 1
           else
-            echo "::notice::Kein Deploy, Secrets fehlen:$fehlt"
-            echo "bereit=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::No deploy, missing secrets:$missing"
+            echo "ready=false" >> "$GITHUB_OUTPUT"
           fi
 
-  pruefen:
-    name: Prüfung
-    needs: voraussetzungen
-    if: needs.voraussetzungen.outputs.bereit == 'true'
+  check:
+    name: Check
+    needs: prerequisites
+    if: needs.prerequisites.outputs.ready == 'true'
     uses: ./.github/workflows/ci.yml
 
-  veroeffentlichen:
-    name: Auf Netlify veröffentlichen
-    needs: [voraussetzungen, pruefen]
-    if: needs.voraussetzungen.outputs.bereit == 'true'
+  deploy:
+    name: Deploy to Netlify
+    needs: [prerequisites, check]
+    if: needs.prerequisites.outputs.ready == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -81,18 +81,18 @@ jobs:
 
       - run: npm ci
 
-      - name: Version bestimmen
+      - name: Determine version
         id: version
         run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
 
-      - name: Tag passt zu package.json und CHANGELOG.md
+      - name: Tag matches package.json and CHANGELOG.md
         if: github.ref_type == 'tag'
         env:
           TAG: ${{ github.ref_name }}
         run: node scripts/changelog-abschnitt.mjs --pruefe-tag "$TAG"
 
-      # Idempotent: neue Variablen anlegen, abweichende ersetzen, gleiche unverändert lassen. Gibt nur Namen aus.
-      - name: Umgebungsvariablen der Netlify-Site setzen
+      # Idempotent: creates new variables, replaces differing ones, leaves equal ones alone. Prints names only.
+      - name: Set environment variables of the Netlify site
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
@@ -107,14 +107,14 @@ jobs:
           BNET_LOCALE: ${{ vars.BNET_LOCALE }}
           COLLECT_CONCURRENCY: ${{ vars.COLLECT_CONCURRENCY }}
           COLLECT_BUDGET_MS: ${{ vars.COLLECT_BUDGET_MS }}
-          # Wochenzeitung über das eigene AI Gateway, alles freiwillig: Fehlt etwas, wird es nicht gesetzt
-          # (auf Netlify bleibt der bisherige Wert), und ohne URL oder Schlüssel schreiben die Satzbausteine.
+          # Weekly newspaper through your own AI gateway, all optional: anything missing is not set (Netlify keeps
+          # the previous value), and without URL or key the sentence templates write the newspaper.
           NEWSPAPER_AI_KEY: ${{ secrets.NEWSPAPER_AI_KEY }}
           NEWSPAPER_AI_URL: ${{ vars.NEWSPAPER_AI_URL }}
           NEWSPAPER_AI_MODEL: ${{ vars.NEWSPAPER_AI_MODEL }}
           NEWSPAPER_AI_EFFORT: ${{ vars.NEWSPAPER_AI_EFFORT }}
           NEWSPAPER_AI_OUTPUT_CONFIG: ${{ vars.NEWSPAPER_AI_OUTPUT_CONFIG }}
-          # Angaben zur Seite (Name, Logo, Farben, Impressum ...), alle freiwillig, siehe .env.example.
+          # Site details (name, logo, colors, imprint ...), all optional, see .env.example.
           WEBSITE_NAME: ${{ vars.WEBSITE_NAME }}
           WEBSITE_LANGUAGES: ${{ vars.WEBSITE_LANGUAGES }}
           WEBSITE_NEWSPAPER: ${{ vars.WEBSITE_NEWSPAPER }}
@@ -135,15 +135,16 @@ jobs:
           WEBSITE_UMAMI_DOMAINS: ${{ vars.WEBSITE_UMAMI_DOMAINS }}
         run: node scripts/netlify-umgebung.mjs --aus-umgebung
 
-      # Die CLI baut selbst (npm run build mit URL der Site), bündelt die Functions samt Zeitplan
-      # (collect-guild stündlich, collect-static täglich) und lädt netlify.toml mit den Redirects hoch.
-      - name: Bauen und auf Netlify veröffentlichen
+      # The CLI builds by itself (npm run build with the site URL), bundles the functions with their schedules
+      # (collect-guild hourly, collect-static every four hours, collect-weekly daily) and uploads netlify.toml
+      # with the redirects.
+      - name: Build and deploy to Netlify
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
           NETLIFY_TELEMETRY_DISABLED: "1"
           VERSION: ${{ steps.version.outputs.version }}
-          # Die Oberfläche wird hier gebaut; die Angaben zur Seite direkt mitgeben, nicht nur auf Netlify.
+          # The interface is built here, so pass the site details directly, not only on Netlify.
           WEBSITE_NAME: ${{ vars.WEBSITE_NAME }}
           WEBSITE_LANGUAGES: ${{ vars.WEBSITE_LANGUAGES }}
           WEBSITE_NEWSPAPER: ${{ vars.WEBSITE_NEWSPAPER }}

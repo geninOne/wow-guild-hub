@@ -1,6 +1,6 @@
-# Wöchentliche Updates für npm und GitHub Actions. Kleine Updates kommen gebündelt, große einzeln.
-# Die Commit-Präfixe folgen Conventional Commits: fix(deps) für Abhängigkeiten der Seite (ergibt ein Patch-Release),
-# chore(deps-dev) für Entwicklungswerkzeuge und ci(deps) für Actions (beide ohne eigenes Release).
+# Weekly updates for npm and GitHub Actions. Minor and patch updates come grouped, major ones one by one.
+# Commit prefixes follow Conventional Commits: fix(deps) for dependencies of the site (gives a patch release),
+# chore(deps-dev) for development tools and ci(deps) for actions (neither gives a release of its own).
 version: 2
 updates:
   - package-ecosystem: npm
@@ -10,7 +10,7 @@ updates:
       day: monday
     open-pull-requests-limit: 5
     groups:
-      klein:
+      minor-and-patch:
         update-types: [minor, patch]
     commit-message:
       prefix: "fix"

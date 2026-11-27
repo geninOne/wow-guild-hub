@@ -1,0 +1,31 @@
+# Checks that every pull request title follows Conventional Commits. Pull requests are squash-merged, so the title
+# becomes the commit message on main, and release-please derives version and release notes from it.
+# Runs on pull_request (never pull_request_target): no secrets, read-only, also for forks.
+name: PR title
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions: {}
+
+jobs:
+  title:
+    # The job name is a required status check in the branch protection of main.
+    name: Conventional Commits
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Check title
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          pattern='^(feat|fix|perf|revert|docs|style|refactor|test|build|ci|chore)(\([a-z0-9._/-]+\))?!?: [^ ].*$'
+          if [[ "$TITLE" =~ $pattern ]]; then
+            echo "Title matches: $TITLE"
+            exit 0
+          fi
+          echo "::error::The title does not follow Conventional Commits: \"$TITLE\""
+          echo "Form: <type>(<optional scope>): <summary>, e.g. \"feat(professions): filter by recipe rank\" or \"fix: footer version\"."
+          echo "Types: feat, fix, perf, revert, docs, style, refactor, test, build, ci, chore. \"!\" before the colon marks a breaking change."
+          exit 1

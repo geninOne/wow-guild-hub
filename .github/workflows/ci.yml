@@ -1,6 +1,6 @@
-# Prüfung bei jedem Push und Pull Request auf main. Deployt nichts.
-# release.yml ruft diesen Workflow vor jedem Deploy auf (workflow_call).
-name: Prüfung
+# Checks on every push and pull request to main. Deploys nothing.
+# release.yml calls this workflow before every deploy (workflow_call).
+name: CI
 
 on:
   push:
@@ -13,7 +13,9 @@ permissions:
   contents: read
 
 jobs:
-  pruefen:
+  check:
+    # The job name is a required status check in the branch protection of main. Rename it only together with the
+    # branch protection setting.
     name: Lint, Tests, Typen, Build
     runs-on: ubuntu-latest
     timeout-minutes: 15

@@ -1,17 +1,17 @@
-# Versionen und Releases des öffentlichen Repos, ohne Deploy (das Repo hat keine eigene Seite).
+# Versions and releases of the public repo, without deploy (the repo has no site of its own).
 #
-# Nach jedem Push auf main pflegt release-please einen Release-PR "chore(main): release X.Y.Z" mit neuer Version in
-# package.json und package-lock.json, dem Abschnitt in CHANGELOG.md und .release-please-manifest.json. Die
-# Version ergibt sich aus den Conventional Commits seit dem letzten Release: fix = patch, feat = minor,
-# "!" oder BREAKING CHANGE = major. Wird der Release-PR gemergt, entstehen Tag vX.Y.Z und ein GitHub-Release
-# mit denselben Notizen. Einstellungen: release-please-config.json.
+# After every push to main, release-please maintains a release PR "chore(main): release X.Y.Z" with the new version
+# in package.json and package-lock.json, the section in CHANGELOG.md and .release-please-manifest.json. The version
+# follows from the Conventional Commits since the last release: fix = patch, feat = minor, "!" or
+# BREAKING CHANGE = major. When the release PR is merged, the tag vX.Y.Z and a GitHub release with the same notes
+# are created. Settings: release-please-config.json.
 #
-# Token: Mit der GitHub App (Variable BOT_APP_CLIENT_ID, Secret BOT_APP_PRIVATE_KEY) läuft die Prüfung
-# auch auf dem Release-PR. Ohne App nutzt der Workflow GITHUB_TOKEN; dann muss unter Settings, Actions, General
-# "Allow GitHub Actions to create and approve pull requests" an sein, und die Prüfung startet auf dem Release-PR
-# nicht von selbst (PRs von GITHUB_TOKEN lösen keine Workflows aus).
+# Token: with the GitHub App (variable BOT_APP_CLIENT_ID, secret BOT_APP_PRIVATE_KEY) the checks also run on the
+# release PR. Without the app the workflow uses GITHUB_TOKEN; then "Allow GitHub Actions to create and approve pull
+# requests" must be on under Settings, Actions, General, and the checks do not start on the release PR by themselves
+# (PRs created with GITHUB_TOKEN trigger no workflows).
 #
-# Läuft nur in geninOne/wow-guild-hub, nie in Forks oder im privaten Repo, das upstream übernimmt.
+# Runs only in geninOne/wow-guild-hub, never in forks or in the private repo that pulls from upstream.
 name: Release Please
 
 on:
@@ -27,7 +27,7 @@ concurrency:
 
 jobs:
   release-please:
-    name: Release-PR und Release
+    name: Release PR and release
     if: github.repository == 'geninOne/wow-guild-hub'
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -36,7 +36,7 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-      - name: Token der GitHub App
+      - name: GitHub App token
         id: app
         if: vars.BOT_APP_CLIENT_ID != ''
         uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc # v3.4.0
@@ -48,20 +48,20 @@ jobs:
         with:
           persist-credentials: false
 
-      # Einmalig: Die erste Version steht schon von Hand in CHANGELOG.md und im Manifest. Solange es gar kein
-      # Release gibt, wird es hier aus diesem Abschnitt angelegt, damit release-please ab dort weiterzählt.
-      - name: Erstes Release anlegen, falls es noch keins gibt
+      # One-off: the first version was written into CHANGELOG.md and the manifest by hand. As long as there is no
+      # release at all, it is created here from that section, so release-please counts on from there.
+      - name: Create the first release if there is none yet
         env:
           GH_TOKEN: ${{ steps.app.outputs.token || github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
           if [ -n "$(gh release list --limit 1 --json tagName --jq '.[].tagName')" ]; then
-            echo "Es gibt schon Releases, nichts zu tun."
+            echo "Releases exist already, nothing to do."
             exit 0
           fi
           version="$(node -p "require('./.release-please-manifest.json')['.']")"
-          node scripts/changelog-abschnitt.mjs "$version" > "$RUNNER_TEMP/notizen.md"
-          gh release create "v$version" --target "$GITHUB_SHA" --title "v$version" --notes-file "$RUNNER_TEMP/notizen.md"
+          node scripts/changelog-abschnitt.mjs "$version" > "$RUNNER_TEMP/notes.md"
+          gh release create "v$version" --target "$GITHUB_SHA" --title "v$version" --notes-file "$RUNNER_TEMP/notes.md"
 
       - name: release-please
         id: release
@@ -71,15 +71,15 @@ jobs:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
-      # Bei einer neuen Hauptversion heißt der Abschnitt mit den Breaking Changes im GitHub-Release "Upgrade notes",
-      # damit Betreiber sofort sehen, was sie anpassen müssen (Umgebungsvariablen, Schritte bei Netlify).
-      - name: Upgrade notes bei einer Hauptversion
+      # For a new major version, the section with the breaking changes in the GitHub release is called
+      # "Upgrade notes", so operators see right away what they have to adjust (environment variables, Netlify steps).
+      - name: Upgrade notes for a major version
         if: steps.release.outputs.release_created == 'true' && steps.release.outputs.minor == '0' && steps.release.outputs.patch == '0'
         env:
           GH_TOKEN: ${{ steps.app.outputs.token || github.token }}
           GH_REPO: ${{ github.repository }}
           TAG: ${{ steps.release.outputs.tag_name }}
         run: |
-          gh release view "$TAG" --json body --jq .body > "$RUNNER_TEMP/notizen.md"
-          sed -i 's/^### ⚠ BREAKING CHANGES$/### ⚠ Upgrade notes (breaking changes)/' "$RUNNER_TEMP/notizen.md"
-          gh release edit "$TAG" --notes-file "$RUNNER_TEMP/notizen.md"
+          gh release view "$TAG" --json body --jq .body > "$RUNNER_TEMP/notes.md"
+          sed -i 's/^### ⚠ BREAKING CHANGES$/### ⚠ Upgrade notes (breaking changes)/' "$RUNNER_TEMP/notes.md"
+          gh release edit "$TAG" --notes-file "$RUNNER_TEMP/notes.md"
