@@ -6,8 +6,8 @@ import { Icon } from "./Icon";
 const RENDER = "https://render.worldofwarcraft.com";
 
 /**
- * Offizielle Fraktionssymbole vom Bildserver von Blizzard (wie alle anderen Spielsymbole nicht im Repo).
- * Zuerst das runde Fraktionssymbol, dann das PvP-Banner der Fraktion; lädt nichts, bleibt der farbige Wimpel.
+ * Official faction icons from Blizzard's image server (like all other game icons, not in the repo).
+ * First the round faction icon, then the faction's PvP banner; if nothing loads, the colored pennant remains.
  */
 export const FACTION_ICONS: Record<string, string[]> = {
   HORDE: [
@@ -22,13 +22,13 @@ export const FACTION_ICONS: Record<string, string[]> = {
   ],
 };
 
-/** Fahnenfarben (hell, dunkel) aus der Wappen-Palette. */
+/** Banner colors (light, dark) from the crest palette. */
 const FIELDS: Record<string, [string, string]> = {
   HORDE: ["#e0393f", "#b3202a"],
   ALLIANCE: ["#2f6ae0", "#1f4fb8"],
 };
 
-/** Farbiger Wimpel als Rückfall, wenn das Fraktionssymbol nicht lädt, und für unbekannte Fraktionen. */
+/** Colored pennant as a fallback when the faction icon does not load, and for unknown factions. */
 function Pennant({ faction, size }: { faction: string; size: number }) {
   const id = useId();
   const { sprache } = useSprache();
@@ -50,7 +50,8 @@ function Pennant({ faction, size }: { faction: string; size: number }) {
   );
 }
 
-/** Fraktionssymbol von Horde oder Allianz mit Rahmen in Fraktionsfarbe; bei Ladefehler der farbige Wimpel. */
+/** Horde or Alliance faction icon with a border in the faction color; the colored pennant on a load error. */
+
 export function FactionCrest({ faction, size = 18, decorative = false }: { faction: string; size?: number; decorative?: boolean }) {
   const { sprache } = useSprache();
   const sources = FACTION_ICONS[faction];

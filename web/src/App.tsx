@@ -1,15 +1,15 @@
 import { Link, Navigate, NavLink, Route, Routes } from "react-router";
 import { DiscordLink } from "./components/DiscordLink";
 import { OBERFLAECHEN_ERWEITERUNGEN } from "./erweiterungen";
-import { Sprachumschalter } from "./components/Sprachumschalter";
+import { LanguageSwitcher } from "./components/LanguageSwitcher";
 import { site } from "./lib/site";
 import { SpracheProvider, useSprache, type Fassungen } from "./lib/sprache";
 import { versionText } from "./lib/version";
-import { ZeitungArchivePage, ZeitungPage } from "./pages/ZeitungPage";
+import { NewspaperArchivePage, NewspaperPage } from "./pages/NewspaperPage";
 import { CharacterPage } from "./pages/CharacterPage";
-import { DatenschutzPage } from "./pages/DatenschutzPage";
+import { PrivacyPage } from "./pages/PrivacyPage";
 import { GuildPage } from "./pages/GuildPage";
-import { ImpressumPage } from "./pages/ImpressumPage";
+import { ImprintPage } from "./pages/ImprintPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { ProfessionsPage } from "./pages/ProfessionsPage";
 import { StatsPage } from "./pages/StatsPage";
@@ -28,7 +28,7 @@ const NAVIGATION: { to: string; label: Fassungen; end: boolean }[] = [
 ];
 
 const T = {
-  herkunft: {
+  source: {
     de: "Daten aus der Blizzard-API, stündlich aktualisiert. Inoffizielle Fanseite, nicht mit Blizzard Entertainment verbunden.",
     en: "Data from the Blizzard API, updated hourly. Unofficial fan site, not affiliated with Blizzard Entertainment.",
     schwaebisch:
@@ -36,18 +36,18 @@ const T = {
     bayrisch:
       "Daten aus da Blizzard-API, jede Stund frisch. Inoffizielle Fanseitn, ned mit Blizzard Entertainment verbandelt.",
   },
-  hauptnavigation: { de: "Hauptnavigation", en: "Main navigation" },
-  zurUebersicht: { de: "zur Gildenübersicht", en: "to the guild overview" },
-  rechtliches: { de: "Rechtliches", en: "Legal" },
-  impressum: { de: "Impressum", en: "Legal notice" },
-  datenschutz: { de: "Datenschutz", en: "Privacy" },
+  mainNavigation: { de: "Hauptnavigation", en: "Main navigation" },
+  toOverview: { de: "zur Gildenübersicht", en: "to the guild overview" },
+  legal: { de: "Rechtliches", en: "Legal" },
+  imprint: { de: "Impressum", en: "Legal notice" },
+  privacy: { de: "Datenschutz", en: "Privacy" },
 } satisfies Record<string, Fassungen>;
 
-/** Rechtstexte aus einem Modul, sonst die Platzhalter-Vorlagen des Kerns. */
-const EigenesImpressum = OBERFLAECHEN_ERWEITERUNGEN.find((e) => e.impressumSeite)?.impressumSeite ?? ImpressumPage;
-const EigenerDatenschutz = OBERFLAECHEN_ERWEITERUNGEN.find((e) => e.datenschutzSeite)?.datenschutzSeite ?? DatenschutzPage;
+/** Legal texts from a module, otherwise the core's placeholder templates. */
+const CustomImprint = OBERFLAECHEN_ERWEITERUNGEN.find((e) => e.impressumSeite)?.impressumSeite ?? ImprintPage;
+const CustomPrivacy = OBERFLAECHEN_ERWEITERUNGEN.find((e) => e.datenschutzSeite)?.datenschutzSeite ?? PrivacyPage;
 
-/** Layout und Routen. Den Router setzt der Aufrufer (main.tsx bzw. Tests). */
+/** Layout and routes. The caller provides the router (main.tsx or tests). */
 export default function App() {
   return (
     <SpracheProvider>
@@ -58,20 +58,20 @@ export default function App() {
 
 function Site() {
   const { t, sprache } = useSprache();
-  const version = versionText(import.meta.env.VITE_VERSION, import.meta.env.VITE_VERSION_DATUM, sprache === "en");
+  const version = versionText(import.meta.env.VITE_VERSION, import.meta.env.VITE_VERSION_DATE, sprache === "en");
   const { name, logo, logoAlt, tagline, imprint } = site();
   return (
     <div className="site">
       <header className="site-header">
         <div className="site-header-inner">
-          <nav className="site-nav" aria-label={t(T.hauptnavigation)}>
+          <nav className="site-nav" aria-label={t(T.mainNavigation)}>
             {NAVIGATION.map((item) => (
               <NavLink key={item.to} to={item.to} end={item.end} className="nav-link">
                 {t(item.label)}
               </NavLink>
             ))}
           </nav>
-          <Link to="/" className="brand" aria-label={`${name}, ${t(T.zurUebersicht)}`}>
+          <Link to="/" className="brand" aria-label={`${name}, ${t(T.toOverview)}`}>
             <img
               className="brand-crest"
               src={logo}
@@ -81,7 +81,7 @@ function Site() {
             />
           </Link>
           <div className="site-header-end">
-            <Sprachumschalter />
+            <LanguageSwitcher />
             <DiscordLink className="discord-link" />
           </div>
         </div>
@@ -99,11 +99,11 @@ function Site() {
           {OBERFLAECHEN_ERWEITERUNGEN.flatMap((e) =>
             (e.routen ?? []).map(({ pfad, Komponente }) => <Route key={`${e.id}:${pfad}`} path={pfad} element={<Komponente />} />),
           )}
-          <Route path="/zeitung" element={<ZeitungPage />} />
-          <Route path="/zeitung/archiv" element={<ZeitungArchivePage />} />
-          <Route path="/zeitung/:woche" element={<ZeitungPage />} />
-          {imprint && <Route path="/impressum" element={<EigenesImpressum />} />}
-          {imprint && <Route path="/datenschutz" element={<EigenerDatenschutz />} />}
+          <Route path="/zeitung" element={<NewspaperPage />} />
+          <Route path="/zeitung/archiv" element={<NewspaperArchivePage />} />
+          <Route path="/zeitung/:woche" element={<NewspaperPage />} />
+          {imprint && <Route path="/impressum" element={<CustomImprint />} />}
+          {imprint && <Route path="/datenschutz" element={<CustomPrivacy />} />}
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
@@ -114,11 +114,11 @@ function Site() {
             <DiscordLink className="footer-discord" />
           </p>
         )}
-        <p>{t(T.herkunft)}</p>
+        <p>{t(T.source)}</p>
         {imprint && (
-          <nav className="footer-legal" aria-label={t(T.rechtliches)}>
-            <Link to="/impressum">{t(T.impressum)}</Link>
-            <Link to="/datenschutz">{t(T.datenschutz)}</Link>
+          <nav className="footer-legal" aria-label={t(T.legal)}>
+            <Link to="/impressum">{t(T.imprint)}</Link>
+            <Link to="/datenschutz">{t(T.privacy)}</Link>
           </nav>
         )}
         {version && <p className="footer-version">{version}</p>}

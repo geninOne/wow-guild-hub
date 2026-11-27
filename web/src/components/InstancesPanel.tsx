@@ -4,46 +4,46 @@ import { formatDate, formatDayMonth } from "../lib/format";
 import { fassungIn, useSprache, type Fassungen, type Sprache } from "../lib/sprache";
 
 const T = {
-  malBesiegt: {
+  defeatedTimes: {
     de: (boss: string, n: number) => `${boss} ${n} Mal besiegt`,
     en: (boss: string, n: number) => `${boss} defeated ${n} times`,
     schwaebisch: (boss: string, n: number) => `${boss} ${n} Mol bsiegt`,
     bayrisch: (boss: string, n: number) => `${boss} ${n} Moi bsiegt`,
   },
-  besiegt: {
+  defeated: {
     de: (boss: string) => `${boss} besiegt`,
     en: (boss: string) => `${boss} defeated`,
     schwaebisch: (boss: string) => `${boss} bsiegt`,
     bayrisch: (boss: string) => `${boss} bsiegt`,
   },
-  zuletzt: { de: "zuletzt", en: "last", schwaebisch: "zletscht", bayrisch: "zletzt" },
-  stufe: { de: "Stufe", en: "Level", schwaebisch: "Stufe", bayrisch: "Stufn" },
-  bis: { de: "bis", en: "to", schwaebisch: "bis", bayrisch: "bis" },
-  abgeschlossen: { de: "Abgeschlossen", en: "Completed", schwaebisch: "Gschafft", bayrisch: "Gschafft" },
-  am: { de: "am", en: "on", schwaebisch: "am", bayrisch: "am" },
-  mal: { de: "Mal", en: "times", schwaebisch: "Mol", bayrisch: "Moi" },
-  aufAccount: { de: "Auf diesem Account", en: "On this account", schwaebisch: "Uff dem Account", bayrisch: "Auf dem Account" },
-  aufAccountTitel: {
+  last: { de: "zuletzt", en: "last", schwaebisch: "zletscht", bayrisch: "zletzt" },
+  level: { de: "Stufe", en: "Level", schwaebisch: "Stufe", bayrisch: "Stufn" },
+  to: { de: "bis", en: "to", schwaebisch: "bis", bayrisch: "bis" },
+  completed: { de: "Abgeschlossen", en: "Completed", schwaebisch: "Gschafft", bayrisch: "Gschafft" },
+  on: { de: "am", en: "on", schwaebisch: "am", bayrisch: "am" },
+  times: { de: "Mal", en: "times", schwaebisch: "Mol", bayrisch: "Moi" },
+  onAccount: { de: "Auf diesem Account", en: "On this account", schwaebisch: "Uff dem Account", bayrisch: "Auf dem Account" },
+  onAccountTitle: {
     de: "Blizzard meldet diesen Abschluss nur für den ganzen Account. Die Statistik dieses Charakters enthält keinen Sieg über den Endboss.",
     en: "Blizzard reports this completion for the whole account only. This character's statistics show no kill of the final boss.",
     schwaebisch: "Blizzard meldet den Abschluss bloß fürs ganze Account. En dr Statistik von dem Charakter stoht koi Sieg übern Endboss.",
     bayrisch: "Blizzard meldt den Abschluss nur fürs ganze Account. In da Statistik vo dem Charakter steht koa Sieg übern Endboss.",
   },
-  aufAccountOhneStatistik: {
+  onAccountUntracked: {
     de: "Blizzard meldet diesen Abschluss nur für den ganzen Account und führt den Endboss dieses Dungeons nicht in der Statistik. Ob dieser Charakter ihn geschafft hat, ist deshalb nicht bekannt.",
     en: "Blizzard reports this completion for the whole account only and does not track this dungeon's final boss in the statistics, so it is unknown whether this character cleared it.",
     schwaebisch: "Blizzard meldet den Abschluss bloß fürs ganze Account ond führt den Endboss vo dem Dungeon net en dr Statistik. Ob der Charakter den gschafft hot, woiß mr deshalb net.",
     bayrisch: "Blizzard meldt den Abschluss nur fürs ganze Account und führt an Endboss vo dem Dungeon ned in da Statistik. Ob da Charakter eam gschafft hod, woaß ma deshoib ned.",
   },
-  nichtBesucht: { de: "Noch nicht besucht", en: "Not visited yet", schwaebisch: "No net bsuacht", bayrisch: "No ned bsuacht" },
-  bosse: { de: "Bosse", en: "Bosses", schwaebisch: "Bosse", bayrisch: "Bosse" },
-  vonBossen: {
-    de: (n: number, alle: number) => `${n} von ${alle} Bossen`,
-    en: (n: number, alle: number) => `${n} of ${alle} bosses`,
-    schwaebisch: (n: number, alle: number) => `${n} vo ${alle} Bosse`,
-    bayrisch: (n: number, alle: number) => `${n} vo ${alle} Bossn`,
+  notVisited: { de: "Noch nicht besucht", en: "Not visited yet", schwaebisch: "No net bsuacht", bayrisch: "No ned bsuacht" },
+  bosses: { de: "Bosse", en: "Bosses", schwaebisch: "Bosse", bayrisch: "Bosse" },
+  bossesOf: {
+    de: (n: number, total: number) => `${n} von ${total} Bossen`,
+    en: (n: number, total: number) => `${n} of ${total} bosses`,
+    schwaebisch: (n: number, total: number) => `${n} vo ${total} Bosse`,
+    bayrisch: (n: number, total: number) => `${n} vo ${total} Bossn`,
   },
-  nichtVerfuegbar: {
+  unavailable: {
     de: "Dungeon- und Raiddaten werden gerade zusammengetragen. Schau bald wieder vorbei.",
     en: "Dungeon and raid data is being gathered right now. Check back soon.",
     schwaebisch: "Dungeon- ond Raiddaten werdet grad zammatraga. Schau bald wieder vorbei, gell.",
@@ -51,15 +51,15 @@ const T = {
   },
   dungeons: { de: "Dungeons", en: "Dungeons", schwaebisch: "Dungeons", bayrisch: "Dungeons" },
   raids: { de: "Raids", en: "Raids", schwaebisch: "Raids", bayrisch: "Raids" },
-  weitereSiege: { de: "Weitere Boss-Siege", en: "Other boss kills", schwaebisch: "No meh Boss-Siege", bayrisch: "Weitere Boss-Sieg" },
+  otherKills: { de: "Weitere Boss-Siege", en: "Other boss kills", schwaebisch: "No meh Boss-Siege", bayrisch: "Weitere Boss-Sieg" },
 } satisfies Record<string, Fassungen | Fassungen<(...a: never[]) => string>>;
 
 type Dungeon = InstancesView["dungeonTiers"][number]["dungeons"][number];
 type Raid = InstancesView["raids"][number];
 
 /**
- * Zustand einer Karte: abgeschlossen (mit Datum und Anzahl, falls bekannt), begonnen, nur auf dem Account erledigt
- * (accountweiter Erfolg ohne eigenen Sieg) oder offen.
+ * State of a card: completed (with date and count if known), started, done only on the account
+ * (account-wide achievement without an own kill) or open.
  */
 type CardStatus =
   | { kind: "done"; at: string | null; times: number }
@@ -67,21 +67,21 @@ type CardStatus =
   | { kind: "account"; tracked: boolean }
   | { kind: "open" };
 
-function killText(k: KillRef, sprache: Sprache): string {
+function killText(k: KillRef, language: Sprache): string {
   const when = k.lastAt ? formatDate(k.lastAt) : null;
   if (k.quantity > 1) {
-    return `${fassungIn(T.malBesiegt, sprache)(k.boss, k.quantity)}${when ? ` (${fassungIn(T.zuletzt, sprache)} ${when})` : ""}`;
+    return `${fassungIn(T.defeatedTimes, language)(k.boss, k.quantity)}${when ? ` (${fassungIn(T.last, language)} ${when})` : ""}`;
   }
-  return `${fassungIn(T.besiegt, sprache)(k.boss)}${when ? ` (${when})` : ""}`;
+  return `${fassungIn(T.defeated, language)(k.boss)}${when ? ` (${when})` : ""}`;
 }
 
-function levelText(levels: LevelRange | null, sprache: Sprache): string | null {
+function levelText(levels: LevelRange | null, language: Sprache): string | null {
   if (!levels) return null;
-  const stufe = fassungIn(T.stufe, sprache);
-  return levels.min === levels.max ? `${stufe} ${levels.min}` : `${stufe} ${levels.min} ${fassungIn(T.bis, sprache)} ${levels.max}`;
+  const label = fassungIn(T.level, language);
+  return levels.min === levels.max ? `${label} ${levels.min}` : `${label} ${levels.min} ${fassungIn(T.to, language)} ${levels.max}`;
 }
 
-/** Ruhige Grundtöne für Orte ohne Bild, passend zur Wappen-Palette (Gold, Horde, Allianz, Grünspan, Arkan). */
+/** Calm tones for places without an image, matching the crest palette (gold, Horde, Alliance, verdigris, arcane). */
 const ART_TINTS = ["242 201 90", "224 57 63", "47 106 224", "92 168 140", "160 112 224"];
 
 function tintOf(name: string): string {
@@ -90,7 +90,7 @@ function tintOf(name: string): string {
   return ART_TINTS[hash % ART_TINTS.length];
 }
 
-/** Hintergrundbild oder, wenn Blizzard keins hat, ein eigener Hintergrund mit Rautengitter und Lichtschein. */
+/** Background image or, if Blizzard has none, an own background with a diamond grid and a glow. */
 function CardArt({ image, name }: { image: string | null; name: string }) {
   const [failed, setFailed] = useState(false);
   if (image && !failed) {
@@ -99,40 +99,40 @@ function CardArt({ image, name }: { image: string | null; name: string }) {
   return <div className="instance-card-art" aria-hidden="true" style={{ "--art-tint": tintOf(name) } as CSSProperties} />;
 }
 
-/** Fester Platz oben rechts: goldener Wimpel bei Abschluss, sonst ein kleiner, ruhiger Hinweis. */
+/** Fixed spot at the top right: a golden pennant when completed, otherwise a small, calm note. */
 function StatusMark({ status }: { status: CardStatus }) {
   const { t } = useSprache();
   if (status.kind === "done") {
     const title = [
-      t(T.abgeschlossen),
-      status.at ? ` ${t(T.am)} ${formatDate(status.at)}` : "",
-      status.times > 1 ? `, ${status.times} ${t(T.mal)}` : "",
+      t(T.completed),
+      status.at ? ` ${t(T.on)} ${formatDate(status.at)}` : "",
+      status.times > 1 ? `, ${status.times} ${t(T.times)}` : "",
     ].join("");
     return (
       <p className="instance-pennant" title={title}>
         <span className="instance-pennant-star" aria-hidden="true">
           ✦
         </span>
-        <span className="instance-pennant-label">{t(T.abgeschlossen)}</span>
+        <span className="instance-pennant-label">{t(T.completed)}</span>
         {status.at && <span className="instance-pennant-date"> {formatDayMonth(status.at)}</span>}
         {status.times > 1 && <span className="instance-pennant-count"> {status.times}×</span>}
       </p>
     );
   }
   if (status.kind === "started") {
-    return <p className="instance-card-note instance-card-note-started">{t(T.vonBossen)(status.defeated, status.total)}</p>;
+    return <p className="instance-card-note instance-card-note-started">{t(T.bossesOf)(status.defeated, status.total)}</p>;
   }
   if (status.kind === "account") {
     return (
-      <p className="instance-card-note instance-card-note-account" title={t(status.tracked ? T.aufAccountTitel : T.aufAccountOhneStatistik)}>
-        {t(T.aufAccount)}
+      <p className="instance-card-note instance-card-note-account" title={t(status.tracked ? T.onAccountTitle : T.onAccountUntracked)}>
+        {t(T.onAccount)}
       </p>
     );
   }
-  return <p className="instance-card-note">{t(T.nichtBesucht)}</p>;
+  return <p className="instance-card-note">{t(T.notVisited)}</p>;
 }
 
-/** Bildkarte: Name und Stufe oben links, Status fest oben rechts, Bosse unten. */
+/** Image card: name and level at the top left, status fixed at the top right, bosses at the bottom. */
 function InstanceCard({
   name,
   image,
@@ -171,7 +171,7 @@ function dungeonStatus(d: Dungeon): CardStatus {
   return d.onAccount ? { kind: "account", tracked: d.tracked } : { kind: "open" };
 }
 
-/** Dungeon-Karte: Bosse nur als Info, der Endboss dezent hervorgehoben. */
+/** Dungeon card: bosses for information only, the final boss subtly highlighted. */
 function DungeonCard({ dungeon: d }: { dungeon: Dungeon }) {
   const { t } = useSprache();
   const finals = new Set(d.finalBosses);
@@ -179,7 +179,7 @@ function DungeonCard({ dungeon: d }: { dungeon: Dungeon }) {
     <InstanceCard name={d.name} image={d.image} levels={d.levels} status={dungeonStatus(d)} className="instance-card-dungeon">
       {d.bosses && (
         <p className="instance-card-bosses">
-          {t(T.bosse)}:{" "}
+          {t(T.bosses)}:{" "}
           {d.bosses.map((b, i) => (
             <span key={b}>
               {i > 0 && ", "}
@@ -207,14 +207,14 @@ function bossText(b: Raid["bosses"][number]): string {
   return `✔ ${b.name}${b.lastAt ? ` (${formatDate(b.lastAt)})` : ""}`;
 }
 
-/** Raid-Karte: Bosse als Chips, besiegte grün; bei Einzelboss-Raids wie Onyxia keine Chips. */
+/** Raid card: bosses as chips, defeated ones green; no chips for single-boss raids like Onyxia. */
 function RaidCard({ raid }: { raid: Raid }) {
   const { t } = useSprache();
   const single = raid.bosses.length === 1 && raid.bosses[0].name === raid.name;
   return (
     <InstanceCard name={raid.name} image={raid.image} levels={raid.levels} status={raidStatus(raid)} className="instance-card-raid">
       {!single && (
-        <ul className="instance-bosses" aria-label={t(T.bosse)}>
+        <ul className="instance-bosses" aria-label={t(T.bosses)}>
           {raid.bosses.map((b) => (
             <li key={b.name} className={b.defeated ? "instance-boss instance-boss-defeated" : "instance-boss"}>
               {bossText(b)}
@@ -226,7 +226,7 @@ function RaidCard({ raid }: { raid: Raid }) {
   );
 }
 
-/** Alle Dungeons in einer Liste, nach Levelbereich; ohne gepflegte Stufe am Ende in der Reihenfolge der Erfolge. */
+/** All dungeons in one list, by level range; those without a maintained level at the end in achievement order. */
 function sortedDungeons(view: InstancesView): Dungeon[] {
   const all = view.dungeonTiers.flatMap((t) => t.dungeons);
   return all
@@ -242,13 +242,14 @@ function sortedDungeons(view: InstancesView): Dungeon[] {
     .map(({ d }) => d);
 }
 
-/** "Dungeons & Raids" eines Charakters als Bildkarten: nur eigener Fortschritt, kein Vergleich. */
+/** A character's "Dungeons & Raids" as image cards: only its own progress, no comparison. */
+
 export function InstancesPanel({ view }: { view: InstancesView }) {
   const { t, sprache } = useSprache();
   if (!view.available) {
     return (
       <div className="state state-empty">
-        <p>{t(T.nichtVerfuegbar)}</p>
+        <p>{t(T.unavailable)}</p>
       </div>
     );
   }
@@ -265,7 +266,7 @@ export function InstancesPanel({ view }: { view: InstancesView }) {
         </ul>
         {view.otherKills.length > 0 && (
           <div className="instance-others">
-            <h3 className="instance-others-title">{t(T.weitereSiege)}</h3>
+            <h3 className="instance-others-title">{t(T.otherKills)}</h3>
             <ul className="instance-list">
               {view.otherKills.map((k, i) => (
                 <li key={i} className="instance-row small">

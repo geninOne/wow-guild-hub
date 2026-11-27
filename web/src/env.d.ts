@@ -4,7 +4,7 @@ interface ImportMetaEnv {
   /** Version from package.json, inserted during the build. */
   readonly VITE_VERSION?: string;
   /** Date of the version from CHANGELOG.md (otherwise the build date) as YYYY-MM-DD. */
-  readonly VITE_VERSION_DATUM?: string;
+  readonly VITE_VERSION_DATE?: string;
   /** Site details, see .env.example. */
   readonly WEBSITE_NAME?: string;
   readonly WEBSITE_LOGO?: string;

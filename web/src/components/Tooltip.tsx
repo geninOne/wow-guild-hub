@@ -18,7 +18,7 @@ interface TooltipProps {
 
 const MARGIN = 8;
 
-/** Platziert den Tooltip neben, sonst unter oder über dem Auslöser, immer im Fenster. */
+/** Places the tooltip beside the trigger, otherwise below or above it, always inside the window. */
 function placeTooltip(trigger: DOMRect, width: number, height: number): { left: number; top: number } {
   const vw = document.documentElement.clientWidth || window.innerWidth;
   const vh = window.innerHeight;
@@ -39,8 +39,8 @@ function placeTooltip(trigger: DOMRect, width: number, height: number): { left: 
 }
 
 /**
- * Zeigt `content` bei Hover (Maus), Tastaturfokus und Tippen (Touch).
- * Die Kinder werden in ein fokussierbares Element gelegt.
+ * Shows `content` on hover (mouse), keyboard focus and tap (touch).
+ * The children are wrapped in a focusable element.
  */
 export function Tooltip({ content, children, className }: TooltipProps) {
   const [open, setOpen] = useState(false);
@@ -103,7 +103,8 @@ export function Tooltip({ content, children, className }: TooltipProps) {
           if (e.pointerType === "mouse") close();
         }}
         onFocus={() => {
-          // Fokus durch Antippen übernimmt der Klick, sonst öffnet und schließt es gleich wieder.
+          // Focus from a tap is handled by the click, otherwise it would open and close right away.
+
           if (pointerRef.current === null) setOpen(true);
         }}
         onBlur={() => {

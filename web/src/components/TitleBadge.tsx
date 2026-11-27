@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSprache, type Fassungen } from "../lib/sprache";
 
-/** Titel mit gemaltem Abzeichen unter web/public/titel/<id>.png. Künftige Titel ohne Datei fehlen hier. */
+/** Titles with a painted badge at web/public/titel/<id>.png. Future titles without a file are missing here. */
 export const TITLE_BADGE_IDS = new Set([
   "nachteule", "frueher-vogel", "stammgast", "dauerlaeufer", "pechvogel", "schaffe-schaffe",
   "kellerkind", "kaepsele", "schleimer", "verlorener-sohn", "tausendsassa", "frisch-eingekleidet",
@@ -13,22 +13,22 @@ export function titleBadgeSrc(titleId: string): string | null {
 
 interface TitleBadgeProps {
   titleId: string;
-  /** Name des Titels als Alternativtext, als Text oder in allen Fassungen (dann gilt die gewählte Sprache). */
+  /** Name of the title as alt text, as plain text or in all versions (then the selected language applies). */
   name: string | Fassungen;
-  /** Kantenlänge in CSS-Pixeln; die Bilder haben 192 Pixel, also höchstens etwa 100 für scharfe Darstellung. */
+  /** Edge length in CSS pixels; the images have 192 pixels, so at most about 100 for a sharp rendering. */
   size: number;
-  /** Tooltip, ohne Angabe der Name. */
+  /** Tooltip, defaults to the name. */
   tooltip?: string;
-  /** Abgedunkelt und entsättigt, z. B. für nicht vergebene Titel. */
+  /** Dimmed and desaturated, e.g. for titles not awarded. */
   muted?: boolean;
-  /** Rein schmückend, wenn der Name daneben steht. */
+  /** Purely decorative when the name is shown next to it. */
   decorative?: boolean;
 }
 
-/** Gemaltes Medaillon eines Spaßtitels; ohne Datei oder bei Ladefehler nichts (der Aufrufer zeigt dann Text). */
-export function TitleBadge({ titleId, name: fassungen, size, tooltip, muted = false, decorative = false }: TitleBadgeProps) {
+/** Painted medallion of a fun title; nothing without a file or on a load error (the caller then shows text). */
+export function TitleBadge({ titleId, name: versions, size, tooltip, muted = false, decorative = false }: TitleBadgeProps) {
   const { t } = useSprache();
-  const name = typeof fassungen === "string" ? fassungen : t(fassungen);
+  const name = typeof versions === "string" ? versions : t(versions);
   const [failed, setFailed] = useState<string | null>(null);
   const src = titleBadgeSrc(titleId);
   if (!src || failed === src) return null;
@@ -47,7 +47,7 @@ export function TitleBadge({ titleId, name: fassungen, size, tooltip, muted = fa
   );
 }
 
-/** Gibt es für den Titel ein Abzeichen? Für Rückfälle mit Text. */
+/** Is there a badge for the title? For text fallbacks. */
 export function hasTitleBadge(titleId: string): boolean {
   return TITLE_BADGE_IDS.has(titleId);
 }

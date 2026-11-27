@@ -8,13 +8,13 @@ import { Tooltip } from "./Tooltip";
 
 interface EquipmentPanelProps {
   character: CharacterRecord;
-  /** Schlüssel: itemId */
+  /** Key: itemId */
   itemIcons: Record<string, string | null>;
 }
 
 const ICON_SIZE = 44;
 
-/** Platznamen wie im englischen Spielclient; Deutsch und Dialekte nehmen SLOT_NAMES_DE. */
+/** Slot names as in the English game client; German and the dialects use SLOT_NAMES_DE. */
 const SLOT_NAMES_EN: Record<string, string> = {
   HEAD: "Head",
   NECK: "Neck",
@@ -41,9 +41,9 @@ const SLOT_NAMES_EN: Record<string, string> = {
 const SLOT_NAMES: Fassungen<Record<string, string>> = { de: SLOT_NAMES_DE, en: SLOT_NAMES_EN };
 
 const T = {
-  links: { de: "Ausrüstung links", en: "Equipment, left" },
-  rechts: { de: "Ausrüstung rechts", en: "Equipment, right" },
-  waffen: { de: "Waffen", en: "Weapons" },
+  left: { de: "Ausrüstung links", en: "Equipment, left" },
+  right: { de: "Ausrüstung rechts", en: "Equipment, right" },
+  weapons: { de: "Waffen", en: "Weapons" },
 } satisfies Record<string, Fassungen>;
 
 function Slot({ slot, item, icon }: { slot: string; item: EquippedItem | undefined; icon: string | null }) {
@@ -82,7 +82,8 @@ function Slot({ slot, item, icon }: { slot: string; item: EquippedItem | undefin
   );
 }
 
-/** Ausrüstung: Plätze links und rechts vom Charakterbild, Waffen darunter. */
+/** Equipment: slots left and right of the character portrait, weapons below. */
+
 export function EquipmentPanel({ character, itemIcons }: EquipmentPanelProps) {
   const { t } = useSprache();
   const bySlot = new Map(character.equipment.map((item) => [item.slot, item]));
@@ -96,16 +97,16 @@ export function EquipmentPanel({ character, itemIcons }: EquipmentPanelProps) {
 
   return (
     <div className="equipment">
-      <ul className="equipment-column equipment-left" aria-label={t(T.links)}>
+      <ul className="equipment-column equipment-left" aria-label={t(T.left)}>
         {column(SLOT_LAYOUT.left)}
       </ul>
       <div className="equipment-portrait">
         <Portrait character={character} />
       </div>
-      <ul className="equipment-column equipment-right" aria-label={t(T.rechts)}>
+      <ul className="equipment-column equipment-right" aria-label={t(T.right)}>
         {column(SLOT_LAYOUT.right)}
       </ul>
-      <ul className="equipment-weapons" aria-label={t(T.waffen)}>
+      <ul className="equipment-weapons" aria-label={t(T.weapons)}>
         {column(SLOT_LAYOUT.bottom)}
       </ul>
     </div>

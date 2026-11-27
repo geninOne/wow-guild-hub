@@ -20,7 +20,7 @@ const view: ReputationView = {
   ],
 };
 
-test("Gruppen mit Fraktionen, Stufenname und Balken", () => {
+test("groups with factions, standing name and bar", () => {
   render(<ReputationPanel view={view} />);
   const horde = screen.getByRole("heading", { name: "Horde" }).closest("section")!;
   const orgrimmar = within(horde).getByText("Orgrimmar").closest("li")!;
@@ -33,7 +33,8 @@ test("Gruppen mit Fraktionen, Stufenname und Balken", () => {
   expect(screen.getByText("Donnerfels").closest("li")!.querySelector(".reputation-neutral")).toBeTruthy();
 });
 
-test("ohne Daten und ohne Fraktionen freundliche Hinweise", () => {
+test("friendly notes without data and without factions"
+, () => {
   render(<ReputationPanel view={{ available: false, groups: [] }} />);
   expect(screen.getByText("Rufdaten werden gerade zusammengetragen. Schau bald wieder vorbei.")).toBeTruthy();
   cleanup();

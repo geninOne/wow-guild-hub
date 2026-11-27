@@ -10,11 +10,11 @@ const COIN_NAMES: Fassungen<Record<Coin, string>> = {
 };
 
 const T = {
-  verkaufspreis: { de: "Verkaufspreis", en: "Sell Price" },
-  gegenstandsstufe: { de: "Gegenstandsstufe", en: "Item Level" },
+  sellPrice: { de: "Verkaufspreis", en: "Sell Price" },
+  itemLevel: { de: "Gegenstandsstufe", en: "Item Level" },
 } satisfies Record<string, Fassungen>;
 
-/** Münzwerte ab der ersten Stelle ungleich 0. Ohne Wert leer. */
+/** Coin values from the first nonzero place on. Empty without a value. */
 function sellPriceParts(price: ItemTooltipData["sellPrice"]): { value: number; coin: Coin }[] {
   if (!price) return [];
   const parts: { value: number; coin: Coin }[] = [
@@ -26,22 +26,22 @@ function sellPriceParts(price: ItemTooltipData["sellPrice"]): { value: number; c
   return first === -1 ? [] : parts.slice(first);
 }
 
-/** "{g} Gold {s} Silber {k} Kupfer", führende Nullstellen entfallen. Ohne Wert `null`. */
-export function formatSellPrice(price: ItemTooltipData["sellPrice"], sprache: Sprache = "de"): string | null {
+/** "{g} Gold {s} Silber {k} Kupfer", leading zero places are dropped. `null` without a value. */
+export function formatSellPrice(price: ItemTooltipData["sellPrice"], language: Sprache = "de"): string | null {
   const parts = sellPriceParts(price);
   if (parts.length === 0) return null;
-  const namen = fassungIn(COIN_NAMES, sprache);
-  return parts.map((p) => `${p.value} ${namen[p.coin]}`).join(" ");
+  const names = fassungIn(COIN_NAMES, language);
+  return parts.map((p) => `${p.value} ${names[p.coin]}`).join(" ");
 }
 
-/** Verkaufspreis mit Münzen statt Wörtern; Screenreader lesen den Text aus dem Label. */
+/** Sell price with coins instead of words; screen readers read the text from the label. */
 function SellPrice({ price }: { price: ItemTooltipData["sellPrice"] }) {
   const { t, sprache } = useSprache();
   const text = formatSellPrice(price, sprache);
   if (!text) return null;
   return (
-    <p aria-label={`${t(T.verkaufspreis)}: ${text}`}>
-      {t(T.verkaufspreis)}:{" "}
+    <p aria-label={`${t(T.sellPrice)}: ${text}`}>
+      {t(T.sellPrice)}:{" "}
       {sellPriceParts(price).map((p, i) => (
         <span key={p.coin}>
           {i > 0 && " "}
@@ -68,7 +68,7 @@ function Line({ text, className }: { text: string | null; className?: string }) 
   return <p className={className}>{text}</p>;
 }
 
-/** Was ein Gegenstand-Tooltip braucht: getragene Ausrüstung oder hergestellter Gegenstand eines Rezepts. */
+/** What an item tooltip needs: worn equipment or the crafted item of a recipe. */
 export interface TooltipItem {
   name: string;
   quality: string | null;
@@ -78,7 +78,8 @@ export interface TooltipItem {
   slotName?: string;
 }
 
-/** Inhalt eines Gegenstand-Tooltips. Alte Daten ohne `tooltip` zeigen nur das Wesentliche. */
+/** Content of an item tooltip. Old data without `tooltip` only shows the essentials. */
+
 export function ItemTooltip({ item }: { item: TooltipItem }) {
   const { t } = useSprache();
   const tip = item.tooltip;
@@ -94,7 +95,7 @@ export function ItemTooltip({ item }: { item: TooltipItem }) {
         {item.name}
       </p>
       {item.itemLevel !== null && <p className="item-tip-level">
-          {t(T.gegenstandsstufe)} {item.itemLevel}
+          {t(T.itemLevel)} {item.itemLevel}
         </p>}
       {tip ? (
         <>

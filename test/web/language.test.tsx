@@ -6,15 +6,15 @@ import App from "../../web/src/App";
 import { angeboteneSprachen, gemerkteSprache, SPRACH_SCHLUESSEL, spracheMerken } from "../../web/src/lib/sprache";
 import { ausKonfig, istSprache } from "../../src/sprache";
 
-/** Sprache des Browsers; jsdom meldet sonst "en-US". */
-function browserSprache(sprache: string) {
-  vi.spyOn(navigator, "language", "get").mockReturnValue(sprache);
+/** Browser language; jsdom reports "en-US" otherwise. */
+function browserLanguage(language: string) {
+  vi.spyOn(navigator, "language", "get").mockReturnValue(language);
 }
 
 beforeEach(() => {
   window.localStorage.clear();
   vi.stubGlobal("fetch", vi.fn(() => new Promise(() => {})));
-  browserSprache("de-DE");
+  browserLanguage("de-DE");
 });
 
 afterEach(() => {
@@ -25,8 +25,8 @@ afterEach(() => {
   window.localStorage.clear();
 });
 
-/** Alle vier Sprachen angeboten, wie auf einer Installation mit Dialekten. */
-function mitDialekten() {
+/** All four languages offered, as on an installation with dialects. */
+function withDialects() {
   vi.stubEnv("WEBSITE_LANGUAGES", "de,schwaebisch,bayrisch,en");
 }
 
@@ -38,101 +38,101 @@ function site() {
   );
 }
 
-const umschalter = (name = "Sprache") => screen.getByRole("combobox", { name }) as HTMLSelectElement;
+const switcher = (name = "Sprache") => screen.getByRole("combobox", { name }) as HTMLSelectElement;
 
-test("Standard ist Deutsch, der Umschalter bietet ohne Angabe Deutsch und Englisch", () => {
+test("default is German, without config the switcher offers German and English", () => {
   site();
-  expect(umschalter().value).toBe("de");
-  expect([...umschalter().options].map((o) => o.textContent)).toEqual(["Deutsch", "English"]);
-  expect(umschalter().closest("header")).toBeTruthy();
+  expect(switcher().value).toBe("de");
+  expect([...switcher().options].map((o) => o.textContent)).toEqual(["Deutsch", "English"]);
+  expect(switcher().closest("header")).toBeTruthy();
   expect(screen.getByText(/^Daten aus der Blizzard-API, stündlich aktualisiert/)).toBeTruthy();
 });
 
-test("Mit WEBSITE_LANGUAGES bietet der Umschalter auch die Dialekte, Deutsch vorn", () => {
-  mitDialekten();
+test("with WEBSITE_LANGUAGES the switcher also offers the dialects, German first", () => {
+  withDialects();
   site();
-  expect(umschalter().value).toBe("de");
-  expect([...umschalter().options].map((o) => o.textContent)).toEqual(["Deutsch", "Schwäbisch", "Bayrisch", "English"]);
+  expect(switcher().value).toBe("de");
+  expect([...switcher().options].map((o) => o.textContent)).toEqual(["Deutsch", "Schwäbisch", "Bayrisch", "English"]);
 });
 
-test("Nur Deutsch angeboten: kein Umschalter", () => {
+test("only German offered: no switcher", () => {
   vi.stubEnv("WEBSITE_LANGUAGES", "de");
   site();
   expect(screen.queryByRole("combobox", { name: "Sprache" })).toBeNull();
   expect(angeboteneSprachen()).toEqual(["de"]);
 });
 
-test("Umschalten ändert die Texte sofort und merkt die Wahl im Browser", () => {
-  mitDialekten();
+test("switching changes the texts at once and remembers the choice in the browser", () => {
+  withDialects();
   site();
-  fireEvent.change(umschalter(), { target: { value: "schwaebisch" } });
+  fireEvent.change(switcher(), { target: { value: "schwaebisch" } });
   expect(screen.getByText(/^Daten aus dr Blizzard-API, jede Stond frisch/)).toBeTruthy();
   expect(window.localStorage.getItem(SPRACH_SCHLUESSEL)).toBe("schwaebisch");
   expect(document.documentElement.dataset.sprache).toBe("schwaebisch");
 
-  fireEvent.change(umschalter("Sproch"), { target: { value: "bayrisch" } });
+  fireEvent.change(switcher("Sproch"), { target: { value: "bayrisch" } });
   expect(screen.getByText(/^Daten aus da Blizzard-API, jede Stund frisch/)).toBeTruthy();
   expect(screen.getByRole("link", { name: "Wochnblatt" })).toBeTruthy();
   expect(window.localStorage.getItem(SPRACH_SCHLUESSEL)).toBe("bayrisch");
 
-  fireEvent.change(umschalter("Sprach"), { target: { value: "en" } });
+  fireEvent.change(switcher("Sprach"), { target: { value: "en" } });
   expect(screen.getByText(/^Data from the Blizzard API, updated hourly/)).toBeTruthy();
   expect(screen.getByRole("navigation", { name: "Main navigation" })).toBeTruthy();
   expect(document.documentElement.lang).toBe("en");
   expect(window.localStorage.getItem(SPRACH_SCHLUESSEL)).toBe("en");
 });
 
-test("Eine gemerkte Wahl gilt beim nächsten Besuch", () => {
-  mitDialekten();
+test("a remembered choice applies on the next visit", () => {
+  withDialects();
   window.localStorage.setItem(SPRACH_SCHLUESSEL, "bayrisch");
   site();
-  expect(umschalter("Sprach").value).toBe("bayrisch");
+  expect(switcher("Sprach").value).toBe("bayrisch");
   expect(screen.getByText(/^Daten aus da Blizzard-API, jede Stund frisch/)).toBeTruthy();
 });
 
-test("Browser auf Englisch ohne gemerkte Wahl ergibt Englisch", () => {
-  browserSprache("en-US");
+test("browser in English without a remembered choice gives English", () => {
+  browserLanguage("en-US");
   expect(gemerkteSprache()).toBe("en");
   site();
-  expect(umschalter("Language").value).toBe("en");
+  expect(switcher("Language").value).toBe("en");
   const nav = screen.getByRole("navigation", { name: "Main navigation" });
   expect([...nav.querySelectorAll("a")].map((a) => a.textContent)).toEqual(["Guild", "Professions", "Statistics", "Titles", "Weekly"]);
 });
 
-test("Browser auf Englisch, aber Englisch nicht angeboten: Deutsch", () => {
-  browserSprache("en-US");
+test("browser in English, but English not offered: German", () => {
+  browserLanguage("en-US");
   vi.stubEnv("WEBSITE_LANGUAGES", "de,bayrisch");
   expect(gemerkteSprache()).toBe("de");
 });
 
-test("Eine gemerkte, nicht mehr angebotene Sprache zählt nicht", () => {
+test("a remembered language that is no longer offered does not count", () => {
   window.localStorage.setItem(SPRACH_SCHLUESSEL, "bayrisch");
   expect(gemerkteSprache()).toBe("de");
-  browserSprache("en-GB");
+  browserLanguage("en-GB");
   expect(gemerkteSprache()).toBe("en");
 });
 
-test("Unbrauchbare gemerkte Werte führen zu Deutsch", () => {
+test("unusable remembered values lead to German", () => {
   window.localStorage.setItem(SPRACH_SCHLUESSEL, "klingonisch");
   expect(gemerkteSprache()).toBe("de");
 });
 
-test("Gesperrter Speicher: Browsersprache gilt, Umschalten klappt trotzdem ohne Fehler", () => {
-  mitDialekten();
+test("blocked storage: browser language applies, switching still works without errors", () => {
+  withDialects();
   vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
-    throw new Error("gesperrt");
+    throw new Error("blocked");
   });
   vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
-    throw new Error("gesperrt");
+    throw new Error("blocked");
   });
   expect(gemerkteSprache()).toBe("de");
   expect(() => spracheMerken("schwaebisch")).not.toThrow();
   site();
-  fireEvent.change(umschalter(), { target: { value: "schwaebisch" } });
-  expect(umschalter("Sproch").value).toBe("schwaebisch");
+  fireEvent.change(switcher(), { target: { value: "schwaebisch" } });
+  expect(switcher("Sproch").value).toBe("schwaebisch");
 });
 
-test("Konfigurationstexte: String gilt überall, fehlendes Englisch fällt auf Deutsch zurück", () => {
+test("config texts: a string applies everywhere, missing English falls back to German", () => {
   expect(ausKonfig("Petri Heil!")).toEqual({ de: "Petri Heil!", en: "Petri Heil!", schwaebisch: "Petri Heil!", bayrisch: "Petri Heil!" });
   expect(ausKonfig({ de: "Gut", bayrisch: "Guad" })).toEqual({ de: "Gut", en: "Gut", bayrisch: "Guad" });
   expect(ausKonfig({ de: "Gut", en: "Good" })).toEqual({ de: "Gut", en: "Good" });
@@ -142,7 +142,7 @@ test("Konfigurationstexte: String gilt überall, fehlendes Englisch fällt auf D
   expect(istSprache("klingonisch")).toBe(false);
 });
 
-test("Alte API-Antworten aus dem Browser-Cache: einfache Werte kommen unverändert durch", async () => {
+test("old API responses from the browser cache: plain values pass through unchanged", async () => {
   const { fassungIn } = await import("../../web/src/lib/sprache");
   expect(fassungIn({ de: "Tode", en: "Deaths", bayrisch: "Dode" }, "bayrisch")).toBe("Dode");
   expect(fassungIn({ de: "Tode", en: "Deaths" }, "schwaebisch")).toBe("Tode");

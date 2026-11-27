@@ -6,34 +6,34 @@ import { DataState } from "../components/DataState";
 import { FactionCrest } from "../components/FactionCrest";
 import { MemberListDialog, MemberListTrigger, PeopleIcon, type MemberSet } from "../components/MemberList";
 import { TitleBadge } from "../components/TitleBadge";
-import { TestdatenHinweis } from "../components/TestdatenHinweis";
+import { SampleDataNotice } from "../components/SampleDataNotice";
 import { useApi } from "../lib/api";
 import { PUBLISHED_WHEN, formatPlainDayMonth, weekRangeLabel, newspaperName } from "../lib/fun";
 import { useSprache, type Fassungen } from "../lib/sprache";
 import { numberLocale } from "../lib/format";
 
 const T = {
-  niemand: { de: "Diese Woche niemand", en: "Nobody this week", schwaebisch: "Die Woch koiner", bayrisch: "De Woch koana" },
-  regelFuer: { de: "Regel für", en: "Rule for", schwaebisch: "Regel für", bayrisch: "Regel fia" },
-  ehrentafel: { de: "Ehrentafel der Vorwochen", en: "Hall of Fame: Previous Weeks", schwaebisch: "Ehretafel vo de Vorwoche", bayrisch: "Ehrntafel vo de Vorwochn" },
-  neuere: { de: "‹ neuere Wochen", en: "‹ newer weeks", schwaebisch: "‹ neuere Woche", bayrisch: "‹ neiere Wochn" },
-  aeltere: { de: "ältere Wochen ›", en: "older weeks ›", schwaebisch: "ältere Woche ›", bayrisch: "ältere Wochn ›" },
-  titel: { de: "Titel", en: "Title", schwaebisch: "Titel", bayrisch: "Titel" },
-  bis: { de: "bis", en: "to", schwaebisch: "bis", bayrisch: "bis" },
-  nichtVergeben: { de: "nicht vergeben", en: "not awarded", schwaebisch: "net vergebe", bayrisch: "ned vergebn" },
-  ersteWoche: {
-    de: (wann: string) => `Die erste Woche ist noch nicht ausgewertet. Neue Titel gibt es ${wann} für die Woche bis Samstag.`,
-    en: (wann: string) => `The first week has not been scored yet. New titles arrive ${wann} for the week ending Saturday.`,
-    schwaebisch: (wann: string) => `Die erscht Woch isch no net ausgwertet. Neie Titel gibt's ${wann} für d'Woch bis Samschdig.`,
-    bayrisch: (wann: string) => `De erste Woch is no ned ausgwertet. Neie Titel gibt's ${wann} für de Woch bis Samstag.`,
+  nobody: { de: "Diese Woche niemand", en: "Nobody this week", schwaebisch: "Die Woch koiner", bayrisch: "De Woch koana" },
+  ruleFor: { de: "Regel für", en: "Rule for", schwaebisch: "Regel für", bayrisch: "Regel fia" },
+  hallOfFame: { de: "Ehrentafel der Vorwochen", en: "Hall of Fame: Previous Weeks", schwaebisch: "Ehretafel vo de Vorwoche", bayrisch: "Ehrntafel vo de Vorwochn" },
+  newer: { de: "‹ neuere Wochen", en: "‹ newer weeks", schwaebisch: "‹ neuere Woche", bayrisch: "‹ neiere Wochn" },
+  older: { de: "ältere Wochen ›", en: "older weeks ›", schwaebisch: "ältere Woche ›", bayrisch: "ältere Wochn ›" },
+  title: { de: "Titel", en: "Title", schwaebisch: "Titel", bayrisch: "Titel" },
+  to: { de: "bis", en: "to", schwaebisch: "bis", bayrisch: "bis" },
+  notAwarded: { de: "nicht vergeben", en: "not awarded", schwaebisch: "net vergebe", bayrisch: "ned vergebn" },
+  firstWeek: {
+    de: (when: string) => `Die erste Woche ist noch nicht ausgewertet. Neue Titel gibt es ${when} für die Woche bis Samstag.`,
+    en: (when: string) => `The first week has not been scored yet. New titles arrive ${when} for the week ending Saturday.`,
+    schwaebisch: (when: string) => `Die erscht Woch isch no net ausgwertet. Neie Titel gibt's ${when} für d'Woch bis Samschdig.`,
+    bayrisch: (when: string) => `De erste Woch is no ned ausgwertet. Neie Titel gibt's ${when} für de Woch bis Samstag.`,
   },
-  zurZeitung: {
-    de: (zeitung: string) => `${zeitung} dieser Woche lesen`,
-    en: (zeitung: string) => `Read this week's ${zeitung}`,
-    schwaebisch: (zeitung: string) => `zum ${zeitung} vo dere Woch`,
-    bayrisch: (zeitung: string) => `zum ${zeitung} vo dera Woch`,
+  toNewspaper: {
+    de: (paper: string) => `${paper} dieser Woche lesen`,
+    en: (paper: string) => `Read this week's ${paper}`,
+    schwaebisch: (paper: string) => `zum ${paper} vo dere Woch`,
+    bayrisch: (paper: string) => `zum ${paper} vo dera Woch`,
   },
-  regeln: {
+  rules: {
     de: "Die Titel werden einmal pro Woche nach festen Regeln vergeben, gewertet wird Sonntag bis Samstag. Bei Gleichstand teilen sich alle den Titel. Auf der Karte steht, wer ihn am längsten nicht hatte, sonst entscheidet ein fester Zufall. Wer keine Titel möchte, sagt der Gildenleitung Bescheid. Die Regel eines Titels zeigt das Fragezeichen an seiner Kachel.",
     en: "Titles are awarded once a week by fixed rules, counting Sunday to Saturday. On a tie, everyone shares the title. The card shows whoever has gone longest without it, otherwise a fixed random draw decides. If you would rather not receive titles, let the guild officers know. The question mark on each tile shows that title's rule.",
     schwaebisch:
@@ -41,41 +41,41 @@ const T = {
     bayrisch:
       "De Titel gibt's oamoi in da Woch nach festn Regln, gwertet werd Sonntag bis Samstag. Bei Gleichstand teilen se se olle an Titel. Auf da Kachl steht, wer'n am längstn ned ghabt hod, sonst entscheidt a fester Zufall. Wer koane Titel mog, sogt's da Gildnleitung. De Regel vo am Titel zeigt des Fragezeichn an seiner Kachl.",
   },
-  geteilt: {
+  shared: {
     de: (n: number) => (n === 1 ? "teilt sich den Titel mit einem weiteren" : `teilt sich den Titel mit ${n} weiteren`),
     en: (n: number) => (n === 1 ? "shares the title with one other" : `shares the title with ${n} others`),
     schwaebisch: (n: number) => (n === 1 ? "teilt sich dr Titel mit oim andre" : `teilt sich dr Titel mit ${n} andre`),
     bayrisch: (n: number) => (n === 1 ? "teilt se an Titel mit oam andan" : `teilt se an Titel mit ${n} andane`),
   },
-  gleichstand: {
+  tie: {
     de: "Gleichstand: Alle mit dem Höchstwert teilen sich den Titel. Hier steht, wer ihn am längsten nicht hatte, sonst entscheidet ein fester Zufall.",
     en: "Tie: everyone with the top value shares the title. Shown here is whoever has gone longest without it, otherwise a fixed random draw decides.",
     schwaebisch: "Gleichstand: Älle mit em Höchschtwert teilet sich dr Titel. Do stoht, wer'n am längschte net ghabt hot, sonscht entscheidet a feschter Zufall.",
     bayrisch: "Gleichstand: Olle mit am Höchstwert teilen se an Titel. Do steht, wer'n am längstn ned ghabt hod, sonst entscheidt a fester Zufall.",
   },
-  rangliste: { de: "Rangliste ansehen", en: "View ranking", schwaebisch: "Ranglischt aagucke", bayrisch: "Ranglistn oschaun" },
-  ranglisteVon: {
-    de: (titel: string, woche: string) => `Rangliste ${titel}, ${woche}`,
-    en: (titel: string, woche: string) => `Ranking ${titel}, ${woche}`,
-    schwaebisch: (titel: string, woche: string) => `Ranglischt ${titel}, ${woche}`,
-    bayrisch: (titel: string, woche: string) => `Ranglistn ${titel}, ${woche}`,
+  ranking: { de: "Rangliste ansehen", en: "View ranking", schwaebisch: "Ranglischt aagucke", bayrisch: "Ranglistn oschaun" },
+  rankingOf: {
+    de: (title: string, week: string) => `Rangliste ${title}, ${week}`,
+    en: (title: string, week: string) => `Ranking ${title}, ${week}`,
+    schwaebisch: (title: string, week: string) => `Ranglischt ${title}, ${week}`,
+    bayrisch: (title: string, week: string) => `Ranglistn ${title}, ${week}`,
   },
-  wert: { de: "Wert", en: "Value", schwaebisch: "Wert", bayrisch: "Wert" },
-  gewinner: { de: "Gewinner", en: "Winner", schwaebisch: "Gwinner", bayrisch: "Gwinner" },
-  nurGewinner: {
+  value: { de: "Wert", en: "Value", schwaebisch: "Wert", bayrisch: "Wert" },
+  winner: { de: "Gewinner", en: "Winner", schwaebisch: "Gwinner", bayrisch: "Gwinner" },
+  winnerOnly: {
     de: "Für diese Woche ist nur der Gewinner gespeichert, die ganze Rangliste gibt es erst für neuere Wochen.",
     en: "Only the winner is stored for this week; full rankings exist only for more recent weeks.",
     schwaebisch: "Für die Woch isch bloß dr Gwinner gspeichert, d'ganze Ranglischt gibt's erscht für neiere Woche.",
     bayrisch: "Für de Woch is bloß da Gwinner gspeichert, de ganze Ranglistn gibt's erst für neiere Wochn.",
   },
-  seitentitel: { de: "Titel der Woche", en: "Titles of the Week", schwaebisch: "Titel vo dr Woch", bayrisch: "Titel vo da Woch" },
-  erscheintVor: {
-    de: (zeitung: string) => `Neue Titel und eine neue Ausgabe von ${zeitung} gibt es `,
-    en: (zeitung: string) => `New titles and a new issue of ${zeitung} arrive `,
-    schwaebisch: (zeitung: string) => `Neie Titel ond a neis ${zeitung} gibt's `,
-    bayrisch: (zeitung: string) => `Neie Titel und a neis ${zeitung} gibt's `,
+  pageTitle: { de: "Titel der Woche", en: "Titles of the Week", schwaebisch: "Titel vo dr Woch", bayrisch: "Titel vo da Woch" },
+  publishedBefore: {
+    de: (paper: string) => `Neue Titel und eine neue Ausgabe von ${paper} gibt es `,
+    en: (paper: string) => `New titles and a new issue of ${paper} arrive `,
+    schwaebisch: (paper: string) => `Neie Titel ond a neis ${paper} gibt's `,
+    bayrisch: (paper: string) => `Neie Titel und a neis ${paper} gibt's `,
   },
-  erscheintNach: {
+  publishedAfter: {
     de: ", gewertet wird Sonntag bis Samstag.",
     en: ", counting Sunday to Saturday.",
     schwaebisch: ", gwertet wird Sonndig bis Samschdig.",
@@ -83,7 +83,7 @@ const T = {
   },
 } satisfies Record<string, Fassungen<unknown>>;
 
-/** Seitengröße der Ehrentafel: 5 Wochen, auf schmalen Bildschirmen 3. */
+/** Page size of the hall of fame: 5 weeks, 3 on narrow screens. */
 function useWeeksPerPage(): number {
   const query = "(max-width: 640px)";
   const get = () => (typeof window !== "undefined" && window.matchMedia?.(query).matches ? 3 : 5);
@@ -100,10 +100,10 @@ function useWeeksPerPage(): number {
 
 type Title = TitlesView["titles"][number];
 
-/** Lässt sich die Rangliste eines Titels in der Woche zeigen? Mit Gewinner immer, sonst nur mit gespeicherter Rangliste. */
+/** Can the ranking of a title for the week be shown? Always with a winner, otherwise only with a stored ranking. */
 const hasRanking = (week: TitleWeekView, award: TitleAwardView | undefined) => award !== undefined || week.ranked;
 
-/** Klick irgendwo auf die Kachel öffnet die Rangliste, außer auf Links und Knöpfen darin (wie bei den Statistikkarten). */
+/** A click anywhere on the tile opens the ranking, except on links and buttons inside it (as with the stat cards). */
 function onTileClick(open: () => void) {
   return (event: MouseEvent<HTMLElement>) => {
     if (event.target instanceof Element && event.target.closest("a, button")) return;
@@ -112,28 +112,28 @@ function onTileClick(open: () => void) {
   };
 }
 
-/** Pfad für die Rangliste eines Titels in einer Woche. */
+/** Path for the ranking of a title in a week. */
 export function titleRankingPath(titleId: string, week: string): string {
   return `/api/titles?title=${encodeURIComponent(titleId)}&week=${encodeURIComponent(week)}`;
 }
 
-/** Menge für die Mitgliederliste: Wert als Text wie auf der Kachel, alle Inhaber gleich hervorgehoben. */
+/** Set for the member list: value as text like on the tile, all holders highlighted equally. */
 export function titleRankingSet(title: Title, data: TitleRankingView, t: <V>(f: Fassungen<V>) => V): MemberSet {
   return {
     key: title.id,
     label: t(title.name),
-    valueLabel: t(T.wert),
+    valueLabel: t(T.value),
     entries: data.entries,
     textValue: true,
     formatValue: (v) => {
       const text = data.valueTexts[String(v)];
       return text ? t(text) : v.toLocaleString(numberLocale());
     },
-    ...(data.winnerIds.length > 0 ? { highlight: { ids: data.winnerIds, label: t(T.gewinner) } } : {}),
+    ...(data.winnerIds.length > 0 ? { highlight: { ids: data.winnerIds, label: t(T.winner) } } : {}),
   };
 }
 
-/** Lädt die Rangliste erst beim Öffnen und zeigt sie in der Mitgliederliste. */
+/** Loads the ranking only when opened and shows it in the member list. */
 function TitleRankingDialog({ title, week, onClose }: { title: Title; week: TitleWeekView; onClose(): void }) {
   const { t, sprache } = useSprache();
   const { data, error } = useApi<TitleRankingView>(titleRankingPath(title.id, week.week));
@@ -141,7 +141,7 @@ function TitleRankingDialog({ title, week, onClose }: { title: Title; week: Titl
   return (
     <MemberListDialog
       title={t(title.name)}
-      subtitle={data && !data.complete ? `${range}. ${t(T.nurGewinner)}` : range}
+      subtitle={data && !data.complete ? `${range}. ${t(T.winnerOnly)}` : range}
       sets={data ? [titleRankingSet(title, data, t)] : null}
       error={error}
       guild={null}
@@ -184,37 +184,37 @@ function Tile({
           <span className="title-tile-value">{t(award.valueText)}</span>
           {award.sharedWith > 0 && (
             <button type="button" className="title-tile-shared" aria-haspopup="dialog" onClick={onOpen}>
-              {t(T.geteilt)(award.sharedWith)}
+              {t(T.shared)(award.sharedWith)}
             </button>
           )}
         </>
       ) : (
-        <span className="title-tile-value muted">{t(T.niemand)}</span>
+        <span className="title-tile-value muted">{t(T.nobody)}</span>
       )}
       <button
         type="button"
         className="title-tile-info"
         aria-expanded={open}
         aria-controls={ruleId}
-        aria-label={`${t(T.regelFuer)} ${t(title.name)}`}
+        aria-label={`${t(T.ruleFor)} ${t(title.name)}`}
         onClick={() => setOpen((o) => !o)}
       >
         ?
       </button>
       {clickable && (
-        <MemberListTrigger className="title-tile-trigger" label={`${t(T.rangliste)}: ${t(title.name)}`} onClick={onOpen}>
-          {t(T.rangliste)}
+        <MemberListTrigger className="title-tile-trigger" label={`${t(T.ranking)}: ${t(title.name)}`} onClick={onOpen}>
+          {t(T.ranking)}
         </MemberListTrigger>
       )}
       <span id={ruleId} className={open ? "title-tile-rule title-tile-rule-open" : "title-tile-rule"}>
         {t(title.description)}
-        {award && award.sharedWith > 0 && <span className="title-tile-rule-tie">{t(T.gleichstand)}</span>}
+        {award && award.sharedWith > 0 && <span className="title-tile-rule-tie">{t(T.tie)}</span>}
       </span>
     </li>
   );
 }
 
-/** Ehrentafel: eine Zeile je Titel, eine Spalte je Woche, neueste links; geblättert wird in Wochen. */
+/** Hall of fame: one row per title, one column per week, newest on the left; pages through weeks. */
 function HonorTable({ view, onOpen }: { view: TitlesView; onOpen(title: Title, week: TitleWeekView): void }) {
   const { t, sprache } = useSprache();
   const perPage = useWeeksPerPage();
@@ -227,14 +227,14 @@ function HonorTable({ view, onOpen }: { view: TitlesView; onOpen(title: Title, w
   return (
     <div className="panel panel-flush honor">
       <header className="panel-header">
-        <h2 className="panel-title">{t(T.ehrentafel)}</h2>
+        <h2 className="panel-title">{t(T.hallOfFame)}</h2>
         {(older || newer) && (
           <span className="honor-nav">
             <button type="button" className="honor-nav-button" disabled={!newer} onClick={() => setStart(Math.max(0, first - perPage))}>
-              {t(T.neuere)}
+              {t(T.newer)}
             </button>
             <button type="button" className="honor-nav-button" disabled={!older} onClick={() => setStart(first + perPage)}>
-              {t(T.aeltere)}
+              {t(T.older)}
             </button>
           </span>
         )}
@@ -248,14 +248,14 @@ function HonorTable({ view, onOpen }: { view: TitlesView; onOpen(title: Title, w
         </colgroup>
         <thead>
           <tr>
-            <th scope="col">{t(T.titel)}</th>
+            <th scope="col">{t(T.title)}</th>
             {shown.map((w) => (
               <th key={w.week} scope="col" className="honor-week">
                 <Link to={`/zeitung/${w.week}`} aria-label={weekRangeLabel(w.from, w.to, sprache)}>
                   {formatPlainDayMonth(w.from)}
                 </Link>
                 <span className="honor-week-date">
-                  {t(T.bis)} {formatPlainDayMonth(w.to)}
+                  {t(T.to)} {formatPlainDayMonth(w.to)}
                 </span>
               </th>
             ))}
@@ -276,20 +276,20 @@ function HonorTable({ view, onOpen }: { view: TitlesView; onOpen(title: Title, w
                       {a ? (
                         <span
                           className="honor-winner"
-                          title={a.sharedWith > 0 ? `${t(a.valueText)}, ${t(T.geteilt)(a.sharedWith)}` : t(a.valueText)}
+                          title={a.sharedWith > 0 ? `${t(a.valueText)}, ${t(T.shared)(a.sharedWith)}` : t(a.valueText)}
                         >
                           <CharacterLink character={a.character} />
                         </span>
                       ) : (
-                        <span className="honor-none" role="img" aria-label={t(T.nichtVergeben)} />
+                        <span className="honor-none" role="img" aria-label={t(T.notAwarded)} />
                       )}
                       {hasRanking(w, a) && (
                         <button
                           type="button"
                           className="honor-ranking"
                           aria-haspopup="dialog"
-                          aria-label={t(T.ranglisteVon)(t(title.name), weekRangeLabel(w.from, w.to, sprache))}
-                          title={t(T.rangliste)}
+                          aria-label={t(T.rankingOf)(t(title.name), weekRangeLabel(w.from, w.to, sprache))}
+                          title={t(T.ranking)}
                           onClick={() => onOpen(title, w)}
                         >
                           <PeopleIcon />
@@ -314,7 +314,7 @@ function TitlesContent({ view }: { view: TitlesView }) {
   if (!current) {
     return (
       <div className="state state-empty" role="status">
-        <p>{t(T.ersteWoche)(t(PUBLISHED_WHEN))}</p>
+        <p>{t(T.firstWeek)(t(PUBLISHED_WHEN))}</p>
       </div>
     );
   }
@@ -322,9 +322,9 @@ function TitlesContent({ view }: { view: TitlesView }) {
     <>
       <p className="page-subtitle muted">
         {weekRangeLabel(current.from, current.to, sprache)} ·{" "}
-        <Link to={`/zeitung/${current.week}`}>{t(T.zurZeitung)(newspaperName(sprache))}</Link>
+        <Link to={`/zeitung/${current.week}`}>{t(T.toNewspaper)(newspaperName(sprache))}</Link>
       </p>
-      <TestdatenHinweis show={view.testdaten} />
+      <SampleDataNotice show={view.testdaten} />
       <ul className="title-tiles">
         {view.titles.map((title) => (
           <Tile
@@ -339,7 +339,7 @@ function TitlesContent({ view }: { view: TitlesView }) {
       </ul>
       {view.history.length > 0 && <HonorTable view={view} onOpen={(title, week) => setRanking({ title, week })} />}
       {ranking && <TitleRankingDialog title={ranking.title} week={ranking.week} onClose={() => setRanking(null)} />}
-      <p className="muted small">{t(T.regeln)}</p>
+      <p className="muted small">{t(T.rules)}</p>
     </>
   );
 }
@@ -350,11 +350,11 @@ export function TitlesPage() {
   return (
     <section className="page">
       <header className="page-header">
-        <h1 className="page-title">{t(T.seitentitel)}</h1>
+        <h1 className="page-title">{t(T.pageTitle)}</h1>
         <p className="erscheint-hint">
-          {t(T.erscheintVor)(newspaperName(sprache))}
+          {t(T.publishedBefore)(newspaperName(sprache))}
           <strong>{t(PUBLISHED_WHEN)}</strong>
-          {t(T.erscheintNach)}
+          {t(T.publishedAfter)}
         </p>
       </header>
       <DataState loading={loading} error={error}>

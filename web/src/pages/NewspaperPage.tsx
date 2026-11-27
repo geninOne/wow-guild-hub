@@ -6,94 +6,94 @@ import { DataState } from "../components/DataState";
 import { FactionCrest } from "../components/FactionCrest";
 import { GuildFilter } from "../components/GuildFilter";
 import { TitleBadge } from "../components/TitleBadge";
-import { TestdatenHinweis } from "../components/TestdatenHinweis";
+import { SampleDataNotice } from "../components/SampleDataNotice";
 import { useApi } from "../lib/api";
 import { PUBLISHED_WHEN, splitByNames, weekRangeLabel } from "../lib/fun";
 import { useSprache, type Fassungen, type Sprache, fassungIn } from "../lib/sprache";
 import { newspaperName } from "../../../src/weekly/phrases-extras";
 import { numberLocale } from "../lib/format";
 
-/** Name der Zeitung: WEBSITE_NEWSPAPER oder der Standardname der Sprache. */
-function zeitung(sprache: Sprache): string {
+/** Name of the newspaper: WEBSITE_NEWSPAPER or the default name for the language. */
+function paperName(sprache: Sprache): string {
   return newspaperName(sprache, import.meta.env.WEBSITE_NEWSPAPER);
 }
 
-const UND: Record<Sprache, string> = { de: "und", en: "and", schwaebisch: "ond", bayrisch: "und" };
+const AND: Record<Sprache, string> = { de: "und", en: "and", schwaebisch: "ond", bayrisch: "und" };
 
-/** Namen als Aufzählung: "A, B und C". */
-function aufzaehlung(namen: string[], sprache: Sprache): string {
-  if (namen.length <= 1) return namen.join("");
-  return `${namen.slice(0, -1).join(", ")} ${UND[sprache]} ${namen[namen.length - 1]}`;
+/** Names as a list: "A, B and C". */
+function joinNames(names: string[], sprache: Sprache): string {
+  if (names.length <= 1) return names.join("");
+  return `${names.slice(0, -1).join(", ")} ${AND[sprache]} ${names[names.length - 1]}`;
 }
 
 const T = {
-  ausgaben: { de: "Ausgaben", en: "Issues", schwaebisch: "Ausgabe", bayrisch: "Ausgabn" },
-  vorherige: { de: "‹ Vorherige Ausgabe", en: "‹ Previous issue", schwaebisch: "‹ Vorherige Ausgab", bayrisch: "‹ Vorige Ausgab" },
-  archiv: { de: "Alle Ausgaben im Archiv", en: "All issues in the archive", schwaebisch: "Älle Ausgabe im Archiv", bayrisch: "Olle Ausgabn im Archiv" },
-  naechste: { de: "Nächste Ausgabe ›", en: "Next issue ›", schwaebisch: "Nächschte Ausgab ›", bayrisch: "Nächste Ausgab ›" },
-  titelDerWoche: { de: "Titel der Woche", en: "Title of the week", schwaebisch: "Titel vo dr Woch", bayrisch: "Titel vo da Woch" },
-  /** Unterzeile im Kopf mit den Gildennamen aus der Ausgabe; ohne Namen neutral. */
+  issues: { de: "Ausgaben", en: "Issues", schwaebisch: "Ausgabe", bayrisch: "Ausgabn" },
+  previous: { de: "‹ Vorherige Ausgabe", en: "‹ Previous issue", schwaebisch: "‹ Vorherige Ausgab", bayrisch: "‹ Vorige Ausgab" },
+  archive: { de: "Alle Ausgaben im Archiv", en: "All issues in the archive", schwaebisch: "Älle Ausgabe im Archiv", bayrisch: "Olle Ausgabn im Archiv" },
+  next: { de: "Nächste Ausgabe ›", en: "Next issue ›", schwaebisch: "Nächschte Ausgab ›", bayrisch: "Nächste Ausgab ›" },
+  titleOfWeek: { de: "Titel der Woche", en: "Title of the week", schwaebisch: "Titel vo dr Woch", bayrisch: "Titel vo da Woch" },
+  /** Subline in the masthead with the guild names from the issue; neutral without names. */
   kicker: {
     de: (g: string) => (g ? `Wochenzeitung von ${g}` : "Die Wochenzeitung der Gilde"),
     en: (g: string) => (g ? `The weekly paper of ${g}` : "The guild's weekly paper"),
     schwaebisch: (g: string) => (g ? `Wocheblatt vo ${g}` : "S'Wocheblatt vo dr Gilde"),
     bayrisch: (g: string) => (g ? `Wochnzeitung vo ${g}` : "De Wochnzeitung vo da Gilde"),
   },
-  ausgabe: { de: "Ausgabe", en: "Issue", schwaebisch: "Ausgab", bayrisch: "Ausgab" },
-  erscheint: { de: "Erscheint", en: "Out", schwaebisch: "Kommt", bayrisch: "Kimmt" },
-  preis: { de: "Preis: ein Heiltrank", en: "Price: one healing potion", schwaebisch: "Preis: a Portion Maultascha", bayrisch: "Preis: a Brezn und a Hoibe" },
-  zahl: { de: "Zahl der Woche", en: "Number of the week", schwaebisch: "Zahl vo dr Woch", bayrisch: "Zahl vo da Woch" },
-  spruch: { de: "Spruch der Woche", en: "Saying of the week", schwaebisch: "Spruch vo dr Woch", bayrisch: "Spruch vo da Woch" },
-  gibtEsNicht: { de: "Diese Ausgabe gibt es nicht.", en: "This issue does not exist.", schwaebisch: "Die Ausgab gibt's net.", bayrisch: "De Ausgab gibt's ned." },
-  erscheintVor: {
+  issue: { de: "Ausgabe", en: "Issue", schwaebisch: "Ausgab", bayrisch: "Ausgab" },
+  out: { de: "Erscheint", en: "Out", schwaebisch: "Kommt", bayrisch: "Kimmt" },
+  price: { de: "Preis: ein Heiltrank", en: "Price: one healing potion", schwaebisch: "Preis: a Portion Maultascha", bayrisch: "Preis: a Brezn und a Hoibe" },
+  numberOfWeek: { de: "Zahl der Woche", en: "Number of the week", schwaebisch: "Zahl vo dr Woch", bayrisch: "Zahl vo da Woch" },
+  saying: { de: "Spruch der Woche", en: "Saying of the week", schwaebisch: "Spruch vo dr Woch", bayrisch: "Spruch vo da Woch" },
+  notFound: { de: "Diese Ausgabe gibt es nicht.", en: "This issue does not exist.", schwaebisch: "Die Ausgab gibt's net.", bayrisch: "De Ausgab gibt's ned." },
+  publishedBefore: {
     de: () => "Neue Ausgaben erscheinen ",
     en: () => "New issues come out ",
     schwaebisch: (n: string) => `S'${n} kommt `,
     bayrisch: (n: string) => `As ${n} kimmt `,
   },
-  erscheintNach: {
+  publishedAfter: {
     de: " mit der Woche von Sonntag bis Samstag. Die erste Ausgabe kommt am Sonntag nach der ersten ausgewerteten Woche.",
     en: ", covering the week from Sunday to Saturday. The first issue comes out on the Sunday after the first full week.",
     schwaebisch: " mit dr Woch vo Sonndig bis Samschdig. Die erscht Ausgab kommt am Sonndig nach dr erschte ausgwertete Woch.",
     bayrisch: " mit da Woch vo Sonntag bis Samstag. De erste Ausgab kimmt am Sonntag nach da erstn ausgwertn Woch.",
   },
-  zurNeuesten: { de: "Zur neuesten Ausgabe", en: "Go to the latest issue", schwaebisch: "Zur neieschte Ausgab", bayrisch: "Zur neiestn Ausgab" },
-  archivTitel: {
+  toLatest: { de: "Zur neuesten Ausgabe", en: "Go to the latest issue", schwaebisch: "Zur neieschte Ausgab", bayrisch: "Zur neiestn Ausgab" },
+  archiveTitle: {
     de: (n: string) => `Archiv: ${n}`,
     en: (n: string) => `${n} Archive`,
     schwaebisch: (n: string) => `${n}-Archiv`,
     bayrisch: (n: string) => `${n}-Archiv`,
   },
-  archivUnter: {
-    de: (_n: string, wann: string) => `Alle Ausgaben, die neueste zuerst. Neue Ausgaben erscheinen ${wann}.`,
-    en: (_n: string, wann: string) => `Every issue, newest first. New issues come out ${wann}.`,
-    schwaebisch: (n: string, wann: string) => `Älle Ausgabe vom ${n}, die neischt zerscht. Neie Ausgabe kommet ${wann}.`,
-    bayrisch: (n: string, wann: string) => `Olle Ausgabn vom ${n}, de neieste zerst. Neie Ausgabn kemman ${wann}.`,
+  archiveSubtitle: {
+    de: (_n: string, when: string) => `Alle Ausgaben, die neueste zuerst. Neue Ausgaben erscheinen ${when}.`,
+    en: (_n: string, when: string) => `Every issue, newest first. New issues come out ${when}.`,
+    schwaebisch: (n: string, when: string) => `Älle Ausgabe vom ${n}, die neischt zerscht. Neie Ausgabe kommet ${when}.`,
+    bayrisch: (n: string, when: string) => `Olle Ausgabn vom ${n}, de neieste zerst. Neie Ausgabn kemman ${when}.`,
   },
-  leerVor: {
+  emptyBefore: {
     de: () => "Noch keine Ausgabe erschienen. Neue Ausgaben erscheinen ",
     en: () => "No issue published yet. New issues come out ",
     schwaebisch: (n: string) => `No koi Ausgab rauskomme. S'${n} kommt `,
     bayrisch: (n: string) => `No koa Ausgab rauskemma. As ${n} kimmt `,
   },
-  leerNach: {
+  emptyAfter: {
     de: ", die erste Ausgabe am Sonntag nach der ersten ausgewerteten Woche.",
     en: ", the first one on the Sunday after the first full week.",
     schwaebisch: ", die erscht Ausgab am Sonndig nach dr erschte ausgwertete Woch.",
     bayrisch: ", de erste Ausgab am Sonntag nach da erstn ausgwertn Woch.",
   },
-  nr: { de: "Nr.", en: "No.", schwaebisch: "Nr.", bayrisch: "Nr." },
-  inZahlen: { de: "Woche in Zahlen", en: "The week in numbers", schwaebisch: "D'Woch in Zahla", bayrisch: "De Woch in Zahln" },
-  vorwoche: { de: "zur Vorwoche", en: "compared with last week", schwaebisch: "zur Vorwoch", bayrisch: "zur Vorwoch" },
-  gleich: { de: "wie in der Vorwoche", en: "same as last week", schwaebisch: "wie in dr Vorwoch", bayrisch: "wia in da Vorwoch" },
-  wetter: { de: "Wetterbericht", en: "Weather forecast", schwaebisch: "Wetterbericht", bayrisch: "Wetterbericht" },
-  wetterHinweis: {
+  issueNo: { de: "Nr.", en: "No.", schwaebisch: "Nr.", bayrisch: "Nr." },
+  inNumbers: { de: "Woche in Zahlen", en: "The week in numbers", schwaebisch: "D'Woch in Zahla", bayrisch: "De Woch in Zahln" },
+  vsLastWeek: { de: "zur Vorwoche", en: "compared with last week", schwaebisch: "zur Vorwoch", bayrisch: "zur Vorwoch" },
+  same: { de: "wie in der Vorwoche", en: "same as last week", schwaebisch: "wie in dr Vorwoch", bayrisch: "wia in da Vorwoch" },
+  weather: { de: "Wetterbericht", en: "Weather forecast", schwaebisch: "Wetterbericht", bayrisch: "Wetterbericht" },
+  weatherNote: {
     de: "Frei gedichtet aus den Zahlen der Woche, kein echtes Spielwetter.",
     en: "Made up from the week's numbers, not actual in-game weather.",
     schwaebisch: "Frei erfunda aus de Zahla vo dr Woch, koi echts Spielwetter.",
     bayrisch: "Frei dicht aus de Zahln vo da Woch, koa echts Spuiwetter.",
   },
-  rueckblick: {
+  lookBack: {
     de: () => "Vor 4 Wochen",
     en: () => "4 weeks ago",
     schwaebisch: (n: string) => `Vor 4 Woche im ${n}`,
@@ -101,7 +101,7 @@ const T = {
   },
 } satisfies Record<string, Record<Sprache, unknown>>;
 
-const ZAHL_NAMEN: Record<WeeklyNumberKind, Fassungen> = {
+const NUMBER_NAMES: Record<WeeklyNumberKind, Fassungen> = {
   anmeldungen: { de: "Anmeldungen", en: "Logins", schwaebisch: "Aameldunga", bayrisch: "Anmeldungen" },
   level: { de: "Level", en: "Levels", schwaebisch: "Level", bayrisch: "Level" },
   tode: { de: "Tode", en: "Deaths", schwaebisch: "Tode", bayrisch: "Tode" },
@@ -112,38 +112,38 @@ const ZAHL_NAMEN: Record<WeeklyNumberKind, Fassungen> = {
   gegenstandsstufe: { de: "Gegenstandsstufe", en: "Item level", schwaebisch: "Gegenstandsstuf", bayrisch: "Gegenstandsstufn" },
 };
 
-const zahlFormat = (n: number) => n.toLocaleString(numberLocale());
+const formatNumber = (n: number) => n.toLocaleString(numberLocale());
 
-/** Pfeil mit Differenz zur Vorwoche; ohne Vorwoche nichts. */
-function Trend({ zeile }: { zeile: NewspaperNumberView }) {
+/** Arrow with the difference to last week; nothing without last week. */
+function Trend({ row }: { row: NewspaperNumberView }) {
   const { t } = useSprache();
-  if (zeile.vorwoche === null) return null;
-  const diff = zeile.wert - zeile.vorwoche;
+  if (row.vorwoche === null) return null;
+  const diff = row.wert - row.vorwoche;
   if (diff === 0) {
     return (
-      <span className="zeitung-trend" data-richtung="gleich" title={t(T.gleich)}>
+      <span className="zeitung-trend" data-richtung="gleich" title={t(T.same)}>
         <span aria-hidden="true">=</span>
-        <span className="sr-only">{t(T.gleich)}</span>
+        <span className="sr-only">{t(T.same)}</span>
       </span>
     );
   }
-  const text = `${diff > 0 ? "+" : "−"}${zahlFormat(Math.abs(diff))}`;
+  const text = `${diff > 0 ? "+" : "−"}${formatNumber(Math.abs(diff))}`;
   return (
-    <span className="zeitung-trend" data-richtung={diff > 0 ? "hoch" : "runter"} title={`${text} ${t(T.vorwoche)}`}>
+    <span className="zeitung-trend" data-richtung={diff > 0 ? "hoch" : "runter"} title={`${text} ${t(T.vsLastWeek)}`}>
       <span aria-hidden="true">{diff > 0 ? "▲" : "▼"}</span> {text}
-      <span className="sr-only"> {t(T.vorwoche)}</span>
+      <span className="sr-only"> {t(T.vsLastWeek)}</span>
     </span>
   );
 }
 
-/** Infokasten mit den Gildensummen der Woche, umschaltbar wie die Gildenauswahl der übrigen Seiten. */
-function WocheInZahlen({ zahlen }: { zahlen: NewspaperNumbersView }) {
+/** Info box with the guild totals of the week, switchable like the guild filter on the other pages. */
+function WeekInNumbers({ zahlen }: { zahlen: NewspaperNumbersView }) {
   const { t } = useSprache();
   const [params, setParams] = useSearchParams();
-  const gewaehlt = params.get("gilde");
-  const slug = gewaehlt !== null && zahlen.gilden[gewaehlt] ? gewaehlt : null;
-  const zeilen = slug === null ? zahlen.gesamt : zahlen.gilden[slug];
-  const waehle = (next: string | null) => {
+  const selected = params.get("gilde");
+  const slug = selected !== null && zahlen.gilden[selected] ? selected : null;
+  const rows = slug === null ? zahlen.gesamt : zahlen.gilden[slug];
+  const select = (next: string | null) => {
     const q = new URLSearchParams(params);
     if (next === null) q.delete("gilde");
     else q.set("gilde", next);
@@ -151,18 +151,18 @@ function WocheInZahlen({ zahlen }: { zahlen: NewspaperNumbersView }) {
   };
   if (zahlen.gesamt.length === 0) return null;
   return (
-    <section className="zeitung-zahlen" aria-label={t(T.inZahlen)}>
+    <section className="zeitung-zahlen" aria-label={t(T.inNumbers)}>
       <h2 className="zeitung-section-title">
-        <span>{t(T.inZahlen)}</span>
+        <span>{t(T.inNumbers)}</span>
       </h2>
-      <GuildFilter guilds={zahlen.guilds} value={slug} onChange={waehle} />
+      <GuildFilter guilds={zahlen.guilds} value={slug} onChange={select} />
       <dl className="zeitung-zahlen-liste">
-        {zeilen.map((z) => (
+        {rows.map((z) => (
           <div key={z.art} className="zeitung-zahlen-zeile">
-            <dt>{t(ZAHL_NAMEN[z.art])}</dt>
+            <dt>{t(NUMBER_NAMES[z.art])}</dt>
             <dd>
-              <strong>{zahlFormat(z.wert)}</strong>
-              <Trend zeile={z} />
+              <strong>{formatNumber(z.wert)}</strong>
+              <Trend row={z} />
             </dd>
           </div>
         ))}
@@ -171,7 +171,7 @@ function WocheInZahlen({ zahlen }: { zahlen: NewspaperNumbersView }) {
   );
 }
 
-/** Artikel nach Rubrik (gruppiert nach der hochdeutschen Fassung), Reihenfolge wie geliefert. */
+/** Articles by section (grouped by the Standard German version), in the order delivered. */
 function bySection(articles: NewspaperArticleView[]): [Fassungen, NewspaperArticleView[]][] {
   const groups = new Map<string, [Fassungen, NewspaperArticleView[]]>();
   for (const a of articles) {
@@ -185,27 +185,27 @@ function bySection(articles: NewspaperArticleView[]): [Fassungen, NewspaperArtic
 function IssueNav({ view }: { view: NewspaperView }) {
   const { t } = useSprache();
   return (
-    <nav className="zeitung-nav" aria-label={t(T.ausgaben)}>
+    <nav className="zeitung-nav" aria-label={t(T.issues)}>
       {view.previous ? (
         <Link to={`/zeitung/${view.previous}`} rel="prev">
-          {t(T.vorherige)}
+          {t(T.previous)}
         </Link>
       ) : (
-        <span className="muted">{t(T.vorherige)}</span>
+        <span className="muted">{t(T.previous)}</span>
       )}
-      <Link to="/zeitung/archiv">{t(T.archiv)}</Link>
+      <Link to="/zeitung/archiv">{t(T.archive)}</Link>
       {view.next ? (
         <Link to={`/zeitung/${view.next}`} rel="next">
-          {t(T.naechste)}
+          {t(T.next)}
         </Link>
       ) : (
-        <span className="muted">{t(T.naechste)}</span>
+        <span className="muted">{t(T.next)}</span>
       )}
     </nav>
   );
 }
 
-/** Text mit verlinkten Charakternamen. */
+/** Text with linked character names. */
 function Linked({ text, article }: { text: string; article: NewspaperArticleView }) {
   return (
     <>
@@ -216,7 +216,7 @@ function Linked({ text, article }: { text: string; article: NewspaperArticleView
   );
 }
 
-/** Rubrikfarbe nach Wappen-Palette: Klatsch in Allianzblau, Friedhof in Hordenrot, sonst Gold. */
+/** Section color from the crest palette: Klatsch (gossip) in Alliance blue, Friedhof (graveyard) in Horde red, else gold. */
 const SECTION_COLOR: Record<string, string> = { Klatsch: "allianz", Friedhof: "horde" };
 
 function Avatar({ view, character, className }: { view: NewspaperView; character: CharacterRef; className: string }) {
@@ -235,7 +235,7 @@ function Card({ article, view }: { article: NewspaperArticleView; view: Newspape
           titleId={article.title.id}
           name={article.title.name}
           size={64}
-          tooltip={`${t(T.titelDerWoche)}: ${t(article.title.name)}`}
+          tooltip={`${t(T.titleOfWeek)}: ${t(article.title.name)}`}
         />
       )}
       <h3 className="zeitung-headline">
@@ -257,29 +257,29 @@ function Card({ article, view }: { article: NewspaperArticleView; view: Newspape
 
 function Issue({ view }: { view: NewspaperView }) {
   const { t, sprache } = useSprache();
-  const zahl = view.articles.find((a) => a.kind === "zahl");
-  const sections = bySection(view.articles.filter((a) => a !== zahl));
+  const numberArticle = view.articles.find((a) => a.kind === "zahl");
+  const sections = bySection(view.articles.filter((a) => a !== numberArticle));
   const leadCharacter = view.lead.characters[0];
   return (
     <>
-      <TestdatenHinweis show={view.testdaten} />
+      <SampleDataNotice show={view.testdaten} />
       <div className="zeitung">
         <header className="zeitung-masthead">
           <p className="zeitung-kicker">
             <FactionCrest faction="HORDE" size={20} />
-            <span>{t(T.kicker)(aufzaehlung(view.zahlen?.guilds.map((g) => g.name) ?? [], sprache))}</span>
+            <span>{t(T.kicker)(joinNames(view.zahlen?.guilds.map((g) => g.name) ?? [], sprache))}</span>
             <FactionCrest faction="ALLIANCE" size={20} />
           </p>
-          <h1 className="zeitung-title">{zeitung(sprache)}</h1>
+          <h1 className="zeitung-title">{paperName(sprache)}</h1>
           <p className="zeitung-meta">
             <span>
-              {t(T.ausgabe)} {view.issue}
+              {t(T.issue)} {view.issue}
             </span>
             <span>{weekRangeLabel(view.from, view.to, sprache)}</span>
             <span>
-              {t(T.erscheint)} {t(PUBLISHED_WHEN)}
+              {t(T.out)} {t(PUBLISHED_WHEN)}
             </span>
-            <span>{t(T.preis)}</span>
+            <span>{t(T.price)}</span>
           </p>
         </header>
         <article className={leadCharacter && view.avatars?.[String(leadCharacter.id)] ? "zeitung-lead" : "zeitung-lead zeitung-lead-ohne-bild"} data-kind={view.lead.kind}>
@@ -291,7 +291,7 @@ function Issue({ view }: { view: NewspaperView }) {
                   titleId={view.lead.title.id}
                   name={view.lead.title.name}
                   size={56}
-                  tooltip={`${t(T.titelDerWoche)}: ${t(view.lead.title.name)}`}
+                  tooltip={`${t(T.titleOfWeek)}: ${t(view.lead.title.name)}`}
                 />
               )}
             </div>
@@ -305,7 +305,7 @@ function Issue({ view }: { view: NewspaperView }) {
             </p>
           </div>
         </article>
-        {view.zahlen && <WocheInZahlen zahlen={view.zahlen} />}
+        {view.zahlen && <WeekInNumbers zahlen={view.zahlen} />}
         {sections.map(([section, articles]) => (
           <section key={fassungIn(section, "de")} className="zeitung-section" data-farbe={SECTION_COLOR[fassungIn(section, "de")] ?? "gold"} aria-label={t(section)}>
             <h2 className="zeitung-section-title">
@@ -318,40 +318,40 @@ function Issue({ view }: { view: NewspaperView }) {
             </div>
           </section>
         ))}
-        <div className={zahl ? "zeitung-bottom" : "zeitung-bottom zeitung-bottom-ohne-zahl"}>
-          {zahl && (
-            <section className="zeitung-zahl" aria-label={t(T.zahl)}>
+        <div className={numberArticle ? "zeitung-bottom" : "zeitung-bottom zeitung-bottom-ohne-zahl"}>
+          {numberArticle && (
+            <section className="zeitung-zahl" aria-label={t(T.numberOfWeek)}>
               <h2 className="zeitung-section-title">
-                <span>{t(T.zahl)}</span>
+                <span>{t(T.numberOfWeek)}</span>
               </h2>
-              <strong className="zeitung-zahl-wert">{t(zahl.headline)}</strong>
-              <p className="zeitung-text">{t(zahl.text)}</p>
+              <strong className="zeitung-zahl-wert">{t(numberArticle.headline)}</strong>
+              <p className="zeitung-text">{t(numberArticle.text)}</p>
             </section>
           )}
           <aside className="zeitung-motto">
-            <span className="zeitung-motto-label">{t(T.spruch)}</span>
+            <span className="zeitung-motto-label">{t(T.saying)}</span>
             <q>{t(view.motto)}</q>
           </aside>
         </div>
         {(view.wetter || view.rueckblick) && (
           <div className={view.wetter && view.rueckblick ? "zeitung-bottom" : "zeitung-bottom zeitung-bottom-ohne-zahl"}>
             {view.wetter && (
-              <section className="zeitung-wetter" aria-label={t(T.wetter)}>
+              <section className="zeitung-wetter" aria-label={t(T.weather)}>
                 <h2 className="zeitung-section-title">
-                  <span>{t(T.wetter)}</span>
+                  <span>{t(T.weather)}</span>
                 </h2>
                 <p className="zeitung-text">{t(view.wetter)}</p>
-                <p className="zeitung-wetter-hinweis muted">{t(T.wetterHinweis)}</p>
+                <p className="zeitung-wetter-hinweis muted">{t(T.weatherNote)}</p>
               </section>
             )}
             {view.rueckblick && (
-              <section className="zeitung-rueckblick" aria-label={t(T.rueckblick)(zeitung(sprache))}>
+              <section className="zeitung-rueckblick" aria-label={t(T.lookBack)(paperName(sprache))}>
                 <h2 className="zeitung-section-title">
-                  <span>{t(T.rueckblick)(zeitung(sprache))}</span>
+                  <span>{t(T.lookBack)(paperName(sprache))}</span>
                 </h2>
                 <p className="zeitung-rueckblick-meta muted">
                   <Link to={`/zeitung/${view.rueckblick.week}`}>
-                    {view.rueckblick.issue !== null ? `${t(T.ausgabe)} ${view.rueckblick.issue}, ` : ""}
+                    {view.rueckblick.issue !== null ? `${t(T.issue)} ${view.rueckblick.issue}, ` : ""}
                     {weekRangeLabel(view.rueckblick.from, view.rueckblick.to, sprache)}
                   </Link>
                 </p>
@@ -366,30 +366,30 @@ function Issue({ view }: { view: NewspaperView }) {
   );
 }
 
-export function ZeitungPage() {
+export function NewspaperPage() {
   const { t, sprache } = useSprache();
-  const { woche } = useParams();
-  const { data, error, loading } = useApi<NewspaperView>(woche ? `/api/newspaper/${encodeURIComponent(woche)}` : "/api/newspaper");
+  const { woche: week } = useParams();
+  const { data, error, loading } = useApi<NewspaperView>(week ? `/api/newspaper/${encodeURIComponent(week)}` : "/api/newspaper");
   return (
     <section className="page">
       {error?.status === 404 ? (
         <>
           <header className="page-header">
-            <h1 className="page-title">{zeitung(sprache)}</h1>
+            <h1 className="page-title">{paperName(sprache)}</h1>
           </header>
           <div className="state state-empty" role="status">
-            {woche ? (
-              <p>{t(T.gibtEsNicht)}</p>
+            {week ? (
+              <p>{t(T.notFound)}</p>
             ) : (
               <p className="erscheint-hint">
-                {t(T.erscheintVor)(zeitung(sprache))}
+                {t(T.publishedBefore)(paperName(sprache))}
                 <strong>{t(PUBLISHED_WHEN)}</strong>
-                {t(T.erscheintNach)}
+                {t(T.publishedAfter)}
               </p>
             )}
-            {woche && (
+            {week && (
               <p>
-                <Link to="/zeitung">{t(T.zurNeuesten)}</Link>
+                <Link to="/zeitung">{t(T.toLatest)}</Link>
               </p>
             )}
           </div>
@@ -403,35 +403,35 @@ export function ZeitungPage() {
   );
 }
 
-/** Archiv: alle Ausgaben mit Nummer, gewerteter Woche und Schlagzeile des Aufmachers, neueste zuerst. */
-export function ZeitungArchivePage() {
+/** Archive: every issue with number, scored week and lead headline, newest first. */
+export function NewspaperArchivePage() {
   const { t, sprache } = useSprache();
   const { data, error, loading } = useApi<NewspaperArchiveView>("/api/newspaper/archive");
   return (
     <section className="page">
       <header className="page-header">
-        <h1 className="page-title">{t(T.archivTitel)(zeitung(sprache))}</h1>
-        <p className="page-subtitle muted">{t(T.archivUnter)(zeitung(sprache), t(PUBLISHED_WHEN))}</p>
+        <h1 className="page-title">{t(T.archiveTitle)(paperName(sprache))}</h1>
+        <p className="page-subtitle muted">{t(T.archiveSubtitle)(paperName(sprache), t(PUBLISHED_WHEN))}</p>
       </header>
       <DataState loading={loading} error={error}>
         {data &&
           (data.issues.length === 0 ? (
             <div className="state state-empty" role="status">
               <p className="erscheint-hint">
-                {t(T.leerVor)(zeitung(sprache))}
+                {t(T.emptyBefore)(paperName(sprache))}
                 <strong>{t(PUBLISHED_WHEN)}</strong>
-                {t(T.leerNach)}
+                {t(T.emptyAfter)}
               </p>
             </div>
           ) : (
             <>
-              <TestdatenHinweis show={data.issues.some((i) => i.testdaten)} />
+              <SampleDataNotice show={data.issues.some((i) => i.testdaten)} />
               <ol className="zeitung-archive">
                 {data.issues.map((i) => (
                   <li key={i.week} className="zeitung-archive-item">
                     <Link to={`/zeitung/${i.week}`} className="zeitung-archive-link">
                       <span className="zeitung-archive-issue">
-                        {t(T.nr)} {i.issue}
+                        {t(T.issueNo)} {i.issue}
                       </span>
                       <span className="zeitung-archive-week">{weekRangeLabel(i.from, i.to, sprache)}</span>
                       <span className="zeitung-archive-headline">{t(i.headline)}</span>

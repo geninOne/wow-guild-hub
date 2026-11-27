@@ -18,91 +18,91 @@ import { GuildFilter } from "./GuildFilter";
 import { numberLocale } from "../lib/format";
 
 const T = {
-  schliessen: { de: "Schließen", en: "Close", schwaebisch: "Zumache", bayrisch: "Zuamacha" },
-  suchen: { de: "Nach Namen suchen", en: "Search by name", schwaebisch: "Nach Name sucha", bayrisch: "Nach Nama suacha" },
-  suchePlatzhalter: { de: "Name …", en: "Name …", schwaebisch: "Name …", bayrisch: "Nama …" },
-  wert: { de: "Wert", en: "Value", schwaebisch: "Wert", bayrisch: "Wert" },
+  close: { de: "Schließen", en: "Close", schwaebisch: "Zumache", bayrisch: "Zuamacha" },
+  search: { de: "Nach Namen suchen", en: "Search by name", schwaebisch: "Nach Name sucha", bayrisch: "Nach Nama suacha" },
+  searchPlaceholder: { de: "Name …", en: "Name …", schwaebisch: "Name …", bayrisch: "Nama …" },
+  value: { de: "Wert", en: "Value", schwaebisch: "Wert", bayrisch: "Wert" },
   name: { de: "Name", en: "Name", schwaebisch: "Name", bayrisch: "Nama" },
-  klasse: { de: "Klasse", en: "Class", schwaebisch: "Klass", bayrisch: "Klass" },
-  volk: { de: "Volk", en: "Race", schwaebisch: "Volk", bayrisch: "Voik" },
+  class: { de: "Klasse", en: "Class", schwaebisch: "Klass", bayrisch: "Klass" },
+  race: { de: "Volk", en: "Race", schwaebisch: "Volk", bayrisch: "Voik" },
   level: { de: "Level", en: "Level", schwaebisch: "Level", bayrisch: "Level" },
-  unbekannt: { de: "Unbekannt", en: "Unknown", schwaebisch: "Unbekannt", bayrisch: "Unbekannt" },
-  ehemalig: { de: "ehemalig", en: "former", schwaebisch: "ehemalig", bayrisch: "ehemalig" },
-  keiner: {
+  unknown: { de: "Unbekannt", en: "Unknown", schwaebisch: "Unbekannt", bayrisch: "Unbekannt" },
+  former: { de: "ehemalig", en: "former", schwaebisch: "ehemalig", bayrisch: "ehemalig" },
+  nobody: {
     de: "Hier steht niemand drin.",
     en: "Nobody here.",
     schwaebisch: "Do stoht koiner drin.",
     bayrisch: "Do steht koana drin.",
   },
-  keinTreffer: {
+  noMatch: {
     de: "Kein Name passt zur Suche.",
     en: "No name matches the search.",
     schwaebisch: "Koi Name passt zur Such.",
     bayrisch: "Koa Nama passt zur Suach.",
   },
-  anzahl: {
+  count: {
     de: (n: number) => (n === 1 ? "1 Mitglied" : `${n} Mitglieder`),
     en: (n: number) => (n === 1 ? "1 member" : `${n} members`),
     schwaebisch: (n: number) => (n === 1 ? "1 Mitglied" : `${n} Mitglieder`),
     bayrisch: (n: number) => (n === 1 ? "1 Mitglied" : `${n} Mitglieder`),
   },
-  sortieren: {
-    de: (spalte: string) => `Nach ${spalte} sortieren`,
-    en: (spalte: string) => `Sort by ${spalte}`,
-    schwaebisch: (spalte: string) => `Nach ${spalte} sortiera`,
-    bayrisch: (spalte: string) => `Nach ${spalte} sortiern`,
+  sortBy: {
+    de: (column: string) => `Nach ${column} sortieren`,
+    en: (column: string) => `Sort by ${column}`,
+    schwaebisch: (column: string) => `Nach ${column} sortiera`,
+    bayrisch: (column: string) => `Nach ${column} sortiern`,
   },
-  liste: { de: "Mitgliederliste", en: "Member list", schwaebisch: "Mitgliederlischt", bayrisch: "Mitgliederlistn" },
-  ansehen: { de: "Alle ansehen", en: "View all", schwaebisch: "Älle aagucke", bayrisch: "Olle oschaun" },
-  listeZu: {
-    de: (was: string) => `Liste: ${was}`,
-    en: (was: string) => `List: ${was}`,
-    schwaebisch: (was: string) => `Lischt: ${was}`,
-    bayrisch: (was: string) => `Listn: ${was}`,
+  list: { de: "Mitgliederliste", en: "Member list", schwaebisch: "Mitgliederlischt", bayrisch: "Mitgliederlistn" },
+  viewAll: { de: "Alle ansehen", en: "View all", schwaebisch: "Älle aagucke", bayrisch: "Olle oschaun" },
+  listOf: {
+    de: (what: string) => `Liste: ${what}`,
+    en: (what: string) => `List: ${what}`,
+    schwaebisch: (what: string) => `Lischt: ${what}`,
+    bayrisch: (what: string) => `Listn: ${what}`,
   },
 } satisfies Record<string, Fassungen<unknown>>;
 
 const fmt = (n: number) => n.toLocaleString(numberLocale());
 
-/** Eine Menge von Mitgliedern mit Beschriftung und Wertspalte; mehrere Mengen lassen sich im Dialog umschalten. */
+/** A set of members with a label and value column; the dialog can switch between several sets. */
 export interface MemberSet {
   key: string;
-  /** Name der Menge in der Auswahl, etwa "Tode durch Stürze". */
+  /** Name of the set in the picker, e.g. "Tode durch Stürze". */
   label: string;
-  /** Überschrift der Wertspalte; null ohne Wertspalte. */
+  /** Heading of the value column; null without a value column. */
   valueLabel: string | null;
   entries: readonly MemberEntry[];
-  /** Darstellung der Werte, etwa als Datum; Standard sind Zahlen mit Tausenderpunkt. */
+  /** How values are shown, e.g. as a date; the default is numbers with thousands separators. */
   formatValue?: (value: number) => string;
-  /** Werte sind Text (etwa "7 Tode"): linksbündig statt als Zahl. */
+  /** Values are text (e.g. "7 Tode"): left-aligned instead of as a number. */
   textValue?: boolean;
-  /** Hervorgehobene Mitglieder, etwa alle Inhaber eines Titels, mit kurzem Abzeichen. */
+  /** Highlighted members, e.g. all holders of a title, with a short badge. */
   highlight?: { ids: number[]; label: string };
 }
 
 export interface MemberListDialogProps {
-  /** Überschrift des Dialogs, etwa der Kartentitel. */
+  /** Heading of the dialog, e.g. the card title. */
   title: string;
-  /** Unterzeile, etwa der Zeitraum. */
+  /** Subtitle, e.g. the period. */
   subtitle?: string;
-  /** Mengen zum Zeigen; null, solange sie noch laden. */
+  /** Sets to show; null while they are still loading. */
   sets: MemberSet[] | null;
-  /** Fehler beim Nachladen der Mengen. */
+  /** Error while loading the sets. */
   error?: ApiError | null;
-  /** Anfangs gewählte Gilde (Horde/Allianz-Umschalter der Seite), null für alle. */
+  /** Initially selected guild (the page's Horde/Alliance switcher), null for all. */
   guild: string | null;
-  /** Bereits geladene Mitgliederdaten; ohne lädt der Dialog `/api/guild` selbst. */
+  /** Already loaded member data; without it the dialog loads `/api/guild` itself. */
   guildView?: GuildView | null;
-  /** true, wenn die Mengen schon nach Gilde gefiltert sind; dann gibt es im Dialog keinen eigenen Umschalter. */
+  /** true when the sets are already filtered by guild; the dialog then has no switcher of its own. */
   fixedGuild?: boolean;
   onClose(): void;
 }
 
 /**
- * Dialog mit der Mitgliederliste hinter einer Zahl: Name (zur Charakterseite), Klasse in Klassenfarbe, Volk, Level und
- * der Wert der Karte. Sortierbar, ab 15 Einträgen mit Suche, mit eigenem Gildenumschalter, der mit der Wahl der Seite
- * startet. Escape, der Schließen-Knopf und ein Klick daneben schließen; der Fokus kehrt zum Auslöser zurück.
- * Wiederverwendbar von überall: Karten, Tortenstücke, Balken. Am einfachsten über `useMemberList`.
+ * Dialog with the member list behind a number: name (to the character page), class in class color, race, level and
+ * the card's value. Sortable, with search from 15 entries, with its own guild switcher that starts with the page's
+ * choice. Escape, the close button and a click outside close it; focus returns to the trigger.
+ * Reusable from anywhere: cards, pie slices, bars. Easiest via `useMemberList`.
  */
 export function MemberListDialog({ title, subtitle, sets, error = null, guild, guildView, fixedGuild = false, onClose }: MemberListDialogProps) {
   const { t } = useSprache();
@@ -159,7 +159,7 @@ export function MemberListDialog({ title, subtitle, sets, error = null, guild, g
             </h2>
             {subtitle && <p className="muted small member-dialog-subtitle">{subtitle}</p>}
           </div>
-          <button type="button" className="member-dialog-close" onClick={onClose} aria-label={t(T.schliessen)} data-autofocus>
+          <button type="button" className="member-dialog-close" onClick={onClose} aria-label={t(T.close)} data-autofocus>
             <span aria-hidden="true">×</span>
           </button>
         </header>
@@ -196,7 +196,7 @@ function MemberListBody({
   const searchId = useId();
   const selectId = useId();
 
-  const all = useMemo(() => resolveMembers(set?.entries ?? [], members, t(T.unbekannt)), [set, members, t]);
+  const all = useMemo(() => resolveMembers(set?.entries ?? [], members, t(T.unknown)), [set, members, t]);
   const inGuild = useMemo(() => filterMemberList(all, guildSlug, ""), [all, guildSlug]);
   const shown = useMemo(
     () => sortMemberList(filterMemberList(inGuild, null, text), sort.key === "value" && !hasValue ? "name" : sort.key, sort.dir),
@@ -206,8 +206,8 @@ function MemberListBody({
 
   const columns: { key: MemberListSortKey; label: string; num?: boolean; wide?: boolean }[] = [
     { key: "name", label: t(T.name) },
-    { key: "className", label: t(T.klasse), wide: true },
-    { key: "raceName", label: t(T.volk), wide: true },
+    { key: "className", label: t(T.class), wide: true },
+    { key: "raceName", label: t(T.race), wide: true },
     { key: "level", label: t(T.level), num: true },
     ...(hasValue ? [{ key: "value" as const, label: set!.valueLabel!, num: !set!.textValue }] : []),
   ];
@@ -222,7 +222,7 @@ function MemberListBody({
         <GuildFilter guilds={guilds} value={guildSlug} onChange={setGuildSlug} />
         {sets.length > 1 && (
           <label className="member-dialog-field" htmlFor={selectId}>
-            <span className="member-dialog-field-label">{t(T.wert)}</span>
+            <span className="member-dialog-field-label">{t(T.value)}</span>
             <select
               id={selectId}
               className="filter-input"
@@ -242,12 +242,12 @@ function MemberListBody({
         )}
         {searchable && (
           <label className="member-dialog-field" htmlFor={searchId}>
-            <span className="sr-only">{t(T.suchen)}</span>
+            <span className="sr-only">{t(T.search)}</span>
             <input
               id={searchId}
               type="search"
               className="filter-input"
-              placeholder={t(T.suchePlatzhalter)}
+              placeholder={t(T.searchPlaceholder)}
               value={text}
               onChange={(e) => setText(e.target.value)}
               autoComplete="off"
@@ -256,13 +256,13 @@ function MemberListBody({
         )}
       </div>
       <p className="muted small member-dialog-count" role="status" aria-live="polite">
-        {t(T.anzahl)(shown.length)}
+        {t(T.count)(shown.length)}
       </p>
       {shown.length === 0 ? (
-        <p className="muted">{inGuild.length === 0 ? t(T.keiner) : t(T.keinTreffer)}</p>
+        <p className="muted">{inGuild.length === 0 ? t(T.nobody) : t(T.noMatch)}</p>
       ) : (
         <div className="member-dialog-scroll">
-          <table className="table member-table" aria-label={set?.label ?? t(T.liste)}>
+          <table className="table member-table" aria-label={set?.label ?? t(T.list)}>
             <thead>
               <tr>
                 {columns.map((c) => (
@@ -272,7 +272,7 @@ function MemberListBody({
                     className={`${c.num ? "num" : ""}${c.wide ? " member-col-wide" : ""}`}
                     aria-sort={sort.key === c.key ? (sort.dir === "asc" ? "ascending" : "descending") : undefined}
                   >
-                    <button type="button" className="sort-button" onClick={() => sortBy(c.key)} aria-label={t(T.sortieren)(c.label)}>
+                    <button type="button" className="sort-button" onClick={() => sortBy(c.key)} aria-label={t(T.sortBy)(c.label)}>
                       {c.label}
                       <SortMark active={sort.key === c.key} dir={sort.dir} />
                     </button>
@@ -292,7 +292,7 @@ function MemberListBody({
                       ) : (
                         <span className="muted">{r.name}</span>
                       )}
-                      {r.known && r.former && <span className="badge badge-muted member-former">{t(T.ehemalig)}</span>}
+                      {r.known && r.former && <span className="badge badge-muted member-former">{t(T.former)}</span>}
                       {set?.highlight?.ids.includes(r.id) && <span className="badge member-highlight">{set.highlight.label}</span>}
                     </span>
                     {r.known && (
@@ -328,19 +328,19 @@ function SortMark({ active, dir }: { active: boolean; dir: "asc" | "desc" }): Re
   );
 }
 
-/** Was ein Auslöser zum Öffnen braucht; `sets` darf null sein, wenn `load` die Mengen erst beim Öffnen holt. */
+/** What a trigger needs to open the dialog; `sets` may be null when `load` fetches the sets only on opening. */
 export interface MemberListRequest {
   title: string;
   subtitle?: string;
   sets: MemberSet[] | null;
   error?: ApiError | null;
-  /** Mengen sind schon nach der Gilde der Seite gefiltert (siehe `MemberListDialogProps.fixedGuild`). */
+  /** Sets are already filtered by the page's guild (see `MemberListDialogProps.fixedGuild`). */
   fixedGuild?: boolean;
 }
 
 /**
- * Zustand für einen Dialog: `open(request)` öffnet ihn, `dialog` rendert ihn an beliebiger Stelle.
- * Beispiel für ein Tortenstück: `onClick={() => list.open({ title: "Orcs", sets: [{ key: "orc", label: "Orcs", valueLabel: null, entries: ids }] })}`.
+ * State for one dialog: `open(request)` opens it, `dialog` renders it anywhere.
+ * Example for a pie slice: `onClick={() => list.open({ title: "Orcs", sets: [{ key: "orc", label: "Orcs", valueLabel: null, entries: ids }] })}`.
  */
 export function useMemberList(guild: string | null, guildView?: GuildView | null) {
   const [request, setRequest] = useState<MemberListRequest | null>(null);
@@ -360,8 +360,8 @@ export function useMemberList(guild: string | null, guildView?: GuildView | null
 }
 
 /**
- * Erkennbarer Auslöser für eine Liste: kleiner Knopf mit Personen-Symbol, etwa "Alle 12 ansehen".
- * `aria-haspopup="dialog"` sagt Screenreadern, dass ein Dialog aufgeht.
+ * Recognizable trigger for a list: small button with a people icon, e.g. "Alle 12 ansehen".
+ * `aria-haspopup="dialog"` tells screen readers that a dialog opens.
  */
 export function MemberListTrigger({
   onClick,
@@ -394,13 +394,13 @@ export function PeopleIcon() {
 }
 
 /**
- * Kennzahl als klickbare Kachel (wie `.fun-fact`), die eine Mitgliederliste öffnet: ganze Kachel ist ein Knopf, mit
- * Personen-Symbol und "Alle ansehen", damit man sie sofort als klickbar erkennt. Ohne `onClick` eine normale Kachel.
+ * Key figure as a clickable tile (like `.fun-fact`) that opens a member list: the whole tile is a button, with a
+ * people icon and "Alle ansehen", so it is immediately recognizable as clickable. Without `onClick` a plain tile.
  */
 export function MemberFact({ label, value, onClick }: { label: string; value: ReactNode; onClick?: () => void }) {
   const { t } = useSprache();
   if (!onClick) {
-    // Ohne Menge (etwa niemand auf Level 60) bleibt es eine reine Zahl.
+    // Without a set (e.g. nobody at level 60) it stays a plain number.
     return (
       <li className="fun-fact">
         <span className="fun-fact-label">{label}</span>
@@ -415,13 +415,13 @@ export function MemberFact({ label, value, onClick }: { label: string; value: Re
         <strong className="fun-fact-value num">{value}</strong>
         <span className="member-hint small">
           <PeopleIcon />
-          <span className="sr-only">{t(T.listeZu)(label)}, </span>
-          {t(T.ansehen)}
+          <span className="sr-only">{t(T.listOf)(label)}, </span>
+          {t(T.viewAll)}
         </span>
       </button>
     </li>
   );
 }
 
-/** "Alle ansehen" in der gewählten Sprache, für eigene Auslöser. */
-export const ALLE_ANSEHEN: Fassungen = T.ansehen;
+/** "Alle ansehen" in the selected language, for custom triggers. */
+export const VIEW_ALL: Fassungen = T.viewAll;

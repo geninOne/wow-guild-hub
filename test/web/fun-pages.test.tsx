@@ -9,7 +9,7 @@ import { ueberall, type Fassungen } from "../../src/sprache";
 import { dayTotals, heatLevel, monthLabel, peak, splitByNames, weekLabel, weekRangeLabel } from "../../web/src/lib/fun";
 import { SpracheProvider, type Sprache } from "../../web/src/lib/sprache";
 import { StatsPage } from "../../web/src/pages/StatsPage";
-import { ZeitungArchivePage, ZeitungPage } from "../../web/src/pages/ZeitungPage";
+import { NewspaperArchivePage, NewspaperPage } from "../../web/src/pages/NewspaperPage";
 import { TitlesPage } from "../../web/src/pages/TitlesPage";
 
 afterEach(() => {
@@ -32,14 +32,14 @@ function mockFetch(routes: Record<string, unknown>) {
   return fn;
 }
 
-function renderAt(path: string, routes: React.ReactNode, sprache?: Sprache) {
+function renderAt(path: string, routes: React.ReactNode, language?: Sprache) {
   const site = <MemoryRouter initialEntries={[path]}><Routes>{routes}</Routes></MemoryRouter>;
-  render(sprache ? <SpracheProvider start={sprache}>{site}</SpracheProvider> : site);
+  render(language ? <SpracheProvider start={language}>{site}</SpracheProvider> : site);
 }
 
 const f = (de: string, schwaebisch = de, bayrisch = de, en = de): Fassungen => ({ de, en, schwaebisch, bayrisch });
 
-test("Hilfen: Farbstufen, Spitzenwert, Tagessummen, Namen im Text, Beschriftungen", () => {
+test("helpers: heat levels, peak, day totals, names in text, labels", () => {
   expect([0, 1, 5, 10].map((v) => heatLevel(v, 10))).toEqual([0, 1, 3, 5]);
   expect(heatLevel(3, 0)).toBe(0);
   expect(peak([0, 3, 3])).toEqual({ index: 1, value: 3 });
@@ -73,7 +73,7 @@ const activity: ActivityView = {
   testdaten: true,
 };
 
-test("Aktivität: Raster, stärkste Stunde, Testdaten-Hinweis, Gildenfilter mit Leerzustand", async () => {
+test("activity: grid, busiest hour, sample data notice, guild filter with empty state", async () => {
   mockFetch({ "/api/activity": activity });
   renderAt("/statistik/aktivitaet", <Route path="/statistik/:reiter" element={<StatsPage />} />);
   expect(await screen.findByText("Freitag, 21 bis 22 Uhr")).toBeTruthy();
@@ -85,8 +85,8 @@ test("Aktivität: Raster, stärkste Stunde, Testdaten-Hinweis, Gildenfilter mit 
   expect(screen.getByText(/Noch keine Anmeldungen aufgezeichnet/)).toBeTruthy();
 });
 
-test("Aktivität: Charaktere öffnet die Liste mit Anmeldungen je Charakter", async () => {
-  const mitglied = (id: number, name: string, guildSlug: string) => ({
+test("activity: characters opens the list with logins per character", async () => {
+  const member = (id: number, name: string, guildSlug: string) => ({
     id, name, surname: null, slug: name.toLowerCase(), level: 30, classId: 1, className: "Krieger", raceId: 2, raceName: "Orc",
     rank: 1, rankName: "Mitglied", itemLevel: null, mainSpecName: null, hasProfile: true, former: false, guildSlug, guildName: guildSlug, professions: [],
   });
@@ -94,7 +94,7 @@ test("Aktivität: Charaktere öffnet die Liste mit Anmeldungen je Charakter", as
     "/api/activity": activity,
     "/api/guild": {
       fetchedAt: "2026-11-21T09:00:00Z", name: "Bärenklaue", faction: "HORDE", rulesetName: "Classic", memberCount: 2, guilds: activity.guilds,
-      classes: [], ranks: [], members: [mitglied(1, "Anna", "bärenklaue"), mitglied(2, "Bodo", "goldene-bärenklaue")],
+      classes: [], ranks: [], members: [member(1, "Anna", "bärenklaue"), member(2, "Bodo", "goldene-bärenklaue")],
     },
   });
   renderAt("/statistik/aktivitaet", <Route path="/statistik/:reiter" element={<StatsPage />} />, "schwaebisch");
@@ -123,39 +123,39 @@ const titles: TitlesView = {
   testdaten: false,
 };
 
-test("Titel: Kacheln mit Gewinnern, leere Titel, Ehrentafel", async () => {
+test("titles: tiles with winners, empty titles, hall of fame", async () => {
   mockFetch({ "/api/titles": titles });
   renderAt("/titel", <Route path="/titel" element={<TitlesPage />} />);
   const winner = await screen.findByRole("link", { name: "Anna" });
   expect(winner.getAttribute("href")).toBe("/charakter/anna");
   expect(screen.getByText("7 Tode")).toBeTruthy();
   expect(screen.getByRole("img", { name: "Horde" }).getAttribute("src")).toContain("pvpcurrency-honor-horde");
-  // Abzeichen groß in den Kacheln, nicht vergebene Titel abgedunkelt; Ehrentafel mit kleinen Abzeichen im Kopf
-  const kacheln = [...document.querySelectorAll(".title-tile")];
-  expect(kacheln.map((k) => k.querySelector("img.title-medal")?.getAttribute("src"))).toEqual(["/titel/pechvogel.png", "/titel/nachteule.png"]);
-  expect(kacheln[1].querySelector("img.title-medal")?.className).toContain("title-medal-muted");
-  expect(kacheln[0].querySelector("img.title-medal")?.getAttribute("width")).toBe("92");
-  // Ehrentafel gedreht: eine Zeile je Titel mit kleinem Abzeichen, nicht vergeben als Strich
+  // Large badges in the tiles, titles not awarded dimmed; hall of fame with small badges in the header
+  const tiles = [...document.querySelectorAll(".title-tile")];
+  expect(tiles.map((k) => k.querySelector("img.title-medal")?.getAttribute("src"))).toEqual(["/titel/pechvogel.png", "/titel/nachteule.png"]);
+  expect(tiles[1].querySelector("img.title-medal")?.className).toContain("title-medal-muted");
+  expect(tiles[0].querySelector("img.title-medal")?.getAttribute("width")).toBe("92");
+  // Hall of fame rotated: one row per title with a small badge, not awarded shown as a dash
   expect(document.querySelectorAll(".honor-title img.title-medal")).toHaveLength(2);
   expect(document.querySelectorAll(".honor-none").length).toBeGreaterThan(0);
   expect(screen.queryByText("k. A.")).toBeNull();
-  // Regel erst auf Knopfdruck sichtbar
-  const regel = screen.getByRole("button", { name: "Regel für Pechvogel" });
-  expect(regel.getAttribute("aria-expanded")).toBe("false");
-  fireEvent.click(regel);
-  expect(regel.getAttribute("aria-expanded")).toBe("true");
+  // Rule visible only after pressing the button
+  const rule = screen.getByRole("button", { name: "Regel für Pechvogel" });
+  expect(rule.getAttribute("aria-expanded")).toBe("false");
+  fireEvent.click(rule);
+  expect(rule.getAttribute("aria-expanded")).toBe("true");
   expect(document.getElementById("regel-pechvogel")?.className).toContain("title-tile-rule-open");
   expect(screen.getByText("Diese Woche niemand")).toBeTruthy();
   expect(screen.getByRole("link", { name: "Woche vom 02.11. bis 08.11.2026" }).getAttribute("href")).toBe("/zeitung/2026-W45");
   expect(screen.queryByRole("note")).toBeNull();
-  // Gut sichtbar: wann es Neues gibt, und keine Kalenderwochen mehr
+  // Clearly visible: when there is something new, and no more calendar weeks
   expect(document.querySelector(".page-header .erscheint-hint")?.textContent).toContain("jeden Sonntag ab 10 Uhr");
   expect(screen.getByText(/gewertet wird Sonntag bis Samstag\. Bei Gleichstand/)).toBeTruthy();
   expect(document.body.textContent).not.toMatch(/KW \d/);
 });
 
-test("Titel: Klick auf Kachel oder Ehrentafel zeigt die Rangliste der Woche, alle Inhaber hervorgehoben", async () => {
-  const mitglied = (id: number, name: string) => ({
+test("titles: click on tile or hall of fame shows the ranking of the week, all holders highlighted", async () => {
+  const member = (id: number, name: string) => ({
     id, name, surname: null, slug: name.toLowerCase(), level: 30, classId: 1, className: "Krieger", raceId: 2, raceName: "Orc",
     rank: 1, rankName: "Mitglied", itemLevel: null, mainSpecName: null, hasProfile: true, former: false, guildSlug: "bärenklaue", guildName: "Bärenklaue", professions: [],
   });
@@ -171,7 +171,7 @@ test("Titel: Klick auf Kachel oder Ehrentafel zeigt die Rangliste der Woche, all
     "/api/titles": view,
     "/api/titles?title=pechvogel&week=2026-W46": {
       titleId: "pechvogel", week: "2026-W46", from: "2026-11-09", to: "2026-11-15", winnerIds: [1, 2], complete: true,
-      // Gleichstand: Anna und Bodo teilen sich den Titel, Anna steht auf der Karte
+      // Tie: Anna and Bodo share the title, Anna is shown on the card
       entries: [[1, 7], [2, 7], [3, 1]], valueTexts: { "7": f("7 Tode"), "1": f("1 Tod") },
     },
     "/api/titles?title=pechvogel&week=2026-W45": {
@@ -180,16 +180,16 @@ test("Titel: Klick auf Kachel oder Ehrentafel zeigt die Rangliste der Woche, all
     },
     "/api/guild": {
       fetchedAt: "2026-11-21T09:00:00Z", name: "Bärenklaue", faction: "HORDE", rulesetName: "Classic", memberCount: 3, guilds: view.guilds,
-      classes: [], ranks: [], members: [mitglied(1, "Anna"), mitglied(2, "Bodo"), mitglied(3, "Cleo")],
+      classes: [], ranks: [], members: [member(1, "Anna"), member(2, "Bodo"), member(3, "Cleo")],
     },
   });
   renderAt("/titel", <Route path="/titel" element={<TitlesPage />} />);
   await screen.findByText("7 Tode");
-  // Nicht vergebene Titel ohne gespeicherte Rangliste haben keinen Auslöser, die aktuelle Woche schon
-  const kacheln = [...document.querySelectorAll(".title-tile")];
-  expect(kacheln.map((k) => k.className.includes("title-tile-clickable"))).toEqual([true, true]);
-  // Klick auf die Kachel selbst (nicht auf den Link) öffnet die Liste
-  fireEvent.click(kacheln[0].querySelector(".title-tile-name")!);
+  // Titles not awarded without a stored ranking have no trigger, the current week does
+  const tiles = [...document.querySelectorAll(".title-tile")];
+  expect(tiles.map((k) => k.className.includes("title-tile-clickable"))).toEqual([true, true]);
+  // Click on the tile itself (not on the link) opens the list
+  fireEvent.click(tiles[0].querySelector(".title-tile-name")!);
   let dialog = await screen.findByRole("dialog", { name: "Pechvogel" });
   await within(dialog).findByRole("table");
   expect(fetch).toHaveBeenCalledWith("/api/titles?title=pechvogel&week=2026-W46", expect.anything());
@@ -204,18 +204,18 @@ test("Titel: Klick auf Kachel oder Ehrentafel zeigt die Rangliste der Woche, all
   fireEvent.click(within(dialog).getByRole("button", { name: "Schließen" }));
   expect(screen.queryByRole("dialog")).toBeNull();
 
-  // Ehrentafel: alte Woche ohne Rangliste zeigt den Gewinner mit Hinweis
+  // Hall of fame: old week without ranking shows the winner with a note
   fireEvent.click(screen.getByRole("button", { name: "Rangliste Pechvogel, Woche vom 02.11. bis 08.11.2026" }));
   dialog = await screen.findByRole("dialog", { name: "Pechvogel" });
   await within(dialog).findByRole("table");
   expect(within(dialog).getByText(/nur der Gewinner gespeichert/)).toBeTruthy();
-  const alt = within(dialog).getAllByRole("row").slice(1);
-  expect(alt.map((r) => [r.querySelector("a")?.textContent, r.lastElementChild?.textContent])).toEqual([["Bodo", "4 Tode"]]);
-  // Nachteule in der alten Woche: nicht vergeben, keine Rangliste, kein Knopf
+  const older = within(dialog).getAllByRole("row").slice(1);
+  expect(older.map((r) => [r.querySelector("a")?.textContent, r.lastElementChild?.textContent])).toEqual([["Bodo", "4 Tode"]]);
+  // Nachteule in the old week: not awarded, no ranking, no button
   expect(screen.queryByRole("button", { name: /Rangliste Nachteule, Woche vom 02\.11\./ })).toBeNull();
 });
 
-test("Titel geteilt: Karte zeigt den Titelträger und wie viele ihn noch haben, der Zusatz öffnet die Rangliste", async () => {
+test("shared title: card shows the holder and how many others have it, the extra opens the ranking", async () => {
   const view: TitlesView = {
     ...titles,
     current: { ...titles.current!, awards: [{ ...titles.current!.awards[0], sharedWith: 12 }] },
@@ -229,20 +229,20 @@ test("Titel geteilt: Karte zeigt den Titelträger und wie viele ihn noch haben, 
     "/api/guild": { fetchedAt: "2026-11-21T09:00:00Z", name: "Bärenklaue", faction: "HORDE", rulesetName: "Classic", memberCount: 0, guilds: view.guilds, classes: [], ranks: [], members: [] },
   });
   renderAt("/titel", <Route path="/titel" element={<TitlesPage />} />);
-  // Nur ein Name auf der Karte, keine Namensliste
+  // Only one name on the card, no list of names
   expect(await screen.findByRole("link", { name: "Anna" })).toBeTruthy();
-  const zusatz = screen.getByRole("button", { name: "teilt sich den Titel mit 12 weiteren" });
-  // Regel-Einblendung erklärt den Gleichstand, nur bei geteilten Titeln
+  const extra = screen.getByRole("button", { name: "teilt sich den Titel mit 12 weiteren" });
+  // Rule popup explains the tie, only for shared titles
   expect(document.getElementById("regel-pechvogel")?.textContent).toMatch(/am längsten nicht hatte/);
   expect(document.getElementById("regel-nachteule")?.textContent).not.toMatch(/Gleichstand/);
   expect(screen.getByText(/Bei Gleichstand teilen sich alle den Titel/)).toBeTruthy();
   expect(document.body.textContent).not.toMatch(/alphabetisch/);
-  fireEvent.click(zusatz);
+  fireEvent.click(extra);
   await screen.findByRole("dialog", { name: "Pechvogel" });
   expect(fetch).toHaveBeenCalledWith("/api/titles?title=pechvogel&week=2026-W46", expect.anything());
 });
 
-test("Titel geteilt: Einzahl und Mundart", async () => {
+test("shared title: singular and dialect", async () => {
   const view: TitlesView = {
     ...titles,
     current: { ...titles.current!, awards: [{ ...titles.current!.awards[0], sharedWith: 1 }] },
@@ -252,7 +252,7 @@ test("Titel geteilt: Einzahl und Mundart", async () => {
   expect(await screen.findByRole("button", { name: "teilt sich dr Titel mit oim andre" })).toBeTruthy();
 });
 
-test("Titel vor der ersten Auswertung: Leerzustand", async () => {
+test("titles before the first scoring: empty state", async () => {
   mockFetch({ "/api/titles": { ...titles, current: null, history: [] } });
   renderAt("/titel", <Route path="/titel" element={<TitlesPage />} />);
   expect(await screen.findByText(/noch nicht ausgewertet/)).toBeTruthy();
@@ -280,11 +280,11 @@ const issue: NewspaperView = {
   testdaten: false,
 };
 
-test("Zeitung: Kopf, verlinkte Namen, Spruch und Blättern", async () => {
+test("newspaper: masthead, linked names, saying and paging", async () => {
   mockFetch({ "/api/newspaper": issue });
-  renderAt("/zeitung", <Route path="/zeitung" element={<ZeitungPage />} />);
+  renderAt("/zeitung", <Route path="/zeitung" element={<NewspaperPage />} />);
   expect(await screen.findByRole("heading", { name: "Gildenblatt", level: 1 })).toBeTruthy();
-  // Ohne Gildennamen in der Ausgabe bleibt die Unterzeile neutral
+  // Without guild names in the issue the subline stays neutral
   expect(screen.getByText("Die Wochenzeitung der Gilde")).toBeTruthy();
   expect(screen.getByText("Preis: ein Heiltrank")).toBeTruthy();
   expect(screen.getByText("Ausgabe 3")).toBeTruthy();
@@ -308,8 +308,8 @@ test("Zeitung: Kopf, verlinkte Namen, Spruch und Blättern", async () => {
   expect(screen.queryByText(/Ältere Ausgabe/)).toBeNull();
 });
 
-test("Zeitung: Woche in Zahlen mit Gildenauswahl, Wetterbericht und Rückblick", async () => {
-  const z = (art: "anmeldungen" | "level" | "tode", wert: number, vorwoche: number | null) => ({ art, wert, vorwoche });
+test("newspaper: week in numbers with guild filter, weather forecast and look back", async () => {
+  const z = (kind: "anmeldungen" | "level" | "tode", value: number, lastWeek: number | null) => ({ art: kind, wert: value, vorwoche: lastWeek });
   mockFetch({
     "/api/newspaper": {
       ...issue,
@@ -325,40 +325,40 @@ test("Zeitung: Woche in Zahlen mit Gildenauswahl, Wetterbericht und Rückblick",
       rueckblick: { week: "2026-W42", issue: 1, from: "2026-10-12", to: "2026-10-18", headline: f("Anna rast los"), characters: [ref({})] },
     },
   });
-  renderAt("/zeitung", <Route path="/zeitung" element={<ZeitungPage />} />);
-  const kasten = await screen.findByRole("region", { name: "Woche in Zahlen" });
-  // Gildennamen in der Unterzeile kommen aus den Daten der Ausgabe
+  renderAt("/zeitung", <Route path="/zeitung" element={<NewspaperPage />} />);
+  const box = await screen.findByRole("region", { name: "Woche in Zahlen" });
+  // Guild names in the subline come from the issue data
   expect(screen.getByText("Wochenzeitung von Bärenklaue und Goldene Bärenklaue")).toBeTruthy();
-  const zeilen = () => [...kasten.querySelectorAll(".zeitung-zahlen-zeile")].map((d) => d.textContent);
-  expect(zeilen()).toEqual(["Anmeldungen120▲ +20 zur Vorwoche", "Level30=wie in der Vorwoche", "Tode9"]);
-  fireEvent.click(within(kasten).getByRole("radio", { name: /Goldene Bärenklaue/ }));
-  expect(zeilen()).toEqual(["Tode7▲ +6 zur Vorwoche"]);
-  fireEvent.click(within(kasten).getByRole("radio", { name: /^Bärenklaue/ }));
-  expect(zeilen()).toEqual(["Tode2▼ −3 zur Vorwoche"]);
+  const rows = () => [...box.querySelectorAll(".zeitung-zahlen-zeile")].map((d) => d.textContent);
+  expect(rows()).toEqual(["Anmeldungen120▲ +20 zur Vorwoche", "Level30=wie in der Vorwoche", "Tode9"]);
+  fireEvent.click(within(box).getByRole("radio", { name: /Goldene Bärenklaue/ }));
+  expect(rows()).toEqual(["Tode7▲ +6 zur Vorwoche"]);
+  fireEvent.click(within(box).getByRole("radio", { name: /^Bärenklaue/ }));
+  expect(rows()).toEqual(["Tode2▼ −3 zur Vorwoche"]);
   expect(screen.getByRole("region", { name: "Wetterbericht" }).textContent).toContain("Sturm über Azeroth.");
-  const rueck = screen.getByRole("region", { name: "Vor 4 Wochen" });
-  expect(within(rueck).getByRole("link").getAttribute("href")).toBe("/zeitung/2026-W42");
-  expect(rueck.textContent).toContain("Anna rast los");
+  const lookBack = screen.getByRole("region", { name: "Vor 4 Wochen" });
+  expect(within(lookBack).getByRole("link").getAttribute("href")).toBe("/zeitung/2026-W42");
+  expect(lookBack.textContent).toContain("Anna rast los");
 });
 
-test("Zeitung: alte Ausgabe ohne Zahlen, Wetter und Rückblick", async () => {
+test("newspaper: old issue without numbers, weather and look back", async () => {
   mockFetch({ "/api/newspaper": issue });
-  renderAt("/zeitung", <Route path="/zeitung" element={<ZeitungPage />} />);
+  renderAt("/zeitung", <Route path="/zeitung" element={<NewspaperPage />} />);
   await screen.findByRole("heading", { name: "Gildenblatt", level: 1 });
   expect(screen.queryByRole("region", { name: "Woche in Zahlen" })).toBeNull();
   expect(screen.queryByRole("region", { name: "Wetterbericht" })).toBeNull();
   expect(screen.queryByRole("region", { name: "Vor 4 Wochen" })).toBeNull();
 });
 
-test("Zeitung: unbekannte Ausgabe und noch keine Ausgabe", async () => {
+test("newspaper: unknown issue and no issue yet", async () => {
   mockFetch({});
-  renderAt("/zeitung/2026-W01", <Route path="/zeitung/:woche" element={<ZeitungPage />} />);
+  renderAt("/zeitung/2026-W01", <Route path="/zeitung/:woche" element={<NewspaperPage />} />);
   expect(await screen.findByText("Diese Ausgabe gibt es nicht.")).toBeTruthy();
   cleanup();
-  renderAt("/zeitung", <Route path="/zeitung" element={<ZeitungPage />} />);
-  const leer = await screen.findByText(/Neue Ausgaben erscheinen/);
-  expect(leer.textContent).toContain("jeden Sonntag ab 10 Uhr");
-  expect(leer.className).toBe("erscheint-hint");
+  renderAt("/zeitung", <Route path="/zeitung" element={<NewspaperPage />} />);
+  const empty = await screen.findByText(/Neue Ausgaben erscheinen/);
+  expect(empty.textContent).toContain("jeden Sonntag ab 10 Uhr");
+  expect(empty.className).toBe("erscheint-hint");
 });
 
 const wrapped: WrappedView = {
@@ -372,7 +372,7 @@ const wrapped: WrappedView = {
   testdaten: false,
 };
 
-test("Wrapped: Karte mit Kennzahlen, fehlende Werte als Hinweis, Monatswahl lädt neu", async () => {
+test("wrapped: card with key figures, missing values as a note, month selection reloads", async () => {
   const fetch = mockFetch({
     "/api/wrapped/anna": wrapped,
     "/api/wrapped/anna/2026-10": { ...wrapped, month: "2026-10", running: false, levels: null, rank: null, titles: [] },
@@ -393,7 +393,7 @@ test("Wrapped: Karte mit Kennzahlen, fehlende Werte als Hinweis, Monatswahl läd
   expect(fetch.mock.calls.map((c) => c[0])).toEqual(["/api/wrapped/anna", "/api/wrapped/anna/2026-10"]);
 });
 
-test("Wrapped: Hinweis, wenn erst seit dem Beitritt gezählt wird", async () => {
+test("wrapped: note when counting only since joining", async () => {
   mockFetch({ "/api/wrapped/anna": wrapped });
   render(<MemoryRouter><WrappedPanel slug="anna" /></MemoryRouter>);
   await screen.findByText("+5");
@@ -405,7 +405,7 @@ test("Wrapped: Hinweis, wenn erst seit dem Beitritt gezählt wird", async () => 
   expect(screen.getByText(/Verglichen: 12\.11\.2026 und 17\.11\.2026/)).toBeTruthy();
 });
 
-test("Wrapped: im Monat des Serverstarts steht der Hinweis darauf, die Gegenstandsstufe als aktueller Stand", async () => {
+test("wrapped: in the month of the server launch it says so, item level as current value", async () => {
   mockFetch({
     "/api/wrapped/anna": {
       ...wrapped, from: "2026-11-05", serverStart: "2026-11-05", levels: { gained: 24, start: 1, end: 25 }, itemLevel: 14,
@@ -423,7 +423,7 @@ test("Wrapped: im Monat des Serverstarts steht der Hinweis darauf, die Gegenstan
   expect(screen.queryByText(/Verglichen/)).toBeNull();
 });
 
-test("Archiv: Liste neueste zuerst mit Nummer, Woche und Schlagzeile; Leerzustand", async () => {
+test("archive: list newest first with number, week and headline; empty state", async () => {
   mockFetch({
     "/api/newspaper/archive": {
       issues: [
@@ -433,7 +433,7 @@ test("Archiv: Liste neueste zuerst mit Nummer, Woche und Schlagzeile; Leerzustan
       ],
     },
   });
-  renderAt("/zeitung/archiv", <><Route path="/zeitung/archiv" element={<ZeitungArchivePage />} /><Route path="/zeitung/:woche" element={<ZeitungPage />} /></>);
+  renderAt("/zeitung/archiv", <><Route path="/zeitung/archiv" element={<NewspaperArchivePage />} /><Route path="/zeitung/:woche" element={<NewspaperPage />} /></>);
   const links = await screen.findAllByRole("link");
   expect(links.map((l) => l.textContent)).toEqual([
     "Nr. 3Woche vom 16.11. bis 21.11.2026Übergang",
@@ -446,11 +446,11 @@ test("Archiv: Liste neueste zuerst mit Nummer, Woche und Schlagzeile; Leerzustan
   expect(screen.getByRole("note")).toBeTruthy();
   cleanup();
   mockFetch({ "/api/newspaper/archive": { issues: [] } });
-  renderAt("/zeitung/archiv", <Route path="/zeitung/archiv" element={<ZeitungArchivePage />} />);
+  renderAt("/zeitung/archiv", <Route path="/zeitung/archiv" element={<NewspaperArchivePage />} />);
   expect((await screen.findByText(/Noch keine Ausgabe erschienen/)).textContent).toContain("jeden Sonntag ab 10 Uhr");
 });
 
-test("TitleBadge: ohne Datei nichts, bei Ladefehler nichts, Schleimer hat sein Abzeichen", () => {
+test("TitleBadge: nothing without a file, nothing on load error, Schleimer has its badge", () => {
   const { container, rerender } = render(<TitleBadge titleId="gibt-es-nicht" name="X" size={40} />);
   expect(container.innerHTML).toBe("");
   rerender(<TitleBadge titleId="schleimer" name="Schleimer vom Dienst" size={40} />);
@@ -460,7 +460,7 @@ test("TitleBadge: ohne Datei nichts, bei Ladefehler nichts, Schleimer hat sein A
   expect(container.innerHTML).toBe("");
 });
 
-test("Für jeden der elf Titel liegt ein Abzeichen unter web/public/titel", async () => {
+test("every one of the eleven titles has a badge in web/public/titel", async () => {
   const { existsSync, readdirSync } = await import("node:fs");
   const { TITLES } = await import("../../src/weekly/titles");
   const { TITLE_BADGE_IDS } = await import("../../web/src/components/TitleBadge");
@@ -469,8 +469,8 @@ test("Für jeden der elf Titel liegt ein Abzeichen unter web/public/titel", asyn
   expect(readdirSync("web/public/titel").sort()).toEqual([...TITLE_BADGE_IDS].map((id) => `${id}.png`).sort());
 });
 
-test("Ehrentafel: neueste Woche links, fünf Wochen je Seite, ältere per Blättern, Wert als Tooltip", async () => {
-  // Bärenklaue-Wochen, die neueste endet am Samstag 14.11.
+test("hall of fame: newest week on the left, five weeks per page, older by paging, value as tooltip", async () => {
+  // Bärenklaue weeks, the newest ends on Saturday 14.11.
   const weeks = Array.from({ length: 7 }, (_, i) => {
     const w = 45 - i;
     const to = new Date(Date.UTC(2026, 10, 14 - 7 * i)).toISOString().slice(0, 10);
@@ -483,22 +483,22 @@ test("Ehrentafel: neueste Woche links, fünf Wochen je Seite, ältere per Blätt
   mockFetch({ "/api/titles": { ...titles, history: weeks } });
   renderAt("/titel", <Route path="/titel" element={<TitlesPage />} />);
   await screen.findByText("Ehrentafel der Vorwochen");
-  const kopf = () => [...document.querySelectorAll(".honor-week a")].map((a) => a.textContent);
-  expect(kopf()).toEqual(["08.11.", "01.11.", "25.10.", "18.10.", "11.10."]);
+  const header = () => [...document.querySelectorAll(".honor-week a")].map((a) => a.textContent);
+  expect(header()).toEqual(["08.11.", "01.11.", "25.10.", "18.10.", "11.10."]);
   expect([...document.querySelectorAll(".honor-week-date")].map((d) => d.textContent)[0]).toBe("bis 14.11.");
   expect(screen.getByRole("link", { name: "Woche vom 08.11. bis 14.11.2026" }).getAttribute("href")).toBe("/zeitung/2026-11-14");
   expect(screen.getByRole("link", { name: "Held45" }).parentElement?.getAttribute("title")).toBe("45 Tode");
   expect((screen.getByRole("button", { name: "‹ neuere Wochen" }) as HTMLButtonElement).disabled).toBe(true);
   fireEvent.click(screen.getByRole("button", { name: "ältere Wochen ›" }));
-  expect(kopf()).toEqual(["25.10.", "18.10.", "11.10.", "04.10.", "27.09."]);
+  expect(header()).toEqual(["25.10.", "18.10.", "11.10.", "04.10.", "27.09."]);
   expect((screen.getByRole("button", { name: "ältere Wochen ›" }) as HTMLButtonElement).disabled).toBe(true);
   fireEvent.click(screen.getByRole("button", { name: "‹ neuere Wochen" }));
-  expect(kopf()[0]).toBe("08.11.");
-  // Zeilen sind die Titel
+  expect(header()[0]).toBe("08.11.");
+  // Rows are the titles
   expect([...document.querySelectorAll(".honor-title")].map((t) => t.textContent)).toEqual(["Pechvogel", "Nachteule"]);
 });
 
-test("Titel auf Schwäbisch und Bayrisch: Namen, Regeln und Hinweise in der gewählten Fassung", async () => {
+test("titles in Swabian and Bavarian: names, rules and notes in the selected version", async () => {
   mockFetch({ "/api/titles": titles });
   renderAt("/titel", <Route path="/titel" element={<TitlesPage />} />, "schwaebisch");
   expect(await screen.findByRole("heading", { name: "Titel vo dr Woch", level: 1 })).toBeTruthy();
@@ -519,9 +519,9 @@ test("Titel auf Schwäbisch und Bayrisch: Namen, Regeln und Hinweise in der gew�
   expect(document.querySelector(".title-tile img.title-medal")?.getAttribute("src")).toBe("/titel/pechvogel.png");
 });
 
-test("Zeitung auf Schwäbisch: Schlagzeile, Text und Spruch in der schwäbischen Fassung", async () => {
+test("newspaper in Swabian: headline, text and saying in the Swabian version", async () => {
   mockFetch({ "/api/newspaper": issue });
-  renderAt("/zeitung", <Route path="/zeitung" element={<ZeitungPage />} />, "schwaebisch");
+  renderAt("/zeitung", <Route path="/zeitung" element={<NewspaperPage />} />, "schwaebisch");
   const lead = await screen.findByRole("heading", { name: "Anna gibt Gas wie verruckt", level: 2 });
   expect(within(lead).getByRole("link", { name: "Anna" })).toBeTruthy();
   expect(screen.getByText("springt wie a Wiesele.", { exact: false })).toBeTruthy();
@@ -535,14 +535,14 @@ test("Zeitung auf Schwäbisch: Schlagzeile, Text und Spruch in der schwäbischen
   expect(screen.getByRole("heading", { name: "Gildeblatt", level: 1 })).toBeTruthy();
   expect(screen.getByText("S'Wocheblatt vo dr Gilde")).toBeTruthy();
   expect(screen.getByRole("link", { name: "Älle Ausgabe im Archiv" })).toBeTruthy();
-  // Die Rubrikfarbe hängt an der hochdeutschen Rubrik
+  // The section color depends on the Standard German section
   expect(document.querySelector('[data-farbe="horde"]')?.getAttribute("aria-label")).toBe("Friedhof");
   expect(screen.queryByText("Nur nicht hetzen.")).toBeNull();
 });
 
-test("Zeitung auf Bayrisch: Schlagzeile, Text und Spruch in der bayrischen Fassung", async () => {
+test("newspaper in Bavarian: headline, text and saying in the Bavarian version", async () => {
   mockFetch({ "/api/newspaper": issue });
-  renderAt("/zeitung", <Route path="/zeitung" element={<ZeitungPage />} />, "bayrisch");
+  renderAt("/zeitung", <Route path="/zeitung" element={<NewspaperPage />} />, "bayrisch");
   expect(await screen.findByRole("heading", { name: "Gildnblatt", level: 1 })).toBeTruthy();
   expect(screen.getByRole("heading", { name: "Anna gibt Gas, Obacht", level: 2 })).toBeTruthy();
   expect(screen.getByText("rennt wia da Blitz.", { exact: false })).toBeTruthy();
@@ -554,22 +554,22 @@ test("Zeitung auf Bayrisch: Schlagzeile, Text und Spruch in der bayrischen Fassu
   expect(screen.queryByText("No ned hudla.")).toBeNull();
 });
 
-test("Zeitungsarchiv und Leerzustand im Dialekt", async () => {
+test("newspaper archive and empty state in dialect", async () => {
   mockFetch({
     "/api/newspaper/archive": {
       issues: [{ issue: 1, week: "2026-W45", from: "2026-11-02", to: "2026-11-08", headline: f("Ruhige Woche", "A ruhigs Wöchle", "A ruhige Woch"), testdaten: false }],
     },
   });
-  renderAt("/zeitung/archiv", <Route path="/zeitung/archiv" element={<ZeitungArchivePage />} />, "schwaebisch");
+  renderAt("/zeitung/archiv", <Route path="/zeitung/archiv" element={<NewspaperArchivePage />} />, "schwaebisch");
   expect((await screen.findByRole("link")).textContent).toBe("Nr. 1Woch vom 02.11. bis 08.11.2026A ruhigs Wöchle");
   expect(screen.getByText(/Neie Ausgabe kommet jeden Sonndig ab 10 Uhr/)).toBeTruthy();
   cleanup();
   mockFetch({});
-  renderAt("/zeitung", <Route path="/zeitung" element={<ZeitungPage />} />, "bayrisch");
+  renderAt("/zeitung", <Route path="/zeitung" element={<NewspaperPage />} />, "bayrisch");
   expect((await screen.findByText(/As Gildnblatt kimmt/)).textContent).toContain("De erste Ausgab kimmt am Sonntag");
 });
 
-test("Aktivität im Dialekt: Wochentage, Kennzahlen und Raster", async () => {
+test("activity in dialect: weekdays, key figures and grid", async () => {
   mockFetch({ "/api/activity": activity });
   renderAt("/statistik/aktivitaet", <Route path="/statistik/:reiter" element={<StatsPage />} />, "schwaebisch");
   expect(await screen.findByText("Freidig, 21 bis 22 Uhr")).toBeTruthy();
@@ -583,7 +583,7 @@ test("Aktivität im Dialekt: Wochentage, Kennzahlen und Raster", async () => {
   expect(screen.getByText("vui")).toBeTruthy();
 });
 
-test("Titel auf Englisch: Seitenkopf, Kacheln und Wochenzeitung ohne Gildennamen", async () => {
+test("titles in English: page header, tiles and newspaper without guild names", async () => {
   mockFetch({ "/api/titles": titles });
   renderAt("/titel", <Route path="/titel" element={<TitlesPage />} />, "en");
   expect(await screen.findByRole("heading", { name: "Titles of the Week", level: 1 })).toBeTruthy();
@@ -601,7 +601,7 @@ test("Titel auf Englisch: Seitenkopf, Kacheln und Wochenzeitung ohne Gildennamen
   vi.unstubAllEnvs();
 });
 
-test("Wrapped auf Englisch: Marke aus WEBSITE_NAME, Kennzahlen und Lieblingszeit", async () => {
+test("wrapped in English: brand from WEBSITE_NAME, key figures and favorite time", async () => {
   vi.stubEnv("WEBSITE_NAME", "Die Tapferen");
   mockFetch({ "/api/wrapped/anna": wrapped });
   render(<SpracheProvider start="en"><MemoryRouter><WrappedPanel slug="anna" /></MemoryRouter></SpracheProvider>);
@@ -619,7 +619,7 @@ test("Wrapped auf Englisch: Marke aus WEBSITE_NAME, Kennzahlen und Lieblingszeit
   expect(document.querySelector(".wrapped-brand")?.textContent).toBe("Gildenseite-Rückblick");
 });
 
-test("Wrapped im Dialekt: Kennzahlen, Lieblingszeit und Titel", async () => {
+test("wrapped in dialect: key figures, favorite time and titles", async () => {
   mockFetch({ "/api/wrapped/anna": wrapped });
   render(<SpracheProvider start="schwaebisch"><MemoryRouter><WrappedPanel slug="anna" /></MemoryRouter></SpracheProvider>);
   expect(await screen.findByText(/Level gwonne, vo 20 auf 25/)).toBeTruthy();
@@ -634,7 +634,7 @@ test("Wrapped im Dialekt: Kennzahlen, Lieblingszeit und Titel", async () => {
   expect(screen.getByText("ned umzbringa!")).toBeTruthy();
 });
 
-test("Wochenzeitung auf Englisch: Kopf, Rubriken und Texte in der englischen Fassung, fehlendes Englisch fällt auf Deutsch zurück", async () => {
+test("newspaper in English: masthead, sections and texts in English, missing English falls back to German", async () => {
   const en: NewspaperView = {
     ...issue,
     lead: { ...issue.lead, headline: f("Anna gibt Gas", "Anna gibt Gas wie verruckt", "Anna gibt Gas, Obacht", "Anna hits the gas") },
@@ -642,7 +642,7 @@ test("Wochenzeitung auf Englisch: Kopf, Rubriken und Texte in der englischen Fas
     articles: [issue.articles[0], { ...issue.articles[1], section: f("Zahl der Woche", "Zahl der Woche", "Zahl der Woche", "Number of the Week") }],
   };
   mockFetch({ "/api/newspaper": en });
-  renderAt("/zeitung", <Route path="/zeitung" element={<ZeitungPage />} />, "en");
+  renderAt("/zeitung", <Route path="/zeitung" element={<NewspaperPage />} />, "en");
   expect(await screen.findByRole("heading", { name: "Guild Gazette", level: 1 })).toBeTruthy();
   expect(screen.getByRole("heading", { name: "Anna hits the gas", level: 2 })).toBeTruthy();
   expect(screen.getByText("Slow and steady wins the race.")).toBeTruthy();
@@ -651,19 +651,19 @@ test("Wochenzeitung auf Englisch: Kopf, Rubriken und Texte in der englischen Fas
   expect(screen.getByText("The guild's weekly paper")).toBeTruthy();
   expect(screen.getByText("Price: one healing potion")).toBeTruthy();
   expect(screen.getByRole("link", { name: "All issues in the archive" })).toBeTruthy();
-  // Alte Ausgaben ohne Englisch zeigen den deutschen Text
+  // Old issues without English show the German text
   expect(screen.getByText("Level gesammelt.")).toBeTruthy();
 });
 
-test("WEBSITE_NEWSPAPER gibt der Wochenzeitung in allen Sprachen denselben Namen", async () => {
+test("WEBSITE_NEWSPAPER gives the newspaper the same name in all languages", async () => {
   vi.stubEnv("WEBSITE_NEWSPAPER", "Bärenklaue-Blatt");
   try {
     mockFetch({ "/api/newspaper": issue });
-    renderAt("/zeitung", <Route path="/zeitung" element={<ZeitungPage />} />, "en");
+    renderAt("/zeitung", <Route path="/zeitung" element={<NewspaperPage />} />, "en");
     expect(await screen.findByRole("heading", { name: "Bärenklaue-Blatt", level: 1 })).toBeTruthy();
     cleanup();
     mockFetch({ "/api/newspaper/archive": { issues: [] } });
-    renderAt("/zeitung/archiv", <Route path="/zeitung/archiv" element={<ZeitungArchivePage />} />, "bayrisch");
+    renderAt("/zeitung/archiv", <Route path="/zeitung/archiv" element={<NewspaperArchivePage />} />, "bayrisch");
     expect(await screen.findByRole("heading", { name: "Bärenklaue-Blatt-Archiv", level: 1 })).toBeTruthy();
     expect(screen.getByText(/As Bärenklaue-Blatt kimmt/)).toBeTruthy();
   } finally {

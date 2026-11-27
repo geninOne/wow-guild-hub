@@ -56,40 +56,40 @@ const view: InstancesView = {
 
 const card = (name: string) => screen.getByRole("heading", { name }).closest<HTMLElement>(".instance-card")!;
 
-test("Dungeon-Karte: Name und Stufe oben, goldener Wimpel mit Datum fest oben rechts, Bosse unten", () => {
+test("dungeon card: name and level at the top, golden pennant with date fixed at the top right, bosses at the bottom", () => {
   render(<InstancesPanel view={view} />);
-  const flamme = card("Flammenschlund");
-  expect(flamme.className).toContain("instance-card-done");
-  expect(flamme.querySelector("img.instance-card-img")?.getAttribute("src")).toBe(TILE);
-  const head = flamme.querySelector(".instance-card-head")!;
-  // Wimpel steht zuerst im Kopf (schwimmt rechts oben), danach Name und Stufe.
+  const ragefire = card("Flammenschlund");
+  expect(ragefire.className).toContain("instance-card-done");
+  expect(ragefire.querySelector("img.instance-card-img")?.getAttribute("src")).toBe(TILE);
+  const head = ragefire.querySelector(".instance-card-head")!;
+  // The pennant comes first in the head (floats at the top right), then name and level.
   expect([...head.children].map((e) => e.className)).toEqual(["instance-pennant", "instance-card-name", "instance-card-level"]);
   const pennant = head.querySelector(".instance-pennant")!;
   expect(pennant.textContent).toBe("✦Abgeschlossen 03.11.");
   expect(pennant.getAttribute("title")).toBe("Abgeschlossen am 03.11.2026");
   expect(head.querySelector(".instance-card-level")?.textContent).toBe("Stufe 13 bis 18");
-  expect(flamme.querySelector(".instance-card-content > :last-child")?.className).toBe("instance-card-bosses");
-  expect(flamme.querySelector(".instance-card-bosses")?.textContent).toBe("Bosse: Flintauge, Taragaman der Hungerleider, Bazzalan");
-  expect(flamme.querySelector(".instance-final-boss")?.textContent).toBe("Bazzalan");
-  expect(within(flamme).queryAllByRole("listitem")).toHaveLength(0);
-  expect(flamme.textContent).not.toMatch(/von \d+ Bossen|✔|Noch nicht besucht/);
+  expect(ragefire.querySelector(".instance-card-content > :last-child")?.className).toBe("instance-card-bosses");
+  expect(ragefire.querySelector(".instance-card-bosses")?.textContent).toBe("Bosse: Flintauge, Taragaman der Hungerleider, Bazzalan");
+  expect(ragefire.querySelector(".instance-final-boss")?.textContent).toBe("Bazzalan");
+  expect(within(ragefire).queryAllByRole("listitem")).toHaveLength(0);
+  expect(ragefire.textContent).not.toMatch(/von \d+ Bossen|✔|Noch nicht besucht/);
 });
 
-test("Wimpel mit Anzahl bei mehreren Siegen, ohne Datum nur Abgeschlossen; offen gedämpft mit ruhigem Hinweis", () => {
+test("pennant with count for several kills, only completed without a date; open ones dimmed with a calm note", () => {
   render(<InstancesPanel view={view} />);
-  const todesminen = card("Todesminen").querySelector(".instance-pennant")!;
-  expect(todesminen.textContent).toBe("✦Abgeschlossen 05.11. 3×");
-  expect(todesminen.getAttribute("title")).toBe("Abgeschlossen am 05.11.2026, 3 Mal");
-  const ruinen = card("Ruinen von Lordaeron");
-  expect(ruinen.querySelector(".instance-pennant")?.textContent).toBe("✦Abgeschlossen");
-  const hoehlen = card("Höhlen des Wehklagens");
-  expect(hoehlen.className).toContain("instance-card-open");
-  expect(hoehlen.querySelector(".instance-pennant")).toBeNull();
-  expect(hoehlen.querySelector(".instance-card-head > .instance-card-note")?.textContent).toBe("Noch nicht besucht");
-  expect(hoehlen.textContent).toContain("Bosse: A, B, Mutanus");
+  const deadmines = card("Todesminen").querySelector(".instance-pennant")!;
+  expect(deadmines.textContent).toBe("✦Abgeschlossen 05.11. 3×");
+  expect(deadmines.getAttribute("title")).toBe("Abgeschlossen am 05.11.2026, 3 Mal");
+  const ruins = card("Ruinen von Lordaeron");
+  expect(ruins.querySelector(".instance-pennant")?.textContent).toBe("✦Abgeschlossen");
+  const wailing = card("Höhlen des Wehklagens");
+  expect(wailing.className).toContain("instance-card-open");
+  expect(wailing.querySelector(".instance-pennant")).toBeNull();
+  expect(wailing.querySelector(".instance-card-head > .instance-card-note")?.textContent).toBe("Noch nicht besucht");
+  expect(wailing.textContent).toContain("Bosse: A, B, Mutanus");
 });
 
-test("ohne Bild ein eigener Hintergrund statt Platzhalter-Symbol, Grundton je Ort fest", () => {
+test("without an image an own background instead of a placeholder icon, base tone fixed per place", () => {
   render(<InstancesPanel view={view} />);
   const art = card("Ruinen von Lordaeron").querySelector<HTMLElement>(".instance-card-art")!;
   expect(art).toBeTruthy();
@@ -99,7 +99,7 @@ test("ohne Bild ein eigener Hintergrund statt Platzhalter-Symbol, Grundton je Or
   expect(card("Onyxia").querySelector(".instance-card-art")).toBeNull();
 });
 
-test("nur zwei Bereiche Dungeons und Raids, Dungeons nach Stufe, ohne Stufe am Ende in alter Reihenfolge", () => {
+test("only two sections, dungeons and raids, dungeons by level, those without a level at the end in the old order", () => {
   render(<InstancesPanel view={view} />);
   expect(screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent)).toEqual(["Dungeons", "Raids"]);
   expect(document.body.textContent).not.toMatch(/Novize|Erfahren|Meister/);
@@ -114,7 +114,7 @@ test("nur zwei Bereiche Dungeons und Raids, Dungeons nach Stufe, ohne Stufe am E
   ]);
 });
 
-test("Raids nach denselben Regeln: begonnen mit Bossanzahl oben rechts, offen gedämpft, abgeschlossen mit Wimpel", () => {
+test("raids follow the same rules: started with boss count at the top right, open dimmed, completed with pennant", () => {
   render(<InstancesPanel view={view} />);
   const hyjal = card("Hyjalgipfel");
   expect(hyjal.querySelector(".instance-card-level")?.textContent).toBe("Stufe 60");
@@ -127,13 +127,13 @@ test("Raids nach denselben Regeln: begonnen mit Bossanzahl oben rechts, offen ge
   expect(within(onyxia).queryAllByRole("listitem")).toHaveLength(0);
   expect(screen.queryByText("Weitere Boss-Siege")).toBeNull();
   cleanup();
-  const besiegt = { ...view.raids[1], bosses: [{ name: "Onyxia", defeated: true, lastAt: "2026-11-04T20:00:00.000Z" }] };
-  render(<InstancesPanel view={{ ...view, raids: [besiegt] }} />);
+  const defeated = { ...view.raids[1], bosses: [{ name: "Onyxia", defeated: true, lastAt: "2026-11-04T20:00:00.000Z" }] };
+  render(<InstancesPanel view={{ ...view, raids: [defeated] }} />);
   expect(card("Onyxia").className).toContain("instance-card-done");
   expect(card("Onyxia").querySelector(".instance-pennant")?.textContent).toBe("✦Abgeschlossen 04.11.");
 });
 
-test("Weitere Boss-Siege nur, wenn vorhanden", () => {
+test("other boss kills only when present", () => {
   render(
     <InstancesPanel view={{ ...view, otherKills: [{ boss: "Baron Rivendare", instance: "Stratholme", quantity: 1, lastAt: null }] }} />,
   );
@@ -141,12 +141,12 @@ test("Weitere Boss-Siege nur, wenn vorhanden", () => {
   expect(document.body.textContent).toContain("Baron Rivendare (Stratholme) besiegt");
 });
 
-test("ohne Definitionen ein freundlicher Hinweis", () => {
+test("a friendly note without definitions", () => {
   render(<InstancesPanel view={{ available: false, dungeonTiers: [], raids: [], otherKills: [] }} />);
   expect(screen.getByText("Dungeon- und Raiddaten werden gerade zusammengetragen. Schau bald wieder vorbei.")).toBeTruthy();
 });
 
-test("nur accountweit erledigt: kein Wimpel, sondern der Hinweis \"Auf diesem Account\" mit Erklärung", () => {
+test("done only account-wide: no pennant but the note \"Auf diesem Account\" with an explanation", () => {
   const account: InstancesView = {
     ...view,
     dungeonTiers: [{ achievementId: 62033, tier: "Meister", dungeons: [dungeon({ criterionId: 5, name: "Scholomance" }), dungeon({ criterionId: 6, name: "Stratholme: Tot", onAccount: true })] }],
@@ -164,13 +164,14 @@ test("nur accountweit erledigt: kein Wimpel, sondern der Hinweis \"Auf diesem Ac
   expect(card("Scholomance").querySelector(".instance-card-note")?.textContent).toBe("Noch nicht besucht");
 });
 
-test("ohne Statistik: der Hinweis erklärt, dass der Abschluss je Charakter unbekannt ist", () => {
-  const sumpf: InstancesView = {
+test("untracked: the note explains that completion per character is unknown"
+, () => {
+  const swamp: InstancesView = {
     ...view,
     dungeonTiers: [{ achievementId: 62031, tier: "Novize", dungeons: [dungeon({ criterionId: 7, name: "Ausgrabungsstätte: Sumpfland", onAccount: true, tracked: false })] }],
     raids: [],
   };
-  render(<InstancesPanel view={sumpf} />);
+  render(<InstancesPanel view={swamp} />);
   const note = card("Ausgrabungsstätte: Sumpfland").querySelector(".instance-card-note-account")!;
   expect(note.textContent).toBe("Auf diesem Account");
   expect(note.getAttribute("title")).toContain("nicht bekannt");

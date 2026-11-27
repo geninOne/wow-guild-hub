@@ -44,14 +44,14 @@ const guildView: GuildView = {
   classes: [], ranks: [], members,
 };
 
-describe("Auswahl der Menge", () => {
-  test("activeMemberIds: aktive Mitglieder ab Mindestlevel, optional nur einer Gilde", () => {
+describe("selecting the set", () => {
+  test("activeMemberIds: active members from a minimum level, optionally of one guild only", () => {
     expect(activeMemberIds(members, null)).toEqual([1, 2, 3]);
     expect(activeMemberIds(members, null, 60)).toEqual([1, 3]);
     expect(activeMemberIds(members, "goldene-bärenklaue")).toEqual([2]);
   });
 
-  test("resolveMembers: Mitgliederdaten dazu, Unbekannte als Platzhalter, doppelte IDs einmal", () => {
+  test("resolveMembers: adds member data, unknown ones as placeholders, duplicate IDs once", () => {
     const rows = resolveMembers([[3, 7], [99, 2], [3, 1], [4, 0]], members);
     expect(rows.map((r) => [r.id, r.name, r.value, r.known])).toEqual([
       [3, "Cleo", 7, true],
@@ -62,14 +62,14 @@ describe("Auswahl der Menge", () => {
     expect(resolveMembers([1], members)[0].value).toBeNull();
   });
 
-  test("filterMemberList: Gilde und Namensteil, Unbekannte nur bei allen Gilden", () => {
+  test("filterMemberList: guild and name part, unknown ones only for all guilds", () => {
     const rows = resolveMembers([1, 2, 3, 99], members);
     expect(filterMemberList(rows, "bärenklaue", "").map((r) => r.id)).toEqual([1, 3]);
     expect(filterMemberList(rows, null, "").map((r) => r.id)).toEqual([1, 2, 3, 99]);
     expect(filterMemberList(rows, null, " LE ").map((r) => r.id)).toEqual([3]);
   });
 
-  test("sortMemberList: Zahlen und Texte in beide Richtungen, fehlende Werte unten, Gleichstand nach Name", () => {
+  test("sortMemberList: numbers and texts in both directions, missing values last, ties by name", () => {
     const rows = resolveMembers([[1, 5], [2, 9], [3, 5], [99, 1]], members);
     expect(sortMemberList(rows, "value", "desc").map((r) => r.id)).toEqual([2, 1, 3, 99]);
     expect(sortMemberList(rows, "level", "asc").map((r) => r.id)).toEqual([2, 1, 3, 99]);
@@ -77,7 +77,7 @@ describe("Auswahl der Menge", () => {
     expect(sortMemberList(rows, "name", "desc").map((r) => r.name)).toEqual(["Unbekannt", "Cleo", "Bodo", "Anna"]);
   });
 
-  test("statMemberSets: je Statistik eine Menge mit Kurzname und Einheit, Statistiken ohne Antwort fallen weg", () => {
+  test("statMemberSets: one set per statistic with short name and unit, statistics without an answer are dropped", () => {
     const card: StatCardView = {
       slug: "tode", form: "grabsteinfeld", title: ueberall("Tode"), blurb: null, span: 3,
       stats: [
@@ -93,19 +93,19 @@ describe("Auswahl der Menge", () => {
     ]);
   });
 
-  test("statMembersPath: Zeitraum wie die Ansicht, Karte als Abfrage", () => {
+  test("statMembersPath: period as in the view, card as query", () => {
     expect(statMembersPath({ kind: "gesamt", id: null }, "tode")).toBe("/api/stats?card=tode");
     expect(statMembersPath({ kind: "woche", id: "2026-11-21" }, "flaeschle")).toBe("/api/stats/week/2026-11-21?card=flaeschle");
     expect(statMembersPath({ kind: "monat", id: null }, "a b")).toBe("/api/stats/month?card=a%20b");
   });
 });
 
-function renderDialog(sets: MemberSet[] | null, opts: { guild?: string | null; sprache?: Sprache; onClose?: () => void } = {}) {
+function renderDialog(sets: MemberSet[] | null, opts: { guild?: string | null; language?: Sprache; onClose?: () => void } = {}) {
   const onClose = opts.onClose ?? vi.fn();
   render(
-    <SpracheProvider start={opts.sprache ?? "de"}>
+    <SpracheProvider start={opts.language ?? "de"}>
       <MemoryRouter>
-        <button type="button">Auslöser</button>
+        <button type="button">Trigger</button>
         <MemberListDialog title="Auf Level 60" sets={sets} guild={opts.guild ?? null} guildView={guildView} onClose={onClose} />
       </MemoryRouter>
     </SpracheProvider>,
@@ -116,7 +116,7 @@ function renderDialog(sets: MemberSet[] | null, opts: { guild?: string | null; s
 const bodyRows = () => within(screen.getByRole("table")).getAllByRole("row").slice(1);
 
 describe("MemberListDialog", () => {
-  test("Tabelle mit Name als Link, Klasse in Klassenfarbe, Volk, Level und Wert; sortierbar", () => {
+  test("table with name as link, class in class color, race, level and value; sortable", () => {
     renderDialog([{ key: "a", label: "Fische", valueLabel: "Fische", entries: [[1, 5], [3, 9], [2, 1]] }]);
     const dialog = screen.getByRole("dialog", { name: "Auf Level 60" });
     expect(dialog.getAttribute("aria-modal")).toBe("true");
@@ -133,7 +133,7 @@ describe("MemberListDialog", () => {
     expect(screen.getByRole("status").textContent).toBe("3 Mitglieder");
   });
 
-  test("Gildenumschalter startet mit der Wahl der Seite und filtert", () => {
+  test("guild switcher starts with the page's choice and filters", () => {
     renderDialog([{ key: "a", label: "Alle", valueLabel: null, entries: [1, 2, 3] }], { guild: "bärenklaue" });
     expect(bodyRows()).toHaveLength(2);
     expect(screen.queryByRole("columnheader", { name: /Wert/ })).toBeNull();
@@ -143,7 +143,7 @@ describe("MemberListDialog", () => {
     expect(bodyRows()).toHaveLength(3);
   });
 
-  test("Suche erst ab 15 Einträgen", () => {
+  test("search only from 15 entries", () => {
     const many: MemberRow[] = Array.from({ length: MEMBER_SEARCH_FROM }, (_, i) => member({ id: 100 + i, name: `Held${i}`, slug: `held${i}` }));
     const view = { ...guildView, members: [...members, ...many] };
     render(
@@ -161,7 +161,7 @@ describe("MemberListDialog", () => {
     expect(screen.queryByRole("searchbox")).toBeNull();
   });
 
-  test("Mehrere Mengen: Auswahl wechselt die Wertspalte", () => {
+  test("several sets: the picker switches the value column", () => {
     renderDialog([
       { key: "a", label: "Tode", valueLabel: "Tode", entries: [[1, 5]] },
       { key: "b", label: "Stürze", valueLabel: "Stürze", entries: [[2, 3], [3, 1]] },
@@ -172,14 +172,14 @@ describe("MemberListDialog", () => {
     expect(bodyRows()).toHaveLength(2);
   });
 
-  test("Escape und Schließen-Knopf schließen, Fokus startet auf Schließen und kehrt zum Auslöser zurück", async () => {
+  test("Escape and the close button close it, focus starts on close and returns to the trigger", async () => {
     const onClose = vi.fn();
     render(
       <MemoryRouter>
-        <button type="button">Auslöser</button>
+        <button type="button">Trigger</button>
       </MemoryRouter>,
     );
-    const trigger = screen.getByRole("button", { name: "Auslöser" });
+    const trigger = screen.getByRole("button", { name: "Trigger" });
     trigger.focus();
     const { unmount } = render(
       <MemoryRouter>
@@ -195,8 +195,8 @@ describe("MemberListDialog", () => {
     await waitFor(() => expect(document.activeElement).toBe(trigger));
   });
 
-  test("Lädt: Hinweis statt Tabelle; Texte auf Bayrisch", () => {
-    renderDialog(null, { sprache: "bayrisch" });
+  test("loading: hint instead of table; texts in Bavarian", () => {
+    renderDialog(null, { language: "bayrisch" });
     expect(screen.getByText("Lad Datn")).toBeTruthy();
     expect(screen.getByRole("button", { name: "Zuamacha" })).toBeTruthy();
   });

@@ -19,15 +19,15 @@ const tree = fixture<TalentTreeRecord>("test/fixtures/records/talent-trees/1114.
 const gelmar = fixture<CharacterRecord>("test/fixtures/records/character-1647409.json");
 const view: TalentView = { layout: layoutTalentTree(tree, TALENT_FIXES), icons: {} };
 
-/** Knoten-Element, das den (versteckten) Talentnamen trägt. */
+/** Node element that carries the (hidden) talent name. */
 function nodeOf(name: string): HTMLElement {
   const label = screen.getByText(name);
   const el = label.closest<HTMLElement>(".talent-node");
-  if (!el) throw new Error(`Kein Knoten für ${name}`);
+  if (!el) throw new Error(`No node for ${name}`);
   return el;
 }
 
-test("Gelmar: drei Bäume, Disziplin 1 Punkt, Ränge x/y", () => {
+test("Gelmar: three trees, Discipline 1 point, ranks x/y", () => {
   render(<TalentTree view={view} specs={gelmar.specs} />);
 
   const headings = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
@@ -52,20 +52,20 @@ test("Gelmar: drei Bäume, Disziplin 1 Punkt, Ränge x/y", () => {
   expect(screen.getByText("Unbenanntes Talent")).toBeTruthy();
 });
 
-test("Pfeile werden gezeichnet und färben sich nach dem Ziel", () => {
+test("arrows are drawn and colored by their target", () => {
   const { container } = render(<TalentTree view={view} specs={gelmar.specs} />);
   const arrows = container.querySelectorAll(".talent-arrow");
   expect(arrows.length).toBeGreaterThan(0);
   expect(container.querySelectorAll(".talent-arrow-active")).toHaveLength(0);
   cleanup();
 
-  // Seelenwehr (talentId 135369) setzt Verbessertes Machtwort: Schild voraus; mit Punkten im Ziel wird der Pfeil gold.
+  // Seelenwehr (talentId 135369) requires Verbessertes Machtwort: Schild; with points in the target, the arrow is gold.
   const withTarget = [{ ...gelmar.specs[0], talents: [{ talentId: 135369, spellId: 0, name: "Seelenwehr", rank: 1, description: "" }] }];
   const { container: c2 } = render(<TalentTree view={view} specs={withTarget} />);
   expect(c2.querySelectorAll(".talent-arrow-active")).toHaveLength(1);
 });
 
-test("Tooltip zeigt Rang, aktuelle und nächste Beschreibung", () => {
+test("tooltip shows rank, current and next description", () => {
   render(<TalentTree view={view} specs={gelmar.specs} />);
   const trigger = nodeOf("Zauberstab-Spezialisierung").querySelector<HTMLElement>(".tooltip-trigger")!;
   fireEvent.focus(trigger);
@@ -76,7 +76,8 @@ test("Tooltip zeigt Rang, aktuelle und nächste Beschreibung", () => {
   expect(tip.textContent).toMatch(/Zauberstäben um 13%/);
 });
 
-test("Ohne Punkte: Hinweis und alle Bäume mit 0 Punkten", () => {
+test("without points: note and all trees with 0 points"
+, () => {
   render(<TalentTree view={view} specs={[]} />);
   expect(screen.getByText("Noch keine Talentpunkte verteilt")).toBeTruthy();
   expect(screen.getByText("Verteilte Punkte 0")).toBeTruthy();

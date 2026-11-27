@@ -1,12 +1,12 @@
 /*
- * Theme der Gildenseite, Gestaltung "Wappen": dunkler Stahl, viel Gold, links das Blau der
- * Allianz, rechts das Rot der Horde. Alle Farben, Rahmen und Schriften kommen aus den Variablen unten;
- * neue Bausteine nutzen die Rollen-Variablen (--panel, --border, --gold, --text, --muted ...) und die
- * gemeinsamen Klassen (.panel, .table, .badge, .button, .segmented, .tabs), dann passen sie von selbst.
+ * Theme of the guild site, "Crest" style: dark steel, plenty of gold, Alliance blue on the left,
+ * Horde red on the right. All colors, borders and fonts come from the variables below;
+ * new building blocks use the role variables (--panel, --border, --gold, --text, --muted ...) and the
+ * shared classes (.panel, .table, .badge, .button, .segmented, .tabs), then they fit by themselves.
  */
 
 :root {
-  /* Palette aus dem Gildenlogo */
+  /* Palette from the guild logo */
   --steel-deep: #0c0d11;
   --steel: #14161c;
   --steel-2: #1c1f27;
@@ -23,7 +23,7 @@
   --frame-gap: #121419;
   --frame-inner: #6b5220;
 
-  /* Rollen: diese Namen nutzen alle Bausteine */
+  /* Roles: all building blocks use these names */
   --bg: var(--steel-deep);
   --panel: var(--steel-2);
   --panel-hi: var(--steel-3);
@@ -39,25 +39,25 @@
   --danger: #e8867a;
   --success: #9fc27a;
 
-  /* Verläufe */
+  /* Gradients */
   --gold-text: linear-gradient(180deg, #fff1b8, var(--gold-1) 45%, var(--gold-2));
   --gold-fill: linear-gradient(180deg, var(--gold-pale), var(--gold-2));
   --alliance-fill: linear-gradient(180deg, var(--alliance-hi), var(--alliance));
-  /* Mit weißem Text: oben etwas dunkler als --horde-hi, damit 4,5:1 erreicht wird */
+  /* With white text: slightly darker than --horde-hi at the top, so 4.5:1 is reached */
   --horde-fill: linear-gradient(180deg, #cc2a31, var(--horde));
   --faction-line: linear-gradient(90deg, var(--alliance) 0 50%, var(--horde) 50% 100%);
   --gold-line: linear-gradient(90deg, transparent, var(--gold-2) 20%, var(--gold-1) 50%, var(--gold-2) 80%, transparent);
   --panel-fill: linear-gradient(180deg, var(--steel-3), var(--steel-2));
-  /* Doppelter Goldrahmen innerhalb einer 1px-Kante in --frame-outer: dunkle Fuge, dann goldene Linie */
+  /* Double gold border inside a 1px edge in --frame-outer: dark gap, then a golden line */
   --frame-lines: inset 0 0 0 2px var(--frame-gap), inset 0 0 0 3px var(--frame-inner);
   --diamond: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 .5 11.5 6 6 11.5.5 6Z' fill='%23f2c95a' stroke='%238a6420'/%3E%3C/svg%3E");
 
-  /* Schrift */
+  /* Fonts */
   --font-display: "Cinzel Decorative", "Cinzel", "Times New Roman", serif;
   --font-head: "Cinzel", "Times New Roman", serif;
   --font-body: "Alegreya Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  /* Maße */
+  /* Sizes */
   --radius: 6px;
   --radius-lg: 10px;
   --gap: 1rem;
@@ -128,7 +128,7 @@ a:hover {
   text-underline-offset: 0.2em;
 }
 
-/* Fokus: heller Goldring mit dunklem Rand, sichtbar auf Stahl und auf Gold */
+/* Focus: light gold ring with a dark edge, visible on steel and on gold */
 :focus-visible {
   outline: 2px solid var(--gold-hi);
   outline-offset: 2px;
@@ -144,7 +144,7 @@ img {
   color: var(--text-bright);
 }
 
-/* Seitengerüst */
+/* Page scaffold */
 
 .site {
   display: flex;
@@ -152,7 +152,7 @@ img {
   min-height: 100vh;
 }
 
-/* Kopf: Navigation links, Logo mittig wie ein Wappen, Discord rechts; darunter halb blau, halb rot. */
+/* Header: navigation on the left, logo centered like a crest, Discord on the right; below it half blue, half red. */
 .site-header {
   position: relative;
   z-index: 10;
@@ -298,7 +298,7 @@ img {
   color: var(--muted);
 }
 
-/* Handy: Logo kleiner und oben, Discord daneben, Navigation darunter. */
+/* Phone: logo smaller and on top, Discord next to it, navigation below. */
 @media (max-width: 640px) {
   .site-header-inner {
     grid-template-areas:
@@ -331,7 +331,7 @@ img {
   }
 }
 
-/* Seitenkopf */
+/* Page header */
 
 .page {
   display: flex;
@@ -345,7 +345,7 @@ img {
   gap: 0.25rem;
 }
 
-/* Seitentitel in Cinzel Decorative mit Goldverlauf */
+/* Page title in Cinzel Decorative with a gold gradient */
 .page-title {
   margin: 0;
   font-family: var(--font-display);
@@ -369,14 +369,14 @@ img {
   }
 }
 
-/* Impressum und Datenschutz: ruhiger Lesetext in einem Panel */
+/* Imprint and privacy policy: calm reading text in a panel */
 
 .legal {
   max-width: 48rem;
   padding: 1.5rem 1.75rem 1.75rem;
 }
 
-/* Hinweise in den Vorlagen für Impressum und Datenschutz, die der Betreiber ersetzen muss */
+/* Notes in the imprint and privacy policy templates that the operator has to replace */
 .legal-platzhalter {
   padding: 0.5rem 0.75rem;
   border-left: 3px solid var(--danger);
@@ -418,7 +418,7 @@ img {
   }
 }
 
-/* Panels: doppelter Goldrahmen mit Rauten an den oberen Ecken */
+/* Panels: double gold border with diamonds at the top corners */
 
 .panel {
   position: relative;
@@ -429,7 +429,7 @@ img {
   box-shadow: var(--shadow);
 }
 
-/* Rahmenlinien liegen über dem Inhalt, damit Tabellenköpfe und Zeilen sie nicht verdecken. */
+/* Border lines sit above the content so table headers and rows do not cover them. */
 .panel::before {
   content: "";
   position: absolute;
@@ -453,7 +453,7 @@ img {
   pointer-events: none;
 }
 
-/* Ohne Innenabstand (z.B. mit Tabelle); die Rundung übernehmen das erste und das letzte Kind. */
+/* Without padding (e.g. with a table); the first and last child take over the rounding. */
 .panel-flush {
   padding: 0;
 }
@@ -532,7 +532,7 @@ img {
   opacity: 0.45;
 }
 
-/* Abzeichen */
+/* Badges */
 
 .badge {
   display: inline-block;
@@ -556,7 +556,7 @@ img {
   border-color: var(--border);
 }
 
-/* Goldenes Abzeichen mit Stern, z.B. für "Abgeschlossen" */
+/* Golden badge with a star, e.g. for "Abgeschlossen" (completed) */
 .badge-gold,
 .status-done {
   display: inline-flex;
@@ -584,7 +584,7 @@ img {
   content: "✦" / "";
 }
 
-/* Banner-Wimpel als Fraktionsmarke mit Text (unten spitz) */
+/* Banner pennant as a faction mark with text (pointed at the bottom) */
 .pennant {
   display: inline-block;
   padding: 0.15rem 0.6rem 0.4rem;
@@ -605,7 +605,7 @@ img {
   background: var(--alliance-fill);
 }
 
-/* Tabellen */
+/* Tables */
 
 .table-wrap {
   width: 100%;
@@ -668,7 +668,7 @@ img {
   }
 }
 
-/* Bedienelemente */
+/* Controls */
 
 .button {
   display: inline-flex;
@@ -689,7 +689,7 @@ img {
   border-color: var(--gold);
 }
 
-/* Goldener Knopf (wie Discord im Kopf) */
+/* Golden button (like Discord in the header) */
 .button-gold,
 .discord-link {
   display: inline-flex;
@@ -768,7 +768,7 @@ img {
   color: var(--text);
 }
 
-/* Lade-, Leer- und Fehlerzustand (DataState) */
+/* Loading, empty and error state (DataState) */
 
 .state {
   display: flex;
@@ -817,7 +817,7 @@ img {
   }
 }
 
-/* Gildenübersicht */
+/* Guild overview */
 
 .class-bars {
   list-style: none;
@@ -901,7 +901,7 @@ img {
 }
 
 /* ==========================================================================
-   Charakterseite: Kopf, Reiter, Ausrüstung, Charakterbild, Item-Tooltips
+   Character page: header, tabs, equipment, character image, item tooltips
    ========================================================================== */
 
 .character-name {
@@ -934,7 +934,7 @@ img {
   border-color: rgb(232 134 122 / 0.5);
 }
 
-/* Reiter */
+/* Tabs */
 
 .tabs {
   display: flex;
@@ -980,7 +980,7 @@ img {
   box-shadow: 0 0 8px rgb(242 201 90 / 0.6);
 }
 
-/* Symbole */
+/* Icons */
 
 .icon {
   display: inline-block;
@@ -1005,7 +1005,7 @@ img {
     #0b0907;
 }
 
-/* Ausrüstung */
+/* Equipment */
 
 .equipment {
   display: grid;
@@ -1107,7 +1107,7 @@ img {
   justify-content: flex-end;
 }
 
-/* Charakterbild */
+/* Character image */
 
 .portrait {
   position: relative;
@@ -1127,7 +1127,7 @@ img {
   height: 100%;
   object-fit: cover;
   object-position: center;
-  /* Die Aufnahme hat viel transparenten Rand, der Charakter steht etwa mittig. */
+  /* The render has a lot of transparent margin; the character stands roughly in the middle. */
   transform: scale(1.55);
   transform-origin: 50% 48%;
   filter: drop-shadow(0 8px 18px rgb(0 0 0 / 0.6));
@@ -1251,7 +1251,7 @@ img {
   font-style: italic;
 }
 
-/* Nur für Screenreader sichtbar */
+/* Visible to screen readers only */
 
 .sr-only {
   position: absolute;
@@ -1265,7 +1265,7 @@ img {
   border: 0;
 }
 
-/* Talentbäume */
+/* Talent trees */
 
 .talents-summary {
   display: flex;
@@ -1488,7 +1488,7 @@ img {
   }
 }
 
-/* ===== Berufe ===== */
+/* ===== Professions ===== */
 
 .profession-member {
   display: grid;
@@ -1521,7 +1521,7 @@ img {
   scroll-margin-top: 6rem;
 }
 
-/* Sprungziel von der Berufe-Seite (#bergbau) */
+/* Jump target from the professions page (#bergbau) */
 .character-profession-highlight {
   margin: 0 -0.75rem;
   padding: 0.5rem 0.75rem;
@@ -1542,7 +1542,7 @@ img {
   text-align: right;
 }
 
-/* Rezepte am Charakter: Raster aus Icons im Qualitätsrahmen */
+/* Recipes on the character: grid of icons in a quality frame */
 .recipe-grid-wrap {
   margin-top: 0.45rem;
 }
@@ -1582,7 +1582,7 @@ img {
   outline: 2px solid var(--gold-hi);
 }
 
-/* Rezept-Tooltip */
+/* Recipe tooltip */
 .recipe-tip .item-tip + .recipe-tip-quantity,
 .recipe-tip .recipe-tip-reagents {
   margin-top: 0.45rem;
@@ -1621,7 +1621,7 @@ img {
   }
 }
 
-/* Münzen im Verkaufspreis */
+/* Coins in the sell price */
 .coin {
   display: inline-block;
   width: 0.8em;
@@ -1644,13 +1644,13 @@ img {
   background: radial-gradient(circle at 35% 30%, #ffd2ad 0%, #cf7a3a 45%, #6f3612 100%);
 }
 
-/* Zwei Gilden: Wappen, Kopf und Filter */
+/* Two guilds: crests, header and filter */
 .faction-crest {
   flex: none;
   vertical-align: -0.2em;
 }
 
-/* Offizielles Fraktionssymbol: Rahmen in Fraktionsfarbe, rund wie das Symbol selbst */
+/* Official faction icon: frame in the faction color, round like the icon itself */
 .faction-icon {
   border-width: 1px;
   border-radius: 50%;
@@ -1691,7 +1691,7 @@ img {
   color: var(--gold);
 }
 
-/* Segmentsteuerung (Gildenfilter): nur so breit wie der Inhalt; aktiv golden (Alle), Horde-Gilde rot, Allianz-Gilde blau (nach Fraktion, nicht nach Name) */
+/* Segmented control (guild filter): only as wide as its content; active gold (all), Horde guild red, Alliance guild blue (by faction, not by name) */
 .segmented {
   display: inline-flex;
   flex-wrap: wrap;
@@ -1754,7 +1754,7 @@ img {
   }
 }
 
-/* Dungeons & Raids: Bildkarten über die volle Inhaltsbreite */
+/* Dungeons & raids: image cards across the full content width */
 .instances {
   display: grid;
   gap: 2rem;
@@ -1833,7 +1833,7 @@ img {
   object-fit: cover;
 }
 
-/* Orte ohne Blizzard-Bild: Lichtschein im Grundton des Ortes, feines Rautengitter, großes Rautenwappen */
+/* Places without a Blizzard image: glow in the place's base tone, fine diamond grid, large diamond crest */
 .instance-card-art {
   --art-tint: 242 201 90;
   background:
@@ -1853,7 +1853,7 @@ img {
   box-shadow: inset 0 0 60px rgb(0 0 0 / 0.55);
 }
 
-/* Verlauf: oben dunkel für Name und Stufe, Mitte frei fürs Bild, unten dunkel für die Bosse */
+/* Gradient: dark at the top for name and level, clear in the middle for the image, dark at the bottom for the bosses */
 .instance-card-shade {
   position: absolute;
   inset: 0;
@@ -1869,8 +1869,8 @@ img {
 }
 
 /*
- * Abgeschlossen leuchtet golden; begonnen etwas ruhiger; offen dezent gedämpft, beim Zeigen wieder farbig. "Auf diesem
- * Account" ist für diesen Charakter nicht abgeschlossen und sieht deshalb aus wie offen.
+ * Completed glows golden; started is a bit calmer; open is subtly muted and colored again on hover. "Auf diesem
+ * Account" (on this account) is not completed for this character and therefore looks like open.
  */
 .instance-card-done {
   border-color: var(--gold-2);
@@ -1910,7 +1910,7 @@ img {
   text-shadow: 0 1px 3px rgb(0 0 0 / 0.9);
 }
 
-/* Kopf: Name und Stufe links in fester Spalte, rechts bleibt Platz für den Status in der Ecke. */
+/* Header: name and level on the left in a fixed column, room on the right for the status in the corner. */
 .instance-card-head {
   margin-bottom: 0.9rem;
   padding-right: 6.3rem;
@@ -1937,7 +1937,7 @@ img {
   color: var(--muted);
 }
 
-/* Goldener Wimpel wie die Fraktionsbanner: hängt an der Oberkante, unten spitz */
+/* Golden pennant like the faction banners: hangs from the top edge, pointed at the bottom */
 .instance-pennant {
   position: absolute;
   top: 0;
@@ -1963,7 +1963,7 @@ img {
   filter: drop-shadow(0 3px 6px rgb(0 0 0 / 0.55));
 }
 
-/* Goldstange oben, wie beim Fraktionswimpel */
+/* Gold bar at the top, as on the faction pennant */
 .instance-pennant::before {
   content: "";
   position: absolute;
@@ -1993,7 +1993,7 @@ img {
   font-size: 0.78rem;
 }
 
-/* "Noch nicht besucht", "Auf diesem Account" und "x von y Bossen": klein und ruhig am selben Platz wie der Wimpel */
+/* "Noch nicht besucht", "Auf diesem Account" and "x von y Bossen": small and calm in the same spot as the pennant */
 .instance-card-note {
   position: absolute;
   top: 0.85rem;
@@ -2091,7 +2091,7 @@ img {
   }
 }
 
-/* Ruf */
+/* Reputation */
 .reputation {
   display: grid;
   gap: 1.25rem;
@@ -2153,7 +2153,7 @@ img {
   }
 }
 
-/* Discord: goldener Knopf im Kopf (siehe .button-gold), schlichter Link im Fuß */
+/* Discord: golden button in the header (see .button-gold), plain link in the footer */
 .footer-discord {
   display: inline-flex;
   align-items: center;
@@ -2179,7 +2179,7 @@ img {
   }
 }
 
-/* Berufe: Werkbank */
+/* Professions: workbench */
 .bench {
   display: grid;
   grid-template-columns: 250px minmax(0, 1fr);
@@ -2328,7 +2328,7 @@ img {
   color: var(--muted);
 }
 
-/* Werkbank: Umschalter Personen / Alle Rezepte */
+/* Workbench: toggle people / all recipes */
 .bench-modes {
   display: inline-flex;
   gap: 0.25rem;
@@ -2361,7 +2361,7 @@ img {
   outline-offset: 2px;
 }
 
-/* Werkbank: Rezeptkarten */
+/* Workbench: recipe cards */
 .recipe-cards {
   list-style: none;
   margin: 0;
@@ -2546,7 +2546,7 @@ img {
 }
 
 /* ------------------------------------------------------------------ */
-/* Aktivität, Titel der Woche, Wochenzeitung, Wrapped                 */
+/* Activity, titles of the week, weekly newspaper, Wrapped           */
 /* ------------------------------------------------------------------ */
 
 .testdaten-hint {
@@ -2561,7 +2561,7 @@ img {
   border-radius: var(--radius);
 }
 
-/* Wann Titel und Zeitung erscheinen: gut sichtbar unter dem Seitentitel und im Leerzustand */
+/* When titles and newspaper come out: clearly visible below the page title and in the empty state */
 .erscheint-hint {
   margin: 0;
   padding: 0.45rem 0.8rem;
@@ -2582,7 +2582,7 @@ img {
   font-weight: 700;
 }
 
-/* Kennzahlen über der Heatmap */
+/* Key figures above the heatmap */
 .fun-facts {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr));
@@ -2605,7 +2605,7 @@ img {
 
 .fun-fact-label,
 .wrapped-stat-label {
-  /* Lange Wörter wie "Durchschnittslevel" dürfen auf schmalen Handys nicht über den Rand ragen. */
+  /* Long words like "Durchschnittslevel" must not stick out over the edge on narrow phones. */
   overflow-wrap: anywhere;
   font-family: var(--font-head);
   font-size: 0.7rem;
@@ -2621,7 +2621,7 @@ img {
   text-align: left;
 }
 
-/* Heatmap: Wochentage als Zeilen, Stunden als Spalten */
+/* Heatmap: weekdays as rows, hours as columns */
 .heatmap {
   display: flex;
   flex-direction: column;
@@ -2701,7 +2701,7 @@ img {
   .heatmap-cell { forced-color-adjust: none; }
 }
 
-/* Titel der Woche: Kacheln */
+/* Titles of the week: tiles */
 .title-tiles {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
@@ -2739,7 +2739,7 @@ img {
   filter: drop-shadow(0 0 4px rgb(242 201 90 / 0.55));
 }
 
-/* Gemalte Titel-Abzeichen (web/public/titel, 192 Pixel): kreisrund freigestellt, höchstens etwa 100 CSS-Pixel */
+/* Painted title badges (web/public/titel, 192 pixels): cut out as a circle, at most about 100 CSS pixels */
 .title-medal {
   display: inline-block;
   flex: none;
@@ -2766,7 +2766,7 @@ img {
   margin-bottom: 0.2rem;
 }
 
-/* Regel einer Kachel: Fragezeichen oben rechts, Text als Einblendung bei Überfahren, Fokus oder Antippen */
+/* Rule of a tile: question mark at the top right, text as an overlay on hover, focus or tap */
 .title-tile-info {
   position: absolute;
   top: 0.45rem;
@@ -2789,7 +2789,7 @@ img {
   border-color: var(--gold-3);
 }
 
-/* Oben über dem Abzeichen, damit der Knopf für die Rangliste unten frei bleibt */
+/* At the top above the badge, so the ranking button at the bottom stays free */
 .title-tile-rule {
   position: absolute;
   inset: 2.1rem 0.4rem auto;
@@ -2817,7 +2817,7 @@ img {
   }
 }
 
-/* Handy: zwei Kacheln je Reihe, Medaillon 88 Pixel */
+/* Phone: two tiles per row, medallion 88 pixels */
 @media (max-width: 640px) {
   .title-tiles {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2846,7 +2846,7 @@ img {
   }
 }
 
-/* Ehrentafel: Zeile je Titel, Spalte je Woche; feste Spaltenbreiten, nie seitliches Scrollen */
+/* Roll of honor: one row per title, one column per week; fixed column widths, never horizontal scrolling */
 .honor .panel-header {
   margin: 0;
 }
@@ -3049,8 +3049,8 @@ img {
   filter: brightness(1.08);
 }
 
-/* Wochenzeitung, Gestaltung "Wappen bei Nacht":
-   dunkler Stahl, Goldrahmen, Fraktionslinie, Rubriken Klatsch in Allianzblau und Friedhof in Hordenrot. */
+/* Weekly newspaper, "Crest at night" style:
+   dark steel, gold border, faction line, gossip section in Alliance blue and graveyard section in Horde red. */
 .zeitung {
   position: relative;
   padding: 1.6rem clamp(0.9rem, 3vw, 2.5rem) 1.9rem;
@@ -3433,7 +3433,7 @@ img {
   }
 }
 
-/* Zeitungsarchiv */
+/* Newspaper archive */
 .zeitung-archive {
   display: flex;
   flex-direction: column;
@@ -3487,7 +3487,7 @@ img {
   }
 }
 
-/* Wrapped: Karte */
+/* Wrapped: card */
 .wrapped-toolbar {
   display: flex;
   justify-content: flex-end;
@@ -3642,8 +3642,8 @@ img {
   border-top: 1px solid rgb(242 201 90 / 0.15);
 }
 
-/* Desktop: breiter und zweispaltig statt einer langen Handyspalte. Links Levelzuwachs und Lieblingszeit, rechts
-   Kennzahlen und Titel. */
+/* Desktop: wider and two columns instead of one long phone column. Level gain and favorite time on the left, key
+   figures and titles on the right. */
 @media (min-width: 900px) {
   .wrapped-card {
     max-width: 920px;
@@ -3704,9 +3704,9 @@ img {
 }
 
 /*
- * Navigation mit fünf Einträgen: Schrift und Abstände wachsen mit der Breite der linken Spalte (Container-
- * Einheiten), damit auch längere Beschriftungen (Englisch, "Wochenblatt") in eine Zeile passen. Erst wenn das
- * Minimum erreicht ist, bricht sie um statt überzulaufen.
+ * Navigation with five entries: font size and spacing grow with the width of the left column (container
+ * units), so longer labels (English, "Wochenblatt") fit on one line too. Only once the minimum is reached
+ * does it wrap instead of overflowing.
  */
 .site-nav {
   container-type: inline-size;
@@ -3733,7 +3733,7 @@ img {
   }
 }
 
-/* Statistikseite: Reiterinhalt, Verteilungen nebeneinander, Zeitraumwahl, Statistikkarten mit Rangliste */
+/* Stats page: tab content, distributions side by side, period picker, stat cards with ranking */
 .stats-tab {
   display: flex;
   flex-direction: column;
@@ -3751,7 +3751,7 @@ img {
   background: var(--gold-fill);
 }
 
-/* Klassenbalken als Schalter: gewählte Klasse filtert die Levelverteilung */
+/* Class bars as toggles: the selected class filters the level distribution */
 .class-bar-pick {
   width: 100%;
   margin: 0;
@@ -3876,7 +3876,7 @@ img {
   background: rgb(242 201 90 / 0.08);
 }
 
-/* Gildenstatistik als Kuriositäten-Wand: Karten in drei Spalten, breite Karten über zwei, jede Form mit eigenem Bild */
+/* Guild stats as a wall of curiosities: cards in three columns, wide cards span two, each shape with its own image */
 .fun-wall {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -4001,7 +4001,7 @@ img {
   border-radius: 999px;
 }
 
-/* Grabsteinfeld: je Todesursache ein Stein, größer je mehr Tode, auf einem Streifen Wiese */
+/* Graveyard: one stone per cause of death, bigger the more deaths, on a strip of meadow */
 .fun-graveyard {
   display: grid;
   grid-template-columns: minmax(14rem, 1fr) minmax(0, 3fr);
@@ -4114,7 +4114,7 @@ img {
   gap: 1rem;
 }
 
-/* Piktogramme: Fische und Flammen */
+/* Pictograms: fish and flames */
 .fun-pictos {
   display: flex;
   flex-wrap: wrap;
@@ -4144,7 +4144,7 @@ img {
   height: 1.3rem;
 }
 
-/* Waage */
+/* Scales */
 .fun-scale {
   width: 100%;
   max-width: 14rem;
@@ -4183,7 +4183,7 @@ img {
   color: var(--gold-2);
 }
 
-/* Wusstest du? */
+/* "Wusstest du?" (did you know?) */
 .fun-facts-list {
   display: grid;
   gap: 0.9rem;
@@ -4252,7 +4252,7 @@ img {
   text-align: center;
 }
 
-/* Horde gegen Allianz */
+/* Horde versus Alliance */
 .fun-duel-head {
   display: flex;
   justify-content: space-between;
@@ -4323,7 +4323,7 @@ img {
   font-style: italic;
 }
 
-/* Hitparade bei nur einer Gilde */
+/* Chart list with only one guild */
 .fun-hitparade {
   display: grid;
   gap: 0.35rem;
@@ -4364,7 +4364,7 @@ img {
   white-space: nowrap;
 }
 
-/* Fläschle */
+/* "Fläschle" (flasks) */
 .fun-bottles {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
@@ -4390,13 +4390,13 @@ img {
   color: var(--text-bright);
 }
 
-/* Jede n. Quest */
+/* Every nth quest */
 .fun-ratio {
   text-align: center;
   font-style: italic;
 }
 
-/* EKG der Notaufnahme */
+/* ECG of the emergency room */
 .fun-ekg {
   width: 100%;
   height: auto;
@@ -4430,7 +4430,7 @@ img {
   gap: 0.2rem;
 }
 
-/* Stall */
+/* Stable */
 .fun-stable {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -4464,7 +4464,7 @@ img {
   font-size: 0.9rem;
 }
 
-/* Schredder */
+/* Shredder */
 .fun-shredder {
   display: flex;
   flex-direction: column;
@@ -4506,7 +4506,7 @@ img {
   opacity: 0.85;
 }
 
-/* Verbandsrolle */
+/* Bandage roll */
 .fun-bandage {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
@@ -4542,7 +4542,7 @@ img {
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.4);
 }
 
-/* Fahrplan */
+/* Timetable */
 .fun-route {
   position: relative;
   display: grid;
@@ -4631,7 +4631,7 @@ img {
   }
 }
 
-/* Sprachumschalter im Kopf: Deutsch, Schwäbisch, Bayrisch */
+/* Language switcher in the header: German, Swabian, Bavarian */
 .site-header-end {
   display: flex;
   align-items: center;
@@ -4693,9 +4693,9 @@ img {
 }
 
 /*
- * Bewegung für die Statistikseite: Karten gleiten nacheinander herein, Balken wachsen, Grabsteine steigen aus
- * der Wiese, Symbole ploppen auf, das EKG zeichnet sich, die Waage pendelt aus. `--i` staffelt die Einsätze.
- * Nur ohne "Bewegung reduzieren"; die Animationen laufen einmal und enden im normalen Zustand (backwards).
+ * Motion for the stats page: cards slide in one after another, bars grow, gravestones rise from the meadow,
+ * icons pop up, the ECG draws itself, the scales swing to rest. `--i` staggers the starts.
+ * Only without "reduce motion"; the animations run once and end in the normal state (backwards).
  */
 @media (prefers-reduced-motion: no-preference) {
   .fun-card {
@@ -4915,7 +4915,7 @@ img {
   }
 }
 
-/* Reiter Dungeons und Raids: Abenteuerkarte mit Stationen, Highlights mit Bildern, Raids mit Bossliste */
+/* Dungeons and raids tab: adventure map with stations, highlights with images, raids with a boss list */
 .dungeon-panel {
   background:
     radial-gradient(ellipse 80% 60% at 50% 0%, rgb(242 201 90 / 0.1), transparent 70%),
@@ -4940,7 +4940,7 @@ img {
   text-align: center;
 }
 
-/* Gepunkteter Weg zur nächsten Station */
+/* Dotted path to the next station */
 .dungeon-stop::after {
   content: "";
   position: absolute;
@@ -5190,8 +5190,8 @@ img {
 }
 
 /*
- * Reiter Allgemein: links Klassen und darunter Level (die Klassenwahl filtert direkt die Level darunter),
- * rechts die Völkertorte über beide Zeilen. Auf schmalen Schirmen untereinander in derselben Reihenfolge.
+ * General tab: classes on the left with levels below (the class choice directly filters the levels below),
+ * the race pie on the right across both rows. On narrow screens stacked in the same order.
  */
 @media (min-width: 760px) {
   .dist-grid {
@@ -5218,9 +5218,9 @@ img {
 }
 
 /*
- * Levelverteilung als Säulendiagramm. Das Panel ist eine Flex-Spalte, die Säulenreihe nimmt den Rest der Höhe:
- * auf dem Desktop streckt das Raster die linke Spalte auf die Höhe der Völkertorte, die Säulen wachsen mit.
- * Je Säule teilen sich Luft und Säule die Höhe über flex-grow (max minus Anzahl gegen Anzahl), die Zahl sitzt dazwischen.
+ * Level distribution as a column chart. The panel is a flex column, the row of columns takes the rest of the height:
+ * on desktop the grid stretches the left column to the height of the race pie, and the columns grow along.
+ * Per column, air and column share the height via flex-grow (max minus count versus count), the number sits between.
  */
 .dist-level {
   display: flex;
@@ -5387,7 +5387,7 @@ img {
   }
 }
 
-/* Völkerverteilung: Torte in SVG mit Tabelle als Legende darunter; Stücke und Legendenzeilen wählen ein Volk */
+/* Race distribution: SVG pie with a table as legend below; slices and legend rows select a race */
 .race-panel {
   display: flex;
   flex-direction: column;
@@ -5486,7 +5486,7 @@ img {
   opacity: 0.55;
 }
 
-/* Volk als Schalter in der Legende: sieht aus wie Text, ist per Tastatur erreichbar */
+/* Race as a toggle in the legend: looks like text, reachable by keyboard */
 .race-pick {
   padding: 0;
   font: inherit;
@@ -5543,10 +5543,10 @@ img {
 }
 
 /* ==========================================================================
-   Mitgliederliste: klickbare Karten und Kennzahlen, Dialog mit Tabelle
+   Member list: clickable cards and key figures, dialog with a table
    ========================================================================== */
 
-/* Auslöser: kleiner goldener Rahmenknopf mit Personen-Symbol */
+/* Trigger: small golden framed button with a people icon */
 .member-trigger {
   display: inline-flex;
   align-items: center;
@@ -5581,7 +5581,7 @@ img {
   height: 0.95em;
 }
 
-/* Karten der Gildenstatistik: ganze Karte klickbar, Knopf unten für die Tastatur */
+/* Guild stats cards: whole card clickable, button at the bottom for the keyboard */
 .fun-card-clickable {
   cursor: pointer;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
@@ -5601,7 +5601,7 @@ img {
   margin-top: auto;
 }
 
-/* Titel-Kacheln: ganze Kachel öffnet die Rangliste der Woche, Knopf unten für die Tastatur */
+/* Title tiles: the whole tile opens the week's ranking, button at the bottom for the keyboard */
 .title-tile-clickable {
   cursor: pointer;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
@@ -5616,7 +5616,7 @@ img {
   margin-top: 0.45rem;
 }
 
-/* Ehrentafel: kleines Personen-Symbol neben dem Gewinner öffnet die Rangliste der Woche; lange Namen kürzen, Knopf bleibt */
+/* Roll of honor: a small people icon next to the winner opens the week's ranking; long names are cut, the button stays */
 .honor-cell-inner {
   display: flex;
   align-items: center;
@@ -5661,7 +5661,7 @@ img {
   height: 0.8em;
 }
 
-/* Mitgliederliste: hervorgehobene Zeile (etwa der Gewinner eines Titels) und Werte als Text */
+/* Member list: highlighted row (such as the winner of a title) and values as text */
 .member-row-highlight td {
   background: rgb(242 201 90 / 0.1);
 }
@@ -5678,7 +5678,7 @@ img {
   color: var(--text-bright);
 }
 
-/* Kennzahl-Kachel als Knopf */
+/* Key figure tile as a button */
 .fun-fact-clickable {
   padding: 0;
   transition: border-color 0.15s ease;
@@ -5716,7 +5716,7 @@ img {
   color: var(--gold-hi);
 }
 
-/* Dungeon-Station als Knopf */
+/* Dungeon station as a button */
 .dungeon-stop-button {
   display: flex;
   flex-direction: column;
@@ -5878,7 +5878,7 @@ img {
   font-size: 0.62rem;
 }
 
-/* Klasse und Volk auf dem Handy unter dem Namen statt in eigenen Spalten */
+/* Class and race on the phone below the name instead of in their own columns */
 .member-narrow {
   display: none;
   color: var(--muted);
@@ -5917,7 +5917,7 @@ img {
   }
 }
 
-/* Klassenbalken: mit gewählter Klasse treten die anderen zurück (gedimmt, nicht ausgeblendet) */
+/* Class bars: with a class selected the others step back (dimmed, not hidden) */
 .class-bars[data-picked] .class-bar-pick[aria-pressed="false"] :is(.class-bar-fill, .class-bar-label, .class-bar-count) {
   opacity: 0.45;
 }
@@ -5928,8 +5928,8 @@ img {
 }
 
 /*
- * Kopf des Reiters Allgemein: links Gildenumschalter und darunter die aktive Auswahl, rechts die Kennzahl-Kachel
- * über beide Zeilen. Auf schmalen Schirmen untereinander: Umschalter, Kachel, Auswahl.
+ * Header of the general tab: guild switcher on the left with the active selection below, the key figure tile on
+ * the right across both rows. On narrow screens stacked: switcher, tile, selection.
  */
 .dist-top {
   display: grid;
@@ -5952,7 +5952,7 @@ img {
   display: flex;
   align-items: center;
   min-width: 0;
-  /* Zwei Zeilen Platz auf dem Handy, damit beim Wählen nichts darunter springt */
+  /* Room for two lines on the phone, so nothing below jumps when selecting */
   min-height: calc(2 * 1.85rem + 0.4rem);
 }
 
@@ -6051,7 +6051,7 @@ img {
   outline-offset: 2px;
 }
 
-/* Kennzahl-Kachel: vier Kennzahlen mit Symbol in einer Kachel, durch feine Linien getrennt */
+/* Key figure tile: four key figures with icons in one tile, separated by fine lines */
 .figures {
   position: relative;
   min-width: 0;
@@ -6067,7 +6067,7 @@ img {
   box-shadow: var(--frame-lines), 0 0 0 1px rgb(242 201 90 / 0.25), 0 0 16px rgb(242 201 90 / 0.12);
 }
 
-/* Marke "Gefiltert" sitzt auf dem oberen Rand und ist immer da, nur unsichtbar: so springt nichts */
+/* The "Gefiltert" (filtered) tag sits on the top edge and is always there, just invisible: so nothing jumps */
 .figures-badge {
   position: absolute;
   top: 0;
@@ -6108,7 +6108,7 @@ img {
   list-style: none;
 }
 
-/* Ab Tabletbreite eine Zeile: jedes Feld so breit wie sein Inhalt, übriger Platz gleich verteilt */
+/* From tablet width one row: each field as wide as its content, remaining space shared equally */
 @media (min-width: 560px) {
   .figures-list {
     display: flex;
@@ -6124,7 +6124,7 @@ img {
   min-width: 0;
 }
 
-/* Trennlinien: auf dem Handy als Kreuz im 2x2-Raster, sonst senkrecht zwischen den Spalten */
+/* Dividers: on the phone as a cross in the 2x2 grid, otherwise vertical between the columns */
 .figure + .figure {
   border-left: 1px solid rgb(242 201 90 / 0.12);
 }
@@ -6194,7 +6194,7 @@ img {
   line-height: 1.2;
   text-transform: uppercase;
   color: var(--gold-2);
-  /* "Durchschnittslevel" trägt einen weichen Trennstrich an der Wortfuge; nur dort wird umbrochen */
+  /* "Durchschnittslevel" carries a soft hyphen at the word joint; it only breaks there */
   hyphens: manual;
 }
 
@@ -6242,7 +6242,7 @@ img {
   }
 }
 
-/* Charakter: Werte wie im Arsenal. Oben die Grundwerte als Kacheln, darunter Angriff, Zauber und Verteidigung. */
+/* Character: stats as in the Armory. Base stats as tiles at the top, below them attack, spell and defense. */
 .attributes {
   display: grid;
   gap: var(--gap);
@@ -6261,7 +6261,7 @@ img {
 
 .attribute-tiles {
   display: grid;
-  /* Feste vier Spalten: sieben Grundwerte ergeben 4 + 3 gleich breite Kacheln statt 5 + 2. */
+  /* Fixed four columns: seven base stats give 4 + 3 tiles of equal width instead of 5 + 2. */
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0.6rem;
 }
@@ -6275,7 +6275,7 @@ img {
   border-radius: var(--radius);
 }
 
-/* Kopfzeile: Symbol, Beschriftung und rechtsbündiger Wert auf einer Linie. */
+/* Header row: icon, label and right-aligned value on one line. */
 .attribute-head {
   display: flex;
   align-items: center;
@@ -6308,7 +6308,7 @@ img {
   white-space: nowrap;
 }
 
-/* Fußzeile bei allen Kacheln gleich hoch, auch leer; der Zuwachs einzeilig, gedämpft und wie der Wert rechtsbündig. */
+/* Footer row equally tall on all tiles, even when empty; the gain on one line, muted and right-aligned like the value. */
 .attribute-foot {
   display: block;
   height: 1.7rem;
@@ -6377,7 +6377,7 @@ img {
   }
 }
 
-/* Auf dem Handy eine Spalte: Beschriftung und Wert brauchen nebeneinander die ganze Breite. */
+/* One column on the phone: label and value need the full width side by side. */
 @media (max-width: 560px) {
   .attribute-tiles {
     grid-template-columns: minmax(0, 1fr);

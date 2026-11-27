@@ -13,7 +13,7 @@ import { BrowserRouter } from "react-router";
 import App from "./App";
 
 const root = document.getElementById("root");
-if (!root) throw new Error("Element #root fehlt in index.html");
+if (!root) throw new Error("Element #root missing in index.html");
 
 createRoot(root).render(
   <StrictMode>

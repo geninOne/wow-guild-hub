@@ -5,12 +5,12 @@ import { ClassName } from "./ClassName";
 import { FactionCrest } from "./FactionCrest";
 import { Icon } from "./Icon";
 import { fassungIn, useSprache, type Fassungen, type Sprache } from "../lib/sprache";
-import { RecipeIcon, recipeTone, RecipeTooltip, REZEPT_TEXTE } from "./RecipeTooltip";
+import { RecipeIcon, recipeTone, RecipeTooltip, RECIPE_TEXTS } from "./RecipeTooltip";
 import { Tooltip } from "./Tooltip";
 
 export type RecipePerson = CharacterRef & { skill: number; max: number };
 
-/** So viele Personen sind sichtbar, bevor eingeklappt wird. */
+/** This many people are visible before the list collapses. */
 const VISIBLE_PEOPLE = 6;
 
 function fullName(c: CharacterRef): string {
@@ -18,23 +18,23 @@ function fullName(c: CharacterRef): string {
 }
 
 const T = {
-  kennen: {
+  knownBy: {
     de: (n: number) => (n === 1 ? "kennt 1 Charakter" : `kennen ${n} Charaktere`),
     en: (n: number) => (n === 1 ? "known by 1 character" : `known by ${n} characters`),
     schwaebisch: (n: number) => (n === 1 ? "kennt 1 Charakter" : `kennet ${n} Charaktere`),
     bayrisch: (n: number) => (n === 1 ? "kennt 1 Charakter" : `kennan ${n} Charaktere`),
   },
-  stelltHer: { de: "Stellt her", en: "Creates", schwaebisch: "Macht", bayrisch: "Macht" },
-  materialien: REZEPT_TEXTE.materialien,
-  werKennt: {
+  creates: { de: "Stellt her", en: "Creates", schwaebisch: "Macht", bayrisch: "Macht" },
+  reagents: RECIPE_TEXTS.reagents,
+  whoKnows: {
     de: (name: string) => `Wer kennt ${name}`,
     en: (name: string) => `Who knows ${name}`,
     schwaebisch: (name: string) => `Wer kennt ${name}`,
     bayrisch: (name: string) => `Wer kennt ${name}`,
   },
-  fertigkeit: { de: "Fertigkeit", en: "Skill", schwaebisch: "Fertigkeit", bayrisch: "Fertigkeit" },
-  weniger: { de: "weniger anzeigen", en: "show less", schwaebisch: "weniger zoiga", bayrisch: "weniger ozoagn" },
-  alle: {
+  skill: { de: "Fertigkeit", en: "Skill", schwaebisch: "Fertigkeit", bayrisch: "Fertigkeit" },
+  showLess: { de: "weniger anzeigen", en: "show less", schwaebisch: "weniger zoiga", bayrisch: "weniger ozoagn" },
+  showAll: {
     de: (n: number) => `alle ${n} anzeigen`,
     en: (n: number) => `show all ${n}`,
     schwaebisch: (n: number) => `älle ${n} zoiga`,
@@ -42,19 +42,19 @@ const T = {
   },
 } satisfies Record<string, Fassungen | Fassungen<(...a: never[]) => string>>;
 
-/** Unterzeile: hergestellter Gegenstand, wenn er vom Rezeptnamen abweicht, sonst Art und Platz. */
-function subline(name: string, recipe: RecipeView | null, sprache: Sprache): string | null {
-  if (!recipe) return fassungIn(REZEPT_TEXTE.detailsFolgen, sprache);
+/** Subline: crafted item if it differs from the recipe name, otherwise type and slot. */
+function subline(name: string, recipe: RecipeView | null, language: Sprache): string | null {
+  if (!recipe) return fassungIn(RECIPE_TEXTS.detailsPending, language);
   const item = recipe.item;
   if (!item) return recipe.description;
   if (item.name !== name || recipe.craftedQuantity > 1) {
-    return `${fassungIn(T.stelltHer, sprache)}: ${item.name}${recipe.craftedQuantity > 1 ? ` × ${recipe.craftedQuantity}` : ""}`;
+    return `${fassungIn(T.creates, language)}: ${item.name}${recipe.craftedQuantity > 1 ? ` × ${recipe.craftedQuantity}` : ""}`;
   }
   const kind = [item.tooltip?.subclass, item.tooltip?.slotType].filter(Boolean).join(" · ");
   return kind || null;
 }
 
-/** Rezept als Karte: Icon und Name mit Tooltip, Materialien und wer es kennt. */
+/** Recipe as a card: icon and name with tooltip, reagents and who knows it. */
 export function RecipeCard({
   entry,
   people,
@@ -62,9 +62,10 @@ export function RecipeCard({
   factionOf,
 }: {
   entry: ProfessionRecipe;
-  /** Bereits gefiltert und sortiert. */
+  /** Already filtered and sorted. */
   people: RecipePerson[];
-  /** URL-Kürzel des Berufs als Sprungziel am Charakter. */
+  /** URL slug of the profession as the jump target on the character. */
+
   profession: string;
   factionOf: (guildSlug: string) => string;
 }) {
@@ -87,11 +88,11 @@ export function RecipeCard({
             {sub && <span className="recipe-card-sub">{sub}</span>}
           </span>
         </Tooltip>
-        <span className="recipe-card-count">{t(T.kennen)(people.length)}</span>
+        <span className="recipe-card-count">{t(T.knownBy)(people.length)}</span>
       </div>
 
       {recipe && recipe.reagents.length > 0 && (
-        <ul className="recipe-card-reagents" aria-label={t(T.materialien)}>
+        <ul className="recipe-card-reagents" aria-label={t(T.reagents)}>
           {recipe.reagents.map((r) => (
             <li key={r.id}>
               <Icon src={r.icon} alt="" size={18} />
@@ -101,13 +102,13 @@ export function RecipeCard({
         </ul>
       )}
 
-      <ul className="recipe-card-people" aria-label={t(T.werKennt)(name)}>
+      <ul className="recipe-card-people" aria-label={t(T.whoKnows)(name)}>
         {shown.map((p) => (
           <li key={p.id}>
             <Link to={`/charakter/${p.slug}?reiter=berufe#${profession}`} className="recipe-chip">
               <FactionCrest faction={factionOf(p.guildSlug)} size={14} />
               <ClassName classId={p.classId} name={fullName(p)} />
-              <span className="recipe-chip-skill" title={t(T.fertigkeit)}>
+              <span className="recipe-chip-skill" title={t(T.skill)}>
                 {p.skill}
               </span>
             </Link>
@@ -116,7 +117,7 @@ export function RecipeCard({
       </ul>
       {collapsible && (
         <button type="button" className="recipe-card-more" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>
-          {expanded ? t(T.weniger) : t(T.alle)(people.length)}
+          {expanded ? t(T.showLess) : t(T.showAll)(people.length)}
         </button>
       )}
     </li>
