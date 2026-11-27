@@ -7,6 +7,7 @@ import {
   isGermanText,
   onlyChanged,
   parseDiff,
+  parseIgnoreList,
   parseWordList,
   scanFile,
   splitName,
@@ -163,5 +164,23 @@ describe("JSX and tests", () => {
     expect(declaredNames("const zeitung = { stimmen: 1 }; function fuelle() {}")).toEqual(["zeitung", "fuelle"]);
     const findings = scanFile("test/x.test.ts", "const data = { stimmen: 42 };\nconst zeile = 1;", words);
     expect(findings.map((f) => f.text)).toEqual(["zeile"]);
+  });
+});
+
+describe("fork ignore list", () => {
+  test("folder prefixes, single and double stars, comments", () => {
+    const ignored = parseIgnoreList(
+      ["# private scripts", "scripts/erfolge-*.mjs", "scripts/spaetzle-sync.sh", "test/private/", ".github/**/upstream-*.yml"].join(
+        "\n",
+      ),
+    );
+    expect(ignored("scripts/erfolge-katalog.mjs")).toBe(true);
+    expect(ignored("scripts/erfolge/katalog.mjs")).toBe(false);
+    expect(ignored("scripts/spaetzle-sync.sh")).toBe(true);
+    expect(ignored("scripts/spaetzle-sync.shx")).toBe(false);
+    expect(ignored("test/private/a/b.test.ts")).toBe(true);
+    expect(ignored(".github/workflows/upstream-sync.yml")).toBe(true);
+    expect(ignored("src/language.ts")).toBe(false);
+    expect(parseIgnoreList("")("anything")).toBe(false);
   });
 });

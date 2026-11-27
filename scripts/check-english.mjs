@@ -5,14 +5,18 @@
 //   npm run check:english -- --base main     against another base
 //   npm run check:english -- --all           every tracked file
 //   npm run check:english -- --strict        exit code 1 if anything is found (for CI)
+//
+// A fork can list its own files that may stay German (e.g. private modules or scripts) in `.check-english-ignore`
+// in the repository root; see parseIgnoreList in scripts/check-english-lib.mjs and docs/extensions.md.
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { parseArgs } from "node:util";
 import {
   FROZEN_NAMES,
   formatReport,
   onlyChanged,
   parseDiff,
+  parseIgnoreList,
   parseNameList,
   parseWordList,
   scanFile,
@@ -32,6 +36,10 @@ for (const name of parseNameList(readFileSync(new URL("./check-english-frozen.tx
   FROZEN_NAMES.add(name);
 }
 
+const ignoredByFork = existsSync(".check-english-ignore")
+  ? parseIgnoreList(readFileSync(".check-english-ignore", "utf8"))
+  : () => false;
+
 let changes = null;
 let paths;
 if (values.all) {
@@ -44,6 +52,7 @@ if (values.all) {
 
 let findings = [];
 for (const path of paths) {
+  if (ignoredByFork(path)) continue;
   let source;
   try {
     source = readFileSync(path, "utf8");
