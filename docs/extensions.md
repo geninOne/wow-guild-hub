@@ -169,7 +169,7 @@ schreibe: ({ name, picker, seed }) => {
 ```
 
 If the pools have the same length in all four languages, you can also use `picker.chooseAll(topf, toepfe, seed)`
-with the type `Alle` from `src/weekly/bausteine.ts`; `gleichLang` checks this in the test.
+with the type `Alle` from `src/weekly/phrases.ts`; `sameLength` checks this in the test.
 
 **AI texts (`fuerKi`).** With an AI key, a language model writes the articles. It receives each fact as JSON:
 the core sets `nr`, `rubrik` and `art`, `fuerKi` supplies the rest with names instead of IDs, e.g.

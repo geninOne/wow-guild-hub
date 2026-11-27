@@ -19,7 +19,7 @@ function zeilenJeFassung(datei: string): Record<string, string[]> {
 }
 
 test("Schwäbische Satzbausteine sagen net, nicht das bayrische ned", () => {
-  const schwaebisch = zeilenJeFassung("src/weekly/bausteine.ts").schwaebisch;
+  const schwaebisch = zeilenJeFassung("src/weekly/phrases.ts").schwaebisch;
   expect(schwaebisch.length).toBeGreaterThan(100);
   expect(schwaebisch.filter((z) => /\bned\b/.test(z))).toEqual([]);
 });

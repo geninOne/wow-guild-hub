@@ -3,15 +3,15 @@ import type { Fassungen } from "../sprache";
 
 export interface TitleDef {
   id: string;
-  /** Name in allen Sprachfassungen (Deutsch und Englisch Pflicht, Dialekte optional). */
+  /** Name in every language version (German and English required, dialects optional). */
   name: Fassungen;
-  /** Regel in einem Satz, für die Übersicht. */
+  /** The rule in one sentence, for the overview. */
   description: Fassungen;
-  /** Mindestwert, darunter wird der Titel nicht vergeben (eine Anmeldung ist keine Meldung wert). */
+  /** Minimum value; below it the title is not awarded (a single login is not worth a story). */
   min: number;
-  /** Wert, nach dem der Titel vergeben wird; null zählt nicht. Fehlt bei Titeln, die aus anderen Titeln folgen. */
+  /** Value the title is awarded by; null does not count. Missing for titles derived from other titles. */
   value?(m: WeekMetrics): number | null;
-  /** Wert als Text, z. B. "7 Tode". */
+  /** Value as text, e.g. "7 Tode". */
   valueText(n: number): Fassungen;
 }
 
@@ -230,16 +230,16 @@ export const TITLES: TitleDef[] = [
   },
 ];
 
-/** Plätze, die für den Tausendsassa zählen. */
-export const TAUSENDSASSA_TOP = 5;
+/** Places that count towards the Tausendsassa. */
+export const ALL_ROUNDER_TOP = 5;
 
 export function titleDef(id: string): TitleDef | undefined {
   return TITLES.find((t) => t.id === id);
 }
 
 /**
- * Abmeldeliste aus der Umgebungsvariable `TITLE_OPT_OUTS`: kommagetrennt Slug, Name oder Charakter-ID der
- * Charaktere, die keine Spaßtitel bekommen sollen. Reine Zahlen gelten als ID.
+ * Opt-out list from the environment variable `TITLE_OPT_OUTS`: comma-separated slug, name or character ID of the
+ * characters that should not get fun titles. Plain numbers count as IDs.
  */
 export function parseOptOuts(raw: string | undefined): (string | number)[] {
   return (raw ?? "")
@@ -253,7 +253,7 @@ export const TITLE_OPT_OUTS: (string | number)[] = parseOptOuts(
   typeof process === "undefined" ? undefined : process.env.TITLE_OPT_OUTS,
 );
 
-/** Steht das Mitglied (per ID, Slug oder Name, Groß- und Kleinschreibung egal) auf der Abmeldeliste? */
+/** Is the member on the opt-out list (by ID, slug or name, case-insensitive)? */
 export function isOptedOut(member: MemberSummary, list: (string | number)[]): boolean {
   return list.some((entry) => {
     if (typeof entry === "number") return entry === member.id;
@@ -263,21 +263,24 @@ export function isOptedOut(member: MemberSummary, list: (string | number)[]): bo
   });
 }
 
-/** Rangliste eines Titels: [Charakter-ID, Wert], bester zuerst. */
+/** Ranking of one title: [character ID, value], best first. */
 export type TitleRanking = [id: number, value: number][];
 
 export interface TitleResult {
   awards: TitleAward[];
-  /** Je Titel alle Kandidaten mit einem Wert ab 1, bester zuerst (auch unter dem Mindestwert); Titelträger vor den anderen Inhabern. */
+  /**
+   * Per title all candidates with a value of 1 or more, best first (also below the minimum); title bearer before the
+   * other holders.
+   */
   rankings: Record<string, TitleRanking>;
 }
 
-/** Alle Inhaber eines vergebenen Titels; ältere Wochen kennen nur den Titelträger. */
+/** All holders of an awarded title; older weeks only know the title bearer. */
 export function titleHolders(award: TitleAward): number[] {
   return award.characterIds ?? [award.characterId];
 }
 
-/** Fester Zufall für Gleichstände: FNV-1a über den Text, gleiche Eingabe gibt immer denselben Wert. */
+/** Fixed randomness for ties: FNV-1a over the text, the same input always gives the same value. */
 export function tieHash(text: string): number {
   let h = 0x811c9dc5;
   for (let i = 0; i < text.length; i++) {
@@ -287,24 +290,24 @@ export function tieHash(text: string): number {
   return h;
 }
 
-/** Was für die Wahl des Titelträgers bei Gleichstand nötig ist. */
+/** What is needed to pick the title bearer in a tie. */
 export interface TitleHistory {
-  /** Die ausgewertete Woche, Grundlage des festen Zufalls. */
+  /** The evaluated week, basis of the fixed randomness. */
   week: string;
-  /** Frühere Wochenergebnisse, die jüngste zuerst. */
+  /** Earlier weekly results, most recent first. */
   previous: Pick<WeeklyRecord, "titles">[];
 }
 
 /**
- * Reihenfolge der Inhaber eines geteilten Titels, Titelträger zuerst: wer den Titel am längsten nicht hatte (noch nie
- * zuerst), dann ein fester Zufall aus Woche, Titel und Charakter. Weder Name noch Spielzeit spielen eine Rolle.
+ * Order of the holders of a shared title, title bearer first: whoever has gone the longest without the title (never
+ * first), then a fixed randomness from week, title and character. Neither name nor playtime matters.
  */
 export function orderHolders(ids: number[], titleId: string, history: TitleHistory): number[] {
-  const lastHeld = (id: number) => {
+  const holdAge = (id: number) => {
     const i = history.previous.findIndex((r) => r.titles.some((a) => a.titleId === titleId && titleHolders(a).includes(id)));
     return i === -1 ? Infinity : i;
   };
-  const key = new Map(ids.map((id) => [id, { gap: lastHeld(id), hash: tieHash(`${history.week}:${titleId}:${id}`) }]));
+  const key = new Map(ids.map((id) => [id, { gap: holdAge(id), hash: tieHash(`${history.week}:${titleId}:${id}`) }]));
   return [...ids].sort((a, b) => {
     const ka = key.get(a)!;
     const kb = key.get(b)!;
@@ -314,10 +317,10 @@ export function orderHolders(ids: number[], titleId: string, history: TitleHisto
 }
 
 /**
- * Vergibt jeden Titel an alle aktiven Charaktere mit dem höchsten Wert (mindestens `min`); bei Gleichstand teilen sie
- * ihn. Auf der Karte steht einer davon, siehe `orderHolders`. Abgemeldete und Ehemalige werden übersprungen.
- * Dazu die ganze Rangliste je Titel, damit die Titelseite zeigen kann, wer wie viel hatte.
- * Für den Tausendsassa zählt der Platz: Wer gleich viel hat, teilt sich den Platz, und jeder Platz bis 5 zählt.
+ * Awards each title to all active characters with the highest value (at least `min`); in a tie they share it.
+ * The card shows one of them, see `orderHolders`. Opted-out and former members are skipped.
+ * Also returns the full ranking per title so the titles page can show who had how much.
+ * For the Tausendsassa the place counts: equal values share a place, and every place up to 5 counts.
  */
 export function rankTitles(
   metrics: Map<number, WeekMetrics>,
@@ -336,7 +339,7 @@ export function rankTitles(
     const holders = best >= Math.max(1, title.min) ? all.filter((c) => c.value === best).map((c) => c.id) : [];
     const ordered = orderHolders(holders, title.id, history);
     const pos = new Map(ordered.map((id, i) => [id, i]));
-    // Gleiche Werte in fester, zufälliger Reihenfolge; die Inhaber in der Reihenfolge der Kartenwahl
+    // Equal values in a fixed random order; the holders in the order chosen for the card
     const hash = (id: number) => tieHash(`${history.week}:${title.id}:${id}`);
     all.sort((a, b) => b.value - a.value || (pos.get(a.id) ?? 0) - (pos.get(b.id) ?? 0) || hash(a.id) - hash(b.id) || a.id - b.id);
     rankings[title.id] = all.map((c) => [c.id, c.value]);
@@ -355,15 +358,15 @@ export function rankTitles(
     const ranked = all.filter((c) => c.value >= Math.max(1, title.min));
     for (const c of ranked) {
       const place = 1 + ranked.filter((o) => o.value > c.value).length;
-      if (place <= TAUSENDSASSA_TOP) topCount.set(c.id, (topCount.get(c.id) ?? 0) + 1);
+      if (place <= ALL_ROUNDER_TOP) topCount.set(c.id, (topCount.get(c.id) ?? 0) + 1);
     }
   }
-  // Tausendsassa: in den meisten anderen Titeln unter den ersten fünf, zählt sich selbst nicht mit.
+  // Tausendsassa: in the top five of the most other titles, does not count itself.
   rank(titleDef("tausendsassa")!, candidates.map((m) => ({ id: m.id, value: topCount.get(m.id) ?? 0 })));
   return { awards, rankings };
 }
 
-/** Nur die vergebenen Titel, siehe `rankTitles`. */
+/** Only the awarded titles, see `rankTitles`. */
 export function awardTitles(
   metrics: Map<number, WeekMetrics>,
   members: MemberSummary[],

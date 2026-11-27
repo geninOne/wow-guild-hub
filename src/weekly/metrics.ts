@@ -2,19 +2,19 @@ import type { ActivityWeek, DaySnapshot, MemberSummary, WeekMetrics } from "../m
 
 type SnapshotField = "level" | "deaths" | "recipes" | "dungeons" | "achievements" | "reputation" | "equippedItemLevel";
 
-/** Zuwachs eines Zählers zwischen zwei Tagesständen; null, wenn einer der beiden den Wert nicht kennt. */
+/** Gain of a counter between two daily snapshots; null if either of them lacks the value. */
 export function gain(before: DaySnapshot | null, end: DaySnapshot | null, id: number, field: SnapshotField): number | null {
   const a = before?.characters[String(id)]?.[field];
   const b = end?.characters[String(id)]?.[field];
   if (typeof a !== "number" || typeof b !== "number") return null;
-  // Rangwechsel zwischen Twink und Hauptcharakter ändert, ob accountweite Erfolge zählen; das ist kein Zuwachs.
+  // Switching between alt and main character changes whether account-wide achievements count; that is no gain.
   if (field === "achievements" && !before?.characters[String(id)]?.achievementsTwink !== !end?.characters[String(id)]?.achievementsTwink) {
     return null;
   }
   return Math.max(0, b - a);
 }
 
-/** Kennzahlen einer Woche je aktivem Mitglied aus der Aktivität und zwei Tagesständen (vor und am Ende der Woche). */
+/** Key figures of a week per active member from the activity and two daily snapshots (before and at the end of the week). */
 export function weekMetrics(input: {
   activity: ActivityWeek | null;
   before: DaySnapshot | null;

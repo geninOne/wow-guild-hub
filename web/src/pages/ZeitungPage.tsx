@@ -1,6 +1,6 @@
 import { Link, useParams, useSearchParams } from "react-router";
 import type { ZeitungArchiveView, ZeitungArticleView, ZeitungView, ZeitungZahlenView, ZeitungZahlView, CharacterRef } from "../../../src/api/types";
-import type { WochenZahlArt } from "../../../src/model";
+import type { WeeklyNumberKind } from "../../../src/model";
 import { CharacterLink } from "../components/CharacterLink";
 import { DataState } from "../components/DataState";
 import { FactionCrest } from "../components/FactionCrest";
@@ -10,12 +10,12 @@ import { TestdatenHinweis } from "../components/TestdatenHinweis";
 import { useApi } from "../lib/api";
 import { ERSCHEINT_FASSUNGEN, splitByNames, weekRangeLabel } from "../lib/fun";
 import { useSprache, type Fassungen, type Sprache, fassungIn } from "../lib/sprache";
-import { zeitungsName } from "../../../src/weekly/bausteine-woche";
+import { newspaperName } from "../../../src/weekly/phrases-extras";
 import { zahlLocale } from "../lib/format";
 
 /** Name der Zeitung: WEBSITE_NEWSPAPER oder der Standardname der Sprache. */
 function zeitung(sprache: Sprache): string {
-  return zeitungsName(sprache, import.meta.env.WEBSITE_NEWSPAPER);
+  return newspaperName(sprache, import.meta.env.WEBSITE_NEWSPAPER);
 }
 
 const UND: Record<Sprache, string> = { de: "und", en: "and", schwaebisch: "ond", bayrisch: "und" };
@@ -101,7 +101,7 @@ const T = {
   },
 } satisfies Record<string, Record<Sprache, unknown>>;
 
-const ZAHL_NAMEN: Record<WochenZahlArt, Fassungen> = {
+const ZAHL_NAMEN: Record<WeeklyNumberKind, Fassungen> = {
   anmeldungen: { de: "Anmeldungen", en: "Logins", schwaebisch: "Aameldunga", bayrisch: "Anmeldungen" },
   level: { de: "Level", en: "Levels", schwaebisch: "Level", bayrisch: "Level" },
   tode: { de: "Tode", en: "Deaths", schwaebisch: "Tode", bayrisch: "Tode" },

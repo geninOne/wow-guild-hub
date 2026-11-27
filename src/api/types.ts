@@ -1,5 +1,5 @@
 import type { Fassungen } from "../sprache";
-import type { CharacterRecord, RecipeDetail, RecipeReagent, TalentNode, WochenZahlArt } from "../model";
+import type { CharacterRecord, RecipeDetail, RecipeReagent, TalentNode, WeeklyNumberKind } from "../model";
 
 export interface TalentFix {
   nodeId: number;
@@ -379,7 +379,7 @@ export interface ZeitungView {
 
 /** Eine Zeile im Infokasten „Woche in Zahlen“. */
 export interface ZeitungZahlView {
-  art: WochenZahlArt;
+  art: WeeklyNumberKind;
   wert: number;
   /** Wert der Vorwoche; null ohne Vergleich (dann kein Pfeil). */
   vorwoche: number | null;

@@ -6,8 +6,8 @@ import type { CharacterView } from "../../src/api/types";
 import type { ServerErweiterung } from "../../src/erweiterungen/typen";
 import type { DaySnapshot, GuildRecord, WeeklyRecord } from "../../src/model";
 import { createMemoryStore } from "../../src/store";
-import type { ErweiterungsFakt } from "../../src/weekly/zeitung-facts";
-import { bausteinGenerator } from "../../src/weekly/zeitung-text";
+import type { ErweiterungsFakt } from "../../src/weekly/newspaper-facts";
+import { phraseGenerator } from "../../src/weekly/newspaper-text";
 import { factsForModel } from "../../src/weekly/claude-text";
 import { runWeeklyEvaluation } from "../../src/weekly/run";
 import { member } from "../helpers/members";
@@ -77,7 +77,7 @@ describe("Kern ohne Erweiterungen", () => {
   test("Wochenzeitung ohne Meldungen von Erweiterungen; alte Rubrik Erfolge bleibt übersetzt", async () => {
     const store = await storeMitGilde();
     await storeWoche(store);
-    await runWeeklyEvaluation({ store, now: () => new Date(NOW), generator: bausteinGenerator, serverStart: null, erweiterungen: [] });
+    await runWeeklyEvaluation({ store, now: () => new Date(NOW), generator: phraseGenerator, serverStart: null, erweiterungen: [] });
     const record = await store.get<WeeklyRecord>("weekly/2026-11-14");
     expect(record).not.toBeNull();
     expect([record!.zeitung.lead, ...record!.zeitung.articles].map((a) => a.kind)).not.toContain("umfrage");
@@ -126,7 +126,7 @@ describe("Kern mit Test-Erweiterung", () => {
   test("Wochenartikel erscheint in der Ausgabe mit eigener Art, Rubrik und Texten in Deutsch und Englisch", async () => {
     const store = await storeMitGilde();
     await storeWoche(store);
-    await runWeeklyEvaluation({ store, now: () => new Date(NOW), generator: bausteinGenerator, serverStart: null, erweiterungen: [testErweiterung] });
+    await runWeeklyEvaluation({ store, now: () => new Date(NOW), generator: phraseGenerator, serverStart: null, erweiterungen: [testErweiterung] });
     const record = (await store.get<WeeklyRecord>("weekly/2026-11-14"))!;
     // Nachrichtenwert 90: der Aufmacher
     const lead = record.zeitung.lead;
@@ -143,7 +143,7 @@ describe("Kern mit Test-Erweiterung", () => {
   test("Dialekte fallen auf Deutsch zurück, die KI bekommt Rubrik, Art und die Felder der Erweiterung", async () => {
     const facts = [umfrageFakt([1])];
     const ctx = { week: "2026-11-14", name: (id: number) => (id === 1 ? "Anna" : "Bodo"), allNames: ["Anna", "Bodo"], sprachen: ["de", "en", "schwaebisch"] as const };
-    const r = await bausteinGenerator(facts, ctx);
+    const r = await phraseGenerator(facts, ctx);
     expect(r.articles[0].dialekte?.schwaebisch?.text).toBe("Anna stimmt 42 Mal ab.");
     expect(factsForModel(facts, ctx)).toEqual([{ nr: 0, rubrik: "Aufmacher", art: "umfrage", abstimmende: ["Anna"], stimmen: 42 }]);
   });

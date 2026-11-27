@@ -166,7 +166,7 @@ schreibe: ({ name, picker, seed }) => {
 ```
 
 Gibt es die Töpfe in allen vier Sprachen gleich lang, geht auch `picker.chooseAll(topf, toepfe, seed)` mit dem Typ
-`Alle` aus `src/weekly/bausteine.ts`; `gleichLang` prüft das im Test.
+`Alle` aus `src/weekly/phrases.ts`; `sameLength` prüft das im Test.
 
 **KI-Texte (`fuerKi`).** Mit KI-Schlüssel schreibt ein Sprachmodell die Artikel. Es bekommt jeden Fakt als JSON:
 `nr`, `rubrik` und `art` setzt der Kern, den Rest liefert `fuerKi` mit Namen statt IDs, etwa
