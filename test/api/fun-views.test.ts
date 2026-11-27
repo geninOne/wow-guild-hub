@@ -420,7 +420,7 @@ test("/api/wrapped: after the month of the server start the snapshot before the 
   });
 });
 
-test("Bärenklaue weeks next to old ISO weeks: paging, archive with shortened transition week and badges", async () => {
+test("guild weeks next to old ISO weeks: paging, archive with shortened transition week and badges", async () => {
   await store.set("weekly/2026-W46", weekly("2026-W46", "2026-11-09", "2026-11-15"));
   await store.set("weekly/2026-11-21", weekly("2026-11-21", "2026-11-16", "2026-11-21"));
   await store.set("weekly/2026-11-28", weekly("2026-11-28", "2026-11-22", "2026-11-28", { titles: [{ titleId: "dauerlaeufer", characterId: 1, value: 4 }] }));
@@ -450,7 +450,7 @@ test("Bärenklaue weeks next to old ISO weeks: paging, archive with shortened tr
   expect(anna.body.titles).toEqual([{ titleId: "dauerlaeufer", name: MARATHON_RUNNER, week: "2026-11-28", from: "2026-11-22", to: "2026-11-28", valueText: value("4 Level", "4 levels") }]);
 });
 
-test("/api/wrapped: a Bärenklaue week belongs to the month of its Saturday", async () => {
+test("/api/wrapped: a guild week belongs to the month of its Saturday", async () => {
   await store.set("history/2026-11-28", snap("2026-11-28", { "1": { level: 5 } }));
   await store.set("weekly/2026-W46", weekly("2026-W46", "2026-11-09", "2026-11-15"));
   await store.set("weekly/2026-10-31", weekly("2026-10-31", "2026-10-25", "2026-10-31"));

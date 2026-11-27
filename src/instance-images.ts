@@ -8,8 +8,7 @@ export interface DungeonInfo {
   bosse: string[];
   /**
    * Additional entries of the boss kill statistic that indicate completion when the statistic names the instance
-   * or final boss differently than the achievement and boss list,
-   * e.g. "Siege über Erzmagier Arugal (Burg Schattenfang)".
+   * or final boss differently than the achievement and boss list, e.g. a boss listed with an extra title.
    */
   statistik: { instanz: string; endboss: string }[];
   /** The final boss is not in the boss kill statistic: completion cannot be proven per character. */
@@ -40,13 +39,13 @@ export const DUNGEON_INFO: Record<string, DungeonInfo> = Object.fromEntries(
 );
 
 /**
- * Dungeon outside the "Dungeonerforscher" achievement criteria (`config/zusatz-dungeons.json`): one that is in no
+ * Dungeon outside the dungeon explorer achievement criteria (`config/zusatz-dungeons.json`): one that is in no
  * achievement, or one half of a criterion shared by counterparts of both factions. Completion comes from the boss kill
- * statistic "Siege über ENDBOSS (INSTANZ)".
+ * statistic `Siege über FINAL_BOSS (INSTANCE)`.
  */
 export interface ExtraDungeon {
   name: string;
-  /** Achievement tier it is sorted into ("Novize", "Erfahren", "Meister"). */
+  /** Achievement tier it is sorted into (`Novize`, `Erfahren`, `Meister`). */
   tier: string;
   info: DungeonInfo;
   source: { instance: string; finalBoss: string };
@@ -108,7 +107,7 @@ export const INSTANCE_IMAGE_IDS: number[] = [
 
 /**
  * Comparison form for instance and boss names: lowercase, without a leading German article. The statistic inflects
- * names ("Siege über Mutanus den Verschlinger"), so "den" is treated like "der".
+ * names (accusative after `Siege über`), so `den` is treated like `der`.
  */
 export function normName(name: string): string {
   return name.trim().toLowerCase().replace(/^(die|der|das|den) /, "").replace(/ den /g, " der ");

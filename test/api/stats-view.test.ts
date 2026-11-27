@@ -137,7 +137,7 @@ describe("statCards", () => {
 });
 
 describe("resolveStatsPeriod", () => {
-  const start = "2026-11-05"; // Bärenklaue week until Saturday 2026-11-07
+  const start = "2026-11-05"; // guild week until Saturday 2026-11-07
 
   test("week needs the snapshot of the previous week", () => {
     expect(resolveStatsPeriod(["2026-11-14", "2026-11-21"], { kind: "week", week: "2026-11-21" }, start)).toEqual({

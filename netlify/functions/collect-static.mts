@@ -5,6 +5,6 @@ import { createRuntime } from "../../src/runtime";
 
 export default async () => runAndRespond("collect-static", () => runStaticCollection(createRuntime()));
 
-// Alle vier Stunden um halb (0:30, 4:30, ... UTC), versetzt zu collect-guild (volle Stunde) und collect-weekly (Viertel nach),
-// damit sich die Läufe nicht im Rate-Limit von Blizzard drängeln. Was im Zeitbudget keinen Platz hat, folgt im nächsten Lauf.
+// Every four hours at half past (0:30, 4:30, ... UTC), offset from collect-guild (on the hour) and collect-weekly (quarter past),
+// so the runs do not crowd each other in Blizzard's rate limit. Whatever does not fit in the time budget follows in the next run.
 export const config: Config = { schedule: "30 */4 * * *" };

@@ -37,12 +37,12 @@ export interface CharacterParts {
   reputations: any | null;
 }
 
-/** Statistics category "Dungeons & Schlachtzüge" (dungeons and raids) and its subcategory "Boss-Kills". */
+/** Statistics category `Dungeons & Schlachtzüge` (dungeons and raids) and its subcategory `Boss-Kills`. */
 const STATS_INSTANCES = 14807;
 const STATS_BOSS_KILLS = 14821;
-/** "5-Spieler-Dungeons betreten" (5-player dungeons entered) in "Dungeons & Schlachtzüge". */
+/** `5-Spieler-Dungeons betreten` (5-player dungeons entered) in the dungeons and raids category. */
 const STAT_DUNGEONS_ENTERED = 932;
-/** Statistics category "Tode" (deaths) and within it "Tode insgesamt" (total deaths). */
+/** Statistics category `Tode` (deaths) and within it `Tode insgesamt` (total deaths). */
 const STATS_DEATHS = 122;
 const STAT_DEATHS_TOTAL = 60;
 
@@ -156,7 +156,7 @@ export function mapAchievementProgress(raw: any | null): AchievementProgress[] {
 }
 
 export function parseBossKillName(name: string): { boss: string; instance: string | null } {
-  // Blizzard de_DE statistic name: "Siege über BOSS (INSTANCE)" ("Victories over ...").
+  // Blizzard de_DE statistic name: `Siege über BOSS (INSTANCE)` ("Victories over ...").
   const match = /^Siege über (.+?)(?: \((.+)\))?$/.exec(name);
   if (!match) return { boss: name, instance: null };
   return { boss: match[1], instance: match[2] ?? null };

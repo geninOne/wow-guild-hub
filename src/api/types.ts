@@ -221,7 +221,7 @@ export interface ProfessionsView {
     name: string;
     /** URL slug, e.g. "kraeuterkunde". */
     slug: string;
-    /** "Handwerk", "Sammeln", "Nebenberufe" or "Weitere Berufe". */
+    /** Group label: `Handwerk`, `Sammeln`, `Nebenberufe` or `Weitere Berufe` (crafting, gathering, secondary, other). */
     group: string;
     icon: string | null;
     primary: boolean;
@@ -451,7 +451,7 @@ export interface StatLeaderView {
 export interface StatConversionView {
   per: number;
   unit: Translations<[string, string]>;
-  /** Explanation of the conversion, such as "wenn ein Fass hundert Krüge hergibt". */
+  /** Explanation of the conversion, such as how many mugs a barrel yields. */
   text: Translations;
 }
 
@@ -516,7 +516,7 @@ export interface GuildDungeonView {
   key: string;
   /** Displayed name: the alternatives someone has completed, else the first. */
   name: string;
-  /** "Novize", "Erfahren" or "Meister". */
+  /** Achievement tier: `Novize`, `Erfahren` or `Meister` (novice, experienced, master). */
   tier: string;
   image: string | null;
   levels: LevelRange | null;

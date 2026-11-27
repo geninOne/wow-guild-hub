@@ -25,7 +25,7 @@ function mockFetch(routes: Record<string, unknown>) {
   const fn = vi.fn(async (path: string) => {
     const body = routes[path];
     return body === undefined
-      ? new Response(JSON.stringify({ error: "Nicht gefunden" }), { status: 404 })
+      ? new Response(JSON.stringify({ error: "Not found" }), { status: 404 })
       : new Response(JSON.stringify(body), { status: 200 });
   });
   vi.stubGlobal("fetch", fn);
@@ -470,7 +470,7 @@ test("every one of the eleven titles has a badge in web/public/titel", async () 
 });
 
 test("hall of fame: newest week on the left, five weeks per page, older by paging, value as tooltip", async () => {
-  // Bärenklaue weeks, the newest ends on Saturday 14.11.
+  // Guild weeks, the newest ends on Saturday 2026-11-14.
   const weeks = Array.from({ length: 7 }, (_, i) => {
     const w = 45 - i;
     const to = new Date(Date.UTC(2026, 10, 14 - 7 * i)).toISOString().slice(0, 10);

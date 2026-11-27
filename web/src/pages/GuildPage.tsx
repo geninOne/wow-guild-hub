@@ -74,7 +74,7 @@ function GuildContent({ guild }: { guild: GuildView }) {
   const [sort, setSort] = useState<{ key: SortKey; dir: "asc" | "desc" }>({ key: "level", dir: "desc" });
 
   const rankChoices = useMemo(() => rankGroups(guild.ranks, guild.guilds, guildSlug), [guild.ranks, guild.guilds, guildSlug]);
-  // Guild switched and the rank no longer exists there: the filter falls back to "Alle Ränge".
+  // Guild switched and the rank no longer exists there: the filter falls back to all ranks.
   const activeRankValue = rankChoices.some((g) => g.options.some((o) => o.value === rankValue)) ? rankValue : "";
   const { rank, rankGuildSlug } = parseRankValue(activeRankValue);
   const rows = useMemo(

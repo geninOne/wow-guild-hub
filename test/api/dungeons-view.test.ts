@@ -60,7 +60,7 @@ const records = [
       { boss: "Edwin van Cleef", instance: "Todesminen", quantity: 1, lastAt: "2026-11-09T10:00:00.000Z" },
     ],
   }),
-  // Bodo (Alliance): Halle der Thanen once
+  // Bodo (Alliance): the Alliance counterpart once
   record(2, {
     achievements: [],
     bossKills: [{ boss: "Durgen Dirgehammer", instance: "Halle der Thanen", quantity: 1, lastAt: "2026-11-12T10:00:00.000Z" }],
@@ -157,7 +157,7 @@ describe("extra dungeons", () => {
   });
 });
 
-describe("Flammenschlund and Halle der Thanen separate", () => {
+describe("faction counterparts sharing one criterion stay separate", () => {
   test("own completions, image and member list per faction", () => {
     // Bodo (Alliance) also has the mirrored Bazzalan in his statistics.
     const bodo = record(2, {

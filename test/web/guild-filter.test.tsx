@@ -86,7 +86,7 @@ test("segments show the faction icon only as decoration, the name stays the guil
   expect(screen.getByRole("radio", { name: "Goldene Bärenklaue" }).querySelector("img")?.getAttribute("src")).toContain("pvpcurrency-honor-alliance");
 });
 
-test("segments carry the faction so Goldene Bärenklaue appears blue when active", () => {
+test("segments carry the faction so the Alliance guild appears blue when active", () => {
   render(<GuildFilter guilds={guilds} value="goldene-bärenklaue" onChange={() => {}} />);
   expect(screen.getAllByRole("radio").map((r) => r.getAttribute("data-faction"))).toEqual(["", "HORDE", "ALLIANCE"]);
 });

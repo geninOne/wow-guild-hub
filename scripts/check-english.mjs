@@ -8,7 +8,15 @@
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { parseArgs } from "node:util";
-import { formatReport, onlyChanged, parseDiff, parseWordList, scanFile } from "./check-english-lib.mjs";
+import {
+  FROZEN_NAMES,
+  formatReport,
+  onlyChanged,
+  parseDiff,
+  parseNameList,
+  parseWordList,
+  scanFile,
+} from "./check-english-lib.mjs";
 
 const { values } = parseArgs({
   options: {
@@ -20,6 +28,9 @@ const { values } = parseArgs({
 
 const git = (...args) => execFileSync("git", args, { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
 const words = parseWordList(readFileSync(new URL("./check-english-words.txt", import.meta.url), "utf8"));
+for (const name of parseNameList(readFileSync(new URL("./check-english-frozen.txt", import.meta.url), "utf8"))) {
+  FROZEN_NAMES.add(name);
+}
 
 let changes = null;
 let paths;

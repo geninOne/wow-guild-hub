@@ -177,7 +177,7 @@ describe("character view", () => {
 });
 
 describe("guild and recipes in the character view", () => {
-  test("member of Goldene Bärenklaue shows its name and faction", () => {
+  test("member of the second guild shows its name and faction", () => {
     const alliance = { ...gelmarMember, guildSlug: "goldene-bärenklaue" };
     const g: GuildRecord = {
       ...guildOf([alliance]),

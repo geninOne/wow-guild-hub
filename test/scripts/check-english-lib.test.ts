@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, test } from "vitest";
 import {
+  declaredNames,
   germanPathParts,
   isGermanName,
   isGermanText,
@@ -10,6 +11,7 @@ import {
   scanFile,
   splitName,
   tokenizeJs,
+  withoutJsxText,
 } from "../../scripts/check-english-lib.mjs";
 
 const words = parseWordList(readFileSync("scripts/check-english-words.txt", "utf8"));
@@ -147,5 +149,19 @@ describe("diff", () => {
       { path: "src/b.ts", line: 1, kind: "comment", text: "fremd" },
     ];
     expect(onlyChanged(findings, parseDiff(diff)).map((f) => f.text)).toEqual(["neu", "neu.ts"]);
+  });
+});
+
+describe("JSX and tests", () => {
+  test("JSX text is not code, attributes and expressions still are", () => {
+    const tsx = 'const a = <p className="x">Hallo zusammen {zeitung} und mehr</p>;';
+    expect(withoutJsxText(tsx)).toBe(`const a = <p className="x">${" ".repeat(15)}{zeitung}${" ".repeat(9)}</p>;`);
+    expect(scanFile("web/src/x.tsx", '<h2>Über diese Seite</h2>;\nconst seite = 1;', words).map((f) => f.line)).toEqual([2]);
+  });
+
+  test("in tests only declared names count, not object keys", () => {
+    expect(declaredNames("const zeitung = { stimmen: 1 }; function fuelle() {}")).toEqual(["zeitung", "fuelle"]);
+    const findings = scanFile("test/x.test.ts", "const data = { stimmen: 42 };\nconst zeile = 1;", words);
+    expect(findings.map((f) => f.text)).toEqual(["zeile"]);
   });
 });

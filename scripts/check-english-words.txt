@@ -112,7 +112,6 @@ braucht
 breite
 charakter
 charaktere
-cleo
 dabei
 dahin
 danach

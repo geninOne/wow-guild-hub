@@ -354,7 +354,7 @@ function Workbench({ view, slug }: { view: ProfessionsView; slug: string | undef
 }
 
 export function ProfessionsPage() {
-  const { beruf: slug } = useParams();
+  const { profession: slug } = useParams();
   const { t } = useLanguage();
   const { data, error, loading } = useApi<ProfessionsView>("/api/professions");
   return (

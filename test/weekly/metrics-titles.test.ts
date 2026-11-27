@@ -179,7 +179,7 @@ test("titles: unique ids, texts without dashes, singular and plural", () => {
   expect(TITLES.find((t) => t.id === "stammgast")!.valueText(6).bayrisch).toBe("an 6 Dog eigloggt");
 });
 
-test("new titles: Kellerkind, Käpsele, Schleimer, Verlorener Sohn with minimum values", () => {
+test("new titles with minimum values", () => {
   const members = [member({ id: 1, name: "Anna" }), member({ id: 2, name: "Bodo" }), member({ id: 3, name: "Cleo" })];
   const metrics = new Map<number, WeekMetrics>([
     [1, metric({ dungeons: 5, achievements: 2, reputation: 3, awayDays: 13 })],
@@ -192,7 +192,7 @@ test("new titles: Kellerkind, Käpsele, Schleimer, Verlorener Sohn with minimum 
     ["kaepsele", 2, 6],
     ["schleimer", 1, 3],
     ["verlorener-sohn", 2, 30],
-    ["tausendsassa", 2, 3], // Bodo leads in Kellerkind, Käpsele and Verlorener Sohn
+    ["tausendsassa", 2, 3], // Bodo leads in `kellerkind`, `kaepsele` and `verlorener-sohn`
   ]);
   // No award without a previous week (null) or with a break under 14 days
   const noPrevious = new Map<number, WeekMetrics>([[1, metric({ awayDays: 13 })]]);
@@ -213,7 +213,7 @@ test("Schleimer and Verlorener Sohn respect the opt-out list", () => {
 
 test("Tausendsassa: most top-five places in other titles, at least three", () => {
   const members = Array.from({ length: 8 }, (_, i) => member({ id: i + 1, name: `M${i + 1}` }));
-  // M1 in the top five of Kellerkind, Käpsele and Schleimer but never first; M8 first everywhere, but only twice
+  // M1 in the top five of `kellerkind`, `kaepsele` and `schleimer` but never first; M8 first everywhere, but only twice
   const metrics = new Map<number, WeekMetrics>(
     members.map((m) => [
       m.id,

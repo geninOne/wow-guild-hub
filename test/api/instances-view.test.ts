@@ -449,7 +449,7 @@ describe("statistics names from config/dungeons.json", () => {
     expect(find(v, "Düsterbruch: Nord").completed).toBe(true);
   });
 
-  test("inflected names in the statistics (\"den\" instead of \"der\") match the final boss", () => {
+  test("inflected boss names in the statistics match the final boss", () => {
     const v = buildInstancesView(masterDefs, {
       achievements: [],
       bossKills: [kill("Mutanus den Verschlinger", "Höhlen des Wehklagens", 2), kill("Amnennar den Kältebringer", "Hügel von Razorfen")],
@@ -476,7 +476,7 @@ describe("statistics names from config/dungeons.json", () => {
     expect(find(swamp, "Todesminen")).toMatchObject({ tracked: true });
   });
 
-  test("Dalaran: final boss is der Schemen des Erzmagiers, Lyn alone does not complete", () => {
+  test("Dalaran: the final boss is the archmage's shade, Lyn alone does not complete", () => {
     const dal: InstanceAchievementsRecord = {
       achievements: [{ id: 1, name: "Erfahren: Dungeonerforscher", kind: "dungeon", order: 0, rootDescription: null, criteria: [{ id: 1, description: "Dalaran" }] }],
     };
