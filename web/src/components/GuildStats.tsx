@@ -5,7 +5,7 @@ import { formatPlainDate, formatPlainDayMonth, monthLabel, weekLabel } from "../
 import { useSprache, type Fassungen, type Sprache } from "../lib/sprache";
 import { DataState } from "./DataState";
 import { GuildFilter } from "./GuildFilter";
-import { StatWall } from "./StatCards";
+import { StatWall, statsBase } from "./StatCards";
 
 export const PERIODS: { id: StatsPeriodKind; label: Fassungen }[] = [
   { id: "woche", label: { de: "Woche", en: "Week", schwaebisch: "Woch", bayrisch: "Woch" } },
@@ -91,8 +91,8 @@ const T = {
 
 /** API-Pfad zu Zeitraum, optionaler Woche (Samstag) oder Monat und optionaler Gilde. */
 export function statsPath(kind: StatsPeriodKind, id: string | null, guild: string | null = null): string {
-  const base = kind === "gesamt" ? "/api/stats" : id ? `/api/stats/${kind}/${id}` : `/api/stats/${kind}`;
-  return guild === null ? base : `${base}?gilde=${encodeURIComponent(guild)}`;
+  const base = statsBase(kind, id);
+  return guild === null ? base : `${base}?guild=${encodeURIComponent(guild)}`;
 }
 
 const sunday = (saturday: string) => {

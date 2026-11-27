@@ -397,7 +397,7 @@ function Content({ view, onGuild }: { view: GuildDungeonsView; onGuild(slug: str
 
 /** Reiter Dungeons und Raids: Abenteuerkarte, Highlights und Raids über die ganze Gilde. */
 export function DungeonOverview({ guild, onGuild }: { guild: string | null; onGuild(slug: string | null): void }) {
-  const path = guild === null ? "/api/dungeons" : `/api/dungeons?gilde=${encodeURIComponent(guild)}`;
+  const path = guild === null ? "/api/dungeons" : `/api/dungeons?guild=${encodeURIComponent(guild)}`;
   const { data, error, loading } = useApi<GuildDungeonsView>(path);
   return (
     <DataState loading={loading} error={error}>

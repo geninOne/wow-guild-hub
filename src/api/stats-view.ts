@@ -1,4 +1,4 @@
-import karten from "../../config/statistik-karten.json";
+import cardsConfig from "../../config/statistik-karten.json";
 import { addDays, monthOf, guildWeek } from "../lib/time";
 import type { GuildRecord } from "../model";
 import { statDefinition } from "../stats/definitions";
@@ -20,7 +20,7 @@ import type {
   StatsView,
 } from "./types";
 
-/** Wie viele Spitzenreiter je Statistik. */
+/** How many leaders per statistic. */
 export const STAT_LEADERS = 5;
 
 export interface StatCard {
@@ -32,10 +32,10 @@ export interface StatCard {
   ids: number[];
 }
 
-/** Einheit [Einzahl, Mehrzahl] für alle Varianten oder je Variante (Dialekte optional). */
-type KonfigEinheit = string[] | ({ de: string[]; en?: string[]; schwaebisch?: string[]; bayrisch?: string[] });
+/** Unit [singular, plural] for all variants or per variant (dialects optional). */
+type ConfigUnit = string[] | ({ de: string[]; en?: string[]; schwaebisch?: string[]; bayrisch?: string[] });
 
-/** Texte dürfen ein String (gilt überall) oder ein Objekt mit `de` und optional `en`, `schwaebisch` und `bayrisch` sein. */
+/** Texts may be a string (applies everywhere) or an object with `de` and optionally `en`, `schwaebisch`, `bayrisch`. */
 interface CardConfig {
   slug: string;
   form: string;
@@ -47,10 +47,10 @@ interface CardConfig {
 
 interface StatText {
   kurz?: KonfigText;
-  einheit?: KonfigEinheit;
+  einheit?: ConfigUnit;
   ehrung?: KonfigText;
   klasse?: number;
-  umrechnung?: { je: number; einheit: KonfigEinheit; satz: KonfigText };
+  umrechnung?: { je: number; einheit: ConfigUnit; satz: KonfigText };
 }
 
 const FORMS: StatCardForm[] = [
@@ -58,14 +58,14 @@ const FORMS: StatCardForm[] = [
   "fahrplan", "ekg", "stall", "schredder", "verband",
 ];
 
-const CARDS_CONFIG: CardConfig[] = karten.karten;
-const TEXTS: Record<string, StatText> = karten.texte;
+const CARDS_CONFIG: CardConfig[] = cardsConfig.karten;
+const TEXTS: Record<string, StatText> = cardsConfig.texte;
 
 const twoOf = (unit: string[] | undefined): [string, string] | null =>
   unit && unit.length === 2 ? [unit[0], unit[1]] : null;
 
-/** Einheit in allen Fassungen; fehlende oder unvollständige Fassungen fallen auf Hochdeutsch zurück. */
-function pair(unit: KonfigEinheit | undefined): Fassungen<[string, string]> | null {
+/** Unit in all language versions; missing or incomplete versions fall back to standard German. */
+function pair(unit: ConfigUnit | undefined): Fassungen<[string, string]> | null {
   if (unit === undefined) return null;
   if (Array.isArray(unit)) {
     const p = twoOf(unit);
@@ -77,15 +77,18 @@ function pair(unit: KonfigEinheit | undefined): Fassungen<[string, string]> | nu
     : null;
 }
 
-const spanOf = (breite: number | undefined): 1 | 2 | 3 => (breite === 2 || breite === 3 ? breite : 1);
+const spanOf = (width: number | undefined): 1 | 2 | 3 => (width === 2 || width === 3 ? width : 1);
 
 const isForm = (form: string): form is StatCardForm => (FORMS as string[]).includes(form);
 
-/** Karten aus `config/statistik-karten.json`; unbekannte Formen und Statistiken anderer Art als Zähler und Stand fallen weg. */
+/**
+ * Cards from `config/statistik-karten.json`; unknown forms and statistics other than counters and current values
+ * are dropped.
+ */
 export function statCards(): StatCard[] {
   const shown = (id: number) => {
-    const art = statDefinition(id)?.art;
-    return art === "zaehler" || art === "stand";
+    const kind = statDefinition(id)?.art;
+    return kind === "zaehler" || kind === "stand";
   };
   return CARDS_CONFIG.flatMap((c): StatCard[] =>
     isForm(c.form)
@@ -100,7 +103,7 @@ function conversionOf(text: StatText): StatConversionView | null {
   return u && unit && u.je > 0 ? { per: u.je, unit, text: ausKonfig(u.satz) } : null;
 }
 
-/** Letzter Samstag vor dem Monatsersten, also der Stand, mit dem der Vormonat endet. */
+/** Last Saturday before the first of the month, i.e. the snapshot that ends the previous month. */
 function lastWeekBeforeMonth(month: string): string {
   const lastDay = addDays(`${month}-01`, -1);
   const week = guildWeek(lastDay);
@@ -108,9 +111,9 @@ function lastWeekBeforeMonth(month: string): string {
 }
 
 /**
- * Welche Stände ein Zeitraum vergleicht und ob das Ergebnis taugt. Woche und Monat brauchen den Stand direkt davor
- * (Vorwoche bzw. letzte Woche des Vormonats); nur wenn der vor dem Serverstart läge, gilt der Serverstart mit lauter
- * Nullen. Gesamt vergleicht den neuesten Stand immer mit dem Serverstart.
+ * Which snapshots a period compares and whether the result is usable. Week and month need the snapshot right before
+ * (previous week or last week of the previous month); only if that would lie before the server start does the server
+ * start with all zeros apply. Total always compares the latest snapshot with the server start.
  */
 export function resolveStatsPeriod(
   available: string[],
@@ -140,21 +143,22 @@ function leadersOf(rows: Rows, stat: string): StatEntryView["leaders"] {
     .slice(0, STAT_LEADERS);
 }
 
-/** Zähler summiert, Stände als Höchstwert. */
-function aggregate(rows: Rows, stat: string, art: "zaehler" | "stand"): number {
+/** Counters summed up, current values as the maximum. */
+function aggregate(rows: Rows, stat: string, kind: "zaehler" | "stand"): number {
   let result = 0;
   for (const r of rows) {
     const v = r.values[stat] ?? 0;
-    result = art === "zaehler" ? result + v : Math.max(result, v);
+    result = kind === "zaehler" ? result + v : Math.max(result, v);
   }
   return result;
 }
 
 /**
- * Karten mit Zahlen: Zähler als Zuwachs zwischen den Ständen, Stände als aktueller Höchstwert im neueren Stand.
- * Wer im früheren Stand fehlt (Neuzugang, Rückkehrer), zählt bei Woche und Monat nicht mit: Sein Zähler enthält
- * alles seit Spielbeginn und würde den Zeitraum sprengen. Gesamt vergleicht mit dem Serverstart, da zählen alle.
- * Mit `guildSlug` zählen Summe und Spitzenreiter nur für diese Gilde; `perGuild` vergleicht immer alle Gilden.
+ * Cards with numbers: counters as the gain between snapshots, current values as the maximum in the newer snapshot.
+ * Whoever is missing from the earlier snapshot (newcomer, returner) does not count for week and month: their counter
+ * holds everything since they started playing and would blow up the period. Total compares with the server start, so
+ * everyone counts there. With `guildSlug`, sum and leaders count only for that guild; `perGuild` always compares all
+ * guilds.
  */
 export function buildStatCards(
   guild: GuildRecord,
@@ -164,7 +168,7 @@ export function buildStatCards(
 ): StatCardView[] {
   const slugs = guildRefs(guild).map((g) => g.slug);
   const counterRows = rowsOf(guild, statDiff(before, after, { newCharacters: "skip" }));
-  const standRows = rowsOf(guild, after.characters);
+  const currentRows = rowsOf(guild, after.characters);
   const pick = (rows: Rows) => (guildSlug === null ? rows : rows.filter((r) => r.ref.guildSlug === guildSlug));
   return statCards().map((card) => ({
     slug: card.slug,
@@ -174,16 +178,16 @@ export function buildStatCards(
     span: card.span,
     stats: card.ids.map((id): StatEntryView => {
       const def = statDefinition(id)!;
-      const art = def.art === "stand" ? "stand" : "zaehler";
+      const kind = def.art === "stand" ? "stand" : "zaehler";
       const key = String(id);
       const text = TEXTS[key] ?? {};
-      const all = art === "zaehler" ? counterRows : standRows;
+      const all = kind === "zaehler" ? counterRows : currentRows;
       const rows = pick(all);
       const perGuild = Object.fromEntries(
-        slugs.map((slug) => [slug, aggregate(all.filter((r) => r.ref.guildSlug === slug), key, art)]),
+        slugs.map((slug) => [slug, aggregate(all.filter((r) => r.ref.guildSlug === slug), key, kind)]),
       );
       return {
-        id, name: def.name, art, total: aggregate(rows, key, art), perGuild, leaders: leadersOf(rows, key),
+        id, name: def.name, art: kind, total: aggregate(rows, key, kind), perGuild, leaders: leadersOf(rows, key),
         holders: rows.filter((r) => (r.values[key] ?? 0) > 0).length, sum: aggregate(rows, key, "zaehler"), classId: text.klasse ?? null,
         short: ausKonfig(text.kurz), unit: pair(text.einheit), honor: ausKonfig(text.ehrung), conversion: conversionOf(text),
       };
@@ -192,9 +196,9 @@ export function buildStatCards(
 }
 
 /**
- * Mitglieder hinter einer Karte: je Statistik alle Charaktere mit Wert über 0, gezählt wie auf der Karte (Zähler als
- * Zuwachs ohne Neuzugänge bei Woche und Monat, Stände als aktueller Wert). Beim Stall sind bei der ersten Statistik
- * auch die Fußgänger mit 0 dabei, denn um sie geht es dort. Immer über alle Gilden; null für eine unbekannte Karte.
+ * Members behind a card: per statistic all characters with a value above 0, counted as on the card (counters as gain
+ * without newcomers for week and month, current values as they are). For the stable, the first statistic also
+ * includes those on foot with 0, because they are the point there. Always across all guilds; null for an unknown card.
  */
 export function buildStatCardMembers(
   before: StatsSnapshot | null,
@@ -225,8 +229,8 @@ function toPeriod(kind: StatsPeriodKind, id: string): StatsPeriod {
   return { kind: "total" };
 }
 
-/** Lädt die beiden Stände eines aufgelösten Zeitraums; null, wenn einer fehlt. */
-async function loadStands(
+/** Loads both snapshots of a resolved period; null if one is missing. */
+async function loadSnapshots(
   store: JsonStore,
   resolved: { before: string | null; after: string },
 ): Promise<{ before: StatsSnapshot | null; after: StatsSnapshot } | null> {
@@ -238,8 +242,8 @@ async function loadStands(
   return { before, after };
 }
 
-/** Wochen mit Stand ab dem Serverstart, aufsteigend. */
-async function availableStands(store: JsonStore, serverStart: string | null): Promise<string[]> {
+/** Weeks with a snapshot from the server start on, ascending. */
+async function availableSnapshots(store: JsonStore, serverStart: string | null): Promise<string[]> {
   return (await store.list("stats/"))
     .map((k) => k.slice("stats/".length))
     .filter((w) => serverStart === null || w >= serverStart)
@@ -247,8 +251,8 @@ async function availableStands(store: JsonStore, serverStart: string | null): Pr
 }
 
 /**
- * Mitglieder hinter einer Karte für einen Zeitraum, wie `loadStatsView` ohne `id` die neueste Woche bzw. den neuesten
- * Monat. null, wenn die Karte unbekannt ist, Woche oder Monat keinen Stand haben oder der Zeitraum noch nicht taugt.
+ * Members behind a card for a period; like `loadStatsView`, without `id` the latest week or month. null if the card is
+ * unknown, the week or month has no snapshot, or the period is not usable yet.
  */
 export async function loadStatCardMembers(
   store: JsonStore,
@@ -258,7 +262,7 @@ export async function loadStatCardMembers(
   slug: string,
 ): Promise<StatCardMembersView | null> {
   if (!statCards().some((c) => c.slug === slug)) return null;
-  const available = await availableStands(store, serverStart);
+  const available = await availableSnapshots(store, serverStart);
   const weeks = [...available].reverse();
   const months = [...new Set(weeks.map(monthOf))];
   if (requested !== null && !(kind === "woche" ? weeks : months).includes(requested)) return null;
@@ -266,13 +270,13 @@ export async function loadStatCardMembers(
   if (id === null) return null;
   const resolved = resolveStatsPeriod(available, toPeriod(kind, id), serverStart);
   if (resolved.status !== "ok" || resolved.after === null) return null;
-  const stands = await loadStands(store, { before: resolved.before, after: resolved.after });
-  return stands ? buildStatCardMembers(stands.before, stands.after, slug) : null;
+  const snapshots = await loadSnapshots(store, { before: resolved.before, after: resolved.after });
+  return snapshots ? buildStatCardMembers(snapshots.before, snapshots.after, slug) : null;
 }
 
 /**
- * Gildenstatistik für einen Zeitraum. Ohne `id` die neueste Woche bzw. der neueste Monat mit Stand.
- * Gibt null zurück, wenn eine angefragte Woche oder ein Monat keinen Stand hat oder die Gilde unbekannt ist.
+ * Guild statistics for a period. Without `id` the latest week or month with a snapshot. Returns null if a requested
+ * week or month has no snapshot or the guild is unknown.
  */
 export async function loadStatsView(
   store: JsonStore,
@@ -284,7 +288,7 @@ export async function loadStatsView(
 ): Promise<StatsView | null> {
   const guilds = guildRefs(guild);
   if (guildSlug !== null && !guilds.some((g) => g.slug === guildSlug)) return null;
-  const available = await availableStands(store, serverStart);
+  const available = await availableSnapshots(store, serverStart);
   const weeks = [...available].reverse();
   const months = [...new Set(weeks.map(monthOf))];
   const latest = kind === "woche" ? weeks[0] : kind === "monat" ? months[0] : undefined;
@@ -299,9 +303,9 @@ export async function loadStatsView(
   const resolved = resolveStatsPeriod(available, toPeriod(kind, id ?? ""), serverStart);
   if (resolved.after === null) return { ...base, status: resolved.status };
 
-  const stands = await loadStands(store, { before: resolved.before, after: resolved.after });
-  if (!stands) return { ...base, status: "zu-wenig" };
-  const { after, before } = stands;
+  const snapshots = await loadSnapshots(store, { before: resolved.before, after: resolved.after });
+  if (!snapshots) return { ...base, status: "zu-wenig" };
+  const { after, before } = snapshots;
   const view: StatsView = {
     ...base,
     status: resolved.status,

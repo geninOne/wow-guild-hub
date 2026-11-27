@@ -5,10 +5,10 @@ test("fetchJson liefert Daten und wirft ApiError mit Status", async () => {
   const ok = async () => new Response(JSON.stringify({ a: 1 }), { status: 200 });
   expect(await fetchJson("/api/x", ok as typeof fetch)).toEqual({ a: 1 });
   const leer = async () =>
-    new Response(JSON.stringify({ error: "Noch keine Daten gesammelt" }), { status: 503 });
+    new Response(JSON.stringify({ error: "No data collected yet" }), { status: 503 });
   await expect(fetchJson("/api/x", leer as typeof fetch)).rejects.toMatchObject({
     status: 503,
-    message: "Noch keine Daten gesammelt",
+    message: "No data collected yet",
   });
 });
 

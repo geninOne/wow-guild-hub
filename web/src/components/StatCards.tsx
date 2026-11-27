@@ -1,5 +1,5 @@
 import { useEffect, useState, type CSSProperties, type MouseEvent, type ReactNode } from "react";
-import type { GuildRef, StatCardMembersView, StatCardView, StatEntryView, StatsView } from "../../../src/api/types";
+import type { GuildRef, StatCardMembersView, StatCardView, StatEntryView, StatsPeriodKind, StatsView } from "../../../src/api/types";
 import { useApi } from "../lib/api";
 import { useSprache, type Fassungen, type Sprache, fassungIn } from "../lib/sprache";
 import { classColor } from "../lib/wow";
@@ -856,8 +856,16 @@ function CardBody({ card, view }: { card: StatCardView; view: StatsView }) {
 
 /** Pfad für die Mitglieder hinter einer Karte, passend zum Zeitraum der Ansicht (immer alle Gilden). */
 export function statMembersPath(view: Pick<StatsView, "kind" | "id">, slug: string): string {
-  const base = view.kind === "gesamt" ? "/api/stats" : view.id ? `/api/stats/${view.kind}/${view.id}` : `/api/stats/${view.kind}`;
-  return `${base}?karte=${encodeURIComponent(slug)}`;
+  return `${statsBase(view.kind, view.id)}?card=${encodeURIComponent(slug)}`;
+}
+
+/** English API path segment for the period kind of a stats view (the kind values themselves stay German). */
+const PERIOD_SEGMENT: Record<StatsPeriodKind, string> = { gesamt: "", woche: "week", monat: "month" };
+
+/** API path of a stats view without query: `/api/stats`, `/api/stats/week[/<saturday>]`, `/api/stats/month[/<month>]`. */
+export function statsBase(kind: StatsPeriodKind, id: string | null): string {
+  if (kind === "gesamt") return "/api/stats";
+  return id ? `/api/stats/${PERIOD_SEGMENT[kind]}/${id}` : `/api/stats/${PERIOD_SEGMENT[kind]}`;
 }
 
 /**

@@ -114,7 +114,7 @@ function onTileClick(open: () => void) {
 
 /** Pfad für die Rangliste eines Titels in einer Woche. */
 export function titleRankingPath(titleId: string, week: string): string {
-  return `/api/titles?titel=${encodeURIComponent(titleId)}&woche=${encodeURIComponent(week)}`;
+  return `/api/titles?title=${encodeURIComponent(titleId)}&week=${encodeURIComponent(week)}`;
 }
 
 /** Menge für die Mitgliederliste: Wert als Text wie auf der Kachel, alle Inhaber gleich hervorgehoben. */

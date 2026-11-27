@@ -6,13 +6,13 @@ import type { ActivityView, MemberValue } from "./types";
 
 export const ACTIVITY_WEEKS = 8;
 
-/** Wochen für die Heatmap: die laufende und die `count - 1` davor, älteste zuerst. */
+/** Weeks for the heatmap: the current one and the `count - 1` before it, oldest first. */
 export function activityWeeks(nowIso: string, count = ACTIVITY_WEEKS): string[] {
   const current = isoWeek(berlinDate(nowIso));
   return Array.from({ length: count }, (_, i) => shiftWeek(current, i - count + 1));
 }
 
-/** Summiert die Wochen zu Rastern, einmal für alle und je Gilde. Gilde aus der aktuellen Mitgliederliste. */
+/** Sums the weeks into grids, once for everyone and once per guild. Guild from the current member list. */
 export function buildActivityView(guild: GuildRecord, weeks: string[], records: (ActivityWeek | null)[]): ActivityView {
   const guilds = guildRefs(guild);
   const slugOf = new Map(guild.members.map((m) => [String(m.id), memberGuild(guild, m, guilds).slug]));
@@ -25,10 +25,10 @@ export function buildActivityView(guild: GuildRecord, weeks: string[], records: 
     if (!record) continue;
     for (const [id, hours] of Object.entries(record.characters)) {
       const slug = slugOf.get(id);
-      if (slug === undefined) continue; // nicht mehr bekannt
+      if (slug === undefined) continue; // no longer known
       const targets = [all, byGuild.get(slug)].filter((t) => t !== undefined);
       const valid = hours.filter((h) => Number.isInteger(h) && h >= 0 && h < 168).length;
-      logins.set(Number(id), (logins.get(Number(id)) ?? 0) + valid); // wie `characters`: wer auftaucht, zählt
+      logins.set(Number(id), (logins.get(Number(id)) ?? 0) + valid); // like `characters`: whoever shows up counts
       for (const target of targets) {
         target.ids.add(id);
         for (const h of hours) if (Number.isInteger(h) && h >= 0 && h < 168) target.cells[h]++;

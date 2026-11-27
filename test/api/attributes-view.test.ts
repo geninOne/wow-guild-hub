@@ -3,7 +3,7 @@ import { buildAttributesView } from "../../src/api/attributes-view";
 import { toAttributes } from "../../src/transform/attributes";
 import { loadFixture } from "../helpers/fixtures";
 
-/** Antwort in der Form von `/statistics` (gekürzt), Werte erfunden. */
+/** Response in the shape of `/statistics` (shortened), made-up values. */
 const RAW = {
   _links: { self: { href: "https://eu.api.blizzard.com/profile/wow/character/test/statistics" } },
   character: { id: 1, name: "Test" },
@@ -28,7 +28,7 @@ const RAW = {
   name: "kein Zahlenfeld",
 };
 
-test("toAttributes behält nur Zahlen und die Ressource", () => {
+test("toAttributes keeps only numbers and the resource", () => {
   const rec = toAttributes(RAW, "2026-11-26T03:00:00.000Z");
   expect(rec.fetchedAt).toBe("2026-11-26T03:00:00.000Z");
   expect(rec.powerType).toEqual({ id: 0, name: "Mana" });
@@ -39,11 +39,11 @@ test("toAttributes behält nur Zahlen und die Ressource", () => {
   expect(rec.fields).not.toHaveProperty("name");
 });
 
-test("toAttributes ohne Ressource und ohne Felder", () => {
+test("toAttributes without resource and without fields", () => {
   expect(toAttributes(null, "t")).toEqual({ fetchedAt: "t", fields: {}, powerType: null });
 });
 
-test("Ansicht gruppiert, wählt Effektiv- und Prozentwerte und blendet leere Widerstände aus", () => {
+test("view groups rows, picks effective and percent values and hides empty resistances", () => {
   const view = buildAttributesView(toAttributes(RAW, "t"));
   expect(view.available).toBe(true);
   expect(view.resource).toEqual({ id: 0, kind: "mana", name: "Mana" });
@@ -51,36 +51,36 @@ test("Ansicht gruppiert, wählt Effektiv- und Prozentwerte und blendet leere Wid
   const basis = view.groups[0].rows;
   expect(basis.map((r) => r.key)).toEqual(["health", "power", "strength", "agility", "intellect", "stamina", "spirit"]);
   expect(basis.find((r) => r.key === "strength")).toEqual({ key: "strength", kind: "number", value: 52, base: 40 });
-  // Ohne Unterschied kein Grundwert.
+  // No base value when there is no difference.
   expect(basis.find((r) => r.key === "agility")).toEqual({ key: "agility", kind: "number", value: 35 });
   expect(view.groups[1].rows).toEqual([
     { key: "attack_power", kind: "number", value: 120 },
     { key: "melee_crit", kind: "percent", value: 4.123 },
   ]);
-  const verteidigung = view.groups[3].rows.map((r) => r.key);
-  expect(verteidigung).toEqual(["armor", "dodge", "parry", "shadow_resistance"]);
+  const defense = view.groups[3].rows.map((r) => r.key);
+  expect(defense).toEqual(["armor", "dodge", "parry", "shadow_resistance"]);
 });
 
-test("Ressourcen nach ID: Wut, Energie, Runenmacht und Unbekanntes", () => {
+test("resources by ID: rage, energy, runic power and unknown", () => {
   const kind = (id: number) => buildAttributesView(toAttributes({ ...RAW, power_type: { id, name: "N" } }, "t")).resource?.kind;
   expect([kind(1), kind(3), kind(6), kind(2), kind(99)]).toEqual(["rage", "energy", "runic_power", "focus", "other"]);
 });
 
-test("ohne Ressource keine Ressourcenzeile", () => {
+test("no resource row without a resource", () => {
   const view = buildAttributesView(toAttributes({ health: 100, power: 50 }, "t"));
   expect(view.groups).toEqual([{ id: "basis", rows: [{ key: "health", kind: "number", value: 100 }] }]);
 });
 
-test("ohne Datensatz, ohne Felder (404) oder ohne bekannte Felder nicht verfügbar", () => {
+test("not available without a record, without fields (404) or without known fields", () => {
   expect(buildAttributesView(null)).toEqual({ available: false, fetchedAt: null, resource: null, groups: [] });
   expect(buildAttributesView(undefined).available).toBe(false);
   expect(buildAttributesView({ fetchedAt: "t", fields: null, powerType: null })).toEqual({
     available: false, fetchedAt: "t", resource: null, groups: [],
   });
-  expect(buildAttributesView({ fetchedAt: "t", fields: { unbekannt: 3 }, powerType: null }).available).toBe(false);
+  expect(buildAttributesView({ fetchedAt: "t", fields: { unknown: 3 }, powerType: null }).available).toBe(false);
 });
 
-test("echte Forever-Antwort: Retail-Felder mit 0 entfallen, Rüstung ohne Grundwert 0", () => {
+test("real Forever response: Retail fields with 0 are dropped, armor without base value 0", () => {
   const view = buildAttributesView(toAttributes(loadFixture("statistics-forever").data, "t"));
   expect(view.resource).toEqual({ id: 0, kind: "mana", name: "Mana" });
   const keys = Object.fromEntries(view.groups.map((g) => [g.id, g.rows.map((r) => r.key)]));
@@ -95,7 +95,7 @@ test("echte Forever-Antwort: Retail-Felder mit 0 entfallen, Rüstung ohne Grundw
   expect(view.groups[1].rows.find((r) => r.key === "melee_crit")?.value).toBeCloseTo(4.2007);
 });
 
-test("Effektivwert 0 bei Grundwert über 0 (Forever-Ausreißer) entfällt, echte Nullen bleiben", () => {
+test("effective value 0 with base value above 0 (Forever outlier) is dropped, real zeros stay", () => {
   const view = buildAttributesView(
     toAttributes(
       {

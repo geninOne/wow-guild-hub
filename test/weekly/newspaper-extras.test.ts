@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from "vitest";
-import { buildZeitungView } from "../../src/api/zeitung-view";
+import { buildNewspaperView } from "../../src/api/newspaper-view";
 import type { GuildRecord, WeekMetrics, WeeklyRecord, WeeklySums } from "../../src/model";
 import { createMemoryStore } from "../../src/store";
 import { issueExtras } from "../../src/weekly/issue-extras";
@@ -84,11 +84,11 @@ describe("week in numbers", () => {
       week: "2026-11-21", from: "2026-11-15", to: "2026-11-21", generatedAt: "", titles: [],
       zeitung: { lead: { kind: "ruhig", headline: "Ruhig", text: "Nix los.", characterIds: [] }, articles: [], motto: "Spruch" },
     } as WeeklyRecord;
-    const old = buildZeitungView(guild, record, ["2026-11-21"]);
+    const old = buildNewspaperView(guild, record, ["2026-11-21"]);
     expect(old).toMatchObject({ zahlen: null, wetter: null, rueckblick: null });
 
     const z = buildWeeklyNumbers(metrics, guild);
-    const fresh = buildZeitungView(
+    const fresh = buildNewspaperView(
       guild,
       {
         ...record,

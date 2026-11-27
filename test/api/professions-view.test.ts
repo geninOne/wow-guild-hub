@@ -47,11 +47,11 @@ const records: CharacterRecord[] = [
 ];
 
 describe("buildProfessionsView", () => {
-  test("Berufe: nur aktive Mitglieder, Skill absteigend, deutsche Namen", () => {
+  test("professions: only active members, skill descending, German names", () => {
     const v = buildProfessionsView(members, records);
-    const schneiderei = v.professions.find((p) => p.id === 197)!;
-    expect(schneiderei).toMatchObject({ name: "Schneiderei", primary: true });
-    expect(schneiderei.members.map((m) => [m.name, m.skill, m.max])).toEqual([
+    const tailoring = v.professions.find((p) => p.id === 197)!;
+    expect(tailoring).toMatchObject({ name: "Schneiderei", primary: true });
+    expect(tailoring.members.map((m) => [m.name, m.skill, m.max])).toEqual([
       ["Anna", 120, 150], ["Gelmar", 37, 75], ["Bea", 30, 75],
     ]);
     expect(Object.values(v.characters).some((c) => c.former)).toBe(false);
@@ -59,7 +59,7 @@ describe("buildProfessionsView", () => {
     expect(v.characters["5"]).toBeUndefined();
   });
 
-  test("alle Berufe in Gruppen Handwerk, Sammeln, Nebenberufe, auch ohne Mitglieder; Unbekanntes am Ende", () => {
+  test("all professions in the groups Handwerk, Sammeln, Nebenberufe, even without members; unknown ones at the end", () => {
     const v = buildProfessionsView(members, [
       record(1, [prof({ id: 197, name: "", skill: 5 }), prof({ id: 186, name: "Bergbau" }), prof({ id: 999, name: "" })]),
     ]);
@@ -80,7 +80,7 @@ describe("buildProfessionsView", () => {
     ]);
   });
 
-  test("URL-Kürzel ohne Umlaute, Symbole und Klassennamen", () => {
+  test("URL slugs without umlauts, icons and class names", () => {
     const v = buildProfessionsView(members, records, {
       classes: { items: [{ id: 8, name: "Magier" }] },
       icons: { "186": "https://render.worldofwarcraft.com/forever-eu/icons/56/136248.jpg" },
@@ -96,15 +96,15 @@ describe("buildProfessionsView", () => {
 
 });
 
-describe("deutsche Rezepte und Gilden", () => {
-  test("recipeDisplayNames: deutsch, sonst englisch", () => {
+describe("German recipes and guilds", () => {
+  test("recipeDisplayNames: German, otherwise English", () => {
     const p = prof({ id: 186, recipes: ["Smelt Tin", "Mining"], recipeIds: [1848, 1570] });
     expect(recipeDisplayNames(p, { "1848": "Zinn verhütten", "1570": null })).toEqual(["Zinn verhütten", "Mining"]);
     expect(recipeDisplayNames(p, null)).toEqual(["Smelt Tin", "Mining"]);
     expect(recipeDisplayNames(prof({ id: 186, recipes: ["Smelt Tin"] }), { "1848": "Zinn verhütten" })).toEqual(["Smelt Tin"]);
   });
 
-  test("recipeDisplayNames: Name aus den Details vor der Namenstabelle", () => {
+  test("recipeDisplayNames: name from the details before the name table", () => {
     const p = prof({ id: 186, recipes: ["Smelt Tin", "Smelt Copper"], recipeIds: [1848, 2657] });
     const details = { "1848": detail(1848, "Zinn verhütten (Details)"), "2657": null };
     expect(recipeDisplayNames(p, { "1848": "Zinn verhütten", "2657": "Kupfer verhütten" }, details)).toEqual([
@@ -113,7 +113,7 @@ describe("deutsche Rezepte und Gilden", () => {
     ]);
   });
 
-  test("Berufe ohne Rezeptliste, Charaktere mit Gilde", () => {
+  test("professions without recipe list, characters with guild", () => {
     const ms = [
       member({ id: 1, name: "Anna", slug: "anna", guildSlug: "goldene-bärenklaue" }),
       member({ id: 2, name: "Bea", slug: "bea" }),
@@ -153,7 +153,7 @@ describe("buildProfessionRecipesView", () => {
     "8776": detail(8776, "Leinengürtel"),
   };
 
-  test("nur Rezepte des Berufs, je ID ein Eintrag, deutsch sortiert, mit Details und Material-Icons", () => {
+  test("only recipes of the profession, one entry per ID, sorted in German, with details and reagent icons", () => {
     const v = buildProfessionRecipesView(members, recs, "schneiderei", {
       recipeDetails,
       itemIcons: { "2589": "https://render.worldofwarcraft.com/forever-eu/icons/56/132889.jpg" },
@@ -172,13 +172,13 @@ describe("buildProfessionRecipesView", () => {
     expect(v.recipes[0].recipe).toBeNull();
   });
 
-  test("unbekanntes Kürzel ergibt null, bekannter Beruf ohne Mitglieder eine leere Liste", () => {
+  test("unknown slug yields null, known profession without members an empty list", () => {
     expect(buildProfessionRecipesView(members, recs, "gibtsnicht", {})).toBeNull();
     expect(buildProfessionRecipesView(members, recs, "alchemie", {})).toEqual({ professionId: 171, slug: "alchemie", recipes: [] });
   });
 });
 
-test("Charaktere tragen ihren Nachnamen", () => {
+test("characters carry their surname", () => {
   const ms = [member({ id: 1, name: "Luvia", surname: "Stav", slug: "luvia-stav" }), member({ id: 2, name: "Bea", slug: "bea" })];
   const recs = [record(1, [prof({ id: 186, recipes: ["Smelt Tin"] })]), record(2, [prof({ id: 186, recipes: [] })])];
   const v = buildProfessionsView(ms, recs);

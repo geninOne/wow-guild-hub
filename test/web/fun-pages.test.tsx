@@ -2,7 +2,7 @@
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { afterEach, expect, test, vi } from "vitest";
-import type { ActivityView, ZeitungView, CharacterRef, TitlesView, WrappedView } from "../../src/api/types";
+import type { ActivityView, NewspaperView, CharacterRef, TitlesView, WrappedView } from "../../src/api/types";
 import { TitleBadge } from "../../web/src/components/TitleBadge";
 import { WrappedPanel } from "../../web/src/components/WrappedCard";
 import { ueberall, type Fassungen } from "../../src/sprache";
@@ -169,12 +169,12 @@ test("Titel: Klick auf Kachel oder Ehrentafel zeigt die Rangliste der Woche, all
   };
   const fetch = mockFetch({
     "/api/titles": view,
-    "/api/titles?titel=pechvogel&woche=2026-W46": {
+    "/api/titles?title=pechvogel&week=2026-W46": {
       titleId: "pechvogel", week: "2026-W46", from: "2026-11-09", to: "2026-11-15", winnerIds: [1, 2], complete: true,
       // Gleichstand: Anna und Bodo teilen sich den Titel, Anna steht auf der Karte
       entries: [[1, 7], [2, 7], [3, 1]], valueTexts: { "7": f("7 Tode"), "1": f("1 Tod") },
     },
-    "/api/titles?titel=pechvogel&woche=2026-W45": {
+    "/api/titles?title=pechvogel&week=2026-W45": {
       titleId: "pechvogel", week: "2026-W45", from: "2026-11-02", to: "2026-11-08", winnerIds: [2], complete: false,
       entries: [[2, 4]], valueTexts: { "4": f("4 Tode") },
     },
@@ -192,7 +192,7 @@ test("Titel: Klick auf Kachel oder Ehrentafel zeigt die Rangliste der Woche, all
   fireEvent.click(kacheln[0].querySelector(".title-tile-name")!);
   let dialog = await screen.findByRole("dialog", { name: "Pechvogel" });
   await within(dialog).findByRole("table");
-  expect(fetch).toHaveBeenCalledWith("/api/titles?titel=pechvogel&woche=2026-W46", expect.anything());
+  expect(fetch).toHaveBeenCalledWith("/api/titles?title=pechvogel&week=2026-W46", expect.anything());
   expect(within(dialog).getByText("Woche vom 09.11. bis 15.11.2026")).toBeTruthy();
   const rows = within(dialog).getAllByRole("row").slice(1);
   expect(rows.map((r) => [r.querySelector("a")?.textContent, r.lastElementChild?.textContent])).toEqual([
@@ -222,7 +222,7 @@ test("Titel geteilt: Karte zeigt den Titelträger und wie viele ihn noch haben, 
   };
   const fetch = mockFetch({
     "/api/titles": view,
-    "/api/titles?titel=pechvogel&woche=2026-W46": {
+    "/api/titles?title=pechvogel&week=2026-W46": {
       titleId: "pechvogel", week: "2026-W46", from: "2026-11-09", to: "2026-11-15", winnerIds: [1], complete: true,
       entries: [[1, 7]], valueTexts: { "7": f("7 Tode") },
     },
@@ -239,7 +239,7 @@ test("Titel geteilt: Karte zeigt den Titelträger und wie viele ihn noch haben, 
   expect(document.body.textContent).not.toMatch(/alphabetisch/);
   fireEvent.click(zusatz);
   await screen.findByRole("dialog", { name: "Pechvogel" });
-  expect(fetch).toHaveBeenCalledWith("/api/titles?titel=pechvogel&woche=2026-W46", expect.anything());
+  expect(fetch).toHaveBeenCalledWith("/api/titles?title=pechvogel&week=2026-W46", expect.anything());
 });
 
 test("Titel geteilt: Einzahl und Mundart", async () => {
@@ -259,7 +259,7 @@ test("Titel vor der ersten Auswertung: Leerzustand", async () => {
   expect(screen.getByText(/Neue Titel gibt es jeden Sonntag ab 10 Uhr/)).toBeTruthy();
 });
 
-const issue: ZeitungView = {
+const issue: NewspaperView = {
   issue: 3, week: "2026-W46", from: "2026-11-09", to: "2026-11-15",
   lead: {
     kind: "sprung", section: f("Aufsteiger", "Aufschteiger", "Aufsteiger"), title: { id: "dauerlaeufer", name: f("Dauerläufer", "Dauerläufer", "Dauerlaufer") },
@@ -281,7 +281,7 @@ const issue: ZeitungView = {
 };
 
 test("Zeitung: Kopf, verlinkte Namen, Spruch und Blättern", async () => {
-  mockFetch({ "/api/zeitung": issue });
+  mockFetch({ "/api/newspaper": issue });
   renderAt("/zeitung", <Route path="/zeitung" element={<ZeitungPage />} />);
   expect(await screen.findByRole("heading", { name: "Gildenblatt", level: 1 })).toBeTruthy();
   // Ohne Gildennamen in der Ausgabe bleibt die Unterzeile neutral
@@ -311,7 +311,7 @@ test("Zeitung: Kopf, verlinkte Namen, Spruch und Blättern", async () => {
 test("Zeitung: Woche in Zahlen mit Gildenauswahl, Wetterbericht und Rückblick", async () => {
   const z = (art: "anmeldungen" | "level" | "tode", wert: number, vorwoche: number | null) => ({ art, wert, vorwoche });
   mockFetch({
-    "/api/zeitung": {
+    "/api/newspaper": {
       ...issue,
       zahlen: {
         guilds: [
@@ -342,7 +342,7 @@ test("Zeitung: Woche in Zahlen mit Gildenauswahl, Wetterbericht und Rückblick",
 });
 
 test("Zeitung: alte Ausgabe ohne Zahlen, Wetter und Rückblick", async () => {
-  mockFetch({ "/api/zeitung": issue });
+  mockFetch({ "/api/newspaper": issue });
   renderAt("/zeitung", <Route path="/zeitung" element={<ZeitungPage />} />);
   await screen.findByRole("heading", { name: "Gildenblatt", level: 1 });
   expect(screen.queryByRole("region", { name: "Woche in Zahlen" })).toBeNull();
@@ -425,7 +425,7 @@ test("Wrapped: im Monat des Serverstarts steht der Hinweis darauf, die Gegenstan
 
 test("Archiv: Liste neueste zuerst mit Nummer, Woche und Schlagzeile; Leerzustand", async () => {
   mockFetch({
-    "/api/zeitung/archiv": {
+    "/api/newspaper/archive": {
       issues: [
         { issue: 3, week: "2026-11-21", from: "2026-11-16", to: "2026-11-21", headline: ueberall("Übergang"), testdaten: true },
         { issue: 2, week: "2026-W46", from: "2026-11-09", to: "2026-11-15", headline: f("Anna gibt Gas"), testdaten: true },
@@ -445,7 +445,7 @@ test("Archiv: Liste neueste zuerst mit Nummer, Woche und Schlagzeile; Leerzustan
   expect(screen.getByText(/Neue Ausgaben erscheinen jeden Sonntag ab 10 Uhr/)).toBeTruthy();
   expect(screen.getByRole("note")).toBeTruthy();
   cleanup();
-  mockFetch({ "/api/zeitung/archiv": { issues: [] } });
+  mockFetch({ "/api/newspaper/archive": { issues: [] } });
   renderAt("/zeitung/archiv", <Route path="/zeitung/archiv" element={<ZeitungArchivePage />} />);
   expect((await screen.findByText(/Noch keine Ausgabe erschienen/)).textContent).toContain("jeden Sonntag ab 10 Uhr");
 });
@@ -520,7 +520,7 @@ test("Titel auf Schwäbisch und Bayrisch: Namen, Regeln und Hinweise in der gew�
 });
 
 test("Zeitung auf Schwäbisch: Schlagzeile, Text und Spruch in der schwäbischen Fassung", async () => {
-  mockFetch({ "/api/zeitung": issue });
+  mockFetch({ "/api/newspaper": issue });
   renderAt("/zeitung", <Route path="/zeitung" element={<ZeitungPage />} />, "schwaebisch");
   const lead = await screen.findByRole("heading", { name: "Anna gibt Gas wie verruckt", level: 2 });
   expect(within(lead).getByRole("link", { name: "Anna" })).toBeTruthy();
@@ -541,7 +541,7 @@ test("Zeitung auf Schwäbisch: Schlagzeile, Text und Spruch in der schwäbischen
 });
 
 test("Zeitung auf Bayrisch: Schlagzeile, Text und Spruch in der bayrischen Fassung", async () => {
-  mockFetch({ "/api/zeitung": issue });
+  mockFetch({ "/api/newspaper": issue });
   renderAt("/zeitung", <Route path="/zeitung" element={<ZeitungPage />} />, "bayrisch");
   expect(await screen.findByRole("heading", { name: "Gildnblatt", level: 1 })).toBeTruthy();
   expect(screen.getByRole("heading", { name: "Anna gibt Gas, Obacht", level: 2 })).toBeTruthy();
@@ -556,7 +556,7 @@ test("Zeitung auf Bayrisch: Schlagzeile, Text und Spruch in der bayrischen Fassu
 
 test("Zeitungsarchiv und Leerzustand im Dialekt", async () => {
   mockFetch({
-    "/api/zeitung/archiv": {
+    "/api/newspaper/archive": {
       issues: [{ issue: 1, week: "2026-W45", from: "2026-11-02", to: "2026-11-08", headline: f("Ruhige Woche", "A ruhigs Wöchle", "A ruhige Woch"), testdaten: false }],
     },
   });
@@ -635,13 +635,13 @@ test("Wrapped im Dialekt: Kennzahlen, Lieblingszeit und Titel", async () => {
 });
 
 test("Wochenzeitung auf Englisch: Kopf, Rubriken und Texte in der englischen Fassung, fehlendes Englisch fällt auf Deutsch zurück", async () => {
-  const en: ZeitungView = {
+  const en: NewspaperView = {
     ...issue,
     lead: { ...issue.lead, headline: f("Anna gibt Gas", "Anna gibt Gas wie verruckt", "Anna gibt Gas, Obacht", "Anna hits the gas") },
     motto: f("Nur nicht hetzen.", "No ned hudla.", "Nur ned hudln.", "Slow and steady wins the race."),
     articles: [issue.articles[0], { ...issue.articles[1], section: f("Zahl der Woche", "Zahl der Woche", "Zahl der Woche", "Number of the Week") }],
   };
-  mockFetch({ "/api/zeitung": en });
+  mockFetch({ "/api/newspaper": en });
   renderAt("/zeitung", <Route path="/zeitung" element={<ZeitungPage />} />, "en");
   expect(await screen.findByRole("heading", { name: "Guild Gazette", level: 1 })).toBeTruthy();
   expect(screen.getByRole("heading", { name: "Anna hits the gas", level: 2 })).toBeTruthy();
@@ -658,11 +658,11 @@ test("Wochenzeitung auf Englisch: Kopf, Rubriken und Texte in der englischen Fas
 test("WEBSITE_NEWSPAPER gibt der Wochenzeitung in allen Sprachen denselben Namen", async () => {
   vi.stubEnv("WEBSITE_NEWSPAPER", "Bärenklaue-Blatt");
   try {
-    mockFetch({ "/api/zeitung": issue });
+    mockFetch({ "/api/newspaper": issue });
     renderAt("/zeitung", <Route path="/zeitung" element={<ZeitungPage />} />, "en");
     expect(await screen.findByRole("heading", { name: "Bärenklaue-Blatt", level: 1 })).toBeTruthy();
     cleanup();
-    mockFetch({ "/api/zeitung/archiv": { issues: [] } });
+    mockFetch({ "/api/newspaper/archive": { issues: [] } });
     renderAt("/zeitung/archiv", <Route path="/zeitung/archiv" element={<ZeitungArchivePage />} />, "bayrisch");
     expect(await screen.findByRole("heading", { name: "Bärenklaue-Blatt-Archiv", level: 1 })).toBeTruthy();
     expect(screen.getByText(/As Bärenklaue-Blatt kimmt/)).toBeTruthy();

@@ -4,12 +4,12 @@ import type { ReputationView } from "./types";
 
 const OTHERS = "Weitere Fraktionen";
 
-/** Deutscher Name: feste Tabelle, dann statisches Verzeichnis, dann der Name aus den Charakterdaten. */
+/** German name: fixed table, then static directory, then the name from the character data. */
 function factionName(id: number, statics: ReputationFactionsRecord | null, fallback: string): string {
   return FACTION_NAMES_DE[id] ?? statics?.names[String(id)] ?? fallback;
 }
 
-/** Ruf eines Charakters, gruppiert nach den Wurzelfraktionen; innerhalb einer Gruppe nach Name. */
+/** Reputation of a character, grouped by root factions; by name within a group. */
 export function buildReputationView(
   reputations: CharacterReputation[] | null | undefined,
   statics: ReputationFactionsRecord | null,

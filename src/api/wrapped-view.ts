@@ -9,7 +9,7 @@ import { characterRef, characterTitles, weeklyIndex } from "./fun-common";
 import { lookupName } from "./guild-view";
 import type { CharacterTitle, WrappedView } from "./types";
 
-/** Erster und letzter Kalendertag eines Monats. */
+/** First and last calendar day of a month. */
 export function monthRange(month: string): { from: string; to: string } {
   const from = `${month}-01`;
   const [y, m] = month.split("-").map(Number);
@@ -17,7 +17,7 @@ export function monthRange(month: string): { from: string; to: string } {
   return { from, to: addDays(next, -1) };
 }
 
-/** ISO-Wochen (Aktivitätsblöcke), die den Monat berühren. */
+/** ISO weeks (activity blocks) that touch the month. */
 export function weeksOfMonth(month: string): string[] {
   const { from, to } = monthRange(month);
   return isoWeeksBetween(from, to);
@@ -36,18 +36,18 @@ export interface WrappedInput {
   months: string[];
   running: boolean;
   /**
-   * Vergleichsstand; für Nachzügler steht darin schon ihr erster Stand im Monat (siehe `withLateStarts`).
-   * Im Monat des Serverstarts der gedachte Stand mit Level 1 und Zählern auf 0 (siehe `serverStartSnapshot`).
+   * Baseline snapshot; for late joiners it already holds their first snapshot in the month (see `withLateStarts`).
+   * In the month of the server start, the assumed snapshot with level 1 and counters at 0 (see `serverStartSnapshot`).
    */
   before: DaySnapshot | null;
   end: DaySnapshot | null;
-  /** Nachzügler: Charakter-ID auf das Datum ihres ersten Stands im Monat. */
+  /** Late joiners: character ID to the date of their first snapshot in the month. */
   since?: Record<string, string>;
-  /** Serverstart, wenn er im Monat liegt: Dann wird für alle ab ihm gezählt. */
+  /** Server start, if it falls within the month: then everyone is counted from it. */
   serverStart?: string | null;
-  /** Aktivitätswochen, die den Monat berühren. */
+  /** Activity weeks that touch the month. */
   activity: ActivityWeek[];
-  /** Wochenergebnisse, deren letzter Tag im Monat liegt (Wertungswochen: ihr Samstag; alte ISO-Wochen: ihr Sonntag). */
+  /** Weekly results whose last day falls in the month (scoring weeks: their Saturday; old ISO weeks: their Sunday). */
   weekly: WeeklyRecord[];
 }
 
@@ -73,7 +73,7 @@ export function buildWrappedView(input: WrappedInput): WrappedView {
     rank = { place: 1 + gains.filter((g) => g > levels.gained).length, of: gains.length };
   }
 
-  // Wer mit Level 1 auftaucht, hat nichts verpasst; sonst zählt die Bilanz erst ab dem Beitritt.
+  // Whoever shows up at level 1 has missed nothing; otherwise the summary only counts from joining.
   const ownStart = input.since?.[String(id)] ?? null;
   const since = ownStart !== null && levels !== null && levels.start > 1 ? ownStart : null;
 
@@ -134,7 +134,7 @@ export function buildWrappedView(input: WrappedInput): WrappedView {
   };
 }
 
-/** Lädt alles für die Monatsbilanz. `month` null heißt laufender Monat. */
+/** Loads everything for the monthly summary. `month` null means the current month. */
 export async function loadWrappedView(
   store: JsonStore,
   guild: GuildRecord,
@@ -148,7 +148,7 @@ export async function loadWrappedView(
   const wanted = month ?? current;
   const { from, to } = monthRange(wanted);
 
-  // Tagesstände vor dem Serverstart taugen nie als Vergleich und begründen auch keinen Monat in der Auswahl.
+  // Daily snapshots before the server start never serve as a baseline and do not add a month to the selection.
   const dates = sinceServerStart((await store.list("history/")).map((k) => k.slice("history/".length)), serverStart).sort();
   const months = [...new Set([...dates.map(monthOf), current])].sort().reverse();
   const inside = dates.filter((d) => d >= from && d <= to);
@@ -159,7 +159,7 @@ export async function loadWrappedView(
 
   const weeks = weeksOfMonth(wanted);
   const index = await weeklyIndex(store);
-  // Eine Woche gehört zum Monat ihres letzten Tages, eine Wertungswoche also zum Monat ihres Samstags.
+  // A week belongs to the month of its last day, so a scoring week belongs to the month of its Saturday.
   const titleWeeks = index.filter((w) => {
     const last = weekBounds(w).to;
     return last >= from && last <= to;
@@ -171,7 +171,7 @@ export async function loadWrappedView(
     Promise.all(weeks.map((w) => store.get<ActivityWeek>(`activity/${w}`))),
     Promise.all(titleWeeks.map((w) => store.get<WeeklyRecord>(`weekly/${w}`))),
   ]);
-  // Im Monat des Serverstarts beginnen alle bei Level 1; Nachzügler gibt es dann nicht.
+  // In the month of the server start everyone begins at level 1; there are no late joiners then.
   const start = startMonth
     ? { before: end ? serverStartSnapshot(serverStart, end) : null, since: {} }
     : await withLateStarts(store, inside, before, end, guild.members);

@@ -4,9 +4,9 @@ import type { AttributeGroupId, AttributeRow, AttributesView, ResourceKind } fro
 type Kind = AttributeRow["kind"];
 
 /**
- * Welche Felder der Antwort in welcher Gruppe stehen, in dieser Reihenfolge. Felder, die die Antwort nicht hat,
- * entfallen; so passt dieselbe Tabelle für Forever, Classic und Retail. `zeroHidden`: nur zeigen, wenn nicht 0.
- * Forever liefert auch Felder aus Retail (Meisterschaft, Vielseitigkeit, Lebensraub ...), dort meist mit 0.
+ * Which fields of the response belong to which group, in this order. Fields missing from the response are
+ * dropped, so the same table fits Forever, Classic and Retail. `zeroHidden`: only show when not 0.
+ * Forever also delivers Retail fields (mastery, versatility, leech ...), mostly with 0 there.
  */
 export const ATTRIBUTE_GROUPS: { id: AttributeGroupId; rows: { key: string; kind: Kind; zeroHidden?: boolean }[] }[] = [
   {
@@ -70,26 +70,26 @@ export const ATTRIBUTE_GROUPS: { id: AttributeGroupId; rows: { key: string; kind
   },
 ];
 
-/** Ressourcen nach der ID des Power-Types bei Blizzard. */
+/** Resources by Blizzard's power type ID. */
 const RESOURCES: Record<number, ResourceKind> = { 0: "mana", 1: "rage", 2: "focus", 3: "energy", 6: "runic_power" };
 
 const num = (v: unknown): number | null => (typeof v === "number" && Number.isFinite(v) ? v : null);
 
-/** Anzeigewert eines Felds: Prozentwerte aus `value`, Zahlen aus `effective`, sonst die erste passende Angabe. */
+/** Display value of a field: percentages from `value`, numbers from `effective`, otherwise the first usable value. */
 function pick(field: AttributeField | undefined, kind: Kind): { value: number; base: number | null } | null {
   if (field === undefined) return null;
   if (typeof field === "number") return { value: field, base: null };
   const value = kind === "percent" ? (num(field.value) ?? num(field.effective)) : (num(field.effective) ?? num(field.value) ?? num(field.rating));
   if (value === null) return null;
-  // Forever meldet vereinzelt Effektivwert 0 bei Grundwert über 0 (gesehen: Stärke und Beweglichkeit eines Magiers).
-  // Ausrüstung und Buffs können einen Wert nicht auf 0 drücken; die Zeile entfällt, statt eine falsche 0 zu zeigen.
+  // Forever occasionally reports an effective value of 0 with a base value above 0 (seen: strength and agility of a
+  // mage). Gear and buffs cannot push a value down to 0; the row is dropped instead of showing a wrong 0.
   if (value === 0 && (num(field.base) ?? 0) > 0) return null;
-  // Forever meldet bei Rüstung den Grundwert 0; ein Grundwert zählt nur, wenn er da ist und abweicht.
+  // Forever reports a base value of 0 for armor; a base value only counts if it is present and differs.
   const base = num(field.base);
   return { value, base: base !== null && base > 0 && base !== value ? base : null };
 }
 
-/** Werte des Charakters nach Gruppen. Ohne Datensatz oder ohne Felder ist `available` falsch. */
+/** Character stats by group. Without a record or without fields, `available` is false. */
 export function buildAttributesView(record: CharacterAttributesRecord | null | undefined): AttributesView {
   const fields = record?.fields;
   if (!record || !fields) return { available: false, fetchedAt: record?.fetchedAt ?? null, resource: null, groups: [] };
@@ -97,7 +97,7 @@ export function buildAttributesView(record: CharacterAttributesRecord | null | u
   const resource = pt ? { id: pt.id, kind: RESOURCES[pt.id] ?? ("other" as const), name: pt.name } : null;
   const groups = ATTRIBUTE_GROUPS.flatMap(({ id, rows }) => {
     const shown = rows.flatMap(({ key, kind, zeroHidden }): AttributeRow[] => {
-      // Ressource ohne Art (etwa bei einem unbekannten Charakter) bleibt weg, die Zahl allein sagt nichts.
+      // A resource without a kind (e.g. for an unknown character) is left out, the number alone says nothing.
       if (key === "power" && !resource) return [];
       const hit = pick(fields[key], kind);
       if (!hit || (zeroHidden && hit.value === 0)) return [];

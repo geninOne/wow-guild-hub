@@ -67,7 +67,7 @@ const GUILDS: GuildInfo[] = [
 ];
 
 describe("buildGuildView", () => {
-  test("Namen für Klasse, Volk, Rang und Beruf", () => {
+  test("names for class, race, rank and profession", () => {
     const v = buildGuildView({ ...guild, guilds: GUILDS }, classes, races, { bärenklaue: { "3": "Mitglied" } });
     expect(v.members[0]).toMatchObject({
       className: "Priester",
@@ -78,7 +78,7 @@ describe("buildGuildView", () => {
     });
   });
 
-  test("fehlende Namen ergeben lesbare Platzhalter", () => {
+  test("missing names yield readable placeholders", () => {
     const v = buildGuildView(guild, null, null, {});
     expect([v.members[0].className, v.members[0].raceName, v.members[2].rankName]).toEqual([
       "Klasse 5",
@@ -87,13 +87,13 @@ describe("buildGuildView", () => {
     ]);
   });
 
-  test("unbekannter Beruf ergibt Platzhalter", () => {
+  test("unknown profession yields a placeholder", () => {
     const g = { ...guild, members: [member({ professions: [{ id: 9999, skill: 1 }] })] };
     expect(buildGuildView(g, classes, races, {}).members[0].professions[0].name).toBe("Beruf 9999");
   });
 
-  test("Rangliste je Gilde aus Konfiguration und vorkommenden Rängen", () => {
-    // Beide Gilden haben Rang 0 bis 7 in der Konfiguration, Rang 7 kommt zudem bei einem Ehemaligen vor.
+  test("rank list per guild from configuration and ranks in use", () => {
+    // Both guilds have ranks 0 to 7 in the configuration, rank 7 also occurs for a former member.
     const v = buildGuildView({ ...guild, guilds: GUILDS }, classes, races, RANK_NAMES);
     const of = (slug: string) => v.ranks.filter((r) => r.guildSlug === slug).map((r) => r.rank);
     expect(of("bärenklaue")).toEqual([0, 1, 2, 3, 4, 5, 6, 7]);
@@ -103,21 +103,21 @@ describe("buildGuildView", () => {
     expect(v.ranks.find((r) => r.guildSlug === "bärenklaue" && r.rank === 7)?.name).toBe("Frischling");
   });
 
-  test("Ehemalige bleiben in der Antwort, markiert", () => {
+  test("former members stay in the response, marked", () => {
     const v = buildGuildView(guild, classes, races, RANK_NAMES);
     expect(v.members[2].former).toBe(true);
     expect(v.members).toHaveLength(3);
   });
 
-  test("Klassenliste und Kopfdaten", () => {
+  test("class list and header data", () => {
     const v = buildGuildView(guild, classes, races, RANK_NAMES);
     expect(v).toMatchObject({ name: "Bärenklaue", faction: "HORDE", memberCount: 2, rulesetName: "Classic" });
     expect(v.classes).toEqual([{ id: 1, name: "Klasse 1" }, { id: 5, name: "Priester" }]);
   });
 });
 
-describe("zwei Gilden", () => {
-  const zwei: GuildRecord = {
+describe("two guilds", () => {
+  const twoGuilds: GuildRecord = {
     ...guild,
     guilds: GUILDS,
     members: [
@@ -127,15 +127,15 @@ describe("zwei Gilden", () => {
     ],
   };
 
-  test("Gilden in Reihenfolge, Hauptgilde zuerst", () => {
-    expect(buildGuildView(zwei, classes, races, {}).guilds).toEqual([
+  test("guilds in order, main guild first", () => {
+    expect(buildGuildView(twoGuilds, classes, races, {}).guilds).toEqual([
       { slug: "bärenklaue", name: "Bärenklaue", faction: "HORDE", memberCount: 76, main: true },
       { slug: "goldene-bärenklaue", name: "Goldene Bärenklaue", faction: "ALLIANCE", memberCount: 19, main: false },
     ]);
   });
 
-  test("Mitglieder tragen ihre Gilde, ohne guildSlug die Hauptgilde", () => {
-    const v = buildGuildView(zwei, classes, races, {});
+  test("members carry their guild, the main guild without guildSlug", () => {
+    const v = buildGuildView(twoGuilds, classes, races, {});
     expect(v.members.map((m) => [m.name, m.guildSlug, m.guildName])).toEqual([
       ["Horde", "bärenklaue", "Bärenklaue"],
       ["Allianz", "goldene-bärenklaue", "Goldene Bärenklaue"],
@@ -143,23 +143,23 @@ describe("zwei Gilden", () => {
     ]);
   });
 
-  test("Rangname richtet sich nach der Gilde des Mitglieds", () => {
+  test("rank name follows the member's guild", () => {
     const names = { bärenklaue: { "0": "Gildenmeister" }, "goldene-bärenklaue": { "0": "Anführer" } };
     const v = buildGuildView(
-      { ...zwei, members: [member({ id: 1, rank: 0, guildSlug: "bärenklaue" }), member({ id: 2, rank: 0, guildSlug: "goldene-bärenklaue" }), member({ id: 3, rank: 0 })] },
+      { ...twoGuilds, members: [member({ id: 1, rank: 0, guildSlug: "bärenklaue" }), member({ id: 2, rank: 0, guildSlug: "goldene-bärenklaue" }), member({ id: 3, rank: 0 })] },
       classes, races, names,
     );
     expect(v.members.map((m) => m.rankName)).toEqual(["Gildenmeister", "Anführer", "Gildenmeister"]);
   });
 
-  test("GUILD_RANKS: Liste und Objekt je Gilde", () => {
+  test("GUILD_RANKS: list and object per guild", () => {
     expect([0, 1, 2, 3, 4, 5, 6, 7].map((r) => rankName(r, "bärenklaue", RANK_NAMES))).toEqual([
       "Gildenmeister", "Gildenleitung", "Twink GL", "Ratsmitglied", "Mitglied", "Allianz Spion!", "Twink", "Frischling",
     ]);
     expect([0, 5, 7].map((r) => rankName(r, "goldene-bärenklaue", RANK_NAMES))).toEqual(["Gildenmeister", "Horde Spion!", "Frischling"]);
   });
 
-  test("Rückfall Rang N bei fehlender Gilde, fehlendem Rang oder Kommentar-Eintrag", () => {
+  test("fallback Rang N for a missing guild, a missing rank or a comment entry", () => {
     expect(rankName(2, "unbekannt", RANK_NAMES)).toBe("Rang 2");
     expect(rankName(9, "bärenklaue", RANK_NAMES)).toBe("Rang 9");
     expect(rankName(0, "_hinweis", RANK_NAMES)).toBe("Rang 0");
@@ -167,7 +167,7 @@ describe("zwei Gilden", () => {
     expect(rankName(0, "bärenklaue", {})).toBe("Rang 0");
   });
 
-  test("GUILD_RANKS leer oder kaputt ergibt keine Namen", () => {
+  test("empty or broken GUILD_RANKS yields no names", () => {
     expect(parseRankNames(undefined)).toEqual({});
     expect(parseRankNames("")).toEqual({});
     expect(parseRankNames("{kaputt")).toEqual({});
@@ -175,14 +175,14 @@ describe("zwei Gilden", () => {
     expect(rankName(3, "andere", RANK_NAMES)).toBe("Rang 3");
   });
 
-  test("Gildenname mit anderer Unicode-Schreibweise findet die Namen", () => {
+  test("guild name in a different Unicode form finds the names", () => {
     expect(rankName(0, "ba\u0308renklaue", RANK_NAMES)).toBe("Gildenmeister");
   });
 
-  test("alter Blob ohne guilds ergibt eine Gilde aus den Kopf-Feldern", () => {
+  test("old blob without guilds yields one guild from the header fields", () => {
     expect(guildRefs(guild)).toEqual([{ slug: "", name: "Bärenklaue", faction: "HORDE", memberCount: 2, main: true }]);
     expect(buildGuildView(guild, classes, races, {}).members[0]).toMatchObject({ guildSlug: "", guildName: "Bärenklaue" });
-    expect(memberGuild(zwei, null).slug).toBe("bärenklaue");
-    expect(memberGuild(zwei, member({ guildSlug: "unbekannt" })).slug).toBe("bärenklaue");
+    expect(memberGuild(twoGuilds, null).slug).toBe("bärenklaue");
+    expect(memberGuild(twoGuilds, member({ guildSlug: "unbekannt" })).slug).toBe("bärenklaue");
   });
 });

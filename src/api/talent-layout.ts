@@ -5,7 +5,7 @@ const MAX_ROW = 12;
 const BLOCK_WIDTH = 4;
 const MIN_ROWS = 7;
 
-/** Startspalte, deren Fenster s..s+3 die meisten Knoten enthält (Gleichstand: kleinste). */
+/** Start column whose window s..s+3 contains the most nodes (tie: the smallest). */
 function blockStart(cols: number[]): number {
   let best = 0;
   let bestCount = -1;

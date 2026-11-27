@@ -1,5 +1,5 @@
 import { Link, useParams, useSearchParams } from "react-router";
-import type { ZeitungArchiveView, ZeitungArticleView, ZeitungView, ZeitungZahlenView, ZeitungZahlView, CharacterRef } from "../../../src/api/types";
+import type { NewspaperArchiveView, NewspaperArticleView, NewspaperView, NewspaperNumbersView, NewspaperNumberView, CharacterRef } from "../../../src/api/types";
 import type { WeeklyNumberKind } from "../../../src/model";
 import { CharacterLink } from "../components/CharacterLink";
 import { DataState } from "../components/DataState";
@@ -115,7 +115,7 @@ const ZAHL_NAMEN: Record<WeeklyNumberKind, Fassungen> = {
 const zahlFormat = (n: number) => n.toLocaleString(zahlLocale());
 
 /** Pfeil mit Differenz zur Vorwoche; ohne Vorwoche nichts. */
-function Trend({ zeile }: { zeile: ZeitungZahlView }) {
+function Trend({ zeile }: { zeile: NewspaperNumberView }) {
   const { t } = useSprache();
   if (zeile.vorwoche === null) return null;
   const diff = zeile.wert - zeile.vorwoche;
@@ -137,7 +137,7 @@ function Trend({ zeile }: { zeile: ZeitungZahlView }) {
 }
 
 /** Infokasten mit den Gildensummen der Woche, umschaltbar wie die Gildenauswahl der übrigen Seiten. */
-function WocheInZahlen({ zahlen }: { zahlen: ZeitungZahlenView }) {
+function WocheInZahlen({ zahlen }: { zahlen: NewspaperNumbersView }) {
   const { t } = useSprache();
   const [params, setParams] = useSearchParams();
   const gewaehlt = params.get("gilde");
@@ -172,8 +172,8 @@ function WocheInZahlen({ zahlen }: { zahlen: ZeitungZahlenView }) {
 }
 
 /** Artikel nach Rubrik (gruppiert nach der hochdeutschen Fassung), Reihenfolge wie geliefert. */
-function bySection(articles: ZeitungArticleView[]): [Fassungen, ZeitungArticleView[]][] {
-  const groups = new Map<string, [Fassungen, ZeitungArticleView[]]>();
+function bySection(articles: NewspaperArticleView[]): [Fassungen, NewspaperArticleView[]][] {
+  const groups = new Map<string, [Fassungen, NewspaperArticleView[]]>();
   for (const a of articles) {
     const group = groups.get(fassungIn(a.section, "de"));
     if (group) group[1].push(a);
@@ -182,7 +182,7 @@ function bySection(articles: ZeitungArticleView[]): [Fassungen, ZeitungArticleVi
   return [...groups.values()];
 }
 
-function IssueNav({ view }: { view: ZeitungView }) {
+function IssueNav({ view }: { view: NewspaperView }) {
   const { t } = useSprache();
   return (
     <nav className="zeitung-nav" aria-label={t(T.ausgaben)}>
@@ -206,7 +206,7 @@ function IssueNav({ view }: { view: ZeitungView }) {
 }
 
 /** Text mit verlinkten Charakternamen. */
-function Linked({ text, article }: { text: string; article: ZeitungArticleView }) {
+function Linked({ text, article }: { text: string; article: NewspaperArticleView }) {
   return (
     <>
       {splitByNames(text, article.characters.filter((c) => c.classId !== 0)).map((part, i) =>
@@ -219,13 +219,13 @@ function Linked({ text, article }: { text: string; article: ZeitungArticleView }
 /** Rubrikfarbe nach Wappen-Palette: Klatsch in Allianzblau, Friedhof in Hordenrot, sonst Gold. */
 const SECTION_COLOR: Record<string, string> = { Klatsch: "allianz", Friedhof: "horde" };
 
-function Avatar({ view, character, className }: { view: ZeitungView; character: CharacterRef; className: string }) {
+function Avatar({ view, character, className }: { view: NewspaperView; character: CharacterRef; className: string }) {
   const src = view.avatars?.[String(character.id)];
   if (!src) return null;
   return <img className={className} src={src} alt="" width="84" height="84" loading="lazy" />;
 }
 
-function Card({ article, view }: { article: ZeitungArticleView; view: ZeitungView }) {
+function Card({ article, view }: { article: NewspaperArticleView; view: NewspaperView }) {
   const { t } = useSprache();
   const faces = article.characters.length > 1 ? article.characters.filter((c) => view.avatars?.[String(c.id)]).slice(0, 8) : [];
   return (
@@ -255,7 +255,7 @@ function Card({ article, view }: { article: ZeitungArticleView; view: ZeitungVie
   );
 }
 
-function Issue({ view }: { view: ZeitungView }) {
+function Issue({ view }: { view: NewspaperView }) {
   const { t, sprache } = useSprache();
   const zahl = view.articles.find((a) => a.kind === "zahl");
   const sections = bySection(view.articles.filter((a) => a !== zahl));
@@ -369,7 +369,7 @@ function Issue({ view }: { view: ZeitungView }) {
 export function ZeitungPage() {
   const { t, sprache } = useSprache();
   const { woche } = useParams();
-  const { data, error, loading } = useApi<ZeitungView>(woche ? `/api/zeitung/${encodeURIComponent(woche)}` : "/api/zeitung");
+  const { data, error, loading } = useApi<NewspaperView>(woche ? `/api/newspaper/${encodeURIComponent(woche)}` : "/api/newspaper");
   return (
     <section className="page">
       {error?.status === 404 ? (
@@ -406,7 +406,7 @@ export function ZeitungPage() {
 /** Archiv: alle Ausgaben mit Nummer, gewerteter Woche und Schlagzeile des Aufmachers, neueste zuerst. */
 export function ZeitungArchivePage() {
   const { t, sprache } = useSprache();
-  const { data, error, loading } = useApi<ZeitungArchiveView>("/api/zeitung/archiv");
+  const { data, error, loading } = useApi<NewspaperArchiveView>("/api/newspaper/archive");
   return (
     <section className="page">
       <header className="page-header">

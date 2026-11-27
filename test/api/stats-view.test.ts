@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import karten from "../../config/statistik-karten.json";
+import cardsConfig from "../../config/statistik-karten.json";
 import { handleApi } from "../../src/api/router";
 import { buildStatCardMembers, buildStatCards, resolveStatsPeriod, STAT_LEADERS, statCards } from "../../src/api/stats-view";
 import type { StatCardMembersView, StatsView } from "../../src/api/types";
@@ -9,29 +9,29 @@ import type { StatsSnapshot } from "../../src/stats/snapshot";
 import { createMemoryStore } from "../../src/store";
 import { fassungIn, SPRACHEN, ueberall } from "../../src/sprache";
 
-/** Konfigurationstext: String für alle Sprachen oder Objekt mit mindestens `de`, nur bekannte Sprachen. */
-function expectKonfigText(text: unknown, wo: string) {
+/** Config text: a string for all languages or an object with at least `de`, only known languages. */
+function expectConfigText(text: unknown, where: string) {
   if (typeof text === "string") return;
-  expect(text, wo).toBeTypeOf("object");
+  expect(text, where).toBeTypeOf("object");
   const obj = text as Record<string, unknown>;
-  expect(obj.de, wo).toBeTypeOf("string");
-  for (const [sprache, wert] of Object.entries(obj)) {
-    expect(SPRACHEN as readonly string[], wo).toContain(sprache);
-    expect(wert, wo).toBeTypeOf("string");
+  expect(obj.de, where).toBeTypeOf("string");
+  for (const [language, value] of Object.entries(obj)) {
+    expect(SPRACHEN as readonly string[], where).toContain(language);
+    expect(value, where).toBeTypeOf("string");
   }
 }
 
-/** Einheit: Paar für alle Sprachen oder Objekt mit Paaren je Sprache (mindestens `de`). */
-function expectKonfigEinheit(einheit: unknown, wo: string) {
-  if (Array.isArray(einheit)) {
-    expect(einheit, wo).toHaveLength(2);
+/** Unit: a pair for all languages or an object with pairs per language (at least `de`). */
+function expectConfigUnit(unit: unknown, where: string) {
+  if (Array.isArray(unit)) {
+    expect(unit, where).toHaveLength(2);
     return;
   }
-  const obj = einheit as Record<string, unknown>;
-  expect(obj.de, wo).toHaveLength(2);
-  for (const [sprache, paar] of Object.entries(obj)) {
-    expect(SPRACHEN as readonly string[], wo).toContain(sprache);
-    expect(paar, wo).toHaveLength(2);
+  const obj = unit as Record<string, unknown>;
+  expect(obj.de, where).toHaveLength(2);
+  for (const [language, pair] of Object.entries(obj)) {
+    expect(SPRACHEN as readonly string[], where).toContain(language);
+    expect(pair, where).toHaveLength(2);
   }
 }
 
@@ -58,13 +58,13 @@ const guild: GuildRecord = {
   ],
 };
 
-const stand = (week: string, characters: StatsSnapshot["characters"], extra: Partial<StatsSnapshot> = {}): StatsSnapshot => ({
+const snapshot = (week: string, characters: StatsSnapshot["characters"], extra: Partial<StatsSnapshot> = {}): StatsSnapshot => ({
   week, takenAt: `${week}T20:00:00.000Z`, characters, ...extra,
 });
 
-// 60 Tode insgesamt, 594 Tode durch Hogger (nicht mehr gezeigt), 114 Stürze, 1065 /winken, 346 Getränke (alles Zähler), 95 Quests pro Tag (Schnitt)
-const fruehere = stand("2026-11-14", { "1": { "60": 3, "1065": 1 }, "2": { "60": 1 } });
-const neuere = stand("2026-11-21", {
+// 60 deaths in total, 594 deaths by Hogger (no longer shown), 114 falls, 1065 /wave, 346 drinks (all counters), 95 quests per day (average)
+const earlier = snapshot("2026-11-14", { "1": { "60": 3, "1065": 1 }, "2": { "60": 1 } });
+const newer = snapshot("2026-11-21", {
   "1": { "60": 5, "594": 1, "95": 4, "1065": 4, "346": 250 },
   "2": { "60": 1, "1065": 2, "114": 1 },
   "3": { "60": 2 },
@@ -72,28 +72,28 @@ const neuere = stand("2026-11-21", {
 });
 
 describe("statCards", () => {
-  test("Konfiguration: nur bekannte Zähler und Stände, Texte nur für benutzte Statistiken, keine Gedankenstriche", () => {
-    const ids = karten.karten.flatMap((k) => k.statistiken);
-    for (const id of ids) expect(["zaehler", "stand"], `Statistik ${id}`).toContain(statDefinition(id)?.art);
+  test("config: only known counters and current values, texts only for used statistics, no dashes", () => {
+    const ids = cardsConfig.karten.flatMap((k) => k.statistiken);
+    for (const id of ids) expect(["zaehler", "stand"], `statistic ${id}`).toContain(statDefinition(id)?.art);
     const used = new Set(ids.map(String));
-    for (const karte of karten.karten as { slug: string; titel: unknown; spruch?: unknown }[]) {
-      expectKonfigText(karte.titel, `Titel von ${karte.slug}`);
-      if (karte.spruch !== undefined) expectKonfigText(karte.spruch, `Spruch von ${karte.slug}`);
+    for (const card of cardsConfig.karten as { slug: string; titel: unknown; spruch?: unknown }[]) {
+      expectConfigText(card.titel, `title of ${card.slug}`);
+      if (card.spruch !== undefined) expectConfigText(card.spruch, `blurb of ${card.slug}`);
     }
-    for (const [id, text] of Object.entries(karten.texte as Record<string, Record<string, unknown>>)) {
-      expect(used.has(id), `Text für ${id}`).toBe(true);
-      for (const feld of ["kurz", "ehrung"]) if (feld in text) expectKonfigText(text[feld], `${feld} von ${id}`);
-      if ("einheit" in text) expectKonfigEinheit(text.einheit, `Einheit von ${id}`);
-      const umrechnung = text.umrechnung as { einheit: unknown; satz: unknown } | undefined;
-      if (umrechnung) {
-        expectKonfigEinheit(umrechnung.einheit, `Umrechnung von ${id}`);
-        expectKonfigText(umrechnung.satz, `Umrechnungssatz von ${id}`);
+    for (const [id, text] of Object.entries(cardsConfig.texte as Record<string, Record<string, unknown>>)) {
+      expect(used.has(id), `text for ${id}`).toBe(true);
+      for (const field of ["kurz", "ehrung"]) if (field in text) expectConfigText(text[field], `${field} of ${id}`);
+      if ("einheit" in text) expectConfigUnit(text.einheit, `unit of ${id}`);
+      const conversion = text.umrechnung as { einheit: unknown; satz: unknown } | undefined;
+      if (conversion) {
+        expectConfigUnit(conversion.einheit, `conversion of ${id}`);
+        expectConfigText(conversion.satz, `conversion sentence of ${id}`);
       }
     }
-    expect(JSON.stringify(karten)).not.toMatch(/[\u2013\u2014]/);
+    expect(JSON.stringify(cardsConfig)).not.toMatch(/[\u2013\u2014]/);
   });
 
-  test("Gut ein Dutzend lustige Karten in verschiedenen Formen, Tode vorne, nix Trockenes", () => {
+  test("a good dozen fun cards in different forms, deaths first, nothing dry", () => {
     const cards = statCards();
     expect(cards.length).toBeGreaterThanOrEqual(8);
     expect(cards.length).toBeLessThanOrEqual(16);
@@ -108,55 +108,55 @@ describe("statCards", () => {
     expect(cards.every((c) => c.blurb !== null)).toBe(true);
   });
 
-  test("Titel und Sprüche kommen in allen Sprachen, Englisch eigens übersetzt", () => {
+  test("titles and blurbs come in all languages, English translated separately", () => {
     for (const card of statCards()) {
-      for (const sprache of SPRACHEN) {
-        expect(fassungIn(card.title, sprache), `${card.slug} ${sprache}`).toBeTypeOf("string");
-        expect(fassungIn(card.blurb!, sprache), `${card.slug} ${sprache}`).toBeTypeOf("string");
+      for (const language of SPRACHEN) {
+        expect(fassungIn(card.title, language), `${card.slug} ${language}`).toBeTypeOf("string");
+        expect(fassungIn(card.blurb!, language), `${card.slug} ${language}`).toBeTypeOf("string");
       }
       expect(card.title.en, card.slug).not.toBe(card.title.de);
       expect(card.blurb!.en, card.slug).not.toBe(card.blurb!.de);
     }
   });
 
-  test("Deutsch und Englisch ohne Gildennamen und schwäbische Anspielungen", () => {
-    const texte: string[] = [];
-    const sammeln = (wert: unknown, schluessel = "") => {
-      if (typeof wert === "string") {
-        if (schluessel !== "schwaebisch" && schluessel !== "bayrisch") texte.push(wert);
-      } else if (Array.isArray(wert)) {
-        for (const w of wert) sammeln(w, schluessel);
-      } else if (wert && typeof wert === "object") {
-        for (const [k, w] of Object.entries(wert)) sammeln(w, k === "schwaebisch" || k === "bayrisch" ? k : schluessel);
+  test("German and English without guild names and Swabian allusions", () => {
+    const texts: string[] = [];
+    const collect = (value: unknown, language = "") => {
+      if (typeof value === "string") {
+        if (language !== "schwaebisch" && language !== "bayrisch") texts.push(value);
+      } else if (Array.isArray(value)) {
+        for (const v of value) collect(v, language);
+      } else if (value && typeof value === "object") {
+        for (const [k, v] of Object.entries(value)) collect(v, k === "schwaebisch" || k === "bayrisch" ? k : language);
       }
     };
-    sammeln(karten.karten);
-    sammeln(karten.texte);
-    for (const text of texte) expect(text).not.toMatch(/Bärenklaue|Ulm|Schwab|Schwäb|Vesper|Fläschle/);
+    collect(cardsConfig.karten);
+    collect(cardsConfig.texte);
+    for (const text of texts) expect(text).not.toMatch(/Bärenklaue|Ulm|Schwab|Schwäb|Vesper|Fläschle/);
   });
 });
 
 describe("resolveStatsPeriod", () => {
-  const start = "2026-11-05"; // Bärenklaue-Woche bis Samstag 2026-11-07
+  const start = "2026-11-05"; // Bärenklaue week until Saturday 2026-11-07
 
-  test("Woche braucht den Stand der Vorwoche", () => {
+  test("week needs the snapshot of the previous week", () => {
     expect(resolveStatsPeriod(["2026-11-14", "2026-11-21"], { kind: "week", week: "2026-11-21" }, start)).toEqual({
       before: "2026-11-14", after: "2026-11-21", status: "ok",
     });
     expect(resolveStatsPeriod(["2026-11-21"], { kind: "week", week: "2026-11-21" }, start)).toEqual({
       before: null, after: "2026-11-21", status: "zu-wenig",
     });
-    // Lücke: Vorvorwoche taugt nicht
+    // gap: the week before the previous one does not do
     expect(resolveStatsPeriod(["2026-11-07", "2026-11-21"], { kind: "week", week: "2026-11-21" }, start).status).toBe("zu-wenig");
   });
 
-  test("Woche des Serverstarts zählt ab lauter Nullen", () => {
+  test("week of the server start counts from all zeros", () => {
     expect(resolveStatsPeriod(["2026-11-07"], { kind: "week", week: "2026-11-07" }, start)).toEqual({
       before: null, after: "2026-11-07", status: "ok",
     });
   });
 
-  test("Monat: im Startmonat ab Serverstart, danach ab der letzten Woche des Vormonats", () => {
+  test("month: from the server start in the start month, afterwards from the last week of the previous month", () => {
     expect(resolveStatsPeriod(["2026-11-21"], { kind: "month", month: "2026-11" }, start)).toEqual({
       before: null, after: "2026-11-21", status: "ok",
     });
@@ -166,7 +166,7 @@ describe("resolveStatsPeriod", () => {
     });
   });
 
-  test("Gesamt geht sofort, ohne Stand gibt es nichts", () => {
+  test("total works right away, without a snapshot there is nothing", () => {
     expect(resolveStatsPeriod(["2026-11-21"], { kind: "total" }, start)).toEqual({ before: null, after: "2026-11-21", status: "ok" });
     expect(resolveStatsPeriod([], { kind: "total" }, start).status).toBe("keine");
     expect(resolveStatsPeriod(["2026-11-21"], { kind: "week", week: "2026-11-28" }, start).status).toBe("zu-wenig");
@@ -176,92 +176,92 @@ describe("resolveStatsPeriod", () => {
 describe("buildStatCards", () => {
   const stat = (cards: ReturnType<typeof buildStatCards>, id: number) => cards.flatMap((c) => c.stats).find((s) => s.id === id)!;
 
-  test("Zähler als Zuwachs mit Summe, Spitzenreitern und Werten je Gilde", () => {
-    const cards = buildStatCards(guild, fruehere, neuere);
-    const tode = stat(cards, 60);
-    // Anna +2, Bodo +0; Cleo und der Unbekannte fehlen im früheren Stand und zählen nicht
-    expect(tode).toMatchObject({ art: "zaehler", total: 2 });
-    // Texte stehen als Fassungen mit Deutsch und Englisch; fehlende Dialekte fallen auf Deutsch zurück
-    expect(tode.short).toEqual({ de: "Tode", en: "Deaths" });
-    expect(tode.unit!.de).toEqual(["Tod", "Tode"]);
-    expect(tode.unit!.en).toEqual(["death", "deaths"]);
-    expect(tode.honor!.de).toBe("Goldener Grabstein");
-    expect(tode.honor!.en).toBe("Golden Gravestone");
-    for (const sprache of SPRACHEN) expect(fassungIn(tode.unit!, sprache)).toHaveLength(2);
-    expect(tode.leaders.map((l) => [l.character.name, l.value])).toEqual([["Anna", 2]]);
-    expect(tode.perGuild).toEqual({ "bärenklaue": 2, "goldene-bärenklaue": 0 });
+  test("counters as gain with sum, leaders and values per guild", () => {
+    const cards = buildStatCards(guild, earlier, newer);
+    const deaths = stat(cards, 60);
+    // Anna +2, Bodo +0; Cleo and the unknown one are missing from the earlier snapshot and do not count
+    expect(deaths).toMatchObject({ art: "zaehler", total: 2 });
+    // Texts are `Fassungen` with German and English; missing dialects fall back to German
+    expect(deaths.short).toEqual({ de: "Tode", en: "Deaths" });
+    expect(deaths.unit!.de).toEqual(["Tod", "Tode"]);
+    expect(deaths.unit!.en).toEqual(["death", "deaths"]);
+    expect(deaths.honor!.de).toBe("Goldener Grabstein");
+    expect(deaths.honor!.en).toBe("Golden Gravestone");
+    for (const language of SPRACHEN) expect(fassungIn(deaths.unit!, language)).toHaveLength(2);
+    expect(deaths.leaders.map((l) => [l.character.name, l.value])).toEqual([["Anna", 2]]);
+    expect(deaths.perGuild).toEqual({ "bärenklaue": 2, "goldene-bärenklaue": 0 });
     expect(stat(cards, 1065).perGuild).toEqual({ "bärenklaue": 3, "goldene-bärenklaue": 2 });
     expect(stat(cards, 113)).toMatchObject({ total: 0, leaders: [] });
-    const umrechnung = stat(cards, 346).conversion!;
-    expect(umrechnung.per).toBe(100);
-    expect(umrechnung.unit.de).toEqual(["Fass", "Fässer"]);
-    expect(umrechnung.unit.en).toEqual(["barrel", "barrels"]);
-    for (const sprache of SPRACHEN) expect(fassungIn(umrechnung.text, sprache)).toBeTypeOf("string");
-    // Wie viele Charaktere überhaupt einen Wert haben (für den Stall), Klassenfarbe für das EKG
+    const conversion = stat(cards, 346).conversion!;
+    expect(conversion.per).toBe(100);
+    expect(conversion.unit.de).toEqual(["Fass", "Fässer"]);
+    expect(conversion.unit.en).toEqual(["barrel", "barrels"]);
+    for (const language of SPRACHEN) expect(fassungIn(conversion.text, language)).toBeTypeOf("string");
+    // How many characters have a value at all (for the stable), class color for the ECG
     expect(stat(cards, 1065).holders).toBe(2);
     expect(stat(cards, 60).holders).toBe(1);
     expect(stat(cards, 60).sum).toBe(2);
     expect(stat(cards, 800)).toMatchObject({ classId: 2, short: ueberall("Paladin"), holders: 0 });
   });
 
-  test("Neuzugänge: bei Woche und Monat außen vor, bei Gesamt ab Serverstart dabei", () => {
-    const vorher = stand("2026-11-14", { "1": { "60": 10 } });
-    // Cleo tritt mit 400 Toden aus ihrem bisherigen Leben bei und stirbt diese Woche noch einmal
-    const nachher = stand("2026-11-21", { "1": { "60": 12 }, "3": { "60": 401 } });
-    expect(stat(buildStatCards(guild, vorher, nachher), 60)).toMatchObject({ total: 2, holders: 1 });
-    const gesamt = stat(buildStatCards(guild, null, nachher), 60);
-    expect(gesamt.total).toBe(413);
-    expect(gesamt.leaders.map((l) => l.character.name)).toEqual(["Cleo", "Anna"]);
+  test("newcomers: left out for week and month, included from the server start for total", () => {
+    const before = snapshot("2026-11-14", { "1": { "60": 10 } });
+    // Cleo joins with 400 deaths from her previous life and dies once more this week
+    const after = snapshot("2026-11-21", { "1": { "60": 12 }, "3": { "60": 401 } });
+    expect(stat(buildStatCards(guild, before, after), 60)).toMatchObject({ total: 2, holders: 1 });
+    const total = stat(buildStatCards(guild, null, after), 60);
+    expect(total.total).toBe(413);
+    expect(total.leaders.map((l) => l.character.name)).toEqual(["Cleo", "Anna"]);
   });
 
-  test("Gildenfilter: Summe und Spitzenreiter nur der Gilde, Vergleich bleibt", () => {
-    const horde = buildStatCards(guild, fruehere, neuere, "bärenklaue");
+  test("guild filter: sum and leaders only of the guild, comparison stays", () => {
+    const horde = buildStatCards(guild, earlier, newer, "bärenklaue");
     expect(stat(horde, 60)).toMatchObject({ total: 2, perGuild: { "bärenklaue": 2, "goldene-bärenklaue": 0 } });
     expect(stat(horde, 60).leaders.map((l) => l.character.name)).toEqual(["Anna"]);
-    const allianz = buildStatCards(guild, fruehere, neuere, "goldene-bärenklaue");
-    expect(stat(allianz, 114)).toMatchObject({ total: 1 });
-    expect(stat(allianz, 1065).leaders.map((l) => l.character.name)).toEqual(["Bodo"]);
-    expect(stat(allianz, 60).leaders).toEqual([]);
+    const alliance = buildStatCards(guild, earlier, newer, "goldene-bärenklaue");
+    expect(stat(alliance, 114)).toMatchObject({ total: 1 });
+    expect(stat(alliance, 1065).leaders.map((l) => l.character.name)).toEqual(["Bodo"]);
+    expect(stat(alliance, 60).leaders).toEqual([]);
   });
 
-  test("Stand wie Haustiere: Höchstwert als total, Summe aller Charaktere als sum, Besitzer als holders", () => {
-    const tiere = stand("2026-11-21", { "1": { "338": 3 }, "2": { "338": 2 }, "3": {} });
-    expect(stat(buildStatCards(guild, null, tiere), 338)).toMatchObject({ art: "stand", total: 3, sum: 5, holders: 2 });
-    expect(stat(buildStatCards(guild, null, tiere, "bärenklaue"), 338)).toMatchObject({ total: 3, sum: 3, holders: 1 });
+  test("current value like pets: maximum as total, sum of all characters as sum, owners as holders", () => {
+    const pets = snapshot("2026-11-21", { "1": { "338": 3 }, "2": { "338": 2 }, "3": {} });
+    expect(stat(buildStatCards(guild, null, pets), 338)).toMatchObject({ art: "stand", total: 3, sum: 5, holders: 2 });
+    expect(stat(buildStatCards(guild, null, pets, "bärenklaue"), 338)).toMatchObject({ total: 3, sum: 3, holders: 1 });
   });
 
-  test("Serverstart als Nullstand, höchstens fünf Spitzenreiter", () => {
-    const many = stand("2026-11-21", Object.fromEntries([1, 2, 3, 4, 5, 6, 7].map((i) => [String(i), { "1518": i }])));
-    const fische = stat(buildStatCards(guild, null, many), 1518);
-    expect(fische.total).toBe(28);
-    expect(fische.leaders).toHaveLength(STAT_LEADERS);
-    expect(fische.leaders[0].value).toBe(7);
+  test("server start as zero snapshot, at most five leaders", () => {
+    const many = snapshot("2026-11-21", Object.fromEntries([1, 2, 3, 4, 5, 6, 7].map((i) => [String(i), { "1518": i }])));
+    const fish = stat(buildStatCards(guild, null, many), 1518);
+    expect(fish.total).toBe(28);
+    expect(fish.leaders).toHaveLength(STAT_LEADERS);
+    expect(fish.leaders[0].value).toBe(7);
   });
 });
 
 describe("buildStatCardMembers", () => {
   const ids = (card: string) => statCards().find((c) => c.slug === card)!.ids;
 
-  test("Je Statistik der Karte alle mit Wert über 0, höchster zuerst, Unbekannte bleiben drin", () => {
-    const tode = buildStatCardMembers(null, neuere, "tode")!;
-    expect(tode.slug).toBe("tode");
-    expect(tode.stats.map((s) => s.id)).toEqual(ids("tode"));
-    expect(tode.stats[0].entries).toEqual([[99, 7], [1, 5], [3, 2], [2, 1]]);
+  test("per statistic of the card everyone with a value above 0, highest first, unknown ones stay in", () => {
+    const deaths = buildStatCardMembers(null, newer, "tode")!;
+    expect(deaths.slug).toBe("tode");
+    expect(deaths.stats.map((s) => s.id)).toEqual(ids("tode"));
+    expect(deaths.stats[0].entries).toEqual([[99, 7], [1, 5], [3, 2], [2, 1]]);
   });
 
-  test("Woche zählt den Zuwachs wie die Karte, Neuzugänge fehlen", () => {
-    const tode = buildStatCardMembers(fruehere, neuere, "tode")!;
-    expect(tode.stats[0].entries).toEqual([[1, 2]]);
+  test("week counts the gain like the card, newcomers are missing", () => {
+    const deaths = buildStatCardMembers(earlier, newer, "tode")!;
+    expect(deaths.stats[0].entries).toEqual([[1, 2]]);
   });
 
-  test("Stall: die erste Statistik nimmt auch die Fußgänger mit 0 auf", () => {
-    const [reittiere] = ids("stall");
-    const st = stand("2026-11-21", { "1": { [reittiere]: 2 }, "2": {}, "3": { [reittiere]: 1 } });
+  test("stable: the first statistic also includes those on foot with 0", () => {
+    const [mounts] = ids("stall");
+    const st = snapshot("2026-11-21", { "1": { [mounts]: 2 }, "2": {}, "3": { [mounts]: 1 } });
     expect(buildStatCardMembers(null, st, "stall")!.stats[0].entries).toEqual([[1, 2], [3, 1], [2, 0]]);
   });
 
-  test("unbekannte Karte: null", () => {
-    expect(buildStatCardMembers(null, neuere, "quatsch")).toBeNull();
+  test("unknown card: null", () => {
+    expect(buildStatCardMembers(null, newer, "quatsch")).toBeNull();
   });
 });
 
@@ -276,10 +276,10 @@ describe("/api/stats", () => {
   beforeEach(async () => {
     store = createMemoryStore();
     await store.set("guild", guild);
-    await store.set("stats/2026-11-21", neuere);
+    await store.set("stats/2026-11-21", newer);
   });
 
-  test("Gesamt ab Serverstart mit Karten und Gilden", async () => {
+  test("total from the server start with cards and guilds", async () => {
     const { status, body } = await get("/api/stats");
     expect(status).toBe(200);
     expect(body).toMatchObject({ kind: "gesamt", id: null, status: "ok", before: null, after: "2026-11-21", characters: 4, guild: null });
@@ -290,31 +290,31 @@ describe("/api/stats", () => {
     expect(body!.cards[0].stats[0]).toMatchObject({ id: 60, total: 15 });
   });
 
-  test("Gildenfilter über ?gilde=, unbekannte Gilde: 404", async () => {
+  test("guild filter via ?gilde=, unknown guild: 404", async () => {
     const { body } = await get(`/api/stats?gilde=${encodeURIComponent("bärenklaue")}`);
     expect(body).toMatchObject({ guild: "bärenklaue", characters: 2 });
     expect(body!.cards[0].stats[0]).toMatchObject({ id: 60, total: 7 });
     expect((await get("/api/stats?gilde=quatsch")).status).toBe(404);
   });
 
-  test("Woche ohne Vorwoche: Hinweis statt Zahlen, mit Vorwoche Zuwachs", async () => {
-    const ohne = await get("/api/stats/woche");
-    expect(ohne.body).toMatchObject({ kind: "woche", id: "2026-11-21", status: "zu-wenig", cards: [] });
-    await store.set("stats/2026-11-14", fruehere);
-    const mit = await get("/api/stats/woche/2026-11-21");
-    expect(mit.body).toMatchObject({ status: "ok", before: "2026-11-14" });
-    expect(mit.body!.cards[0].stats[0].total).toBe(2);
-    expect(mit.body!.weeks).toEqual(["2026-11-21", "2026-11-14"]);
+  test("week without previous week: notice instead of numbers, with previous week the gain", async () => {
+    const without = await get("/api/stats/woche");
+    expect(without.body).toMatchObject({ kind: "woche", id: "2026-11-21", status: "zu-wenig", cards: [] });
+    await store.set("stats/2026-11-14", earlier);
+    const withPrevious = await get("/api/stats/woche/2026-11-21");
+    expect(withPrevious.body).toMatchObject({ status: "ok", before: "2026-11-14" });
+    expect(withPrevious.body!.cards[0].stats[0].total).toBe(2);
+    expect(withPrevious.body!.weeks).toEqual(["2026-11-21", "2026-11-14"]);
   });
 
-  test("Monat des Serverstarts geht sofort", async () => {
+  test("month of the server start works right away", async () => {
     expect((await get("/api/stats/monat")).body).toMatchObject({ kind: "monat", id: "2026-11", status: "ok" });
   });
 
-  test("ohne Stände: Status keine; falsche oder unbekannte Zeiträume: 404", async () => {
-    const leer = createMemoryStore();
-    await leer.set("guild", guild);
-    const res = await handleApi(new Request("http://x/api/stats/woche"), leer, () => new Date(), opts);
+  test("without snapshots: status keine; wrong or unknown periods: 404", async () => {
+    const empty = createMemoryStore();
+    await empty.set("guild", guild);
+    const res = await handleApi(new Request("http://x/api/stats/woche"), empty, () => new Date(), opts);
     expect(await res.json()).toMatchObject({ status: "keine", id: null });
     expect((await get("/api/stats/woche/2026-11-20")).status).toBe(404);
     expect((await get("/api/stats/woche/2026-11-28")).status).toBe(404);
@@ -323,17 +323,36 @@ describe("/api/stats", () => {
     expect((await get("/api/stats/woche/2026-11-21/x")).status).toBe(404);
   });
 
-  test("?karte= liefert die Mitglieder hinter der Karte, immer über alle Gilden", async () => {
+  test("?karte= returns the members behind the card, always across all guilds", async () => {
     const res = await handleApi(new Request(`http://x/api/stats?karte=tode&gilde=${encodeURIComponent("bärenklaue")}`), store, () => new Date(), opts);
     expect(res.status).toBe(200);
     const body = (await res.json()) as StatCardMembersView;
     expect(body.slug).toBe("tode");
     expect(body.stats[0]).toEqual({ id: 60, entries: [[99, 7], [1, 5], [3, 2], [2, 1]] });
-    // Woche ohne Vorwoche taugt nicht, unbekannte Karte gibt es nicht
+    // a week without the previous week does not do, an unknown card does not exist
     expect((await get("/api/stats/woche?karte=tode")).status).toBe(404);
     expect((await get("/api/stats?karte=quatsch")).status).toBe(404);
-    await store.set("stats/2026-11-14", fruehere);
-    const woche = await handleApi(new Request("http://x/api/stats/woche/2026-11-21?karte=tode"), store, () => new Date(), opts);
-    expect(((await woche.json()) as StatCardMembersView).stats[0].entries).toEqual([[1, 2]]);
+    await store.set("stats/2026-11-14", earlier);
+    const week = await handleApi(new Request("http://x/api/stats/woche/2026-11-21?karte=tode"), store, () => new Date(), opts);
+    expect(((await week.json()) as StatCardMembersView).stats[0].entries).toEqual([[1, 2]]);
+  });
+
+  test("English paths and parameters answer like the German ones of 2.x", async () => {
+    await store.set("stats/2026-11-14", earlier);
+    const slug = encodeURIComponent("bärenklaue");
+    const pairs = [
+      [`/api/stats?guild=${slug}`, `/api/stats?gilde=${slug}`],
+      ["/api/stats/week", "/api/stats/woche"],
+      ["/api/stats/week/2026-11-21", "/api/stats/woche/2026-11-21"],
+      ["/api/stats/month", "/api/stats/monat"],
+      ["/api/stats/week/2026-11-21?card=tode", "/api/stats/woche/2026-11-21?karte=tode"],
+      ["/api/stats/week/2026-11-20", "/api/stats/woche/2026-11-20"],
+    ];
+    for (const [english, legacy] of pairs) {
+      const a = await handleApi(new Request(`http://x${english}`), store, () => new Date("2026-11-21T12:00:00Z"), opts);
+      const b = await handleApi(new Request(`http://x${legacy}`), store, () => new Date("2026-11-21T12:00:00Z"), opts);
+      expect([english, a.status, await a.text()]).toEqual([english, b.status, await b.text()]);
+    }
+    expect((await get("/api/stats/week")).status).toBe(200);
   });
 });

@@ -25,7 +25,7 @@ function weekView(guild: GuildRecord, record: WeeklyRecord): TitleWeekView {
   };
 }
 
-/** Wochenergebnisse neueste zuerst. */
+/** Weekly results, newest first. */
 export function buildTitlesView(guild: GuildRecord, records: WeeklyRecord[]): TitlesView {
   const views = records.map((r) => weekView(guild, r));
   return {
@@ -43,7 +43,7 @@ export async function loadTitlesView(store: JsonStore, guild: GuildRecord): Prom
   return buildTitlesView(guild, records.filter((r): r is WeeklyRecord => r !== null));
 }
 
-/** Rangliste eines Titels in einer Woche; ohne gespeicherte Rangliste (alte Wochen) nur die Inhaber. */
+/** Ranking of a title in a week; without a stored ranking (old weeks) only the holders. */
 export function buildTitleRanking(record: WeeklyRecord, titleId: string): TitleRankingView | null {
   const def = titleDef(titleId);
   if (!def) return null;

@@ -9,13 +9,13 @@ import { titleDef } from "../weekly/titles";
 import { WEEKLY_NUMBER_KINDS } from "../weekly/numbers";
 import { refOf, weeklyIndex } from "./fun-common";
 import { guildRefs } from "./guild-view";
-import type { ZeitungArchiveView, ZeitungArticleView, ZeitungRueckblickView, ZeitungView, ZeitungZahlenView, ZeitungZahlView } from "./types";
+import type { NewspaperArchiveView, NewspaperArticleView, NewspaperLookbackView, NewspaperView, NewspaperNumbersView, NewspaperNumberView } from "./types";
 
 /**
- * Rubriken der Wochenzeitung in allen Sprachen; gespeichert wird der hochdeutsche Name. "Erfolge" steht hier, weil
- * gespeicherte Ausgaben sie tragen, auch wenn ihre Meldungen heute aus einer Erweiterung kommen.
+ * Sections of the weekly newspaper in all languages; the standard German name is what gets stored. "Erfolge" is
+ * listed here because stored issues carry it, even though its articles come from an extension today.
  */
-export const RUBRIKEN: Record<string, Fassungen> = {
+export const SECTIONS: Record<string, Fassungen> = {
   Aufsteiger: { de: "Aufsteiger", en: "Rising Stars", schwaebisch: "Aufsteiger", bayrisch: "Aufsteiger" },
   Handwerk: { de: "Handwerk", en: "Crafting", schwaebisch: "Handwerk", bayrisch: "Handwerk" },
   Friedhof: { de: "Friedhof", en: "Graveyard", schwaebisch: "Kirchhof", bayrisch: "Friedhof" },
@@ -26,62 +26,62 @@ export const RUBRIKEN: Record<string, Fassungen> = {
   Vermischtes: { de: "Vermischtes", en: "Miscellaneous", schwaebisch: "Allerlei", bayrisch: "Allerhand" },
 };
 
-/** Rubrik in allen Sprachen: aus dem Kern, sonst aus den Rubriken der Erweiterungen, sonst überall der deutsche Name. */
+/** Section in all languages: from the core, else from the extensions' sections, else the German name everywhere. */
 export function rubrik(name: string, erweiterungen: readonly ServerErweiterung[] = SERVER_ERWEITERUNGEN): Fassungen {
-  if (Object.hasOwn(RUBRIKEN, name)) return RUBRIKEN[name];
+  if (Object.hasOwn(SECTIONS, name)) return SECTIONS[name];
   for (const e of erweiterungen) if (e.rubriken && Object.hasOwn(e.rubriken, name)) return e.rubriken[name];
   return ueberall(name);
 }
 
 /**
- * Gespeicherter Text samt Übersetzungen als Fassungen. Englisch steht im Feld `dialekte` unter `en`; ältere
- * Ausgaben haben es nicht, dann gilt Deutsch.
+ * Stored text with its translations as `Fassungen`. English sits in the field `dialekte` under `en`; older issues
+ * lack it, then German applies.
  */
-function fassungen<T>(de: T, gespeichert: Dialekte<T> | undefined): Fassungen<T> {
-  return mitDialekten(de, gespeichert, storedTranslationIn(gespeichert, "en") ?? de);
+function versions<T>(de: T, stored: Dialekte<T> | undefined): Fassungen<T> {
+  return mitDialekten(de, stored, storedTranslationIn(stored, "en") ?? de);
 }
 
-/** Ein Feld aus Fassungen von Objekten, z. B. die Schlagzeilen aus Schlagzeile und Text. */
-function feld<T, K extends keyof T>(f: Fassungen<T>, key: K): Fassungen<T[K]> {
+/** One field from `Fassungen` of objects, e.g. the headlines from headline and text. */
+function field<T, K extends keyof T>(f: Fassungen<T>, key: K): Fassungen<T[K]> {
   return Object.fromEntries(Object.entries(f).map(([s, v]) => [s, (v as T)[key]])) as Fassungen<T[K]>;
 }
 
-function article(guild: GuildRecord, a: NewspaperArticle): ZeitungArticleView {
+function article(guild: GuildRecord, a: NewspaperArticle): NewspaperArticleView {
   const def = a.titleId ? titleDef(a.titleId) : undefined;
-  const fassung = fassungen({ headline: a.headline, text: a.text }, a.dialekte);
+  const version = versions({ headline: a.headline, text: a.text }, a.dialekte);
   return {
     kind: a.kind,
     section: rubrik(a.section ?? "Vermischtes"),
     title: def ? { id: def.id, name: def.name } : null,
-    headline: feld(fassung, "headline"),
-    text: feld(fassung, "text"),
+    headline: field(version, "headline"),
+    text: field(version, "text"),
     characters: a.characterIds.map((id) => refOf(guild, id)),
   };
 }
 
-/** Zeilen des Infokastens: nur Arten mit Wert, Vorwoche dazu, wenn sie bekannt ist. */
-function zeilen(s: WeeklySums, vor: WeeklySums | undefined): ZeitungZahlView[] {
-  return WEEKLY_NUMBER_KINDS.flatMap((art) => {
-    const wert = s[art];
-    if (wert === null || wert === undefined) return [];
-    const v = vor?.[art];
-    return [{ art, wert, vorwoche: typeof v === "number" ? v : null }];
+/** Rows of the info box: only kinds with a value, plus the previous week when it is known. */
+function rows(s: WeeklySums, previous: WeeklySums | undefined): NewspaperNumberView[] {
+  return WEEKLY_NUMBER_KINDS.flatMap((kind) => {
+    const value = s[kind];
+    if (value === null || value === undefined) return [];
+    const v = previous?.[kind];
+    return [{ art: kind, wert: value, vorwoche: typeof v === "number" ? v : null }];
   });
 }
 
-export function zahlenView(guild: GuildRecord, zahlen: WeeklyNumbers | undefined): ZeitungZahlenView | null {
-  if (!zahlen) return null;
+export function numbersView(guild: GuildRecord, numbers: WeeklyNumbers | undefined): NewspaperNumbersView | null {
+  if (!numbers) return null;
   const guilds = guildRefs(guild);
   return {
     guilds,
-    gesamt: zeilen(zahlen.gesamt, zahlen.vorwoche?.gesamt),
+    gesamt: rows(numbers.gesamt, numbers.vorwoche?.gesamt),
     gilden: Object.fromEntries(
-      Object.entries(zahlen.gilden).map(([slug, s]) => [slug, zeilen(s, zahlen.vorwoche?.gilden[slug])]),
+      Object.entries(numbers.gilden).map(([slug, s]) => [slug, rows(s, numbers.vorwoche?.gilden[slug])]),
     ),
   };
 }
 
-function rueckblickView(guild: GuildRecord, record: WeeklyRecord, weeks: string[]): ZeitungRueckblickView | null {
+function lookbackView(guild: GuildRecord, record: WeeklyRecord, weeks: string[]): NewspaperLookbackView | null {
   const r = record.zeitung.rueckblick;
   if (!r) return null;
   const at = weeks.indexOf(r.week);
@@ -90,17 +90,17 @@ function rueckblickView(guild: GuildRecord, record: WeeklyRecord, weeks: string[
     issue: at >= 0 ? at + 1 : null,
     from: r.from,
     to: r.to,
-    headline: fassungen(r.headline, r.dialekte),
+    headline: versions(r.headline, r.dialekte),
     characters: r.characterIds.map((id) => refOf(guild, id)),
   };
 }
 
-export function buildZeitungView(
+export function buildNewspaperView(
   guild: GuildRecord,
   record: WeeklyRecord,
   weeks: string[],
   avatars: Record<string, string | null> = {},
-): ZeitungView {
+): NewspaperView {
   const at = weeks.indexOf(record.week);
   return {
     issue: at + 1,
@@ -109,20 +109,20 @@ export function buildZeitungView(
     to: record.to,
     lead: article(guild, record.zeitung.lead),
     articles: record.zeitung.articles.map((a) => article(guild, a)),
-    motto: fassungen(record.zeitung.motto, record.zeitung.mottoDialekte),
+    motto: versions(record.zeitung.motto, record.zeitung.mottoDialekte),
     generator: record.zeitung.generator ?? "bausteine",
     avatars,
     previous: at > 0 ? weeks[at - 1] : null,
     next: at >= 0 && at < weeks.length - 1 ? weeks[at + 1] : null,
     testdaten: record.testdaten === true,
-    zahlen: zahlenView(guild, record.zahlen),
-    wetter: record.zeitung.wetter ? fassungen(record.zeitung.wetter, record.zeitung.wetterDialekte) : null,
-    rueckblick: rueckblickView(guild, record, weeks),
+    zahlen: numbersView(guild, record.zahlen),
+    wetter: record.zeitung.wetter ? versions(record.zeitung.wetter, record.zeitung.wetterDialekte) : null,
+    rueckblick: lookbackView(guild, record, weeks),
   };
 }
 
-/** Ausgabe einer Woche, ohne Woche die neueste; null, wenn es sie nicht gibt. */
-export async function loadZeitungView(store: JsonStore, guild: GuildRecord, week: string | null): Promise<ZeitungView | null> {
+/** Issue of a week, the latest without a week; null if it does not exist. */
+export async function loadNewspaperView(store: JsonStore, guild: GuildRecord, week: string | null): Promise<NewspaperView | null> {
   const weeks = await weeklyIndex(store);
   const wanted = week ?? weeks[weeks.length - 1];
   if (!wanted || !weeks.includes(wanted)) return null;
@@ -131,14 +131,14 @@ export async function loadZeitungView(store: JsonStore, guild: GuildRecord, week
   const ids = [...new Set([record.zeitung.lead, ...record.zeitung.articles].flatMap((a) => a.characterIds))];
   const records = await Promise.all(ids.map((id) => store.get<CharacterRecord>(`characters/${id}`)));
   const avatars = Object.fromEntries(ids.map((id, i) => [String(id), records[i]?.media?.avatar ?? null]));
-  return buildZeitungView(guild, record, weeks, avatars);
+  return buildNewspaperView(guild, record, weeks, avatars);
 }
 
 /**
- * Archiv aller Ausgaben. Schlagzeilen kommen aus dem Index; nur Wochen aus der Zeit vor dem Archiv
- * (ohne Eintrag im Index) werden einzeln geladen.
+ * Archive of all issues. Headlines come from the index; only weeks from before the archive (without an index entry)
+ * are loaded one by one.
  */
-export async function loadZeitungArchive(store: JsonStore): Promise<ZeitungArchiveView> {
+export async function loadNewspaperArchive(store: JsonStore): Promise<NewspaperArchiveView> {
   const index = (await store.get<WeeklyIndex>("weekly/index")) ?? { weeks: [] };
   const missing = index.weeks.filter((w) => !index.entries?.[w]);
   const loaded = await Promise.all(missing.map((w) => store.get<WeeklyRecord>(`weekly/${w}`)));
@@ -148,14 +148,14 @@ export async function loadZeitungArchive(store: JsonStore): Promise<ZeitungArchi
     const record = fallback.get(week);
     const de = entry?.headline ?? record?.zeitung.lead.headline;
     if (de === undefined) return [];
-    const leadDialekte = record?.zeitung.lead.dialekte;
-    const headline = fassungen(
+    const leadDialects = record?.zeitung.lead.dialekte;
+    const headline = versions(
       de,
       entry
         ? entry.dialekte
-        : leadDialekte &&
+        : leadDialects &&
             (Object.fromEntries(
-              Object.entries(leadDialekte).flatMap(([s, t]) => (t?.headline === undefined ? [] : [[s, t.headline]])),
+              Object.entries(leadDialects).flatMap(([s, t]) => (t?.headline === undefined ? [] : [[s, t.headline]])),
             ) as Dialekte<string>),
     );
     const bounds = weekBounds(week);

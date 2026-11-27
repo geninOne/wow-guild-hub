@@ -12,7 +12,7 @@ export function characterRef(guild: GuildRecord, m: MemberSummary): CharacterRef
   };
 }
 
-/** Platzhalter für Charaktere, die nicht mehr in der Mitgliederliste stehen. */
+/** Placeholder for characters that are no longer in the member list. */
 export function unknownRef(id: number): CharacterRef {
   return { id, name: "Unbekannt", surname: null, slug: String(id), classId: 0, former: true, guildSlug: "" };
 }
@@ -22,7 +22,7 @@ export function refOf(guild: GuildRecord, id: number): CharacterRef {
   return m ? characterRef(guild, m) : unknownRef(id);
 }
 
-/** Ausgewertete Wochen, aufsteigend nach ihrem letzten Tag (alte ISO-Wochen vor den Wertungswochen). */
+/** Evaluated weeks, ascending by their last day (old ISO weeks before the scoring weeks). */
 export async function weeklyIndex(store: JsonStore): Promise<string[]> {
   return [...((await store.get<WeeklyIndex>("weekly/index"))?.weeks ?? [])].sort(compareWeeks);
 }
@@ -33,7 +33,7 @@ export async function latestWeekly(store: JsonStore): Promise<WeeklyRecord | nul
   return last ? store.get<WeeklyRecord>(`weekly/${last}`) : null;
 }
 
-/** Titel eines Charakters aus einem Wochenergebnis, mit dem gewerteten Zeitraum der Woche; geteilte Titel zählen für alle Inhaber. */
+/** Titles of a character from a weekly result, with the week's scored period; shared titles count for all holders. */
 export function characterTitles(record: WeeklyRecord, characterId: number): CharacterTitle[] {
   const { week, from, to } = record;
   return record.titles

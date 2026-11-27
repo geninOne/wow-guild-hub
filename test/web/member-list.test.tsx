@@ -94,9 +94,9 @@ describe("Auswahl der Menge", () => {
   });
 
   test("statMembersPath: Zeitraum wie die Ansicht, Karte als Abfrage", () => {
-    expect(statMembersPath({ kind: "gesamt", id: null }, "tode")).toBe("/api/stats?karte=tode");
-    expect(statMembersPath({ kind: "woche", id: "2026-11-21" }, "flaeschle")).toBe("/api/stats/woche/2026-11-21?karte=flaeschle");
-    expect(statMembersPath({ kind: "monat", id: null }, "a b")).toBe("/api/stats/monat?karte=a%20b");
+    expect(statMembersPath({ kind: "gesamt", id: null }, "tode")).toBe("/api/stats?card=tode");
+    expect(statMembersPath({ kind: "woche", id: "2026-11-21" }, "flaeschle")).toBe("/api/stats/week/2026-11-21?card=flaeschle");
+    expect(statMembersPath({ kind: "monat", id: null }, "a b")).toBe("/api/stats/month?card=a%20b");
   });
 });
 

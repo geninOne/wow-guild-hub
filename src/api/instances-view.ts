@@ -15,7 +15,7 @@ type DungeonEntry = InstancesView["dungeonTiers"][number]["dungeons"][number];
 
 const IMAGES = new Map(Object.entries(INSTANCE_IMAGES).map(([name, ref]) => [norm(name), ref]));
 
-/** Kachelbild zu einem Instanznamen; bei "A oder B" die erste Alternative mit Bild. */
+/** Tile image for an instance name; for "A oder B" the first alternative with an image. */
 export function instanceImage(name: string, tiles: IconMap | null): string | null {
   for (const alternative of name.split(" oder ")) {
     const ref = IMAGES.get(norm(alternative));
@@ -25,7 +25,7 @@ export function instanceImage(name: string, tiles: IconMap | null): string | nul
   return null;
 }
 
-/** Raidname aus dem Wurzelkriterium ("Schließt den Hyjalgipfel ab", "Tötet Onyxia"), sonst der Erfolgsname. */
+/** Raid name from the root criterion ("Schließt den Hyjalgipfel ab", "Tötet Onyxia"), else the achievement name. */
 export function raidName(def: InstanceAchievement): string {
   const root = def.rootDescription ?? "";
   const complete = /^Schließt (?:den|die|das) (.+) ab$/.exec(root);
@@ -35,7 +35,7 @@ export function raidName(def: InstanceAchievement): string {
   return def.name;
 }
 
-/** Je Name eine Reihe: die mit Fortschritt des Charakters, sonst die erste in Kategorie-Reihenfolge. */
+/** One series per name: the one with progress of the character, otherwise the first in category order. */
 function pickSeries(
   defs: InstanceAchievement[],
   kind: InstanceAchievement["kind"],
@@ -56,9 +56,9 @@ function levels(info: DungeonInfo | undefined): LevelRange | null {
 }
 
 /**
- * Abschluss aus der Statistik des Charakters: Siege über den Endboss, je Gruppe gleichwertiger Endboss-Einträge
- * (Endboss der Bossliste und gepflegte Statistik-Namen derselben Instanz) das Maximum, über die Gruppen die Summe. Ohne
- * gepflegten Endboss zählen alle zugeordneten Kills.
+ * Completion from the character's statistics: victories over the final boss, the maximum per group of equivalent
+ * final boss entries (final boss of the boss list and maintained statistics names of the same instance), summed over
+ * the groups. Without a maintained final boss, all assigned kills count.
  */
 function completion(kills: KillRef[], groups: string[][]): { at: string | null; times: number } {
   const known = groups.filter((g) => g.length > 0);
@@ -77,12 +77,12 @@ function completion(kills: KillRef[], groups: string[][]): { at: string | null; 
   return { at: dates.sort().at(-1) ?? null, times };
 }
 
-/** Endboss-Namen, die für einen Dungeon zählen: letzter Eintrag der Bossliste und die gepflegten Statistik-Namen. */
+/** Final boss names that count for a dungeon: last entry of the boss list and the maintained statistics names. */
 function finalGroup(info: DungeonInfo): string[] {
   return [...info.bosse.slice(-1), ...info.statistik.map((s) => s.endboss)];
 }
 
-/** Gehört ein Kill zu dieser Alternative: gleicher Instanzname oder ein gepflegter Statistik-Eintrag. */
+/** Whether a kill belongs to this alternative: same instance name or a maintained statistics entry. */
 function killMatches(k: BossKill, alternative: string, info: DungeonInfo | undefined): boolean {
   if (k.instance === null) return false;
   if (norm(k.instance) === norm(alternative)) return true;
@@ -99,7 +99,7 @@ export function buildInstancesView(
   tiles: IconMap | null = null,
   info: Record<string, DungeonInfo> = {},
   extras: ExtraDungeon[] = [],
-  /** Fraktion des Charakters ("HORDE", "ALLIANCE"); entscheidet bei Zusatz-Dungeons mit Fraktion. */
+  /** Faction of the character ("HORDE", "ALLIANCE"); decides for extra dungeons that have a faction. */
   faction: string | null = null,
 ): InstancesView {
   const infoByName = new Map(Object.entries(info).map(([name, i]) => [norm(name), i]));
@@ -110,17 +110,17 @@ export function buildInstancesView(
 
   const done = new Map((progress?.achievements ?? []).map((a) => [a.id, a]));
   /**
-   * Erfolge und ihre Kriterien gelten bei WoW Forever für den ganzen Account (Twinks erben sie vom Hauptcharakter).
-   * Sie zeigen deshalb nur "auf diesem Account" an; abgeschlossen ist ein Dungeon allein über die eigene Statistik.
+   * In WoW Forever, achievements and their criteria apply to the whole account (alts inherit them from the main
+   * character). They therefore only indicate "on this account"; a dungeon is completed only via its own statistics.
    */
   const onAccount = (def: InstanceAchievement, criterionId: number | null): boolean => {
     const p = done.get(def.id);
     return !!p && (p.completed || (criterionId !== null && p.criteria.includes(criterionId)));
   };
-  // Jeder Kill wird höchstens einmal zugeordnet.
+  // Each kill is assigned at most once.
   const open = new Set(progress?.bossKills ?? []);
 
-  // Kriterien, die Zusatz-Dungeons ersetzen, entfallen; ob sie auf dem Account erledigt sind, zeigt der Zusatz-Dungeon.
+  // Criteria replaced by extra dungeons are dropped; the extra dungeon shows whether they are done on the account.
   const replaced = new Set(extras.flatMap((e) => e.replaces.map(norm)));
   const replacedDone = new Set<string>();
   const dungeonTiers = pickSeries(defs.achievements, "dungeon", done).map((def) => ({
@@ -143,7 +143,7 @@ export function buildInstancesView(
       }
       const shown = alternatives.filter((a) => matched.has(a));
       const name = shown.length > 0 ? shown.join(" oder ") : c.description;
-      // Mit Kills in mehreren Alternativen die Angaben aller gezeigten, sonst die erste Alternative mit Angaben.
+      // With kills in several alternatives the data of all shown ones, otherwise the first alternative with data.
       const infos = shown.length > 1 ? infosOf(shown) : infosOf(shown.length > 0 ? shown : alternatives).slice(0, 1);
       const bossNames = [...new Set(infos.flatMap((i) => i.bosse))];
       const finals = infos.flatMap((i) => (i.bosse.length > 0 ? [i.bosse[i.bosse.length - 1]] : []));
@@ -167,7 +167,7 @@ export function buildInstancesView(
     }),
   }));
 
-  // Zusatz-Dungeons ohne Erfolg: Abschluss nur über die Boss-Kill-Statistik, einsortiert in ihre Stufe nach Mindestlevel.
+  // Extra dungeons without an achievement: completion only via boss kill statistics, sorted into their tier by min level.
   extras.forEach((extra, index) => {
     const kills: KillRef[] = [];
     for (const k of [...open]) {
@@ -175,7 +175,7 @@ export function buildInstancesView(
       open.delete(k);
       kills.push(killRef(k));
     }
-    // Gespiegelte Siege eines Charakters der anderen Fraktion werden verbraucht, zählen aber nicht.
+    // Mirrored victories of a character of the other faction are consumed but do not count.
     const ownFaction = extra.faction === null || faction === null || extra.faction === faction;
     if (!ownFaction) kills.length = 0;
     const finals = [extra.source.finalBoss];
@@ -202,7 +202,7 @@ export function buildInstancesView(
       dungeonTiers.push({ achievementId: 0, tier: extra.tier, dungeons: [entry] });
       return;
     }
-    // Vor den ersten Dungeon mit höherem Mindestlevel; Einträge ohne Stufe zählen nicht.
+    // Before the first dungeon with a higher minimum level; entries without a level do not count.
     const min = entry.levels?.min ?? Infinity;
     const at = tier.dungeons.findIndex((d) => d.levels !== null && d.levels.min > min);
     tier.dungeons.splice(at === -1 ? tier.dungeons.length : at, 0, entry);
@@ -211,7 +211,7 @@ export function buildInstancesView(
   const raids = pickSeries(defs.achievements, "raid", done).map((def) => {
     const name = raidName(def);
     const bossList = def.criteria.length > 0 ? def.criteria : [{ id: null, description: name }];
-    // Besiegt nur über die eigene Statistik; die Kriterien des Erfolgs gelten für den ganzen Account.
+    // Defeated only via its own statistics; the achievement criteria apply to the whole account.
     const bosses = bossList.map((b) => {
       const kill = [...open].find((k) => norm(k.boss) === norm(b.description));
       if (kill) open.delete(kill);

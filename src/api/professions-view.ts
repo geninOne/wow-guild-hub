@@ -8,7 +8,7 @@ import type { CharacterRef, GuildRef, ProfessionRecipe, ProfessionRecipesView, P
 
 const collator = (a: string, b: string): number => a.localeCompare(b, "de");
 
-/** Gruppen und Reihenfolge der Berufe im Verzeichnis. */
+/** Groups and order of the professions in the directory. */
 export const PROFESSION_GROUPS: [string, number[]][] = [
   ["Handwerk", [171, 164, 165, 197, 333, 202]],
   ["Sammeln", [186, 182, 393]],
@@ -70,7 +70,7 @@ export function buildProfessionsView(
     }
   }
 
-  // Alle bekannten Berufe in fester Reihenfolge, auch ohne Mitglieder; Unbekanntes alphabetisch dahinter.
+  // All known professions in a fixed order, even without members; unknown ones alphabetically after them.
   const known = PROFESSION_GROUPS.flatMap(([group, ids]) =>
     ids.map((id) => professions.get(id) ?? newEntry(id, PROFESSION_NAMES_DE[id] ?? `Beruf ${id}`, group !== "Nebenberufe")),
   );
@@ -85,9 +85,9 @@ export function buildProfessionsView(
 const displayName = (id: number, name: string): string => name || PROFESSION_NAMES_DE[id] || `Beruf ${id}`;
 
 /**
- * Alle Rezepte eines Berufs (per URL-Kürzel) mit den aktiven Charakteren, die sie kennen.
- * Gleiche Rezept-ID ergibt einen Eintrag; ältere Daten ohne ID werden über den Namen zusammengefasst.
- * null bei unbekanntem Kürzel.
+ * All recipes of a profession (by URL slug) with the active characters who know them.
+ * The same recipe ID yields one entry; older data without an ID is merged by name.
+ * null for an unknown slug.
  */
 export function buildProfessionRecipesView(
   members: MemberSummary[],

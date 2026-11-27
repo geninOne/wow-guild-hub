@@ -47,7 +47,7 @@ const gelmarMember = member({
   classId: 5,
   raceId: 5,
 });
-const ohneProfil = member({
+const noProfile = member({
   id: 7,
   name: "Leer",
   slug: "leer",
@@ -57,9 +57,9 @@ const ohneProfil = member({
   hasProfile: false,
   lastFetchedAt: null,
 });
-const ehemalig = member({ id: 8, name: "Weg", slug: "weg", former: true, leftAt: "2026-11-05T00:00:00.000Z" });
-const altAktiv = member({ id: 20, name: "Alt", slug: "alt-name", former: false });
-const altEhemalig = member({ id: 21, name: "Alt", slug: "alt-name", former: true });
+const formerMember = member({ id: 8, name: "Weg", slug: "weg", former: true, leftAt: "2026-11-05T00:00:00.000Z" });
+const dupActive = member({ id: 20, name: "Alt", slug: "alt-name", former: false });
+const dupFormer = member({ id: 21, name: "Alt", slug: "alt-name", former: true });
 
 function guildOf(members: MemberSummary[]): GuildRecord {
   return {
@@ -73,8 +73,8 @@ function guildOf(members: MemberSummary[]): GuildRecord {
   };
 }
 
-const guild = guildOf([gelmarMember, ohneProfil, ehemalig]);
-const guildMitDoppeltemSlug = guildOf([altEhemalig, altAktiv]);
+const guild = guildOf([gelmarMember, noProfile, formerMember]);
+const guildWithDuplicateSlug = guildOf([dupFormer, dupActive]);
 
 const classes: NamedList = {
   items: [
@@ -99,27 +99,27 @@ const base = {
   rankNames: {},
 };
 
-const zweiGilden: GuildRecord["guilds"] = [
+const twoGuilds: GuildRecord["guilds"] = [
   { slug: "bärenklaue", id: 1, name: "Bärenklaue", faction: "HORDE", memberCount: 76, rulesetName: "Normal", main: true },
   { slug: "goldene-bärenklaue", id: 2, name: "Goldene Bärenklaue", faction: "ALLIANCE", memberCount: 19, rulesetName: "Normal", main: false },
 ];
 
-describe("Charakteransicht", () => {
-  test("findMember per Slug, ID und mit Vorrang für Aktive", () => {
+describe("character view", () => {
+  test("findMember by slug, by ID and with priority for active members", () => {
     expect(findMember(guild, "Gelmar-Soulvenn")?.id).toBe(1647409);
     expect(findMember(guild, "1647409")?.slug).toBe("gelmar-soulvenn");
-    expect(findMember(guildMitDoppeltemSlug, "alt-name")?.former).toBe(false);
+    expect(findMember(guildWithDuplicateSlug, "alt-name")?.former).toBe(false);
     expect(findMember(guild, "gibt-es-nicht")).toBeNull();
   });
 
-  test("Vollständige Statistik bleibt im Speicher und geht nicht an die Seite", () => {
+  test("full statistics stay in storage and are not sent to the page", () => {
     const record = { ...gelmar, statValues: { "60": 4 }, statTexts: { "1336": "Humanoid" } };
     const v = buildCharacterView({ ...base, record })!;
     expect(v.character).not.toHaveProperty("statValues");
     expect(v.character).not.toHaveProperty("statTexts");
   });
 
-  test("fehlende Gegenstandsstufe aus static/item-levels, mitgelieferte Stufe hat Vorrang", () => {
+  test("missing item level from static/item-levels, a delivered level takes precedence", () => {
     const [a, b, c] = gelmar.equipment;
     const record = { ...gelmar, equipment: [{ ...a, itemLevel: null }, { ...b, itemLevel: 20 }, { ...c, itemLevel: null }] };
     const itemLevels = { [a.itemId]: 31, [b.itemId]: 99, [c.itemId]: null };
@@ -128,10 +128,10 @@ describe("Charakteransicht", () => {
     expect(buildCharacterView({ ...base, record })!.character.equipment[0].itemLevel).toBeNull();
   });
 
-  test("Gelmar: Kopf, Rang und nur eigene Icons", () => {
+  test("Gelmar: header, rank and only own icons", () => {
     const v = buildCharacterView({
       ...base,
-      guild: { ...guild, guilds: zweiGilden },
+      guild: { ...guild, guilds: twoGuilds },
       itemIcons: { "53": "https://render.worldofwarcraft.com/a.jpg", "999999": "x" },
       rankNames: { bärenklaue: { "3": "Mitglied" } },
     })!;
@@ -150,25 +150,25 @@ describe("Charakteransicht", () => {
     expect(v.itemIcons["53"]).toBe("https://render.worldofwarcraft.com/a.jpg");
   });
 
-  test("Mitglied ohne gespeicherten Record ergibt Rumpfansicht", () => {
-    const v = buildCharacterView({ ...base, member: ohneProfil, record: null })!;
+  test("member without a stored record yields a minimal view", () => {
+    const v = buildCharacterView({ ...base, member: noProfile, record: null })!;
     expect(v.character).toMatchObject({
       hasProfile: false,
       equipment: [],
       specs: [],
       media: null,
-      level: ohneProfil.level,
+      level: noProfile.level,
     });
-    expect(v.character.fetchedAt).toBe(ohneProfil.firstSeenAt);
+    expect(v.character.fetchedAt).toBe(noProfile.firstSeenAt);
     expect(v.className).toBe("Paladin");
   });
 
-  test("Ehemaliger und Fremder", () => {
-    expect(buildCharacterView({ ...base, member: ehemalig, record: null })!.former).toBe(true);
+  test("former member and stranger", () => {
+    expect(buildCharacterView({ ...base, member: formerMember, record: null })!.former).toBe(true);
     expect(buildCharacterView({ ...base, member: null, record: null })).toBeNull();
   });
 
-  test("Record ohne Mitglied hat keinen Rang", () => {
+  test("record without a member has no rank", () => {
     const v = buildCharacterView({ ...base, member: null })!;
     expect(v.rank).toBeNull();
     expect(v.rankName).toBeNull();
@@ -176,32 +176,32 @@ describe("Charakteransicht", () => {
   });
 });
 
-describe("Gilde und Rezepte in der Charakteransicht", () => {
-  test("Mitglied der Goldenen Bärenklaue zeigt deren Namen und Fraktion", () => {
-    const allianz = { ...gelmarMember, guildSlug: "goldene-bärenklaue" };
+describe("guild and recipes in the character view", () => {
+  test("member of Goldene Bärenklaue shows its name and faction", () => {
+    const alliance = { ...gelmarMember, guildSlug: "goldene-bärenklaue" };
     const g: GuildRecord = {
-      ...guildOf([allianz]),
+      ...guildOf([alliance]),
       guilds: [
         { slug: "bärenklaue", id: 1, name: "Bärenklaue", faction: "HORDE", memberCount: 76, rulesetName: "Normal", main: true },
         { slug: "goldene-bärenklaue", id: 2, name: "Goldene Bärenklaue", faction: "ALLIANCE", memberCount: 19, rulesetName: "Normal", main: false },
       ],
     };
-    const v = buildCharacterView({ ...base, member: allianz, guild: g });
+    const v = buildCharacterView({ ...base, member: alliance, guild: g });
     expect([v?.guildName, v?.guildFaction]).toEqual(["Goldene Bärenklaue", "ALLIANCE"]);
     expect(buildCharacterView(base)?.guildFaction).toBe("HORDE");
   });
 
-  test("Rangname im Charakterkopf je Gilde, Rückfall Rang N", () => {
+  test("rank name in the character header per guild, fallback Rang N", () => {
     const names = { bärenklaue: { "3": "Mitglied" }, "goldene-bärenklaue": { "4": "Veteran" } };
-    const g: GuildRecord = { ...guildOf([gelmarMember]), guilds: zweiGilden };
+    const g: GuildRecord = { ...guildOf([gelmarMember]), guilds: twoGuilds };
     const horde = buildCharacterView({ ...base, guild: g, rankNames: names });
     expect(horde?.rankName).toBe("Mitglied");
-    const allianz = { ...gelmarMember, guildSlug: "goldene-bärenklaue" };
-    const ally = buildCharacterView({ ...base, member: allianz, guild: { ...guildOf([allianz]), guilds: zweiGilden }, rankNames: names });
+    const alliance = { ...gelmarMember, guildSlug: "goldene-bärenklaue" };
+    const ally = buildCharacterView({ ...base, member: alliance, guild: { ...guildOf([alliance]), guilds: twoGuilds }, rankNames: names });
     expect(ally?.rankName).toBe("Rang 3");
   });
 
-  test("Rezepte deutsch, englisch als Rückfall", () => {
+  test("recipes in German, English as fallback", () => {
     const record: CharacterRecord = {
       ...gelmar,
       professions: [{ id: 186, name: "Bergbau", nameEn: "Mining", skill: 1, max: 75, primary: true, recipes: ["Smelt Tin", "Mining"], recipeIds: [1848, 1570] }],

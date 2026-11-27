@@ -35,16 +35,16 @@ const chordrak: InstanceProgress = {
 };
 
 describe("buildInstancesView", () => {
-  test("ohne Definitionen nicht verfügbar", () => {
+  test("not available without definitions", () => {
     expect(buildInstancesView(null, chordrak)).toEqual({ available: false, dungeonTiers: [], raids: [], otherKills: [] });
   });
 
-  test("Dungeons der Stufe Novize mit erledigten Dungeons und Boss-Kills", () => {
+  test("dungeons of tier Novize with completed dungeons and boss kills", () => {
     const v = buildInstancesView(defs, chordrak);
     expect(v.available).toBe(true);
     expect(v.dungeonTiers.map((t) => [t.tier, t.achievementId])).toEqual([["Novize", 62031]]);
-    const [flamme, ruinen, hoehlen] = v.dungeonTiers[0].dungeons;
-    expect(flamme).toEqual({
+    const [ragefire, ruins, wailing] = v.dungeonTiers[0].dungeons;
+    expect(ragefire).toEqual({
       criterionId: 230766,
       name: "Flammenschlund",
       description: "Flammenschlund oder Halle der Thanen",
@@ -59,15 +59,15 @@ describe("buildInstancesView", () => {
       completedAt: BAZZALAN,
       timesCompleted: 1,
     });
-    expect(ruinen).toMatchObject({ name: "Ruinen von Lordaeron", completed: true, kills: [{ boss: "Rath'mael" }] });
-    expect(hoehlen).toEqual({
+    expect(ruins).toMatchObject({ name: "Ruinen von Lordaeron", completed: true, kills: [{ boss: "Rath'mael" }] });
+    expect(wailing).toEqual({
       criterionId: 230763, name: "Höhlen des Wehklagens", description: "Höhlen des Wehklagens", completed: false, onAccount: false, tracked: true, kills: [], image: null, levels: null, bosses: null,
       finalBosses: [], completedAt: null, timesCompleted: 0,
     });
     expect(v.otherKills).toEqual([]);
   });
 
-  test("Kill in beiden Alternativen zeigt die volle Beschreibung und gilt als abgeschlossen", () => {
+  test("kill in both alternatives shows the full description and counts as completed", () => {
     const v = buildInstancesView(defs, {
       achievements: [],
       bossKills: [
@@ -75,31 +75,31 @@ describe("buildInstancesView", () => {
         { boss: "Durgen Dirgehammer", instance: "Halle der Thanen", quantity: 2, lastAt: null },
       ],
     });
-    const erster = v.dungeonTiers[0].dungeons[0];
-    expect(erster.name).toBe("Flammenschlund oder Halle der Thanen");
-    // In Forever erscheinen nur Endbosse in der Statistik, ein Kill heißt also: abgeschlossen.
-    expect([erster.completed, erster.timesCompleted]).toEqual([true, 3]);
-    expect(erster.kills.map((k) => k.boss)).toEqual(["Bazzalan", "Durgen Dirgehammer"]);
+    const first = v.dungeonTiers[0].dungeons[0];
+    expect(first.name).toBe("Flammenschlund oder Halle der Thanen");
+    // In Forever only final bosses appear in the statistics, so a kill means: completed.
+    expect([first.completed, first.timesCompleted]).toEqual([true, 3]);
+    expect(first.kills.map((k) => k.boss)).toEqual(["Bazzalan", "Durgen Dirgehammer"]);
   });
 
-  test("Fortschritt nur in der zweiten Reihe zeigt diese", () => {
+  test("progress only in the second series shows that one", () => {
     const v = buildInstancesView(defs, { achievements: [{ id: 64016, completed: false, criteria: [234131] }], bossKills: [] });
     expect(v.dungeonTiers[0].achievementId).toBe(64016);
     expect(v.dungeonTiers[0].dungeons.find((d) => d.criterionId === 234131)).toMatchObject({ completed: false, onAccount: true });
   });
 
-  test("Twink erbt die accountweiten Kriterien, abgeschlossen ist aber nur, was die eigene Statistik belegt", () => {
-    // Gleiche Kriterien wie der Hauptcharakter (Blizzard liefert sie accountweit), aber keine eigenen Siege.
+  test("alt inherits the account-wide criteria, but only what its own statistics prove is completed", () => {
+    // Same criteria as the main character (Blizzard delivers them account-wide), but no own victories.
     const twink = buildInstancesView(defs, { achievements: chordrak.achievements, bossKills: [] });
-    const [flamme, ruinen, hoehlen] = twink.dungeonTiers[0].dungeons;
-    expect([flamme.completed, flamme.onAccount]).toEqual([false, true]);
-    expect([ruinen.completed, ruinen.onAccount]).toEqual([false, true]);
-    expect([hoehlen.completed, hoehlen.onAccount]).toEqual([false, false]);
+    const [ragefire, ruins, wailing] = twink.dungeonTiers[0].dungeons;
+    expect([ragefire.completed, ragefire.onAccount]).toEqual([false, true]);
+    expect([ruins.completed, ruins.onAccount]).toEqual([false, true]);
+    expect([wailing.completed, wailing.onAccount]).toEqual([false, false]);
     const main = buildInstancesView(defs, chordrak);
     expect(main.dungeonTiers[0].dungeons.slice(0, 2).map((d) => [d.completed, d.onAccount])).toEqual([[true, false], [true, false]]);
   });
 
-  test("Raids mit Bossliste, Onyxia als einzelner Boss", () => {
+  test("raids with boss list, Onyxia as a single boss", () => {
     const v = buildInstancesView(defs, {
       achievements: [{ id: 62034, completed: false, criteria: [230812, 230813] }],
       bossKills: [{ boss: "Bandalar", instance: "Hyjalgipfel", quantity: 1, lastAt: "2026-11-04T20:00:00.000Z" }],
@@ -109,18 +109,18 @@ describe("buildInstancesView", () => {
       ["Onyxia", false, false, 1],
     ]);
     expect(v.raids[0].bosses[0]).toEqual({ name: "Bandalar", defeated: true, lastAt: "2026-11-04T20:00:00.000Z" });
-    // Das Kriterium gilt für den ganzen Account, besiegt zählt nur über die eigene Statistik.
+    // The criterion applies to the whole account, defeated only counts via the own statistics.
     expect(v.raids[0].bosses[1]).toEqual({ name: "Urtum des Verfalls", defeated: false, lastAt: null });
     expect(v.raids[1].bosses).toEqual([{ name: "Onyxia", defeated: false, lastAt: null }]);
     expect(v.otherKills).toEqual([]);
   });
 
-  test("erledigter Erfolg ohne eigenen Sieg: nur auf diesem Account", () => {
+  test("completed achievement without own victory: only on this account", () => {
     const v = buildInstancesView(defs, { achievements: [{ id: 684, completed: true, criteria: [] }], bossKills: [] });
     expect(v.raids[1]).toMatchObject({ completed: false, onAccount: true, bosses: [{ name: "Onyxia", defeated: false }] });
   });
 
-  test("Raid abgeschlossen, wenn die eigene Statistik alle Bosse belegt", () => {
+  test("raid completed when the own statistics prove all bosses", () => {
     const v = buildInstancesView(defs, {
       achievements: [],
       bossKills: [{ boss: "Onyxia", instance: "Onyxias Hort", quantity: 1, lastAt: "2026-11-20T20:00:00.000Z" }],
@@ -128,13 +128,13 @@ describe("buildInstancesView", () => {
     expect(v.raids[1]).toMatchObject({ completed: true, onAccount: false, bosses: [{ name: "Onyxia", defeated: true }] });
   });
 
-  test("raidName aus dem Wurzelkriterium", () => {
+  test("raidName from the root criterion", () => {
     expect(raidName(def(62034, 0))).toBe("Hyjalgipfel");
     expect(raidName(def(684, 0))).toBe("Onyxia");
     expect(raidName({ ...def(684, 0), rootDescription: null })).toBe("Eroberer des Horts");
   });
 
-  test("Kill ohne passenden Dungeon landet unter weiteren Siegen", () => {
+  test("kill without a matching dungeon ends up under other victories", () => {
     const v = buildInstancesView(defs, {
       achievements: [],
       bossKills: [{ boss: "Baron Rivendare", instance: "Stratholme", quantity: 1, lastAt: null }],
@@ -142,7 +142,7 @@ describe("buildInstancesView", () => {
     expect(v.otherKills).toEqual([{ boss: "Baron Rivendare", instance: "Stratholme", quantity: 1, lastAt: null }]);
   });
 
-  test("alter Datensatz ohne Fortschritt", () => {
+  test("old record without progress", () => {
     const v = buildInstancesView(defs, undefined);
     expect(v.dungeonTiers[0].dungeons.every((d) => !d.completed && d.kills.length === 0)).toBe(true);
     expect(v.raids.every((r) => r.bosses.every((b) => !b.defeated))).toBe(true);
@@ -156,8 +156,8 @@ const TILES: IconMap = {
   "240": null,
 };
 
-describe("Instanzbilder", () => {
-  test("instanceImage über die Zuordnungstabelle, normalisiert, erste Alternative mit Bild", () => {
+describe("instance images", () => {
+  test("instanceImage via the mapping table, normalized, first alternative with an image", () => {
     expect(instanceImage("Die Todesminen", TILES)).toBe(TILES["63"]);
     expect(instanceImage("Flammenschlund oder Halle der Thanen", TILES)).toBe(TILES["226"]);
     expect(instanceImage("Halle der Thanen oder Flammenschlund", TILES)).toBe("/dungeons/halle-der-thanen.jpg");
@@ -170,7 +170,7 @@ describe("Instanzbilder", () => {
     expect(instanceImage("Stratholme: Tot", null)).toBe("https://render.worldofwarcraft.com/eu/zones/stratholme-small.jpg");
   });
 
-  test("Dungeons und Raids tragen ihr Bild", () => {
+  test("dungeons and raids carry their image", () => {
     const v = buildInstancesView(defs, chordrak, TILES);
     const byName = Object.fromEntries(v.dungeonTiers[0].dungeons.map((d) => [d.name, d.image]));
     expect(byName["Flammenschlund"]).toBe(TILES["226"]);
@@ -190,56 +190,56 @@ const INFO: Record<string, DungeonInfo> = {
   Hyjalgipfel: { stufe: [60, 60], bosse: [], statistik: [], ohneStatistik: false },
 };
 
-describe("Bosslisten und Stufen aus der gepflegten Datei", () => {
-  test("Dungeon: Bossnamen als Info, Endboss ist der letzte Eintrag, Abschluss aus dem Endboss-Kill", () => {
+describe("boss lists and levels from the maintained file", () => {
+  test("dungeon: boss names as info, final boss is the last entry, completion from the final boss kill", () => {
     const v = buildInstancesView(defs, chordrak, null, INFO);
-    const flamme = v.dungeonTiers[0].dungeons[0];
-    expect(flamme.levels).toEqual({ min: 13, max: 18 });
-    expect(flamme.bosses).toEqual(["Oggleflint", "Taragaman der Hungerleider", "Jergosh der Herbeirufer", "Bazzalan"]);
-    expect(flamme.finalBosses).toEqual(["Bazzalan"]);
-    expect([flamme.completed, flamme.completedAt, flamme.timesCompleted]).toEqual([true, BAZZALAN, 1]);
+    const ragefire = v.dungeonTiers[0].dungeons[0];
+    expect(ragefire.levels).toEqual({ min: 13, max: 18 });
+    expect(ragefire.bosses).toEqual(["Oggleflint", "Taragaman der Hungerleider", "Jergosh der Herbeirufer", "Bazzalan"]);
+    expect(ragefire.finalBosses).toEqual(["Bazzalan"]);
+    expect([ragefire.completed, ragefire.completedAt, ragefire.timesCompleted]).toEqual([true, BAZZALAN, 1]);
   });
 
-  test("Endboss-Kill ohne erledigtes Kriterium gilt als abgeschlossen, Anzahl aus quantity", () => {
+  test("final boss kill without a completed criterion counts as completed, count from quantity", () => {
     const v = buildInstancesView(
       defs,
       { achievements: [], bossKills: [{ boss: "Edwin van Cleef", instance: "Todesminen", quantity: 3, lastAt: "2026-11-05T18:00:00.000Z" }] },
       null,
       INFO,
     );
-    const minen = v.dungeonTiers[0].dungeons.find((d) => d.name === "Todesminen")!;
-    expect([minen.completed, minen.completedAt, minen.timesCompleted]).toEqual([true, "2026-11-05T18:00:00.000Z", 3]);
-    expect(minen.finalBosses).toEqual(["Edwin van Cleef"]);
+    const deadmines = v.dungeonTiers[0].dungeons.find((d) => d.name === "Todesminen")!;
+    expect([deadmines.completed, deadmines.completedAt, deadmines.timesCompleted]).toEqual([true, "2026-11-05T18:00:00.000Z", 3]);
+    expect(deadmines.finalBosses).toEqual(["Edwin van Cleef"]);
   });
 
-  test("Kriterium erledigt, aber kein Kill in der Statistik: nicht abgeschlossen, nur auf diesem Account", () => {
+  test("criterion done but no kill in the statistics: not completed, only on this account", () => {
     const v = buildInstancesView(defs, { achievements: [{ id: 62031, completed: false, criteria: [230762] }], bossKills: [] }, null, INFO);
-    const minen = v.dungeonTiers[0].dungeons.find((d) => d.name === "Todesminen")!;
-    expect([minen.completed, minen.onAccount, minen.completedAt, minen.timesCompleted]).toEqual([false, true, null, 0]);
+    const deadmines = v.dungeonTiers[0].dungeons.find((d) => d.name === "Todesminen")!;
+    expect([deadmines.completed, deadmines.onAccount, deadmines.completedAt, deadmines.timesCompleted]).toEqual([false, true, null, 0]);
   });
 
-  test("Kill eines anderen Bosses als des Endbosses schließt nicht ab", () => {
+  test("kill of a boss other than the final boss does not complete", () => {
     const v = buildInstancesView(
       defs,
       { achievements: [], bossKills: [{ boss: "Rhahk'Zor", instance: "Todesminen", quantity: 1, lastAt: null }] },
       null,
       INFO,
     );
-    const minen = v.dungeonTiers[0].dungeons.find((d) => d.name === "Todesminen")!;
-    expect([minen.completed, minen.timesCompleted, minen.kills.length]).toEqual([false, 0, 1]);
+    const deadmines = v.dungeonTiers[0].dungeons.find((d) => d.name === "Todesminen")!;
+    expect([deadmines.completed, deadmines.timesCompleted, deadmines.kills.length]).toEqual([false, 0, 1]);
   });
 
-  test("ohne Kill die Angaben der ersten Alternative, ohne Eintrag null", () => {
+  test("without a kill the data of the first alternative, without an entry null", () => {
     const v = buildInstancesView(defs, { achievements: [], bossKills: [] }, null, INFO);
-    const [flamme, ruinen] = v.dungeonTiers[0].dungeons;
-    expect(flamme.name).toBe("Flammenschlund oder Halle der Thanen");
-    expect(flamme.levels).toEqual({ min: 13, max: 18 });
-    expect(flamme.bosses).toHaveLength(4);
-    expect(flamme.completed).toBe(false);
-    expect([ruinen.levels, ruinen.bosses, ruinen.finalBosses]).toEqual([null, null, []]);
+    const [ragefire, ruins] = v.dungeonTiers[0].dungeons;
+    expect(ragefire.name).toBe("Flammenschlund oder Halle der Thanen");
+    expect(ragefire.levels).toEqual({ min: 13, max: 18 });
+    expect(ragefire.bosses).toHaveLength(4);
+    expect(ragefire.completed).toBe(false);
+    expect([ruins.levels, ruins.bosses, ruins.finalBosses]).toEqual([null, null, []]);
   });
 
-  test("Kill in der anderen Alternative: deren Bossliste und Endboss", () => {
+  test("kill in the other alternative: its boss list and final boss", () => {
     const v = buildInstancesView(
       defs,
       { achievements: [], bossKills: [{ boss: "Durgen Dirgehammer", instance: "Halle der Thanen", quantity: 1, lastAt: "2026-11-05T10:00:00.000Z" }] },
@@ -253,7 +253,7 @@ describe("Bosslisten und Stufen aus der gepflegten Datei", () => {
     expect([thanen.completedAt, thanen.finalBosses]).toEqual(["2026-11-05T10:00:00.000Z", ["Durgen Dirgehammer"]]);
   });
 
-  test("Kills in beiden Alternativen: Bosse beider, beide Endbosse, jüngstes Datum, Anzahl zusammen", () => {
+  test("kills in both alternatives: bosses of both, both final bosses, latest date, summed count", () => {
     const v = buildInstancesView(
       defs,
       {
@@ -266,21 +266,21 @@ describe("Bosslisten und Stufen aus der gepflegten Datei", () => {
       null,
       INFO,
     );
-    const beide = v.dungeonTiers[0].dungeons[0];
-    expect(beide.bosses).toEqual([
+    const both = v.dungeonTiers[0].dungeons[0];
+    expect(both.bosses).toEqual([
       "Oggleflint", "Taragaman der Hungerleider", "Jergosh der Herbeirufer", "Bazzalan", "Faldrim Anvilmar", "Durgen Dirgehammer",
     ]);
-    expect(beide.finalBosses).toEqual(["Bazzalan", "Durgen Dirgehammer"]);
-    expect([beide.completedAt, beide.timesCompleted]).toEqual(["2026-11-05T10:00:00.000Z", 3]);
+    expect(both.finalBosses).toEqual(["Bazzalan", "Durgen Dirgehammer"]);
+    expect([both.completedAt, both.timesCompleted]).toEqual(["2026-11-05T10:00:00.000Z", 3]);
   });
 
-  test("Raids bekommen ihren Levelbereich", () => {
+  test("raids get their level range", () => {
     const v = buildInstancesView(defs, chordrak, null, INFO);
     expect(v.raids.map((r) => r.levels)).toEqual([{ min: 60, max: 60 }, null]);
   });
 });
 
-test("gepflegte Datei wird geprüft geladen", () => {
+test("maintained file is validated on load", () => {
   expect(toDungeonInfo({ stufe: [13, 18], bosse: ["A", 3] })).toEqual({ stufe: [13, 18], bosse: ["A"], statistik: [], ohneStatistik: false });
   expect(toDungeonInfo({ stufe: [13], bosse: "x" })).toEqual({ stufe: null, bosse: [], statistik: [], ohneStatistik: false });
   expect(toDungeonInfo({})).toEqual({ stufe: null, bosse: [], statistik: [], ohneStatistik: false });
@@ -292,8 +292,8 @@ test("gepflegte Datei wird geprüft geladen", () => {
   expect(DUNGEON_INFO["Flammenschlund"].bosse).toContain("Bazzalan");
 });
 
-describe("Zusatz-Dungeons ohne Erfolg", () => {
-  const verlies: ExtraDungeon = {
+describe("extra dungeons without an achievement", () => {
+  const stockade: ExtraDungeon = {
     name: "Das Verlies",
     tier: "Novize",
     info: { stufe: [24, 32], bosse: ["Targorr der Schreckliche", "Bazil Thredd"], statistik: [], ohneStatistik: false },
@@ -305,37 +305,37 @@ describe("Zusatz-Dungeons ohne Erfolg", () => {
     "Ausgrabungsstätte: Sumpfland": { stufe: [24, 29], bosse: [], statistik: [], ohneStatistik: false },
   };
 
-  test("erscheint in seiner Stufe nach Mindestlevel einsortiert", () => {
-    const v = buildInstancesView(defs, chordrak, null, info, [verlies]);
+  test("appears in its tier, sorted by minimum level", () => {
+    const v = buildInstancesView(defs, chordrak, null, info, [stockade]);
     const names = v.dungeonTiers[0].dungeons.map((d) => d.name);
     expect(names.slice(-3)).toEqual(["Burg Shadowfang", "Ausgrabungsstätte: Sumpfland", "Das Verlies"]);
     const d = v.dungeonTiers[0].dungeons.at(-1);
     expect(d).toMatchObject({ criterionId: -1, levels: { min: 24, max: 32 }, finalBosses: ["Bazil Thredd"], completed: false });
   });
 
-  test("Siege über den Endboss zählen als Abschluss und fehlen bei den weiteren Siegen", () => {
+  test("victories over the final boss count as completion and are missing from other victories", () => {
     const v = buildInstancesView(defs, {
       achievements: [],
       bossKills: [{ boss: "Bazil Thredd", instance: "Verlies von Stormwind", quantity: 3, lastAt: "2026-11-15T12:14:19.000Z" }],
-    }, null, info, [verlies]);
+    }, null, info, [stockade]);
     const d = v.dungeonTiers[0].dungeons.find((x) => x.name === "Das Verlies");
     expect(d).toMatchObject({ completed: true, timesCompleted: 3, completedAt: "2026-11-15T12:14:19.000Z" });
     expect(v.otherKills).toEqual([]);
   });
 
-  test("ohne Daten 0 Abschlüsse", () => {
+  test("0 completions without data", () => {
     for (const progress of [undefined, { achievements: [], bossKills: [] }]) {
-      const d = buildInstancesView(defs, progress, null, info, [verlies]).dungeonTiers[0].dungeons.find((x) => x.name === "Das Verlies");
+      const d = buildInstancesView(defs, progress, null, info, [stockade]).dungeonTiers[0].dungeons.find((x) => x.name === "Das Verlies");
       expect(d).toMatchObject({ completed: false, timesCompleted: 0, completedAt: null, kills: [] });
     }
   });
 
-  test("ohne passende Stufe eine eigene Gruppe", () => {
-    const v = buildInstancesView(defs, chordrak, null, info, [{ ...verlies, tier: "Meister" }]);
+  test("own group without a matching tier", () => {
+    const v = buildInstancesView(defs, chordrak, null, info, [{ ...stockade, tier: "Meister" }]);
     expect(v.dungeonTiers.map((t) => t.tier)).toEqual(["Novize", "Meister"]);
   });
 
-  test("Konfiguration: das Verlies steht mit Stufe, Quelle und Blizzard-Bild drin", () => {
+  test("configuration: Das Verlies is listed with level, source and Blizzard image", () => {
     const v = EXTRA_DUNGEONS.find((d) => d.name === "Das Verlies");
     expect(v).toMatchObject({ tier: "Novize", info: { stufe: [24, 32] }, source: { instance: "Verlies von Stormwind", finalBoss: "Bazil Thredd" } });
     expect(instanceImage("Das Verlies", null)).toBe("https://render.worldofwarcraft.com/eu/zones/the-stockade-small.jpg");
@@ -343,7 +343,7 @@ describe("Zusatz-Dungeons ohne Erfolg", () => {
   });
 });
 
-test("Zusatz-Dungeon landet vor dem ersten Dungeon mit höherem Mindestlevel", () => {
+test("extra dungeon lands before the first dungeon with a higher minimum level", () => {
   const extra: ExtraDungeon = {
     name: "Das Verlies", tier: "Novize", info: { stufe: [16, 20], bosse: [], statistik: [], ohneStatistik: false },
     source: { instance: "Verlies von Stormwind", finalBoss: "Bazil Thredd" }, image: null, faction: null, replaces: [],
@@ -353,34 +353,34 @@ test("Zusatz-Dungeon landet vor dem ersten Dungeon mit höherem Mindestlevel", (
   expect(names.slice(1, 4)).toEqual(["Ruinen von Lordaeron", "Das Verlies", "Höhlen des Wehklagens"]);
 });
 
-describe("Gegenstücke beider Fraktionen getrennt", () => {
-  const ersetzt = ["Flammenschlund oder Halle der Thanen", "Ragefireabgrund oder Halle der Thanen"];
-  const flamme: ExtraDungeon = {
+describe("counterparts of both factions separate", () => {
+  const replaced = ["Flammenschlund oder Halle der Thanen", "Ragefireabgrund oder Halle der Thanen"];
+  const ragefire: ExtraDungeon = {
     name: "Flammenschlund", tier: "Novize", info: DUNGEON_INFO["Flammenschlund"],
-    source: { instance: "Flammenschlund", finalBoss: "Bazzalan" }, image: null, faction: "HORDE", replaces: ersetzt,
+    source: { instance: "Flammenschlund", finalBoss: "Bazzalan" }, image: null, faction: "HORDE", replaces: replaced,
   };
-  const halle: ExtraDungeon = {
+  const hall: ExtraDungeon = {
     name: "Halle der Thanen", tier: "Novize", info: DUNGEON_INFO["Halle der Thanen"],
-    source: { instance: "Halle der Thanen", finalBoss: "Durgen Dirgehammer" }, image: null, faction: "ALLIANCE", replaces: ersetzt,
+    source: { instance: "Halle der Thanen", finalBoss: "Durgen Dirgehammer" }, image: null, faction: "ALLIANCE", replaces: replaced,
   };
-  const extras = [flamme, halle];
+  const extras = [ragefire, hall];
   const find = (v: ReturnType<typeof buildInstancesView>, name: string) =>
     v.dungeonTiers.flatMap((t) => t.dungeons).find((d) => d.name === name);
 
-  test("zwei eigene Einträge vorn statt des gemeinsamen Kriteriums", () => {
+  test("two own entries at the front instead of the shared criterion", () => {
     const v = buildInstancesView(defs, undefined, null, DUNGEON_INFO, extras, "HORDE");
     expect(v.dungeonTiers[0].dungeons.slice(0, 3).map((d) => d.name)).toEqual(["Flammenschlund", "Halle der Thanen", "Ruinen von Lordaeron"]);
     expect(v.dungeonTiers[0].dungeons.some((d) => d.description.includes(" oder "))).toBe(false);
   });
 
-  test("Horde: Bazzalan zählt für den Flammenschlund", () => {
+  test("Horde: Bazzalan counts for Flammenschlund", () => {
     const v = buildInstancesView(defs, chordrak, null, DUNGEON_INFO, extras, "HORDE");
     expect(find(v, "Flammenschlund")).toMatchObject({ completed: true, timesCompleted: 1, completedAt: BAZZALAN });
     expect(find(v, "Halle der Thanen")).toMatchObject({ completed: false, timesCompleted: 0 });
     expect(v.otherKills.map((k) => k.boss)).toEqual([]);
   });
 
-  test("Allianz: gespiegelter Bazzalan zählt nicht, Durgen Dirgehammer für die Halle", () => {
+  test("Alliance: mirrored Bazzalan does not count, Durgen Dirgehammer counts for the hall", () => {
     const v = buildInstancesView(defs, {
       achievements: [{ id: 62031, completed: false, criteria: [230766] }],
       bossKills: [
@@ -393,34 +393,34 @@ describe("Gegenstücke beider Fraktionen getrennt", () => {
     expect(v.otherKills).toEqual([]);
   });
 
-  test("erledigtes Kriterium ohne Statistik zeigt für die eigene Fraktion nur \"auf diesem Account\"", () => {
+  test("completed criterion without statistics shows only \"on this account\" for the own faction", () => {
     const progress = { achievements: [{ id: 64016, completed: false, criteria: [234135] }], bossKills: [] };
-    const allianz = buildInstancesView(defs, progress, null, DUNGEON_INFO, extras, "ALLIANCE");
-    expect(find(allianz, "Halle der Thanen")).toMatchObject({ completed: false, onAccount: true, timesCompleted: 0 });
-    expect(find(allianz, "Flammenschlund")).toMatchObject({ completed: false, onAccount: false });
+    const alliance = buildInstancesView(defs, progress, null, DUNGEON_INFO, extras, "ALLIANCE");
+    expect(find(alliance, "Halle der Thanen")).toMatchObject({ completed: false, onAccount: true, timesCompleted: 0 });
+    expect(find(alliance, "Flammenschlund")).toMatchObject({ completed: false, onAccount: false });
     const horde = buildInstancesView(defs, progress, null, DUNGEON_INFO, extras, "HORDE");
     expect(find(horde, "Flammenschlund")).toMatchObject({ completed: false, onAccount: true });
     expect(find(horde, "Halle der Thanen")).toMatchObject({ completed: false, onAccount: false });
   });
 
-  test("ohne Daten 0 Abschlüsse", () => {
+  test("0 completions without data", () => {
     const v = buildInstancesView(defs, undefined, null, DUNGEON_INFO, extras, "ALLIANCE");
     for (const name of ["Flammenschlund", "Halle der Thanen"]) expect(find(v, name)).toMatchObject({ completed: false, timesCompleted: 0 });
   });
 
-  test("Konfiguration: beide getrennt, Stufe und Bilder aus den gepflegten Angaben", () => {
+  test("configuration: both separate, level and images from the maintained data", () => {
     const byName = new Map(EXTRA_DUNGEONS.map((d) => [d.name, d]));
-    expect(byName.get("Flammenschlund")).toMatchObject({ faction: "HORDE", replaces: ersetzt, info: { stufe: [13, 18] } });
-    expect(byName.get("Halle der Thanen")).toMatchObject({ faction: "ALLIANCE", replaces: ersetzt, info: { stufe: [13, 18] } });
+    expect(byName.get("Flammenschlund")).toMatchObject({ faction: "HORDE", replaces: replaced, info: { stufe: [13, 18] } });
+    expect(byName.get("Halle der Thanen")).toMatchObject({ faction: "ALLIANCE", replaces: replaced, info: { stufe: [13, 18] } });
     expect(byName.get("Halle der Thanen")?.info.bosse.at(-1)).toBe("Durgen Dirgehammer");
     expect(instanceImage("Halle der Thanen", null)).toBe("/dungeons/halle-der-thanen.jpg");
   });
 });
 
-describe("Statistik-Namen aus config/dungeons.json", () => {
-  const meister: InstanceAchievementsRecord = { achievements: [def(62031, 0), loadDef(62033)] };
+describe("statistics names from config/dungeons.json", () => {
+  const masterDefs: InstanceAchievementsRecord = { achievements: [def(62031, 0), loadDef(62033)] };
   function loadDef(id: number): InstanceAchievement {
-    // Meister-Stufe ohne Fixture: Kriterien wie im statischen Datensatz.
+    // Meister tier without a fixture: criteria as in the static data set.
     const names = ["Hügel von Razorfen", "Uldaman", "Blackrocktiefen", "Stratholme: Lebendig", "Stratholme: Tot", "Düsterbruch: Ost", "Düsterbruch: Nord"];
     return { id, name: "Meister: Dungeonerforscher", kind: "dungeon", order: 1, rootDescription: null, criteria: names.map((description, i) => ({ id: 900 + i, description })) };
   }
@@ -428,8 +428,8 @@ describe("Statistik-Namen aus config/dungeons.json", () => {
   const find = (v: ReturnType<typeof buildInstancesView>, name: string) => all(v).find((d) => d.name === name)!;
   const kill = (boss: string, instance: string, quantity = 1) => ({ boss, instance, quantity, lastAt: "2026-11-20T20:00:00.000Z" });
 
-  test("abweichender Instanzname der Statistik zählt für den Dungeon", () => {
-    const v = buildInstancesView(meister, {
+  test("differing instance name of the statistics counts for the dungeon", () => {
+    const v = buildInstancesView(masterDefs, {
       achievements: [],
       bossKills: [kill("Erzmagier Arugal", "Burg Schattenfang", 2), kill("Imperator Dagran Thaurissan", "Schwarzfelstiefen")],
     }, null, DUNGEON_INFO);
@@ -438,8 +438,8 @@ describe("Statistik-Namen aus config/dungeons.json", () => {
     expect(v.otherKills).toEqual([]);
   });
 
-  test("gemeinsamer Instanzname mehrerer Flügel: der Endboss entscheidet", () => {
-    const v = buildInstancesView(meister, {
+  test("shared instance name of several wings: the final boss decides", () => {
+    const v = buildInstancesView(masterDefs, {
       achievements: [],
       bossKills: [kill("Baron Rivendare", "Stratholme"), kill("König Gordok", "Düsterbruch")],
     }, null, DUNGEON_INFO);
@@ -449,8 +449,8 @@ describe("Statistik-Namen aus config/dungeons.json", () => {
     expect(find(v, "Düsterbruch: Nord").completed).toBe(true);
   });
 
-  test("gebeugte Namen der Statistik (\"den\" statt \"der\") passen zum Endboss", () => {
-    const v = buildInstancesView(meister, {
+  test("inflected names in the statistics (\"den\" instead of \"der\") match the final boss", () => {
+    const v = buildInstancesView(masterDefs, {
       achievements: [],
       bossKills: [kill("Mutanus den Verschlinger", "Höhlen des Wehklagens", 2), kill("Amnennar den Kältebringer", "Hügel von Razorfen")],
     }, null, DUNGEON_INFO);
@@ -458,7 +458,7 @@ describe("Statistik-Namen aus config/dungeons.json", () => {
     expect(find(v, "Hügel von Razorfen")).toMatchObject({ completed: true, timesCompleted: 1 });
   });
 
-  test("Kathedrale: zwei gespiegelte Statistiken zählen als ein Abschluss", () => {
+  test("Kathedrale: two mirrored statistics count as one completion", () => {
     const sm: InstanceAchievementsRecord = {
       achievements: [{ id: 1, name: "Erfahren: Dungeonerforscher", kind: "dungeon", order: 0, rootDescription: null, criteria: [{ id: 1, description: "Scharlachrotes Kloster: Kathedrale" }] }],
     };
@@ -470,13 +470,13 @@ describe("Statistik-Namen aus config/dungeons.json", () => {
     expect(v.otherKills).toEqual([]);
   });
 
-  test("Dungeon ohne Statistik: nicht nachweisbar, mit Kriterium nur auf diesem Account", () => {
-    const sumpf = buildInstancesView(defs, { achievements: [{ id: 62031, completed: false, criteria: [230761] }], bossKills: [] }, null, DUNGEON_INFO);
-    expect(find(sumpf, "Ausgrabungsstätte: Sumpfland")).toMatchObject({ completed: false, onAccount: true, tracked: false });
-    expect(find(sumpf, "Todesminen")).toMatchObject({ tracked: true });
+  test("dungeon without statistics: not provable, with criterion only on this account", () => {
+    const swamp = buildInstancesView(defs, { achievements: [{ id: 62031, completed: false, criteria: [230761] }], bossKills: [] }, null, DUNGEON_INFO);
+    expect(find(swamp, "Ausgrabungsstätte: Sumpfland")).toMatchObject({ completed: false, onAccount: true, tracked: false });
+    expect(find(swamp, "Todesminen")).toMatchObject({ tracked: true });
   });
 
-  test("Dalaran: Endboss ist der Schemen des Erzmagiers, Lyn allein schließt nicht ab", () => {
+  test("Dalaran: final boss is der Schemen des Erzmagiers, Lyn alone does not complete", () => {
     const dal: InstanceAchievementsRecord = {
       achievements: [{ id: 1, name: "Erfahren: Dungeonerforscher", kind: "dungeon", order: 0, rootDescription: null, criteria: [{ id: 1, description: "Dalaran" }] }],
     };

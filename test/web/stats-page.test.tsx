@@ -171,7 +171,7 @@ test("Alte Adresse /aktivitaet landet im Reiter Aktivität", async () => {
 
 test("Gildenstatistik: Kuriositäten-Wand mit verschiedenen Formen, Gildenfilter und Zeitraum", async () => {
   const horde: StatsView = { ...gesamt, guild: "bärenklaue" };
-  const fetch = mockFetch({ "/api/stats": gesamt, "/api/stats/woche": woche, [`/api/stats?gilde=${encodeURIComponent("bärenklaue")}`]: horde });
+  const fetch = mockFetch({ "/api/stats": gesamt, "/api/stats/week": woche, [`/api/stats?guild=${encodeURIComponent("bärenklaue")}`]: horde });
   renderAt("/statistik/gilde");
   expect(await screen.findByRole("heading", { name: "Wer hat am häufigsten ins Gras gebissen?" })).toBeTruthy();
   expect(screen.getByText(/Gesamt seit dem Serverstart am 05\.11\.2026/).textContent).toMatch(/· 2 Charaktere$/);
@@ -204,7 +204,7 @@ test("Gildenstatistik: Kuriositäten-Wand mit verschiedenen Formen, Gildenfilter
   fireEvent.click(screen.getByRole("radio", { name: "Bärenklaue" }));
   expect(await screen.findByRole("list", { name: "Hitparade: Wir reden, wir winken, wir jubeln" })).toBeTruthy();
   expect(screen.getByTestId("ort").textContent).toBe(`/statistik/gilde?gilde=${encodeURIComponent("bärenklaue")}`);
-  expect(fetch).toHaveBeenCalledWith(`/api/stats?gilde=${encodeURIComponent("bärenklaue")}`, expect.anything());
+  expect(fetch).toHaveBeenCalledWith(`/api/stats?guild=${encodeURIComponent("bärenklaue")}`, expect.anything());
 
   fireEvent.click(screen.getByRole("radio", { name: "Alle" }));
   fireEvent.click(await screen.findByRole("radio", { name: "Woche" }));
@@ -221,12 +221,12 @@ test("Gildenstatistik: ein einzelner Charakter steht in der Einzahl", async () =
 });
 
 test("Gildenstatistik: Woche aus der Adresse, Auswahl weiterer Wochen", async () => {
-  const fetch = mockFetch({ "/api/stats/woche/2026-11-14": { ...gesamt, kind: "woche", id: "2026-11-14", before: "2026-11-07" } });
+  const fetch = mockFetch({ "/api/stats/week/2026-11-14": { ...gesamt, kind: "woche", id: "2026-11-14", before: "2026-11-07" } });
   renderAt("/statistik/gilde?zeitraum=woche&woche=2026-11-14");
   const auswahl = (await screen.findByLabelText("Woche")) as HTMLSelectElement;
   expect([...auswahl.options].map((o) => o.textContent)).toEqual(["Woche vom 15.11. bis 21.11.", "Woche vom 08.11. bis 14.11."]);
   expect(auswahl.value).toBe("2026-11-14");
-  expect(fetch).toHaveBeenCalledWith("/api/stats/woche/2026-11-14", expect.anything());
+  expect(fetch).toHaveBeenCalledWith("/api/stats/week/2026-11-14", expect.anything());
 });
 
 test("Dungeons und Raids: Abenteuerkarte, Highlights, Raids und Gildenfilter", async () => {
@@ -239,7 +239,7 @@ test("Dungeons und Raids: Abenteuerkarte, Highlights, Raids und Gildenfilter", a
     raids: [{ name: "Onyxia", image: null, levels: { min: 60, max: 60 }, completed: 0, bosses: [{ name: "Onyxia", defeated: 0 }], who: [] }],
     frontier: { dungeon: "Flammenschlund", characters: [ref(1, "Anna", 5)] },
   };
-  const fetch = mockFetch({ "/api/dungeons": dungeons, [`/api/dungeons?gilde=${encodeURIComponent("goldene-bärenklaue")}`]: { ...dungeons, guild: "goldene-bärenklaue" } });
+  const fetch = mockFetch({ "/api/dungeons": dungeons, [`/api/dungeons?guild=${encodeURIComponent("goldene-bärenklaue")}`]: { ...dungeons, guild: "goldene-bärenklaue" } });
   renderAt("/statistik/dungeons");
   expect(await screen.findByRole("heading", { name: "Abenteuerkarte" })).toBeTruthy();
   expect(screen.getByRole("tab", { name: "Dungeons und Raids" }).getAttribute("aria-selected")).toBe("true");
@@ -257,7 +257,7 @@ test("Dungeons und Raids: Abenteuerkarte, Highlights, Raids und Gildenfilter", a
   fireEvent.click(screen.getByRole("radio", { name: "Goldene Bärenklaue" }));
   expect(await screen.findByTestId("ort")).toBeTruthy();
   expect(screen.getByTestId("ort").textContent).toBe(`/statistik/dungeons?gilde=${encodeURIComponent("goldene-bärenklaue")}`);
-  expect(fetch).toHaveBeenCalledWith(`/api/dungeons?gilde=${encodeURIComponent("goldene-bärenklaue")}`, expect.anything());
+  expect(fetch).toHaveBeenCalledWith(`/api/dungeons?guild=${encodeURIComponent("goldene-bärenklaue")}`, expect.anything());
 });
 
 test("Dungeons ohne Statistik: kein Nebel, kein \"noch niemand\", kein Gildenziel", async () => {
@@ -314,16 +314,16 @@ test("Gildenstatistik: Karte mit Werten ist klickbar und lädt ihre Mitglieder e
   const fetch = mockFetch({
     "/api/stats": klickbar,
     "/api/guild": guild,
-    "/api/stats?karte=tode": { slug: "tode", stats: [{ id: 60, entries: [[1, 1000], [2, 234]] }, { id: 114, entries: [[2, 34]] }] },
+    "/api/stats?card=tode": { slug: "tode", stats: [{ id: 60, entries: [[1, 1000], [2, 234]] }, { id: 114, entries: [[2, 34]] }] },
   });
   renderAt("/statistik/gilde");
   await screen.findByText("Wer hat am häufigsten ins Gras gebissen?");
-  expect(fetch).not.toHaveBeenCalledWith("/api/stats?karte=tode", expect.anything());
+  expect(fetch).not.toHaveBeenCalledWith("/api/stats?card=tode", expect.anything());
   // Leere Karte und Karten ohne Mitglieder bleiben, wie sie sind
   expect(screen.getAllByRole("button", { name: /^Alle .*ansehen: / })).toHaveLength(1);
   fireEvent.click(screen.getByRole("button", { name: "Alle 2 ansehen: Wer hat am häufigsten ins Gras gebissen?" }));
   const dialog = await screen.findByRole("dialog", { name: "Wer hat am häufigsten ins Gras gebissen?" });
-  expect(fetch).toHaveBeenCalledWith("/api/stats?karte=tode", expect.anything());
+  expect(fetch).toHaveBeenCalledWith("/api/stats?card=tode", expect.anything());
   await within(dialog).findByRole("table");
   const rows = within(dialog).getAllByRole("row").slice(1);
   expect(rows.map((r) => r.querySelector("a")?.textContent)).toEqual(["Anna", "Bodo"]);
@@ -381,7 +381,7 @@ function renderIn(sprache: Sprache, path: string) {
 }
 
 test("Gildenstatistik auf Schwäbisch: Karten, Bedienelemente und Hinweise in der schwäbischen Fassung", async () => {
-  mockFetch({ "/api/stats": gesamt, "/api/stats/woche": woche });
+  mockFetch({ "/api/stats": gesamt, "/api/stats/week": woche });
   renderIn("schwaebisch", "/statistik/gilde");
   expect(await screen.findByRole("heading", { name: "Wer hat am öftesten ins Gras bissa?" })).toBeTruthy();
   expect(screen.getByRole("tab", { name: "Gildestatistik" }).getAttribute("aria-selected")).toBe("true");
@@ -401,7 +401,7 @@ test("Gildenstatistik auf Schwäbisch: Karten, Bedienelemente und Hinweise in de
 });
 
 test("Gildenstatistik auf Bayrisch: eigene Fassungen für Karten und Hinweise", async () => {
-  mockFetch({ "/api/stats": gesamt, "/api/stats/woche": woche });
+  mockFetch({ "/api/stats": gesamt, "/api/stats/week": woche });
   renderIn("bayrisch", "/statistik/gilde");
   expect(await screen.findByRole("heading", { name: "Wer hod am öftan ins Gras bissn?" })).toBeTruthy();
   expect(screen.getByText(/Gsamt seit'm Serverstart am 05\.11\.2026/)).toBeTruthy();
