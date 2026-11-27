@@ -72,7 +72,9 @@ npm run build
 ## Code style
 
 - TypeScript, React with function components, no new dependencies without a good reason.
-- Identifiers, comments and texts are mostly German; fields from the Blizzard API stay as they are.
+- New code, identifiers, comments, tests and log messages are in English. Older code is still partly German and is
+  being migrated in dedicated pull requests; fields from the Blizzard API stay as they are. Notes for AI coding
+  agents: [AGENTS.md](AGENTS.md).
 - Every visible text has a German and an English version (`Fassungen` from `src/sprache.ts`). Swabian and
   Bavarian are optional.
 - No em dashes (U+2014) in texts.

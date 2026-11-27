@@ -73,7 +73,9 @@ npm run build
 ## Code-Stil
 
 - TypeScript, React mit Funktionskomponenten, keine neuen Abhängigkeiten ohne guten Grund.
-- Bezeichner, Kommentare und Texte sind meist Deutsch; Felder der Blizzard-API bleiben, wie sie sind.
+- Neuer Code, Bezeichner, Kommentare, Tests und Logmeldungen sind englisch. Älterer Code ist noch teils deutsch und
+  wird in eigenen Pull Requests umgestellt; Felder der Blizzard-API bleiben, wie sie sind. Hinweise für
+  KI-Coding-Agenten: [AGENTS.md](AGENTS.md).
 - Jeder sichtbare Text hat eine deutsche und eine englische Fassung (`Fassungen` aus `src/sprache.ts`).
   Schwäbisch und Bayrisch sind freiwillig.
 - Keine Gedankenstriche (U+2014) in Texten.
