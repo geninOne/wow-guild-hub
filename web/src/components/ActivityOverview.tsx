@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ActivityView } from "../../../src/api/types";
 import { useApi } from "../lib/api";
-import { dayTotals, formatRange, hourRange, peak, wochentage } from "../lib/fun";
+import { dayTotals, formatRange, hourRange, peak, weekdayNames } from "../lib/fun";
 import { useSprache, type Fassungen } from "../lib/sprache";
 import { DataState } from "./DataState";
 import { GuildFilter } from "./GuildFilter";
@@ -46,7 +46,7 @@ const T = {
 
 function ActivityContent({ view }: { view: ActivityView }) {
   const { t, sprache } = useSprache();
-  const tage = wochentage(sprache);
+  const tage = weekdayNames(sprache);
   const [guildSlug, setGuildSlug] = useState<string | null>(null);
   const data = guildSlug === null ? view.all : (view.byGuild[guildSlug] ?? view.all);
   const hourPeak = peak(data.cells);

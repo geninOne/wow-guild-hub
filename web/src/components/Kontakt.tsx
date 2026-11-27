@@ -1,4 +1,4 @@
-import { seite, type Impressum } from "../lib/seite";
+import { site, type Imprint } from "../lib/site";
 import { useSprache, type Fassungen } from "../lib/sprache";
 
 /** Hinweis über Rechtstexten: In den anderen Sprachen bleibt der Rechtstext Deutsch. */
@@ -17,17 +17,17 @@ export function RechtstextHinweis() {
 }
 
 /** Angaben aus `WEBSITE_IMPRINT_…`; die Rechtsseiten erscheinen nur, wenn ein Name gesetzt ist. */
-export function impressum(): Impressum {
-  return seite().impressum ?? { name: "", anschrift: [], email: null };
+export function impressum(): Imprint {
+  return site().imprint ?? { name: "", address: [], email: null };
 }
 
 /** Name und Anschrift, auf Wunsch mit E-Mail. */
 export function Anschrift({ mitEmail = false }: { mitEmail?: boolean }) {
-  const { name, anschrift, email } = impressum();
+  const { name, address, email } = impressum();
   return (
     <address className="legal-address">
       {name}
-      {anschrift.map((zeile) => (
+      {address.map((zeile) => (
         <span key={zeile}>
           <br />
           {zeile}

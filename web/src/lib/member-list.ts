@@ -1,9 +1,9 @@
 import type { MemberRow, MemberValue } from "../../../src/api/types";
 
-/** Ein Eintrag für die Mitgliederliste: nur die ID oder [ID, Wert] wie aus der API. */
+/** An entry for the member list: just the ID or [ID, value] as from the API. */
 export type MemberEntry = number | MemberValue;
 
-/** Eine Zeile der Mitgliederliste, aus Eintrag und Mitgliederdaten von `/api/guild` zusammengesetzt. */
+/** A row of the member list, combined from the entry and the member data from `/api/guild`. */
 export interface MemberListRow {
   id: number;
   name: string;
@@ -11,24 +11,24 @@ export interface MemberListRow {
   classId: number;
   className: string;
   raceName: string;
-  /** null, wenn der Charakter nicht mehr in der Mitgliederliste steht. */
+  /** null when the character is no longer on the member list. */
   level: number | null;
   guildSlug: string;
   former: boolean;
-  /** false für Charaktere, die `/api/guild` nicht kennt; sie werden ohne Link gezeigt. */
+  /** false for characters unknown to `/api/guild`; they are shown without a link. */
   known: boolean;
-  /** Wert, um den es bei der Karte geht; null ohne Wertspalte. */
+  /** The value the card is about; null without a value column. */
   value: number | null;
 }
 
 export type MemberListSortKey = "name" | "className" | "raceName" | "level" | "value";
 
-/** Ab so vielen Einträgen gibt es eine Suche nach Namen. */
+/** From this many entries on there is a name search. */
 export const MEMBER_SEARCH_FROM = 15;
 
 /**
- * Setzt die Einträge mit den Mitgliederdaten zusammen. Unbekannte IDs bleiben als Platzhalter "Unbekannt" drin,
- * damit die Liste zur Zahl auf der Karte passt; doppelte IDs zählen einmal.
+ * Combines the entries with the member data. Unknown IDs stay in as an "Unbekannt" placeholder so the list
+ * matches the number on the card; duplicate IDs count once.
  */
 export function resolveMembers(entries: readonly MemberEntry[], members: readonly MemberRow[], unknownName = "Unbekannt"): MemberListRow[] {
   const byId = new Map(members.map((m) => [m.id, m]));
@@ -55,7 +55,7 @@ export function resolveMembers(entries: readonly MemberEntry[], members: readonl
 }
 
 /**
- * Filtert nach Gilde (null: alle, Unbekannte nur dann) und nach Namensteil, ohne Groß- und Kleinschreibung.
+ * Filters by guild (null: all, unknown ones only then) and by part of the name, case-insensitive.
  */
 export function filterMemberList(rows: readonly MemberListRow[], guildSlug: string | null, text: string): MemberListRow[] {
   const needle = text.trim().toLocaleLowerCase("de");
@@ -68,7 +68,7 @@ export function filterMemberList(rows: readonly MemberListRow[], guildSlug: stri
 
 const compareText = (a: string, b: string) => a.localeCompare(b, "de", { sensitivity: "base" });
 
-/** Sortiert nach Spalte; fehlende Werte stehen immer unten, Gleichstand nach Name. */
+/** Sorts by column; missing values always come last, ties by name. */
 export function sortMemberList(rows: readonly MemberListRow[], key: MemberListSortKey, dir: "asc" | "desc"): MemberListRow[] {
   const sign = dir === "asc" ? 1 : -1;
   return [...rows].sort((a, b) => {
@@ -85,12 +85,12 @@ export function sortMemberList(rows: readonly MemberListRow[], key: MemberListSo
   });
 }
 
-/** Erste Sortierung: Zahlen absteigend, Texte aufsteigend. */
+/** Initial sort direction: numbers descending, texts ascending. */
 export function defaultDirection(key: MemberListSortKey): "asc" | "desc" {
   return key === "level" || key === "value" ? "desc" : "asc";
 }
 
-/** IDs der aktiven Mitglieder ab einem Mindestlevel, etwa alle auf Level 60; Gilde null für alle. */
+/** IDs of the active members from a minimum level on, e.g. all at level 60; guild null for all. */
 export function activeMemberIds(members: readonly MemberRow[], guildSlug: string | null, minLevel = 1): number[] {
   return members
     .filter((m) => !m.former && (guildSlug === null || m.guildSlug === guildSlug) && m.level >= minLevel)

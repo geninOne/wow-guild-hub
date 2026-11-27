@@ -2,9 +2,9 @@ import { Link, Navigate, NavLink, Route, Routes } from "react-router";
 import { DiscordLink } from "./components/DiscordLink";
 import { OBERFLAECHEN_ERWEITERUNGEN } from "./erweiterungen";
 import { Sprachumschalter } from "./components/Sprachumschalter";
-import { seite } from "./lib/seite";
+import { site } from "./lib/site";
 import { SpracheProvider, useSprache, type Fassungen } from "./lib/sprache";
-import { versionsText } from "./lib/version";
+import { versionText } from "./lib/version";
 import { ZeitungArchivePage, ZeitungPage } from "./pages/ZeitungPage";
 import { CharacterPage } from "./pages/CharacterPage";
 import { DatenschutzPage } from "./pages/DatenschutzPage";
@@ -51,15 +51,15 @@ const EigenerDatenschutz = OBERFLAECHEN_ERWEITERUNGEN.find((e) => e.datenschutzS
 export default function App() {
   return (
     <SpracheProvider>
-      <Seite />
+      <Site />
     </SpracheProvider>
   );
 }
 
-function Seite() {
+function Site() {
   const { t, sprache } = useSprache();
-  const version = versionsText(import.meta.env.VITE_VERSION, import.meta.env.VITE_VERSION_DATUM, sprache === "en");
-  const { name, logo, logoAlt, untertitel, impressum } = seite();
+  const version = versionText(import.meta.env.VITE_VERSION, import.meta.env.VITE_VERSION_DATUM, sprache === "en");
+  const { name, logo, logoAlt, tagline, imprint } = site();
   return (
     <div className="site">
       <header className="site-header">
@@ -102,20 +102,20 @@ function Seite() {
           <Route path="/zeitung" element={<ZeitungPage />} />
           <Route path="/zeitung/archiv" element={<ZeitungArchivePage />} />
           <Route path="/zeitung/:woche" element={<ZeitungPage />} />
-          {impressum && <Route path="/impressum" element={<EigenesImpressum />} />}
-          {impressum && <Route path="/datenschutz" element={<EigenerDatenschutz />} />}
+          {imprint && <Route path="/impressum" element={<EigenesImpressum />} />}
+          {imprint && <Route path="/datenschutz" element={<EigenerDatenschutz />} />}
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
       <footer className="site-footer">
-        {untertitel && <p className="site-footer-guilds">{untertitel}</p>}
-        {seite().discord && (
+        {tagline && <p className="site-footer-guilds">{tagline}</p>}
+        {site().discord && (
           <p>
             <DiscordLink className="footer-discord" />
           </p>
         )}
         <p>{t(T.herkunft)}</p>
-        {impressum && (
+        {imprint && (
           <nav className="footer-legal" aria-label={t(T.rechtliches)}>
             <Link to="/impressum">{t(T.impressum)}</Link>
             <Link to="/datenschutz">{t(T.datenschutz)}</Link>

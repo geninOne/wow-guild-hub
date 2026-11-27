@@ -4,9 +4,9 @@ export interface MemberFilter {
   text: string;
   classId: number | null;
   rank: number | null;
-  /** Rang gilt nur in dieser Gilde (Rangnamen unterscheiden sich je Gilde); fehlt oder null: in jeder Gilde. */
+  /** The rank applies only in this guild (rank names differ per guild); missing or null: in every guild. */
   rankGuildSlug?: string | null;
-  /** Slug der Gilde, null für alle Gilden. */
+  /** Slug of the guild, null for all guilds. */
   guildSlug: string | null;
   showFormer: boolean;
 }
@@ -30,20 +30,20 @@ export function filterMembers(rows: MemberRow[], f: MemberFilter): MemberRow[] {
 }
 
 export interface RankOption {
-  /** Wert für das Auswahlfeld: `3` (jede Gilde) oder `bärenklaue:3` (nur diese Gilde). */
+  /** Value for the select field: `3` (any guild) or `bärenklaue:3` (only this guild). */
   value: string;
   label: string;
 }
 
 export interface RankGroup {
-  /** Gildenname als Gruppentitel, null für eine einfache Liste. */
+  /** Guild name as group title, null for a plain list. */
   label: string | null;
   options: RankOption[];
 }
 
 /**
- * Auswahl für den Rang-Filter. Bei einer gewählten Gilde und bei "Alle", wenn jede Rangnummer in allen
- * Gilden gleich heißt, eine einfache Liste. Heißt dieselbe Nummer je Gilde anders, nach Gilde gruppiert.
+ * Options for the rank filter. A plain list for a selected guild, and for "Alle" when every rank number has
+ * the same name in all guilds. Grouped by guild when the same number has different names per guild.
  */
 export function rankGroups(ranks: GuildView["ranks"], guilds: GuildRef[], guildSlug: string | null): RankGroup[] {
   const relevant = guildSlug === null ? ranks : ranks.filter((r) => r.guildSlug === guildSlug);
@@ -72,7 +72,7 @@ export function rankGroups(ranks: GuildView["ranks"], guilds: GuildRef[], guildS
     .filter((g) => g.options.length > 0);
 }
 
-/** Auswahlwert aus `rankGroups` zurück in Rang und optionale Gilde. */
+/** Turns a select value from `rankGroups` back into rank and optional guild. */
 export function parseRankValue(value: string): { rank: number | null; rankGuildSlug: string | null } {
   if (value === "") return { rank: null, rankGuildSlug: null };
   const at = value.lastIndexOf(":");
@@ -110,7 +110,7 @@ export function classDistribution(rows: MemberRow[]): { classId: number; classNa
   return [...byClass.values()].sort((a, b) => b.count - a.count || compareText(a.className, b.className));
 }
 
-/** Levelstufen der Levelverteilung: Zehnerschritte, die Höchststufe 60 für sich. */
+/** Level bands of the level distribution: steps of ten, the maximum level 60 on its own. */
 export const LEVEL_BANDS: { from: number; to: number }[] = [
   { from: 1, to: 9 },
   { from: 10, to: 19 },
@@ -121,7 +121,7 @@ export const LEVEL_BANDS: { from: number; to: number }[] = [
   { from: 60, to: 60 },
 ];
 
-/** Aktive Mitglieder je Levelstufe, niedrigste Stufe zuerst, auch leere Stufen. */
+/** Active members per level band, lowest band first, including empty bands. */
 export function levelDistribution(rows: MemberRow[]): { label: string; from: number; to: number; count: number }[] {
   const active = rows.filter((r) => !r.former);
   return LEVEL_BANDS.map((b) => ({
@@ -132,9 +132,9 @@ export function levelDistribution(rows: MemberRow[]): { label: string; from: num
 }
 
 export interface RaceFilter {
-  /** Klasse, null für alle Klassen. */
+  /** Class, null for all classes. */
   classId: number | null;
-  /** Levelspanne (beide Enden inklusive), null für alle Level. */
+  /** Level range (both ends inclusive), null for all levels. */
   band: { from: number; to: number } | null;
 }
 
@@ -142,11 +142,11 @@ export interface RaceSlice {
   raceId: number;
   raceName: string;
   count: number;
-  /** Anteil an allen Treffern, 0 bis 1. */
+  /** Share of all hits, 0 to 1. */
   share: number;
 }
 
-/** Aktive Mitglieder je Volk nach Klasse und Levelspanne, häufigstes Volk zuerst, Gleichstand alphabetisch. */
+/** Active members per race by class and level range, most common race first, ties alphabetically. */
 export function raceDistribution(rows: MemberRow[], filter: RaceFilter): RaceSlice[] {
   const { classId, band } = filter;
   const hits = rows.filter(

@@ -1,4 +1,4 @@
-/** Ein Tortenstück als SVG-Pfad, Winkel im Uhrzeigersinn ab zwölf Uhr. */
+/** A pie slice as an SVG path, angles clockwise from twelve o'clock. */
 export interface PieArc {
   start: number;
   end: number;
@@ -12,8 +12,8 @@ function point(cx: number, cy: number, r: number, angle: number): string {
 }
 
 /**
- * Teilt einen Kreis nach den Werten in Stücke. Ein Wert allein ergibt einen vollen Kreis (zwei Halbbögen,
- * weil ein einzelner SVG-Bogen mit gleichem Start und Ende nichts zeichnet). Nullwerte ergeben leere Pfade.
+ * Splits a circle into slices by the values. A single value gives a full circle (two half arcs, because a
+ * single SVG arc with identical start and end draws nothing). Zero values give empty paths.
  */
 export function pieArcs(values: number[], cx: number, cy: number, r: number): PieArc[] {
   const total = values.reduce((sum, v) => sum + v, 0);

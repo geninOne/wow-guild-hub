@@ -30,7 +30,7 @@ function mitDialekten() {
   vi.stubEnv("WEBSITE_LANGUAGES", "de,schwaebisch,bayrisch,en");
 }
 
-function seite() {
+function site() {
   return render(
     <MemoryRouter initialEntries={["/impressum"]}>
       <App />
@@ -41,7 +41,7 @@ function seite() {
 const umschalter = (name = "Sprache") => screen.getByRole("combobox", { name }) as HTMLSelectElement;
 
 test("Standard ist Deutsch, der Umschalter bietet ohne Angabe Deutsch und Englisch", () => {
-  seite();
+  site();
   expect(umschalter().value).toBe("de");
   expect([...umschalter().options].map((o) => o.textContent)).toEqual(["Deutsch", "English"]);
   expect(umschalter().closest("header")).toBeTruthy();
@@ -50,21 +50,21 @@ test("Standard ist Deutsch, der Umschalter bietet ohne Angabe Deutsch und Englis
 
 test("Mit WEBSITE_LANGUAGES bietet der Umschalter auch die Dialekte, Deutsch vorn", () => {
   mitDialekten();
-  seite();
+  site();
   expect(umschalter().value).toBe("de");
   expect([...umschalter().options].map((o) => o.textContent)).toEqual(["Deutsch", "Schwäbisch", "Bayrisch", "English"]);
 });
 
 test("Nur Deutsch angeboten: kein Umschalter", () => {
   vi.stubEnv("WEBSITE_LANGUAGES", "de");
-  seite();
+  site();
   expect(screen.queryByRole("combobox", { name: "Sprache" })).toBeNull();
   expect(angeboteneSprachen()).toEqual(["de"]);
 });
 
 test("Umschalten ändert die Texte sofort und merkt die Wahl im Browser", () => {
   mitDialekten();
-  seite();
+  site();
   fireEvent.change(umschalter(), { target: { value: "schwaebisch" } });
   expect(screen.getByText(/^Daten aus dr Blizzard-API, jede Stond frisch/)).toBeTruthy();
   expect(window.localStorage.getItem(SPRACH_SCHLUESSEL)).toBe("schwaebisch");
@@ -85,7 +85,7 @@ test("Umschalten ändert die Texte sofort und merkt die Wahl im Browser", () => 
 test("Eine gemerkte Wahl gilt beim nächsten Besuch", () => {
   mitDialekten();
   window.localStorage.setItem(SPRACH_SCHLUESSEL, "bayrisch");
-  seite();
+  site();
   expect(umschalter("Sprach").value).toBe("bayrisch");
   expect(screen.getByText(/^Daten aus da Blizzard-API, jede Stund frisch/)).toBeTruthy();
 });
@@ -93,7 +93,7 @@ test("Eine gemerkte Wahl gilt beim nächsten Besuch", () => {
 test("Browser auf Englisch ohne gemerkte Wahl ergibt Englisch", () => {
   browserSprache("en-US");
   expect(gemerkteSprache()).toBe("en");
-  seite();
+  site();
   expect(umschalter("Language").value).toBe("en");
   const nav = screen.getByRole("navigation", { name: "Main navigation" });
   expect([...nav.querySelectorAll("a")].map((a) => a.textContent)).toEqual(["Guild", "Professions", "Statistics", "Titles", "Weekly"]);
@@ -127,7 +127,7 @@ test("Gesperrter Speicher: Browsersprache gilt, Umschalten klappt trotzdem ohne 
   });
   expect(gemerkteSprache()).toBe("de");
   expect(() => spracheMerken("schwaebisch")).not.toThrow();
-  seite();
+  site();
   fireEvent.change(umschalter(), { target: { value: "schwaebisch" } });
   expect(umschalter("Sproch").value).toBe("schwaebisch");
 });

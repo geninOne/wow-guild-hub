@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { WrappedView } from "../../../src/api/types";
 import { useApi } from "../lib/api";
-import { formatPlainDate, formatPlainDayMonth, hourRange, monthLabel, weekLabel, wochentage } from "../lib/fun";
-import { seite } from "../lib/seite";
+import { formatPlainDate, formatPlainDayMonth, hourRange, monthLabel, weekLabel, weekdayNames } from "../lib/fun";
+import { site } from "../lib/site";
 import { useSprache, type Fassungen } from "../lib/sprache";
 import { DataState } from "./DataState";
 import { TitleBadge } from "./TitleBadge";
@@ -108,7 +108,7 @@ const count = (n: number | null, plus = true) => (n === null ? null : `${plus &&
 function Card({ view, onMonth }: { view: WrappedView; onMonth(month: string): void }) {
   const { t, sprache } = useSprache();
   const c = view.character;
-  const marke = t(T.rueckblick)(seite().name);
+  const marke = t(T.rueckblick)(site().name);
   return (
     <>
       <div className="wrapped-toolbar">
@@ -187,7 +187,7 @@ function Card({ view, onMonth }: { view: WrappedView; onMonth(month: string): vo
           <span className="wrapped-stat-label">{t(T.lieblingszeit)}</span>
           {view.favoriteHour !== null && view.favoriteWeekday !== null ? (
             <strong>
-              {wochentage(sprache)[view.favoriteWeekday]}s, {hourRange(view.favoriteHour, sprache)}
+              {weekdayNames(sprache)[view.favoriteWeekday]}s, {hourRange(view.favoriteHour, sprache)}
             </strong>
           ) : (
             <strong className="wrapped-stat-none">{t(T.keineDaten)}</strong>

@@ -1,10 +1,10 @@
 /**
- * Versionszeile für den Fußbereich, z. B. `Version 1.0.0 vom 06.11.2026`. Version und Datum (JJJJ-MM-TT)
- * setzt Vite beim Bauen ein (siehe `web/vite.config.ts`). Ohne Version gibt es keine Zeile.
+ * Version line for the footer, e.g. `Version 1.0.0 vom 06.11.2026`. Vite inserts version and date (YYYY-MM-DD)
+ * at build time (see `web/vite.config.ts`). Without a version there is no line.
  */
-export function versionsText(version: string | undefined, isoDatum: string | undefined, englisch = false): string | null {
+export function versionText(version: string | undefined, isoDate: string | undefined, english = false): string | null {
   if (!version) return null;
-  const datum = /^(\d{4})-(\d{2})-(\d{2})$/.exec(isoDatum ?? "");
-  if (!datum) return `Version ${version}`;
-  return englisch ? `Version ${version}, ${datum[1]}-${datum[2]}-${datum[3]}` : `Version ${version} vom ${datum[3]}.${datum[2]}.${datum[1]}`;
+  const date = /^(\d{4})-(\d{2})-(\d{2})$/.exec(isoDate ?? "");
+  if (!date) return `Version ${version}`;
+  return english ? `Version ${version}, ${date[1]}-${date[2]}-${date[3]}` : `Version ${version} vom ${date[3]}.${date[2]}.${date[1]}`;
 }

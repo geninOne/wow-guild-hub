@@ -3,7 +3,7 @@ import type { CharacterSpec, TalentNode } from "../../../src/model";
 
 export type NodeState = "empty" | "partial" | "max";
 
-/** Rang je talentId über alle Bäume des Charakters. */
+/** Rank per talentId across all of the character's trees. */
 export function talentRanks(specs: CharacterSpec[]): Map<number, number> {
   const ranks = new Map<number, number>();
   for (const spec of specs) {
@@ -12,7 +12,7 @@ export function talentRanks(specs: CharacterSpec[]): Map<number, number> {
   return ranks;
 }
 
-/** Voraussetzungspfeile aus `lockedBy`, nur wenn Quelle und Ziel im Raster stehen. */
+/** Prerequisite arrows from `lockedBy`, only when source and target are on the grid. */
 export function arrowsFor(spec: SpecLayout): { from: PlacedTalent; to: PlacedTalent }[] {
   const byId = new Map(spec.nodes.map((n) => [n.nodeId, n]));
   const arrows: { from: PlacedTalent; to: PlacedTalent }[] = [];
@@ -25,7 +25,7 @@ export function arrowsFor(spec: SpecLayout): { from: PlacedTalent; to: PlacedTal
   return arrows;
 }
 
-/** Sonderknoten unter dem Baum: nicht ausgeblendete immer, ausgeblendete nur mit Punkten. */
+/** Special nodes below the tree: visible ones always, hidden ones only with points. */
 export function visibleUnplaced(spec: SpecLayout, ranks: Map<number, number>): UnplacedTalent[] {
   return spec.unplaced.filter((n) => !n.hidden || (ranks.get(n.talentId) ?? 0) > 0);
 }
@@ -39,7 +39,7 @@ export function talentName(node: TalentNode): string {
   return node.name.trim() || "Unbenanntes Talent";
 }
 
-/** Beschreibung eines Rangs, leer wenn der Baum sie nicht kennt. */
+/** Description of a rank, empty when the tree does not know it. */
 export function rankDescription(node: TalentNode, rank: number): string {
   return node.ranks.find((r) => r.rank === rank)?.description ?? "";
 }

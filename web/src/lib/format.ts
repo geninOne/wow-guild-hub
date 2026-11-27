@@ -1,23 +1,23 @@
 const ZONE = "Europe/Berlin";
 
 /**
- * Sprache für Zahlen und Datumsangaben. Setzt der SpracheProvider bei jedem Wechsel, damit die Formatierer nicht
- * an jeder Stelle eine Sprache durchgereicht bekommen müssen. Englisch nutzt britische Schreibweise (1,234 und
- * 26 Nov 2026), Deutsch und die Dialekte die deutsche (1.234 und 26.11.2026).
+ * Language for numbers and dates. Set by the SpracheProvider on every change, so the formatters do not need
+ * a language passed in everywhere. English uses British notation (1,234 and 26 Nov 2026), German and the
+ * dialects use German notation (1.234 and 26.11.2026).
  */
-let englisch = false;
+let english = false;
 
-export function setzeFormatSprache(sprache: string): void {
-  englisch = sprache === "en";
+export function setFormatLanguage(language: string): void {
+  english = language === "en";
 }
 
-/** Locale für `toLocaleString` und `Intl` passend zur gewählten Sprache. */
-export function zahlLocale(): string {
-  return englisch ? "en-GB" : "de-DE";
+/** Locale for `toLocaleString` and `Intl` matching the chosen language. */
+export function numberLocale(): string {
+  return english ? "en-GB" : "de-DE";
 }
 
-const MONATE_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const monatEn = (mm: string) => MONATE_EN[Number(mm) - 1] ?? mm;
+const MONTHS_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const monthEn = (mm: string) => MONTHS_EN[Number(mm) - 1] ?? mm;
 
 const dateTimeParts = new Intl.DateTimeFormat("de-DE", {
   timeZone: ZONE,
@@ -35,23 +35,23 @@ function partsOf(iso: string): Record<string, string> {
   return parts;
 }
 
-/** Zeitpunkt auf die Minute genau, z. B. `06.11.2026, 10:13 Uhr` bzw. `6 Nov 2026, 10:13`. */
+/** Point in time to the minute, e.g. `06.11.2026, 10:13 Uhr` or `6 Nov 2026, 10:13`. */
 export function formatDateTime(iso: string): string {
   const p = partsOf(iso);
-  if (englisch) return `${Number(p.day)} ${monatEn(p.month)} ${p.year}, ${p.hour}:${p.minute}`;
+  if (english) return `${Number(p.day)} ${monthEn(p.month)} ${p.year}, ${p.hour}:${p.minute}`;
   return `${p.day}.${p.month}.${p.year}, ${p.hour}:${p.minute} Uhr`;
 }
 
-/** Kalendertag eines ISO-Zeitstempels in Europe/Berlin, z. B. `06.11.2026`. */
+/** Calendar day of an ISO timestamp in Europe/Berlin, e.g. `06.11.2026`. */
 export function formatDate(iso: string): string {
   const p = partsOf(iso);
-  if (englisch) return `${Number(p.day)} ${monatEn(p.month)} ${p.year}`;
+  if (english) return `${Number(p.day)} ${monthEn(p.month)} ${p.year}`;
   return `${p.day}.${p.month}.${p.year}`;
 }
 
-/** Tag und Monat eines ISO-Zeitstempels in Europe/Berlin, z. B. `05.11.`. */
+/** Day and month of an ISO timestamp in Europe/Berlin, e.g. `05.11.`. */
 export function formatDayMonth(iso: string): string {
   const p = partsOf(iso);
-  if (englisch) return `${Number(p.day)} ${monatEn(p.month)}`;
+  if (english) return `${Number(p.day)} ${monthEn(p.month)}`;
   return `${p.day}.${p.month}.`;
 }

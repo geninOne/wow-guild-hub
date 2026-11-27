@@ -1,4 +1,4 @@
-import { hourRange, heatLevel, wochentage, wochentageKurz } from "../lib/fun";
+import { hourRange, heatLevel, weekdayNames, weekdayNamesShort } from "../lib/fun";
 import { useSprache, type Fassungen } from "../lib/sprache";
 
 const HOURS = Array.from({ length: 24 }, (_, h) => h);
@@ -20,7 +20,7 @@ const T = {
 /** Raster Wochentag mal Stunde, 168 Werte ab Montag 0 Uhr. */
 export function Heatmap({ cells }: { cells: number[] }) {
   const { t, sprache } = useSprache();
-  const kurz = wochentageKurz(sprache);
+  const kurz = weekdayNamesShort(sprache);
   const max = Math.max(0, ...cells);
   return (
     <div className="heatmap" role="table" aria-label={t(T.raster)}>
@@ -32,7 +32,7 @@ export function Heatmap({ cells }: { cells: number[] }) {
           </span>
         ))}
       </div>
-      {wochentage(sprache).map((day, d) => (
+      {weekdayNames(sprache).map((day, d) => (
         <div key={day} className="heatmap-row" role="row">
           <span className="heatmap-day" role="rowheader" aria-label={day}>
             {kurz[d]}

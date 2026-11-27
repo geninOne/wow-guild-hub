@@ -6,9 +6,9 @@ import { classColor } from "../lib/wow";
 import { CharacterLink } from "./CharacterLink";
 import { FactionCrest } from "./FactionCrest";
 import { ALLE_ANSEHEN, MemberListDialog, MemberListTrigger, type MemberSet } from "./MemberList";
-import { zahlLocale } from "../lib/format";
+import { numberLocale } from "../lib/format";
 
-const fmt = (n: number) => n.toLocaleString(zahlLocale());
+const fmt = (n: number) => n.toLocaleString(numberLocale());
 
 const T = {
   fuer: { de: "für", en: "for", schwaebisch: "für", bayrisch: "fia" },
@@ -335,7 +335,7 @@ function convert(stat: StatEntryView, sprache: Sprache): string | null {
   const shown = value < 10 ? Math.round(value * 10) / 10 : Math.round(value);
   const pair = fassungIn(stat.conversion.unit, sprache);
   const unit = shown === 1 ? pair[0] : pair[1];
-  return `${shown.toLocaleString(zahlLocale())} ${unit}`;
+  return `${shown.toLocaleString(numberLocale())} ${unit}`;
 }
 
 /** Wusstest du? Jede Statistik mit Umrechnung in etwas Greifbares. */
@@ -565,7 +565,7 @@ function Timetable({ card, characters }: { card: StatCardView; characters: numbe
       </ol>
       {characters > 0 && first.total > 0 && (
         <p className="muted small">
-          {t(T.schnitt)((first.total / characters).toLocaleString(zahlLocale(), { maximumFractionDigits: 1 }), u ? u[1] : label(first))}
+          {t(T.schnitt)((first.total / characters).toLocaleString(numberLocale(), { maximumFractionDigits: 1 }), u ? u[1] : label(first))}
         </p>
       )}
       <Honor stat={first} />
@@ -767,7 +767,7 @@ function Shredder({ card }: { card: StatCardView }) {
       </div>
       {per > 0 && (
         <p className="muted small">
-          {t(N.schnitt)(per.toLocaleString(zahlLocale(), { maximumFractionDigits: 1 }))}
+          {t(N.schnitt)(per.toLocaleString(numberLocale(), { maximumFractionDigits: 1 }))}
         </p>
       )}
       <Honor stat={items} />

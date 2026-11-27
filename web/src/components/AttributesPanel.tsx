@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import type { AttributeGroupId, AttributeRow, AttributesView, ResourceKind } from "../../../src/api/types";
-import { formatDateTime, zahlLocale } from "../lib/format";
+import { formatDateTime, numberLocale } from "../lib/format";
 import { useSprache, type Fassungen } from "../lib/sprache";
 
 const T = {
@@ -290,9 +290,9 @@ function AttributeGlyph({ glyph, color }: { glyph: GlyphName; color: string }) {
 
 function formatValue(row: AttributeRow): string {
   if (row.kind === "percent") {
-    return `${row.value.toLocaleString(zahlLocale(), { minimumFractionDigits: 2, maximumFractionDigits: 2 })} %`;
+    return `${row.value.toLocaleString(numberLocale(), { minimumFractionDigits: 2, maximumFractionDigits: 2 })} %`;
   }
-  return row.value.toLocaleString(zahlLocale(), { maximumFractionDigits: 1 });
+  return row.value.toLocaleString(numberLocale(), { maximumFractionDigits: 1 });
 }
 
 /** Beschriftung, Symbol und Farbe einer Zeile; die Ressource richtet sich nach ihrer Art. */
@@ -311,8 +311,8 @@ function useBaseTooltip(row: AttributeRow): string | undefined {
   const { t } = useSprache();
   if (row.base === undefined) return undefined;
   const diff = row.value - row.base;
-  const plus = `${diff >= 0 ? "+" : "−"}${Math.abs(diff).toLocaleString(zahlLocale(), { maximumFractionDigits: 1 })}`;
-  return t(T.grundwert)(row.base.toLocaleString(zahlLocale()), plus);
+  const plus = `${diff >= 0 ? "+" : "−"}${Math.abs(diff).toLocaleString(numberLocale(), { maximumFractionDigits: 1 })}`;
+  return t(T.grundwert)(row.base.toLocaleString(numberLocale()), plus);
 }
 
 function AttributeTile({ row, view }: { row: AttributeRow; view: AttributesView }) {
@@ -320,7 +320,7 @@ function AttributeTile({ row, view }: { row: AttributeRow; view: AttributesView 
   const { label, glyph, color } = useRowLook(row, view);
   const title = useBaseTooltip(row);
   const plus = row.base !== undefined && row.value > row.base
-    ? `+${(row.value - row.base).toLocaleString(zahlLocale(), { maximumFractionDigits: 1 })}`
+    ? `+${(row.value - row.base).toLocaleString(numberLocale(), { maximumFractionDigits: 1 })}`
     : null;
   // Gleicher Aufbau für alle Kacheln: oben Symbol, Beschriftung und Wert auf einer Linie, unten eine Fußzeile
   // fester Höhe, auch ohne Zuwachs. So sind alle Kacheln gleich hoch und die Werte stehen bündig.

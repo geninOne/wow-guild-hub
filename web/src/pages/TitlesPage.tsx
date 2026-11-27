@@ -8,9 +8,9 @@ import { MemberListDialog, MemberListTrigger, PeopleIcon, type MemberSet } from 
 import { TitleBadge } from "../components/TitleBadge";
 import { TestdatenHinweis } from "../components/TestdatenHinweis";
 import { useApi } from "../lib/api";
-import { ERSCHEINT_FASSUNGEN, formatPlainDayMonth, weekRangeLabel, newspaperName } from "../lib/fun";
+import { PUBLISHED_WHEN, formatPlainDayMonth, weekRangeLabel, newspaperName } from "../lib/fun";
 import { useSprache, type Fassungen } from "../lib/sprache";
-import { zahlLocale } from "../lib/format";
+import { numberLocale } from "../lib/format";
 
 const T = {
   niemand: { de: "Diese Woche niemand", en: "Nobody this week", schwaebisch: "Die Woch koiner", bayrisch: "De Woch koana" },
@@ -127,7 +127,7 @@ export function titleRankingSet(title: Title, data: TitleRankingView, t: <V>(f: 
     textValue: true,
     formatValue: (v) => {
       const text = data.valueTexts[String(v)];
-      return text ? t(text) : v.toLocaleString(zahlLocale());
+      return text ? t(text) : v.toLocaleString(numberLocale());
     },
     ...(data.winnerIds.length > 0 ? { highlight: { ids: data.winnerIds, label: t(T.gewinner) } } : {}),
   };
@@ -314,7 +314,7 @@ function TitlesContent({ view }: { view: TitlesView }) {
   if (!current) {
     return (
       <div className="state state-empty" role="status">
-        <p>{t(T.ersteWoche)(t(ERSCHEINT_FASSUNGEN))}</p>
+        <p>{t(T.ersteWoche)(t(PUBLISHED_WHEN))}</p>
       </div>
     );
   }
@@ -353,7 +353,7 @@ export function TitlesPage() {
         <h1 className="page-title">{t(T.seitentitel)}</h1>
         <p className="erscheint-hint">
           {t(T.erscheintVor)(newspaperName(sprache))}
-          <strong>{t(ERSCHEINT_FASSUNGEN)}</strong>
+          <strong>{t(PUBLISHED_WHEN)}</strong>
           {t(T.erscheintNach)}
         </p>
       </header>

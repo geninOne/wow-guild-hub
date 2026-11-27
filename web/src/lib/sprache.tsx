@@ -1,4 +1,4 @@
-import { setzeFormatSprache } from "./format";
+import { setFormatLanguage } from "./format";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { aktiveSprachen, fassungIn, istSprache, STANDARD_SPRACHE, type Fassungen, type Sprache } from "../../../src/sprache";
 
@@ -55,7 +55,7 @@ const SprachKontext = createContext<SprachWert>({
 export function SpracheProvider({ children, start }: { children: ReactNode; start?: Sprache }) {
   const [sprache, setzen] = useState<Sprache>(() => start ?? gemerkteSprache());
   // Vor dem Rendern der Kinder, damit Zahlen und Daten schon im ersten Durchgang in der richtigen Sprache stehen.
-  setzeFormatSprache(sprache);
+  setFormatLanguage(sprache);
   const setSprache = useCallback((neu: Sprache) => {
     setzen(neu);
     spracheMerken(neu);
