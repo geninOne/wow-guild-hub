@@ -10,7 +10,7 @@
 # Ohne die Secrets NETLIFY_AUTH_TOKEN und NETLIFY_SITE_ID deployt nichts: Beim Tag endet der Lauf mit einem
 # Hinweis, beim Knopf mit einem Fehler.
 # Secrets: NETLIFY_AUTH_TOKEN, NETLIFY_SITE_ID, BNET_CLIENT_ID, BNET_CLIENT_SECRET.
-# Variables: GUILD_SLUGS (Pflicht), optional GUILD_RANKS, TITLE_OPT_OUTS, WOW_VERSION, BNET_REGION, BNET_LOCALE,
+# Variables: GUILD_SLUGS (Pflicht), optional GUILD_RANKS, TWINK_RANKS, TITLE_OPT_OUTS, WOW_VERSION, BNET_REGION, BNET_LOCALE,
 # COLLECT_CONCURRENCY, COLLECT_BUDGET_MS (sonst Standardwert, siehe .env.example).
 name: Release
 
@@ -100,6 +100,7 @@ jobs:
           BNET_CLIENT_SECRET: ${{ secrets.BNET_CLIENT_SECRET }}
           GUILD_SLUGS: ${{ vars.GUILD_SLUGS }}
           GUILD_RANKS: ${{ vars.GUILD_RANKS }}
+          TWINK_RANKS: ${{ vars.TWINK_RANKS }}
           TITLE_OPT_OUTS: ${{ vars.TITLE_OPT_OUTS }}
           WOW_VERSION: ${{ vars.WOW_VERSION }}
           BNET_REGION: ${{ vars.BNET_REGION }}

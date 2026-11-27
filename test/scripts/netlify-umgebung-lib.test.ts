@@ -36,6 +36,7 @@ describe("variablenAusEnv", () => {
       "BNET_CLIENT_SECRET",
       "GUILD_SLUGS",
       "GUILD_RANKS",
+      "TWINK_RANKS",
       "TITLE_OPT_OUTS",
       "WOW_VERSION",
       "BNET_REGION",

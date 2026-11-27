@@ -7,6 +7,10 @@ export function gain(before: DaySnapshot | null, end: DaySnapshot | null, id: nu
   const a = before?.characters[String(id)]?.[field];
   const b = end?.characters[String(id)]?.[field];
   if (typeof a !== "number" || typeof b !== "number") return null;
+  // Rangwechsel zwischen Twink und Hauptcharakter ändert, ob accountweite Erfolge zählen; das ist kein Zuwachs.
+  if (field === "achievements" && !before?.characters[String(id)]?.achievementsTwink !== !end?.characters[String(id)]?.achievementsTwink) {
+    return null;
+  }
   return Math.max(0, b - a);
 }
 

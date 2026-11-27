@@ -121,7 +121,7 @@ test("Gegenstands-Icons aus gespeicherten Charakteren", async () => {
 test("Zeitbudget 0: keine Phase beginnt, keine Anfrage, nichts geschrieben außer der wieder gelösten Sperre", async () => {
   const rep = await run({ budgetMs: 0 });
   expect(rep).toMatchObject({ treesAdded: 0, instanceImagesAdded: 0, skipped: 0 });
-  expect(rep.notStarted).toEqual(["trees", "spells", "recipes", "items", "levels", "instances", "reputation", "professions", "images"]);
+  expect(rep.notStarted).toEqual(["trees", "spells", "recipes", "items", "levels", "instances", "accountWide", "reputation", "professions", "images"]);
   expect(fake.calls).toEqual([]);
   expect(Object.keys(store.dump())).toEqual([]);
 });
@@ -556,6 +556,56 @@ describe("Gegenstandsstufen", () => {
   });
 });
 
+describe("Accountweite Erfolge", () => {
+  const withAchievements = async (id: number, done: number[], open: number[] = []) => {
+    const rec = buildCharacterRecord(
+      { id, name: `c${id}`, surname: null, slug: `c${id}`, level: 30, classId: 1, raceId: 2, rank: 3 },
+      { profile: loadFixture("luvia-profile").data, specializations: null, equipment: null, media: null, professions: null, raids: null,
+        statistics: null, reputations: null, achievements: { achievements: [
+          ...done.map((a) => ({ id: a, criteria: { is_completed: true } })),
+          ...open.map((a) => ({ id: a, criteria: { is_completed: false, child_criteria: [{ id: 1, is_completed: true }] } })),
+        ] } },
+      "t",
+    );
+    await store.set(`characters/${id}`, { ...rec, id });
+  };
+
+  test("holt is_account_wide je abgeschlossenem Erfolg, offene Erfolge nicht", async () => {
+    await withAchievements(1, [62031, 627], [999]);
+    await withAchievements(2, [62031, 1176]);
+    routes["/data/wow/achievement/62031"] = { status: 200, data: { id: 62031, is_account_wide: true } };
+    routes["/data/wow/achievement/627"] = { status: 200, data: { id: 627, is_account_wide: false } };
+    const rep = await run();
+    expect(rep.accountWideAdded).toBe(3);
+    expect(await store.get("static/achievement-account-wide")).toEqual({ "62031": true, "627": false, "1176": null });
+    expect(fake.calls).not.toContain("/data/wow/achievement/999");
+    expect(fake.calls.filter((c) => c === "/data/wow/achievement/62031")).toHaveLength(1);
+    expect((await store.get<Record<string, string>>("static/achievement-account-wide-checked"))?.["1176"]).toBe("2026-11-06T03:00:00.000Z");
+
+    // Bekannte Angaben werden nicht erneut abgefragt.
+    fake.calls.length = 0;
+    expect((await run()).accountWideAdded).toBe(0);
+    expect(fake.calls.filter((c) => c.startsWith("/data/wow/achievement/"))).toEqual([]);
+  });
+
+  test("Serverfehler speichert nichts, der nächste Lauf versucht es erneut", async () => {
+    await withAchievements(1, [62031]);
+    routes["/data/wow/achievement/62031"] = { status: 503, data: null };
+    await run();
+    expect((await store.get<Record<string, boolean | null>>("static/achievement-account-wide"))?.["62031"]).toBeUndefined();
+    routes["/data/wow/achievement/62031"] = { status: 200, data: { is_account_wide: true } };
+    await run();
+    expect((await store.get<Record<string, boolean | null>>("static/achievement-account-wide"))?.["62031"]).toBe(true);
+  });
+
+  test("Indexeinträge ohne Erfolgsliste (ältere Daten) lösen keine Anfrage aus", async () => {
+    await store.set(CHARACTER_INDEX_KEY, { "1": { slug: "c1", hasProfile: false, lastLoginAt: null, itemIds: [], itemLevels: {}, recipeIds: [] } });
+    await store.set("characters/1", { id: 1 });
+    expect((await run()).accountWideAdded).toBe(0);
+    expect(await store.get("static/achievement-account-wide")).toEqual({});
+  });
+});
+
 describe("Vorarbeit, Zeitlimit und Sperre", () => {
   const minimal = (id: number, slug: string, lastLoginAt: string | null, equipment: CharacterRecord["equipment"] = []) => ({
     ...buildCharacterRecord(
@@ -595,7 +645,7 @@ describe("Vorarbeit, Zeitlimit und Sperre", () => {
   test("Bericht nennt die Dauer je Phase", async () => {
     const rep = await run();
     expect(Object.keys(rep.phases)).toEqual(
-      expect.arrayContaining(["prep", "trees", "spells", "recipes", "items", "levels", "instances", "reputation", "professions", "images", "finish"]),
+      expect.arrayContaining(["prep", "trees", "spells", "recipes", "items", "levels", "instances", "accountWide", "reputation", "professions", "images", "finish"]),
     );
     expect(rep.notStarted).toEqual([]);
   });
@@ -634,7 +684,7 @@ describe("Vorarbeit, Zeitlimit und Sperre", () => {
     const index: CharacterIndex = {};
     for (let id = 1; id <= CHARACTERS; id++) {
       const rec = minimal(id, `c${id}`, "2026-11-05T10:00:00.000Z", [item(id * 10, 100), item(id * 10 + 1, null)]);
-      await store.set(`characters/${id}`, rec);
+      await store.set(`characters/${id}`, { ...rec, id });
       index[String(id)] = toCharacterIndexEntry(rec);
       routes[`/profile/wow/character/c${id}/statistics`] = { status: 200, data: { health: id } };
     }

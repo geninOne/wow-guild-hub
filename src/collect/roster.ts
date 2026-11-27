@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any -- Rohantworten der API sind untypisiert */
-import type { CharacterRecord, MemberSummary } from "../model";
+import type { AchievementAccountWide, CharacterRecord, MemberSummary } from "../model";
 import type { RosterEntry } from "../transform/character";
 
 export function parseRoster(raw: any): RosterEntry[] {
@@ -71,7 +71,36 @@ export function mergeRoster(
   return [...current, ...gone];
 }
 
-export function applyRecord(member: MemberSummary, record: CharacterRecord, at: string): MemberSummary {
+/** Blob mit `is_account_wide` je Erfolg; der statische Sammler füllt ihn, der Gildensammler liest ihn. */
+export const ACCOUNT_WIDE_KEY = "static/achievement-account-wide";
+
+/** Hat das Mitglied einen Twink-Rang seiner Gilde? Ohne `guildSlug` gilt die Hauptgilde. */
+export function isTwink(member: MemberSummary, mainSlug: string, twinkRanks: Record<string, number[]> = {}): boolean {
+  const slug = (member.guildSlug ?? mainSlug).normalize("NFC");
+  return twinkRanks[slug]?.includes(member.rank) ?? false;
+}
+
+/**
+ * Abgeschlossene Erfolge. Accountweite Erfolge (Klasse, Berufe, Dungeonerforscher) liefert WoW Forever bei jedem
+ * Charakter des Accounts als erledigt; sie zählen nur beim Hauptcharakter, bei Twinks nicht. Erfolge, deren Angabe
+ * der statische Sammler noch nicht kennt, zählen vorerst auch beim Twink.
+ */
+export function ownAchievementCount(
+  record: CharacterRecord,
+  accountWide: AchievementAccountWide = {},
+  twink = false,
+): number | null {
+  if (!record.instances) return null;
+  return record.instances.achievements.filter((a) => a.completed && !(twink && accountWide[String(a.id)] === true)).length;
+}
+
+export function applyRecord(
+  member: MemberSummary,
+  record: CharacterRecord,
+  at: string,
+  achievements: { accountWide?: AchievementAccountWide; twink?: boolean } = {},
+): MemberSummary {
+  const twink = achievements.twink === true;
   const mainSpec = record.specs.find((s) => s.specId === record.mainSpecId);
   return {
     ...member,
@@ -85,7 +114,8 @@ export function applyRecord(member: MemberSummary, record: CharacterRecord, at: 
     deaths: record.stats?.deaths ?? null,
     dungeonsEntered: record.stats?.dungeonsEntered ?? null,
     recipeCount: record.hasProfile ? record.professions.reduce((sum, p) => sum + p.recipes.length, 0) : null,
-    achievementCount: record.instances ? record.instances.achievements.filter((a) => a.completed).length : null,
+    achievementCount: ownAchievementCount(record, achievements.accountWide, twink),
+    achievementsTwink: twink,
     reputationTiers: record.reputations ? record.reputations.reduce((sum, r) => sum + r.tier, 0) : null,
   };
 }

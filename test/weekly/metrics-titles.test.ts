@@ -41,6 +41,17 @@ test("weekMetrics zählt Logins nach Tageszeit und bildet Zuwächse aus zwei Tag
   expect(m.has(4)).toBe(false);
 });
 
+test("Erfolgszuwachs: Wechsel zwischen Twink und Hauptcharakter ist kein Zuwachs, gleicher Status schon", () => {
+  const before = snap("2026-11-08", {
+    "1": { achievements: 2, achievementsTwink: true }, "2": { achievements: 5 }, "3": { achievements: 2, achievementsTwink: true }, "4": { achievements: 4 },
+  });
+  const end = snap("2026-11-15", {
+    "1": { achievements: 9 }, "2": { achievements: 3, achievementsTwink: true }, "3": { achievements: 3, achievementsTwink: true }, "4": { achievements: 6 },
+  });
+  const m = weekMetrics({ activity: null, before, end, members: [1, 2, 3, 4].map((id) => member({ id })) });
+  expect([1, 2, 3, 4].map((id) => m.get(id)?.achievements)).toEqual([null, null, 1, 2]);
+});
+
 test("awardTitles: höchster Wert gewinnt, mindestens 1, Gleichstand wird geteilt", () => {
   const members = [member({ id: 1, name: "Zora" }), member({ id: 2, name: "Anton" }), member({ id: 3, name: "Bert" })];
   const metrics = new Map<number, WeekMetrics>([
