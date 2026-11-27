@@ -28,7 +28,7 @@ function spec(nodes: PlacedTalent[], rest: UnplacedTalent[] = []): SpecLayout {
   return { specId: 613, name: "Disziplin", nodes, unplaced: rest };
 }
 
-test("Ränge, Zustände und Namen", () => {
+test("ranks, states and names", () => {
   expect(
     talentRanks([
       {
@@ -45,7 +45,7 @@ test("Ränge, Zustände und Namen", () => {
   expect(talentName(node)).toBe("Talent");
 });
 
-test("Ränge aus mehreren Bäumen werden zusammengeführt", () => {
+test("ranks from several trees are merged", () => {
   const ranks = talentRanks([
     { specId: 1, name: "A", spentPoints: 2, talents: [{ talentId: 1, spellId: 1, name: "a", rank: 2, description: "" }] },
     { specId: 2, name: "B", spentPoints: 1, talents: [{ talentId: 2, spellId: 2, name: "b", rank: 1, description: "" }] },
@@ -56,7 +56,7 @@ test("Ränge aus mehreren Bäumen werden zusammengeführt", () => {
   ]);
 });
 
-test("Pfeile nur zwischen platzierten Knoten", () => {
+test("arrows only between placed nodes", () => {
   const a = placed({ nodeId: 1, talentId: 11 });
   const b = placed({ nodeId: 2, talentId: 12, gridRow: 2, lockedBy: [1] });
   const c = placed({ nodeId: 3, talentId: 13, gridRow: 3, lockedBy: [99] });
@@ -67,7 +67,7 @@ test("Pfeile nur zwischen platzierten Knoten", () => {
   expect(arrows[0].to.nodeId).toBe(2);
 });
 
-test("ausgeblendete Sonderknoten nur mit Punkten", () => {
+test("hidden special nodes only with points", () => {
   const hidden = unplaced({ nodeId: 5, talentId: 50, hidden: true });
   const shown = unplaced({ nodeId: 6, talentId: 60, hidden: false });
   const s = spec([], [hidden, shown]);

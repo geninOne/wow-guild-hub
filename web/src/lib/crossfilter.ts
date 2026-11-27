@@ -2,8 +2,8 @@ import type { MemberRow } from "../../../src/api/types";
 import { LEVEL_BANDS } from "./members";
 
 /**
- * Gemeinsame Auswahl des Reiters Allgemein: Volk, Klasse und Levelstufe, jeweils leer (null) oder ein Wert.
- * `bandIndex` ist der Index in `LEVEL_BANDS`.
+ * Shared selection of the General tab: race, class and level band, each empty (null) or one value.
+ * `bandIndex` is the index into `LEVEL_BANDS`.
  */
 export interface Selection {
   raceId: number | null;
@@ -11,14 +11,14 @@ export interface Selection {
   bandIndex: number | null;
 }
 
-/** Eine Achse der Auswahl; jedes Diagramm gehört zu genau einer. */
+/** One axis of the selection; every chart belongs to exactly one. */
 export type Axis = "race" | "class" | "level";
 
 export const EMPTY_SELECTION: Selection = { raceId: null, classId: null, bandIndex: null };
 
 const KEY: Record<Axis, keyof Selection> = { race: "raceId", class: "classId", level: "bandIndex" };
 
-/** Passt das Mitglied zur Auswahl? Mit `skip` zählt diese eine Achse nicht mit (für das Diagramm dieser Achse). */
+/** Does the member match the selection? With `skip` that one axis is ignored (for the chart of that axis). */
 export function matchesSelection(m: MemberRow, s: Selection, skip?: Axis): boolean {
   if (skip !== "race" && s.raceId !== null && m.raceId !== s.raceId) return false;
   if (skip !== "class" && s.classId !== null && m.classId !== s.classId) return false;
@@ -30,19 +30,19 @@ export function matchesSelection(m: MemberRow, s: Selection, skip?: Axis): boole
 }
 
 export interface CrossFiltered {
-  /** Grundlage der Völkertorte: gefiltert nach Klasse und Level. */
+  /** Basis of the race pie: filtered by class and level. */
   forRaces: MemberRow[];
-  /** Grundlage der Klassenbalken: gefiltert nach Volk und Level. */
+  /** Basis of the class bars: filtered by race and level. */
   forClasses: MemberRow[];
-  /** Grundlage der Levelsäulen: gefiltert nach Volk und Klasse. */
+  /** Basis of the level columns: filtered by race and class. */
   forLevels: MemberRow[];
-  /** Alle drei Auswahlen zusammen: Grundlage der Kennzahlen und der Mitgliederliste. */
+  /** All three selections combined: basis of the figures and the member list. */
   selected: MemberRow[];
 }
 
 /**
- * Kreuzfilter: Jedes Diagramm zeigt die aktiven Mitglieder, gefiltert nach den Auswahlen der beiden anderen.
- * Seine eigene Auswahl hebt es nur hervor. Ehemalige fallen immer heraus.
+ * Cross filter: every chart shows the active members, filtered by the selections of the other two.
+ * It only highlights its own selection. Former members are always left out.
  */
 export function crossFilter(rows: readonly MemberRow[], s: Selection): CrossFiltered {
   const active = rows.filter((m) => !m.former);
@@ -54,7 +54,7 @@ export function crossFilter(rows: readonly MemberRow[], s: Selection): CrossFilt
   };
 }
 
-/** Wählt einen Wert auf einer Achse; derselbe Wert noch einmal hebt die Wahl auf, null ebenso. */
+/** Selects a value on an axis; the same value again clears the selection, as does null. */
 export function toggleSelection(s: Selection, axis: Axis, value: number | null): Selection {
   const key = KEY[axis];
   return { ...s, [key]: value === null || s[key] === value ? null : value };
@@ -65,8 +65,8 @@ export function isEmptySelection(s: Selection): boolean {
 }
 
 /**
- * Hängt den gewählten Eintrag mit Anzahl 0 an, wenn ihn die Filter der anderen Achsen gerade ausblenden,
- * damit er sichtbar und per Klick abwählbar bleibt.
+ * Appends the selected entry with count 0 when the filters of the other axes currently hide it,
+ * so it stays visible and can be deselected with a click.
  */
 export function keepSelected<T extends { count: number }>(
   list: readonly T[],
@@ -86,7 +86,7 @@ export interface MemberFigures {
   classes: number;
 }
 
-/** Kennzahlen einer Menge: Anzahl, Durchschnittslevel, Anzahl auf Level 60, Anzahl verschiedener Klassen. */
+/** Figures of a set: count, average level, count at level 60, number of distinct classes. */
 export function memberFigures(rows: readonly MemberRow[]): MemberFigures {
   return {
     members: rows.length,

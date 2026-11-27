@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import type { MemberFigures } from "../lib/crossfilter";
 import { useSprache, type Fassungen } from "../lib/sprache";
-import { zahlLocale } from "../lib/format";
+import { numberLocale } from "../lib/format";
 
 const T = {
   kennzahlen: { de: "Kennzahlen", en: "Key Figures", schwaebisch: "Kennzahle", bayrisch: "Kennzahln" },
@@ -138,7 +138,7 @@ export function FigureTile({ figures, filtered, onMembers, onCapped }: FigureTil
         <Figure
           icon={<AverageGlyph />}
           label={t(T.durchschnitt)}
-          value={figures.average.toLocaleString(zahlLocale(), { maximumFractionDigits: 1 })}
+          value={figures.average.toLocaleString(numberLocale(), { maximumFractionDigits: 1 })}
         />
         <Figure icon={<CrownGlyph />} label={t(T.level60)} value={figures.capped} onClick={onCapped} />
         <Figure icon={<ShieldGlyph />} label={t(T.klassen)} value={figures.classes} />

@@ -19,7 +19,7 @@ function row(over: Partial<MemberRow>): MemberRow {
   };
 }
 
-// Tauren: Druide 12, Druide 60, Krieger 15. Orc: Krieger 60, Schamane 60. Ehemaliger Tauren-Druide.
+// Tauren: Druid 12, Druid 60, Warrior 15. Orc: Warrior 60, Shaman 60. One former Tauren druid.
 const rows: MemberRow[] = [
   row({ id: 1, raceId: 6, raceName: "Tauren", classId: 11, className: "Druide", level: 12 }),
   row({ id: 2, raceId: 6, raceName: "Tauren", classId: 11, className: "Druide", level: 60 }),
@@ -33,12 +33,12 @@ const ids = (list: MemberRow[]) => list.map((m) => m.id);
 const sel = (over: Partial<Selection>): Selection => ({ ...EMPTY_SELECTION, ...over });
 
 describe("crossFilter", () => {
-  test("ohne Auswahl zeigen alle Diagramme alle aktiven Mitglieder", () => {
+  test("without a selection every chart shows all active members", () => {
     const f = crossFilter(rows, EMPTY_SELECTION);
     for (const list of [f.forRaces, f.forClasses, f.forLevels, f.selected]) expect(ids(list)).toEqual([1, 2, 3, 4, 5]);
   });
 
-  test("ein Volk filtert Klassen und Level, die Torte selbst bleibt ungefiltert", () => {
+  test("a race filters classes and levels, the pie itself stays unfiltered", () => {
     const f = crossFilter(rows, sel({ raceId: 6 }));
     expect(ids(f.forClasses)).toEqual([1, 2, 3]);
     expect(ids(f.forLevels)).toEqual([1, 2, 3]);
@@ -46,16 +46,16 @@ describe("crossFilter", () => {
     expect(ids(f.selected)).toEqual([1, 2, 3]);
   });
 
-  test("jedes Diagramm filtert nach den beiden anderen Achsen", () => {
-    // Tauren, Krieger, 10 bis 19
+  test("every chart filters by the other two axes", () => {
+    // Tauren, warrior, 10 to 19
     const f = crossFilter(rows, { raceId: 6, classId: 1, bandIndex: 1 });
-    expect(ids(f.forRaces)).toEqual([3]); // Krieger auf 10 bis 19, jedes Volk
-    expect(ids(f.forClasses)).toEqual([1, 3]); // Tauren auf 10 bis 19, jede Klasse
-    expect(ids(f.forLevels)).toEqual([3]); // Tauren-Krieger, jedes Level
+    expect(ids(f.forRaces)).toEqual([3]); // warriors at 10 to 19, any race
+    expect(ids(f.forClasses)).toEqual([1, 3]); // Tauren at 10 to 19, any class
+    expect(ids(f.forLevels)).toEqual([3]); // Tauren warriors, any level
     expect(ids(f.selected)).toEqual([3]);
   });
 
-  test("Kombination ohne Treffer ergibt leere Mengen", () => {
+  test("a combination without hits gives empty sets", () => {
     const f = crossFilter(rows, sel({ raceId: 2, classId: 11 }));
     expect(f.selected).toEqual([]);
     expect(f.forLevels).toEqual([]);
@@ -64,7 +64,7 @@ describe("crossFilter", () => {
 });
 
 describe("matchesSelection", () => {
-  test("Levelstufe zählt beide Enden mit, Level 60 ist eine eigene Stufe", () => {
+  test("level band includes both ends, level 60 is a band of its own", () => {
     expect(matchesSelection(row({ level: 10 }), sel({ bandIndex: 1 }))).toBe(true);
     expect(matchesSelection(row({ level: 19 }), sel({ bandIndex: 1 }))).toBe(true);
     expect(matchesSelection(row({ level: 20 }), sel({ bandIndex: 1 }))).toBe(false);
@@ -72,14 +72,14 @@ describe("matchesSelection", () => {
     expect(matchesSelection(row({ level: 60 }), sel({ bandIndex: 6 }))).toBe(true);
   });
 
-  test("übersprungene Achse zählt nicht", () => {
+  test("skipped axis does not count", () => {
     expect(matchesSelection(row({ raceId: 2 }), sel({ raceId: 6 }), "race")).toBe(true);
     expect(matchesSelection(row({ raceId: 2 }), sel({ raceId: 6 }), "class")).toBe(false);
   });
 });
 
 describe("toggleSelection", () => {
-  test("wählt, wechselt und hebt die Wahl beim zweiten Klick auf", () => {
+  test("selects, switches and clears the selection on the second click", () => {
     const a = toggleSelection(EMPTY_SELECTION, "race", 6);
     expect(a).toEqual(sel({ raceId: 6 }));
     const b = toggleSelection(a, "race", 2);
@@ -87,14 +87,14 @@ describe("toggleSelection", () => {
     expect(toggleSelection(b, "race", 2)).toEqual(EMPTY_SELECTION);
   });
 
-  test("lässt die anderen Achsen stehen, null entfernt eine Achse", () => {
+  test("keeps the other axes, null clears an axis", () => {
     const a = toggleSelection(toggleSelection(sel({ raceId: 6 }), "class", 11), "level", 1);
     expect(a).toEqual({ raceId: 6, classId: 11, bandIndex: 1 });
     expect(toggleSelection(a, "class", null)).toEqual({ raceId: 6, classId: null, bandIndex: 1 });
     expect(toggleSelection(a, "level", 1)).toEqual({ raceId: 6, classId: 11, bandIndex: null });
   });
 
-  test("Stufe 0 ist ein gültiger Wert", () => {
+  test("band 0 is a valid value", () => {
     expect(toggleSelection(EMPTY_SELECTION, "level", 0)).toEqual(sel({ bandIndex: 0 }));
     expect(isEmptySelection(sel({ bandIndex: 0 }))).toBe(false);
     expect(isEmptySelection(EMPTY_SELECTION)).toBe(true);
@@ -104,10 +104,10 @@ describe("toggleSelection", () => {
 describe("keepSelected", () => {
   const list = [{ id: 1, count: 3 }];
   const make = (id: number) => ({ id, count: 0 });
-  test("hängt den gewählten, gerade ausgefilterten Eintrag mit 0 an", () => {
+  test("appends the selected, currently filtered-out entry with 0", () => {
     expect(keepSelected(list, 7, (e) => e.id, make)).toEqual([{ id: 1, count: 3 }, { id: 7, count: 0 }]);
   });
-  test("lässt die Liste sonst unverändert", () => {
+  test("otherwise leaves the list unchanged", () => {
     expect(keepSelected(list, 1, (e) => e.id, make)).toEqual(list);
     expect(keepSelected(list, null, (e) => e.id, make)).toEqual(list);
     expect(keepSelected(list, 7, (e) => e.id, () => null)).toEqual(list);
@@ -115,11 +115,11 @@ describe("keepSelected", () => {
 });
 
 describe("memberFigures", () => {
-  test("Kennzahlen der Auswahl: Anzahl, Durchschnitt, Level 60, Klassen", () => {
+  test("figures of the selection: count, average, level 60, classes", () => {
     expect(memberFigures(crossFilter(rows, sel({ raceId: 6 })).selected)).toEqual({ members: 3, average: 29, capped: 1, classes: 2 });
     expect(memberFigures(crossFilter(rows, EMPTY_SELECTION).selected)).toEqual({ members: 5, average: 41.4, capped: 3, classes: 3 });
   });
-  test("leere Menge ergibt Nullen", () => {
+  test("an empty set gives zeros", () => {
     expect(memberFigures([])).toEqual({ members: 0, average: 0, capped: 0, classes: 0 });
   });
 });

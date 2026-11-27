@@ -7,9 +7,9 @@ import { CharacterLink } from "./CharacterLink";
 import { DataState } from "./DataState";
 import { GuildFilter } from "./GuildFilter";
 import { ALLE_ANSEHEN, MemberListTrigger, PeopleIcon, useMemberList, type MemberListRequest } from "./MemberList";
-import { zahlLocale } from "../lib/format";
+import { numberLocale } from "../lib/format";
 
-const fmt = (n: number) => n.toLocaleString(zahlLocale());
+const fmt = (n: number) => n.toLocaleString(numberLocale());
 
 const T = {
   bis: { de: "bis", en: "to", schwaebisch: "bis", bayrisch: "bis" },

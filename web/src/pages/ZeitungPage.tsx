@@ -8,10 +8,10 @@ import { GuildFilter } from "../components/GuildFilter";
 import { TitleBadge } from "../components/TitleBadge";
 import { TestdatenHinweis } from "../components/TestdatenHinweis";
 import { useApi } from "../lib/api";
-import { ERSCHEINT_FASSUNGEN, splitByNames, weekRangeLabel } from "../lib/fun";
+import { PUBLISHED_WHEN, splitByNames, weekRangeLabel } from "../lib/fun";
 import { useSprache, type Fassungen, type Sprache, fassungIn } from "../lib/sprache";
 import { newspaperName } from "../../../src/weekly/phrases-extras";
-import { zahlLocale } from "../lib/format";
+import { numberLocale } from "../lib/format";
 
 /** Name der Zeitung: WEBSITE_NEWSPAPER oder der Standardname der Sprache. */
 function zeitung(sprache: Sprache): string {
@@ -112,7 +112,7 @@ const ZAHL_NAMEN: Record<WeeklyNumberKind, Fassungen> = {
   gegenstandsstufe: { de: "Gegenstandsstufe", en: "Item level", schwaebisch: "Gegenstandsstuf", bayrisch: "Gegenstandsstufn" },
 };
 
-const zahlFormat = (n: number) => n.toLocaleString(zahlLocale());
+const zahlFormat = (n: number) => n.toLocaleString(numberLocale());
 
 /** Pfeil mit Differenz zur Vorwoche; ohne Vorwoche nichts. */
 function Trend({ zeile }: { zeile: NewspaperNumberView }) {
@@ -277,7 +277,7 @@ function Issue({ view }: { view: NewspaperView }) {
             </span>
             <span>{weekRangeLabel(view.from, view.to, sprache)}</span>
             <span>
-              {t(T.erscheint)} {t(ERSCHEINT_FASSUNGEN)}
+              {t(T.erscheint)} {t(PUBLISHED_WHEN)}
             </span>
             <span>{t(T.preis)}</span>
           </p>
@@ -383,7 +383,7 @@ export function ZeitungPage() {
             ) : (
               <p className="erscheint-hint">
                 {t(T.erscheintVor)(zeitung(sprache))}
-                <strong>{t(ERSCHEINT_FASSUNGEN)}</strong>
+                <strong>{t(PUBLISHED_WHEN)}</strong>
                 {t(T.erscheintNach)}
               </p>
             )}
@@ -411,7 +411,7 @@ export function ZeitungArchivePage() {
     <section className="page">
       <header className="page-header">
         <h1 className="page-title">{t(T.archivTitel)(zeitung(sprache))}</h1>
-        <p className="page-subtitle muted">{t(T.archivUnter)(zeitung(sprache), t(ERSCHEINT_FASSUNGEN))}</p>
+        <p className="page-subtitle muted">{t(T.archivUnter)(zeitung(sprache), t(PUBLISHED_WHEN))}</p>
       </header>
       <DataState loading={loading} error={error}>
         {data &&
@@ -419,7 +419,7 @@ export function ZeitungArchivePage() {
             <div className="state state-empty" role="status">
               <p className="erscheint-hint">
                 {t(T.leerVor)(zeitung(sprache))}
-                <strong>{t(ERSCHEINT_FASSUNGEN)}</strong>
+                <strong>{t(PUBLISHED_WHEN)}</strong>
                 {t(T.leerNach)}
               </p>
             </div>

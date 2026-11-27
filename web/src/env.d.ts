@@ -1,11 +1,11 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  /** Version aus package.json, beim Bauen eingesetzt. */
+  /** Version from package.json, inserted during the build. */
   readonly VITE_VERSION?: string;
-  /** Datum der Version aus CHANGELOG.md (sonst Baudatum) als JJJJ-MM-TT. */
+  /** Date of the version from CHANGELOG.md (otherwise the build date) as YYYY-MM-DD. */
   readonly VITE_VERSION_DATUM?: string;
-  /** Angaben zur Seite, siehe .env.example. */
+  /** Site details, see .env.example. */
   readonly WEBSITE_NAME?: string;
   readonly WEBSITE_LOGO?: string;
   readonly WEBSITE_LOGO_ALT?: string;
@@ -15,8 +15,8 @@ interface ImportMetaEnv {
   readonly WEBSITE_IMPRINT_ADDRESS?: string;
   readonly WEBSITE_IMPRINT_EMAIL?: string;
   readonly WEBSITE_UMAMI_ID?: string;
-  /** Angebotene Sprachen, kommagetrennt: de, en, schwaebisch, bayrisch. */
+  /** Offered languages, comma-separated: de, en, schwaebisch, bayrisch. */
   readonly WEBSITE_LANGUAGES?: string;
-  /** Name der Wochenzeitung. */
+  /** Name of the weekly newspaper. */
   readonly WEBSITE_NEWSPAPER?: string;
 }

@@ -17,7 +17,7 @@ async function errorMessage(response: Response): Promise<string> {
       return body.error;
     }
   } catch {
-    // Kein JSON im Fehlerkörper, Standardmeldung verwenden.
+    // No JSON in the error body, use the default message.
   }
   return `Anfrage fehlgeschlagen (${response.status})`;
 }
@@ -45,7 +45,7 @@ function toApiError(error: unknown): ApiError {
   return new ApiError(0, error instanceof Error ? error.message : String(error));
 }
 
-/** Lädt `path` als JSON. Mit `null` wird nichts geladen. */
+/** Loads `path` as JSON. With `null` nothing is loaded. */
 export function useApi<T>(path: string | null): ApiState<T> {
   const [loaded, setLoaded] = useState<Loaded<T> | null>(null);
 

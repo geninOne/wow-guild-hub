@@ -117,7 +117,7 @@ is done. Tests need no credentials; never add tests that call the real Blizzard 
    keep `permissions:` minimal (default `contents: read`), use `persist-credentials: false` on checkout, and pin
    third-party actions to a commit SHA. Workflows on pull requests run with `pull_request` only.
 7. **Pages need a redirect.** A new SPA route needs an entry in `netlify.toml` (no catch-all `/*`, so `/api/*`
-   is never shadowed); `test/web/netlify-weiterleitungen.test.ts` checks it.
+   is never shadowed); `test/web/netlify-redirects.test.ts` checks it.
 
 ## Testing and verifying
 

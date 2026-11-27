@@ -15,7 +15,7 @@ import { CharacterLink } from "./CharacterLink";
 import { ClassName } from "./ClassName";
 import { DataState } from "./DataState";
 import { GuildFilter } from "./GuildFilter";
-import { zahlLocale } from "../lib/format";
+import { numberLocale } from "../lib/format";
 
 const T = {
   schliessen: { de: "Schließen", en: "Close", schwaebisch: "Zumache", bayrisch: "Zuamacha" },
@@ -62,7 +62,7 @@ const T = {
   },
 } satisfies Record<string, Fassungen<unknown>>;
 
-const fmt = (n: number) => n.toLocaleString(zahlLocale());
+const fmt = (n: number) => n.toLocaleString(numberLocale());
 
 /** Eine Menge von Mitgliedern mit Beschriftung und Wertspalte; mehrere Mengen lassen sich im Dialog umschalten. */
 export interface MemberSet {

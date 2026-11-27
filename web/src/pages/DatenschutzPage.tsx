@@ -1,6 +1,6 @@
 import { Anschrift, RechtstextHinweis } from "../components/Kontakt";
 import { OBERFLAECHEN_ERWEITERUNGEN } from "../erweiterungen";
-import { seite } from "../lib/seite";
+import { site } from "../lib/site";
 
 /** Ein Abschnitt der Vorlage: Überschrift und Hinweis, was der Betreiber dort beschreiben muss. */
 function Platzhalter({ titel, inhalt }: { titel: string; inhalt: string }) {
@@ -18,7 +18,7 @@ function Platzhalter({ titel, inhalt }: { titel: string; inhalt: string }) {
  * (docs/extensions.md). Abschnitte von Modulen (`datenschutz`) erscheinen weiter.
  */
 export function DatenschutzPage() {
-  const { umami, discord } = seite();
+  const { umami, discord } = site();
   return (
     <section className="page">
       <header className="page-header">

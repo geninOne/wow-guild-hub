@@ -59,7 +59,7 @@ export const OBERFLAECHEN_ERWEITERUNGEN: readonly OberflaechenErweiterung[] = [
 In addition, depending on what the module needs:
 
 - Pages of its own need a redirect to `/index.html` in `netlify.toml` (otherwise Netlify returns 404; locally you
-  won't notice; `test/web/netlify-weiterleitungen.test.ts` checks it). Pages that should stay out of search
+  won't notice; `test/web/netlify-redirects.test.ts` checks it). Pages that should stay out of search
   engines also get `X-Robots-Tag = "noindex, nofollow"` there and render `<meta name="robots">`.
 - Environment variables: describe them in `.env.example` and, if they should end up on Netlify, add them to
   `scripts/netlify-env-lib.mjs` and `.github/workflows/release.yml`.

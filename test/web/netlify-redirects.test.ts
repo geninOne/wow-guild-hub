@@ -4,8 +4,8 @@ import { describe, expect, it } from "vitest";
 import { OBERFLAECHEN_ERWEITERUNGEN } from "../../web/src/erweiterungen";
 
 /**
- * Auf Netlify liefert nur eine Weiterleitung in netlify.toml die App für Unterseiten aus. Lokal fängt Vite jeden Pfad ab,
- * eine fehlende Regel fällt dort also nicht auf (so kam es zum 404 auf /statistik in 1.3.0).
+ * On Netlify only a redirect in netlify.toml serves the app for subpages. Locally Vite catches every path, so a missing
+ * rule goes unnoticed there (that is how the 404 on /statistik in 1.3.0 happened).
  */
 const root = resolve(__dirname, "../..");
 const toml = readFileSync(resolve(root, "netlify.toml"), "utf8");
@@ -17,10 +17,10 @@ const redirects = [...toml.matchAll(/\[\[redirects\]\]([\s\S]*?)(?=\n\[|$)/g)].m
   status: Number(/status\s*=\s*(\d+)/.exec(m[1])?.[1]),
 }));
 const routes = [...app.matchAll(/<Route\s+path="([^"]+)"/g)].map((m) => m[1]);
-/** Seiten der angemeldeten Erweiterungen brauchen ihre Weiterleitung genauso. */
-const erweiterungsRouten = OBERFLAECHEN_ERWEITERUNGEN.flatMap((e) => (e.routen ?? []).map((r) => r.pfad));
+/** Pages of the registered extensions need their redirect just the same. */
+const extensionRoutes = OBERFLAECHEN_ERWEITERUNGEN.flatMap((e) => (e.routen ?? []).map((r) => r.pfad));
 
-/** Deckt eine Weiterleitung den Pfad ab? Parameter wie :key stehen für ein beliebiges Segment. */
+/** Does a redirect cover the path? Parameters like :key stand for any segment. */
 function covered(path: string): boolean {
   return redirects.some(({ from }) => {
     if (from === path) return true;
@@ -30,18 +30,18 @@ function covered(path: string): boolean {
   });
 }
 
-describe("netlify.toml gegen die Routen der App", () => {
-  it("findet Routen und Weiterleitungen", () => {
+describe("netlify.toml against the app's routes", () => {
+  it("finds routes and redirects", () => {
     expect(routes.length).toBeGreaterThan(5);
     expect(redirects.length).toBeGreaterThan(5);
   });
 
-  it("hat für jede Unterseite eine Weiterleitung auf die App", () => {
-    const missing = [...routes, ...erweiterungsRouten].filter((p) => p !== "/" && p !== "*").filter((p) => !covered(p));
+  it("has a redirect to the app for every subpage", () => {
+    const missing = [...routes, ...extensionRoutes].filter((p) => p !== "/" && p !== "*").filter((p) => !covered(p));
     expect(missing).toEqual([]);
   });
 
-  it("schreibt Seiten auf index.html um (Status 200), nie über /api", () => {
+  it("rewrites pages to index.html (status 200), never over /api", () => {
     for (const r of redirects) {
       expect(r.to).toBe("/index.html");
       expect(r.status).toBe(200);

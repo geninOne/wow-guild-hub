@@ -33,8 +33,8 @@ function mockFetch(routes: Record<string, unknown>) {
 }
 
 function renderAt(path: string, routes: React.ReactNode, sprache?: Sprache) {
-  const seite = <MemoryRouter initialEntries={[path]}><Routes>{routes}</Routes></MemoryRouter>;
-  render(sprache ? <SpracheProvider start={sprache}>{seite}</SpracheProvider> : seite);
+  const site = <MemoryRouter initialEntries={[path]}><Routes>{routes}</Routes></MemoryRouter>;
+  render(sprache ? <SpracheProvider start={sprache}>{site}</SpracheProvider> : site);
 }
 
 const f = (de: string, schwaebisch = de, bayrisch = de, en = de): Fassungen => ({ de, en, schwaebisch, bayrisch });

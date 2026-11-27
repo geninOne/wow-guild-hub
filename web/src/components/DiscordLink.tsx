@@ -1,8 +1,8 @@
-import { seite } from "../lib/seite";
+import { site } from "../lib/site";
 
 /** Link zum Discord der Gemeinschaft aus `WEBSITE_DISCORD`; ohne Adresse erscheint nichts. Eigenes, schlichtes Symbol. */
 export function DiscordLink({ className }: { className?: string }) {
-  const href = seite().discord;
+  const href = site().discord;
   if (!href) return null;
   return (
     <a className={className} href={href} target="_blank" rel="noopener noreferrer">

@@ -4,7 +4,7 @@ import { keepSelected } from "../lib/crossfilter";
 import { raceDistribution, type RaceSlice } from "../lib/members";
 import { pieArcs } from "../lib/pie";
 import { useSprache, type Fassungen } from "../lib/sprache";
-import { zahlLocale } from "../lib/format";
+import { numberLocale } from "../lib/format";
 
 const T = {
   titel: { de: "Völkerverteilung", en: "Race Distribution", schwaebisch: "Völkerverteilung", bayrisch: "Völkerverteilung" },
@@ -127,7 +127,7 @@ export function raceColor(raceId: number): string {
 }
 
 function percent(share: number): string {
-  return `${(share * 100).toLocaleString(zahlLocale(), { maximumFractionDigits: 0 })} %`;
+  return `${(share * 100).toLocaleString(numberLocale(), { maximumFractionDigits: 0 })} %`;
 }
 
 /** So weit rückt das gewählte Stück aus der Mitte (in SVG-Einheiten, Radius 92). */
