@@ -1,8 +1,10 @@
-import { beforeEach, expect, test } from "vitest";
+import { beforeEach, expect, test, vi } from "vitest";
 import type { ApiResult } from "../../src/blizzard/client";
+import { END_RESERVE_SHARE } from "../../src/collect/budget";
 import { runGuildCollection } from "../../src/collect/guild";
 import type { Config } from "../../src/config";
-import type { ActivityWeek, CharacterRecord, DaySnapshot, GuildRecord, LevelUpLog } from "../../src/model";
+import { CHARACTER_INDEX_KEY } from "../../src/collect/character-index";
+import type { ActivityWeek, CharacterIndex, CharacterRecord, DaySnapshot, GuildRecord, LevelUpLog } from "../../src/model";
 import { createMemoryStore } from "../../src/store";
 import type { StatsStand } from "../../src/stats/stand";
 import { createFakeClient } from "../helpers/fake-client";
@@ -201,6 +203,29 @@ test("Zeitbudget 0: nichts geholt, Gilde trotzdem geschrieben", async () => {
   expect(rep).toMatchObject({ fetched: 0, skipped: 2 });
   expect((await store.get<GuildRecord>("guild"))?.members).toHaveLength(2);
   expect(await store.list("characters/")).toEqual([]);
+  expect(await store.get(CHARACTER_INDEX_KEY)).toBeNull();
+});
+
+test("Charakterindex für collect-static: Gegenstände, Stufen, Rezepte und Login je geholtem Charakter", async () => {
+  const rep = await run(T10);
+  expect(Object.keys(rep.phases)).toEqual(["guild", "characters", "write"]);
+  const index = await store.get<CharacterIndex>(CHARACTER_INDEX_KEY);
+  const luvia = await store.get<CharacterRecord>(`characters/${LUVIA}`);
+  expect(index?.[String(LUVIA)]).toMatchObject({ slug: "luvia-stav", hasProfile: true, lastLoginAt: luvia?.lastLoginAt });
+  expect(index?.[String(LUVIA)].itemIds).toEqual(luvia?.equipment.filter((e) => e.itemId).map((e) => e.itemId));
+  expect(index?.[String(LUVIA)].recipeIds).toEqual(luvia?.professions.flatMap((p) => p.recipeIds ?? []));
+  expect(index?.[String(SEEROTH)]).toMatchObject({ hasProfile: false, itemIds: [] });
+});
+
+test("Charakterindex: nicht geholte Charaktere behalten ihren Eintrag", async () => {
+  await run(T10);
+  const before = await store.get<CharacterIndex>(CHARACTER_INDEX_KEY);
+  // Nur einer passt ins Budget; der andere behält seinen Eintrag aus dem vorigen Lauf.
+  await store.set(CHARACTER_INDEX_KEY, { ...before, [String(SEEROTH)]: { ...before![String(SEEROTH)], slug: "alt" } });
+  await run(T11, { budgetMs: 0 });
+  expect((await store.get<CharacterIndex>(CHARACTER_INDEX_KEY))?.[String(SEEROTH)].slug).toBe("alt");
+  await run(T12);
+  expect((await store.get<CharacterIndex>(CHARACTER_INDEX_KEY))?.[String(SEEROTH)].slug).not.toBe("alt");
 });
 
 test("Roster nicht abrufbar: Fehler, Speicher unverändert", async () => {
@@ -437,4 +462,30 @@ test("Nicht geholte behalten im Statistik-Stand ihren letzten Wert, Ehemalige ve
   routes[ROSTER] = rosterWith({}, [SEEROTH]);
   await run(T12);
   expect((await store.get<StatsStand>("stats/2026-11-07"))?.characters).toEqual({});
+});
+
+test("neue Charaktere nur bis kurz vor Budgetende, danach noch Schreiben", async () => {
+  // Jede Anfrage kostet 100 ms auf der vorgetäuschten Uhr; Date.now() steht sonst still.
+  vi.useFakeTimers({ toFake: ["Date"] });
+  try {
+    const start = Date.parse(T10);
+    vi.setSystemTime(start);
+    const all = loadFixture("roster").data.members.map((m: { character: { id: number } }) => m.character.id);
+    routes[ROSTER] = rosterWith({}, all);
+    const profileStarts: number[] = [];
+    const slow = {
+      async get(path: string, ns: Parameters<typeof fake.get>[1]) {
+        if (/^\/profile\/wow\/character\/[^/]+$/.test(path)) profileStarts.push(Date.now() - start);
+        vi.setSystemTime(Date.now() + 100);
+        return fake.get(path, ns);
+      },
+    };
+    const budgetMs = 3000;
+    const rep = await runGuildCollection({ client: slow, store, config: { ...config, budgetMs }, now: () => new Date(T10) });
+    expect(rep.skipped).toBeGreaterThan(0);
+    expect(Math.max(...profileStarts)).toBeLessThan(budgetMs * (1 - END_RESERVE_SHARE));
+    expect(rep.durationMs).toBeLessThanOrEqual(budgetMs);
+  } finally {
+    vi.useRealTimers();
+  }
 });
