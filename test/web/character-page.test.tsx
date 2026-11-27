@@ -235,7 +235,7 @@ test("fallbackIconUrl und factionName", () => {
 });
 
 test("unbekannter Charakter", async () => {
-  mockFetch(404, { error: "Nicht gefunden" });
+  mockFetch(404, { error: "Not found" });
   renderAt("/charakter/niemand");
   expect(await screen.findByText("Charakter nicht gefunden")).toBeTruthy();
   expect(screen.getByRole("link", { name: "Zur Gildenübersicht" }).getAttribute("href")).toBe("/");
@@ -268,7 +268,7 @@ test("Talente-Reiter lädt den Klassenbaum und zeigt ihn", async () => {
 test("Talente-Reiter ohne gesammelten Baum", async () => {
   mockRoutes({
     "/api/characters/gelmar-soulvenn": [200, gelmarView()],
-    "/api/talents/5": [404, { error: "Nicht gefunden" }],
+    "/api/talents/5": [404, { error: "Not found" }],
   });
   renderAt("/charakter/gelmar-soulvenn?reiter=talente");
   expect(await screen.findByText("Talentbäume sind noch nicht geladen.")).toBeTruthy();

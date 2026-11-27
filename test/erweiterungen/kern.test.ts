@@ -1,6 +1,6 @@
 // Erweiterungspunkte des Servers: ohne Module bleibt der Kern für sich, eine Test-Erweiterung hängt sich an alle Stellen.
 import { describe, expect, test } from "vitest";
-import { buildZeitungView, rubrik } from "../../src/api/zeitung-view";
+import { buildNewspaperView, rubrik } from "../../src/api/newspaper-view";
 import { handleApi } from "../../src/api/router";
 import type { CharacterView } from "../../src/api/types";
 import type { ServerErweiterung } from "../../src/erweiterungen/typen";
@@ -134,7 +134,7 @@ describe("Kern mit Test-Erweiterung", () => {
     expect(lead.headline === "Große Umfrage" || lead.headline === "Die Gilde hat gewählt").toBe(true);
     expect((lead.dialekte as { en?: { text: string } }).en?.text).toBe("Anna votes 42 times.");
     expect(record.zeitung.bausteine?.some((b) => b.startsWith("umfrage-kopf:"))).toBe(true);
-    const view = buildZeitungView(guild, record, ["2026-11-14"]);
+    const view = buildNewspaperView(guild, record, ["2026-11-14"]);
     expect(view.lead.section).toMatchObject({ de: "Umfragen", en: "Umfragen" });
     // Mit der Erweiterung kennt die Ansicht die Übersetzung der Rubrik.
     expect(rubrik("Umfragen", [testErweiterung])).toEqual({ de: "Umfragen", en: "Polls" });

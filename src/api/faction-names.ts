@@ -1,6 +1,6 @@
 /**
- * Deutsche Fraktionsnamen, die Blizzard auch im statischen Verzeichnis nur englisch liefert.
- * Geht vor dem Namen aus `static/reputation-factions`; unbekannte bleiben, wie sie kommen.
+ * German faction names that Blizzard delivers only in English, even in the static directory.
+ * Takes precedence over the name from `static/reputation-factions`; unknown ones stay as they come.
  */
 export const FACTION_NAMES_DE: Record<number, string> = {
   // Horde
@@ -9,18 +9,18 @@ export const FACTION_NAMES_DE: Record<number, string> = {
   81: "Donnerfels",
   530: "Dunkelspeertrolle",
   2798: "Dunkelspeer-Räuber",
-  // Allianz
+  // Alliance
   72: "Sturmwind",
   47: "Eisenschmiede",
   69: "Darnassus",
   54: "Gnomeregangnome",
-  // Dampfdruckkartell
+  // Steamwheedle Cartel
   169: "Dampfdruckkartell",
   21: "Beutebucht",
   369: "Gadgetzan",
   470: "Ratschet",
   577: "Ewige Warte",
-  // Schlachtfelder
+  // Battlegrounds
   730: "Sturmlanzengarde",
   890: "Schildwachen der Silberschwingen",
 };

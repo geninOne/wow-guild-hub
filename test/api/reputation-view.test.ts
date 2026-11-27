@@ -15,12 +15,12 @@ const statics: ReputationFactionsRecord = {
   checkedRoots: [67, 169],
 };
 
-test("ohne Rufdaten nicht verfügbar", () => {
+test("not available without reputation data", () => {
   expect(buildReputationView(undefined, statics)).toEqual({ available: false, groups: [] });
   expect(buildReputationView(null, statics)).toEqual({ available: false, groups: [] });
 });
 
-test("Gruppen in Reihenfolge, deutsche Namen, Rest unter Weitere Fraktionen", () => {
+test("groups in order, German names, the rest under Weitere Fraktionen", () => {
   const v = buildReputationView(reps, statics);
   expect(v.available).toBe(true);
   expect(v.groups.map((g) => g.name)).toEqual(["Horde", "Dampfdruckkartell", "Weitere Fraktionen"]);
@@ -32,13 +32,13 @@ test("Gruppen in Reihenfolge, deutsche Namen, Rest unter Weitere Fraktionen", ()
   expect(v.groups[2].factions.map((f) => f.name)).toEqual(["Argentumdämmerung", "Versorgung und Logistik Durotar"]);
 });
 
-test("ohne statische Daten eine Gruppe, Namen aus der Tabelle oder dem Profil", () => {
+test("without static data one group, names from the table or the profile", () => {
   const v = buildReputationView(reps, null);
   expect(v.groups.map((g) => g.name)).toEqual(["Weitere Fraktionen"]);
   expect(v.groups[0].factions.map((f) => f.name)).toContain("Donnerfels");
   expect(v.groups[0].factions.map((f) => f.name)).toContain("Powderfuse");
 });
 
-test("leere Rufliste ist verfügbar, aber ohne Gruppen", () => {
+test("empty reputation list is available, but without groups", () => {
   expect(buildReputationView([], statics)).toEqual({ available: true, groups: [] });
 });

@@ -11,7 +11,7 @@ const fixture = <T>(name: string): T =>
 
 const tree = fixture<TalentTreeRecord>("talent-trees/1114.json");
 const gelmar = fixture<CharacterRecord>("character-1647409.json");
-const spellIdsVon1114 = new Set(tree.specs.flatMap((s) => s.nodes.map((n) => n.spellId)));
+const spellIdsOf1114 = new Set(tree.specs.flatMap((s) => s.nodes.map((n) => n.spellId)));
 
 function member(over: Partial<MemberSummary>): MemberSummary {
   return {
@@ -53,7 +53,7 @@ beforeEach(async () => {
 });
 
 describe("handleApi", () => {
-  test("Gilde mit Live-Cache-Headern", async () => {
+  test("guild with live cache headers", async () => {
     const res = await handleApi(req("/api/guild"), store);
     expect(res.status).toBe(200);
     expect(res.headers.get("Content-Type")).toBe("application/json; charset=utf-8");
@@ -62,7 +62,7 @@ describe("handleApi", () => {
     expect((await body(res)).members).toHaveLength(2);
   });
 
-  test("Charakter mit Werten aus attributes/<id>, ohne Blob nicht verfügbar", async () => {
+  test("character with attributes from attributes/<id>, unavailable without the blob", async () => {
     expect((await body(await handleApi(req("/api/characters/gelmar-soulvenn"), store))).attributes).toEqual({
       available: false, fetchedAt: null, resource: null, groups: [],
     });
@@ -71,53 +71,53 @@ describe("handleApi", () => {
     expect(view.attributes.groups).toEqual([{ id: "basis", rows: [{ key: "health", kind: "number", value: 900 }] }]);
   });
 
-  test("Charakter per Slug und per ID, unbekannt 404 ohne Cache", async () => {
+  test("character by slug and by ID, unknown gives 404 without cache", async () => {
     expect((await body(await handleApi(req("/api/characters/gelmar-soulvenn"), store))).character.id).toBe(1647409);
     expect((await handleApi(req("/api/characters/1647409/"), store)).status).toBe(200);
     const res = await handleApi(req("/api/characters/niemand"), store);
     expect([res.status, res.headers.get("Cache-Control")]).toEqual([404, "no-store"]);
   });
 
-  test("Mitglied ohne gespeicherten Datensatz liefert Ansicht aus der Mitgliederliste", async () => {
+  test("member without a stored record gets a view from the member list", async () => {
     const res = await handleApi(req("/api/characters/weg"), store);
     expect(res.status).toBe(200);
     expect((await body(res)).former).toBe(true);
   });
 
-  test("Talente mit statischem Cache und nur eigenen Icons", async () => {
+  test("talents with static cache and only their own icons", async () => {
     const res = await handleApi(req("/api/talents/5"), store);
     expect(res.headers.get("Cache-Control")).toBe("public, max-age=3600");
     expect(res.headers.get("Netlify-CDN-Cache-Control")).toBe("public, s-maxage=86400, stale-while-revalidate=604800");
     const data = await body(res);
     expect(data.layout.className).toBe("Priester");
-    expect(Object.keys(data.icons).every((id) => spellIdsVon1114.has(Number(id)))).toBe(true);
+    expect(Object.keys(data.icons).every((id) => spellIdsOf1114.has(Number(id)))).toBe(true);
     expect((await handleApi(req("/api/talents/3"), store)).status).toBe(404);
   });
 
-  test("Berufe antworten, Verlauf, Levelrennen und Raids gibt es nicht mehr", async () => {
+  test("professions answer; history, level race and raids no longer exist", async () => {
     expect((await handleApi(req("/api/professions"), store)).status).toBe(200);
     for (const p of ["/api/characters/gelmar-soulvenn/history", "/api/levelrace", "/api/raids"])
       expect((await handleApi(req(p), store)).status).toBe(404);
   });
 
-  test("Berufe und Charakter lesen deutsche Rezeptnamen", async () => {
+  test("professions and character read German recipe names", async () => {
     const p = gelmar.professions[0];
-    const berufKuerzel = professionSlug(p.name);
+    const professionKey = professionSlug(p.name);
     await store.set("characters/1647409", {
       ...gelmar,
       professions: [{ ...p, recipes: ["Bolt of Linen Cloth"], recipeIds: [2963] }],
     });
     await store.set("static/recipe-names", { "2963": "Leinenstoffballen" });
-    const berufe = await body(await handleApi(req("/api/professions"), store));
-    expect(berufe.recipes).toBeUndefined();
-    const rezepte = await body(await handleApi(req(`/api/professions/${encodeURIComponent(berufKuerzel)}`), store));
-    expect(rezepte.recipes.map((r: { name: string }) => r.name)).toEqual(["Leinenstoffballen"]);
-    expect(berufe.guilds).toEqual([{ slug: "", name: "Bärenklaue", faction: "HORDE", memberCount: 1, main: true }]);
-    const charakter = await body(await handleApi(req("/api/characters/gelmar-soulvenn"), store));
-    expect(charakter.character.professions[0].recipes).toEqual(["Leinenstoffballen"]);
+    const professions = await body(await handleApi(req("/api/professions"), store));
+    expect(professions.recipes).toBeUndefined();
+    const recipes = await body(await handleApi(req(`/api/professions/${encodeURIComponent(professionKey)}`), store));
+    expect(recipes.recipes.map((r: { name: string }) => r.name)).toEqual(["Leinenstoffballen"]);
+    expect(professions.guilds).toEqual([{ slug: "", name: "Bärenklaue", faction: "HORDE", memberCount: 1, main: true }]);
+    const characterView = await body(await handleApi(req("/api/characters/gelmar-soulvenn"), store));
+    expect(characterView.character.professions[0].recipes).toEqual(["Leinenstoffballen"]);
   });
 
-  test("Rezepte je Beruf mit Details, unbekannter Beruf 404", async () => {
+  test("recipes per profession with details, unknown profession gives 404", async () => {
     const p = gelmar.professions[0];
     await store.set("characters/1647409", { ...gelmar, professions: [{ ...p, recipes: ["X"], recipeIds: [2408] }] });
     await store.set("static/recipes", {
@@ -130,16 +130,16 @@ describe("handleApi", () => {
     const data = await body(res);
     expect(data.recipes[0]).toMatchObject({ id: 2408, name: "Braune Leinenhose", characterIds: [1647409] });
     expect(data.recipes[0].recipe.reagents[0].icon).toBe("https://render.worldofwarcraft.com/a.jpg");
-    const charakter = await body(await handleApi(req("/api/characters/gelmar-soulvenn"), store));
-    expect(charakter.character.professions[0].recipes).toEqual(["Braune Leinenhose"]);
-    expect(charakter.recipes["2408"].reagents[0].icon).toBe("https://render.worldofwarcraft.com/a.jpg");
+    const characterView = await body(await handleApi(req("/api/characters/gelmar-soulvenn"), store));
+    expect(characterView.character.professions[0].recipes).toEqual(["Braune Leinenhose"]);
+    expect(characterView.recipes["2408"].reagents[0].icon).toBe("https://render.worldofwarcraft.com/a.jpg");
     expect((await handleApi(req("/api/professions/gibtsnicht"), store)).status).toBe(404);
     expect((await handleApi(req("/api/professions/a/b"), store)).status).toBe(404);
   });
 
-  test("Charakter mit Dungeons und Raids, sobald Definitionen vorliegen", async () => {
-    const vorher = await body(await handleApi(req("/api/characters/gelmar-soulvenn"), store));
-    expect(vorher.instances.available).toBe(false);
+  test("character with dungeons and raids once definitions exist", async () => {
+    const before = await body(await handleApi(req("/api/characters/gelmar-soulvenn"), store));
+    expect(before.instances.available).toBe(false);
     await store.set("characters/1647409", {
       ...gelmar,
       instances: {
@@ -153,14 +153,14 @@ describe("handleApi", () => {
           criteria: [{ id: 11, description: "Todesminen" }] },
       ],
     });
-    const nachher = await body(await handleApi(req("/api/characters/gelmar-soulvenn"), store));
-    const dungeons = nachher.instances.dungeonTiers[0].dungeons as { name: string; completed: boolean }[];
+    const after = await body(await handleApi(req("/api/characters/gelmar-soulvenn"), store));
+    const dungeons = after.instances.dungeonTiers[0].dungeons as { name: string; completed: boolean }[];
     expect(dungeons.find((d) => d.name === "Todesminen")).toMatchObject({ completed: true, onAccount: false });
-    // Zusatz-Dungeons aus config/zusatz-dungeons.json stehen mit drin.
+    // Extra dungeons from config/zusatz-dungeons.json are included.
     expect(dungeons.map((d) => d.name)).toEqual(expect.arrayContaining(["Flammenschlund", "Halle der Thanen", "Das Verlies"]));
   });
 
-  test("Charakter mit Ruf und deutschen Fraktionsnamen", async () => {
+  test("character with reputation and German faction names", async () => {
     await store.set("characters/1647409", {
       ...gelmar,
       reputations: [{ factionId: 81, name: "Thunder Bluff", tier: 3, tierName: "Neutral", value: 2116, max: 3000 }],
@@ -176,16 +176,16 @@ describe("handleApi", () => {
     ]);
   });
 
-  test("ohne Gildendaten 503, unbekannter Pfad 404, POST 405", async () => {
-    const leer = createMemoryStore();
-    const res = await handleApi(req("/api/guild"), leer);
-    expect([res.status, await body(res)]).toEqual([503, { error: "Noch keine Daten gesammelt" }]);
+  test("without guild data 503, unknown path 404, POST 405", async () => {
+    const empty = createMemoryStore();
+    const res = await handleApi(req("/api/guild"), empty);
+    expect([res.status, await body(res)]).toEqual([503, { error: "No data collected yet" }]);
     expect((await handleApi(req("/api/gibtsnicht"), store)).status).toBe(404);
     const post = await handleApi(new Request("http://x/api/guild", { method: "POST" }), store);
     expect([post.status, post.headers.get("Cache-Control")]).toEqual([405, "no-store"]);
   });
 
-  test("kaputte Prozentkodierung ergibt 404 ohne Cache und ohne Fehlerlog", async () => {
+  test("broken percent encoding gives 404 without cache and without an error log", async () => {
     const log = vi.spyOn(console, "error").mockImplementation(() => {});
     for (const p of ["/api/characters/%E0%A4%A", "/api/characters/%E0%A4%A/history"]) {
       const res = await handleApi(req(p), store);
@@ -195,23 +195,23 @@ describe("handleApi", () => {
     log.mockRestore();
   });
 
-  test("Talent-Index kennt nur eigene Schlüssel", async () => {
+  test("talent index knows only its own keys", async () => {
     for (const k of ["constructor", "__proto__"])
       expect((await handleApi(req(`/api/talents/${k}`), store)).status).toBe(404);
   });
 
-  test("HEAD wird wie GET beantwortet", async () => {
+  test("HEAD is answered like GET", async () => {
     const res = await handleApi(new Request("http://x/api/guild", { method: "HEAD" }), store);
     expect(res.status).toBe(200);
     expect(res.headers.get("Cache-Control")).toBe("public, max-age=300");
     expect(res.headers.get("Netlify-CDN-Cache-Control")).toBe("public, s-maxage=900, stale-while-revalidate=3600");
   });
 
-  test("Ausnahme im Speicher ergibt 500 ohne Details", async () => {
+  test("exception in the store gives 500 without details", async () => {
     const log = vi.spyOn(console, "error").mockImplementation(() => {});
-    const kaputt = { ...store, get: async () => { throw new Error("geheim"); } };
-    const res = await handleApi(req("/api/guild"), kaputt);
-    expect([res.status, await body(res)]).toEqual([500, { error: "Interner Fehler" }]);
+    const broken = { ...store, get: async () => { throw new Error("secret"); } };
+    const res = await handleApi(req("/api/guild"), broken);
+    expect([res.status, await body(res)]).toEqual([500, { error: "Internal error" }]);
     expect(log).toHaveBeenCalledOnce();
     log.mockRestore();
   });

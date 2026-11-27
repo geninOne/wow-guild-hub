@@ -175,7 +175,7 @@ Modell, worum es geht. Die Antwort wird geprüft: Sie darf nur die Charaktere de
 `zahlen`. Passt etwas nicht, springen die Satzbausteine ein. In `zahlen` gehört deshalb jede Zahl, die ein guter
 Text nennen könnte (auch Differenzen oder Ziffern aus Namen wie „Stufe 30“).
 
-**Rubriken.** Die Rubriken des Kerns stehen in `src/api/zeitung-view.ts`. Eine neue Rubrik bringt ihre Namen in
+**Rubriken.** Die Rubriken des Kerns stehen in `src/api/newspaper-view.ts`. Eine neue Rubrik bringt ihre Namen in
 allen Sprachen über `rubriken` mit, Schlüssel ist der deutsche Name:
 
 ```ts

@@ -34,11 +34,11 @@ export interface TalentLayout {
 
 export interface TalentView {
   layout: TalentLayout;
-  /** Schlüssel: spellId */
+  /** Key: spellId */
   icons: Record<string, string | null>;
 }
 
-/** Eine Gilde der Gemeinschaft in Antworten der Lese-API. */
+/** A guild of the community in responses of the read API. */
 export interface GuildRef {
   slug: string;
   name: string;
@@ -74,10 +74,10 @@ export interface GuildView {
   faction: string;
   rulesetName: string;
   memberCount: number;
-  /** Alle Gilden, Hauptgilde zuerst. */
+  /** All guilds, main guild first. */
   guilds: GuildRef[];
   classes: { id: number; name: string }[];
-  /** Ränge je Gilde (Rangname hängt von der Gilde ab), Gilden wie in `guilds`, Ränge aufsteigend. */
+  /** Ranks per guild (the rank name depends on the guild), guilds as in `guilds`, ranks ascending. */
   ranks: { guildSlug: string; rank: number; name: string }[];
   members: MemberRow[];
 }
@@ -94,43 +94,43 @@ export interface KillRef {
 }
 
 /**
- * "Dungeons & Raids" eines Charakters, aus Erfolgen, Boss-Kill-Statistik und statischen Definitionen. Abgeschlossen
- * heißt: eigener Sieg über den Endboss laut Statistik des Charakters. Die Erfolge gelten für den ganzen Account und
- * zeigen nur `onAccount`.
+ * "Dungeons & Raids" of a character, from achievements, boss kill statistics and static definitions. Completed means:
+ * own victory over the final boss according to the character's statistics. The achievements apply to the whole
+ * account and only show `onAccount`.
  */
 export interface InstancesView {
-  /** false, solange die statischen Definitionen fehlen. */
+  /** false while the static definitions are missing. */
   available: boolean;
   dungeonTiers: {
     achievementId: number;
-    /** z.B. "Novize", Teil des Erfolgsnamens vor dem Doppelpunkt */
+    /** e.g. "Novize", part of the achievement name before the colon */
     tier: string;
-    /** `image`: Kachelbild (Retail-Artwork) oder null, dann zeigt die Oberfläche einen Platzhalter. */
+    /** `image`: tile image (retail artwork) or null, then the UI shows a placeholder. */
     dungeons: {
       criterionId: number;
       name: string;
-      /** Bezeichnung im Erfolg, bei Gegenstücken beider Fraktionen "A oder B". */
+      /** Label in the achievement, "A oder B" for counterparts of both factions. */
       description: string;
-      /** Eigener Sieg über den Endboss laut Statistik dieses Charakters. */
+      /** Own victory over the final boss according to this character's statistics. */
       completed: boolean;
       /**
-       * Nicht abgeschlossen, aber laut accountweitem Erfolgskriterium auf diesem Account erledigt (anderer Charakter
-       * oder ein Dungeon, dessen Endboss die Statistik nicht führt). Zählt in keiner Gildenauswertung.
+       * Not completed, but done on this account according to the account-wide achievement criterion (another
+       * character, or a dungeon whose final boss the statistics do not track). Counts in no guild evaluation.
        */
       onAccount: boolean;
-      /** false, wenn die Statistik den Endboss gar nicht führt (`ohneStatistik`): Abschluss je Charakter unbekannt. */
+      /** false if the statistics do not track the final boss (`ohneStatistik`): completion per character unknown. */
       tracked: boolean;
       kills: KillRef[];
       image: string | null;
-      /** Levelbereich aus `config/dungeons.json`, sonst null. */
+      /** Level range from `config/dungeons.json`, else null. */
       levels: LevelRange | null;
-      /** Bossnamen aus `config/dungeons.json` als reine Info; ohne Eintrag null. */
+      /** Boss names from `config/dungeons.json`, for information only; null without an entry. */
       bosses: string[] | null;
-      /** Endbosse (je Alternative der letzte Eintrag); nur sie erscheinen in der Blizzard-Statistik. */
+      /** Final bosses (the last entry of each alternative); only they appear in the Blizzard statistics. */
       finalBosses: string[];
-      /** Letzter Sieg über den Endboss laut Statistik, sonst null. */
+      /** Last victory over the final boss according to the statistics, else null. */
       completedAt: string | null;
-      /** Wie oft der Endboss besiegt wurde (Summe von `quantity`). */
+      /** How often the final boss was defeated (sum of `quantity`). */
       timesCompleted: number;
     }[];
   }[];
@@ -139,18 +139,18 @@ export interface InstancesView {
     name: string;
     image: string | null;
     levels: LevelRange | null;
-    /** Alle Bosse laut eigener Statistik besiegt. */
+    /** All bosses defeated according to own statistics. */
     completed: boolean;
-    /** Nicht abgeschlossen, aber der Erfolg ist auf diesem Account erledigt. */
+    /** Not completed, but the achievement is done on this account. */
     onAccount: boolean;
-    /** `defeated` nur über die eigene Statistik. */
+    /** `defeated` only from own statistics. */
     bosses: { name: string; defeated: boolean; lastAt: string | null }[];
   }[];
-  /** Boss-Kills, die keinem angezeigten Dungeon oder Raidboss zugeordnet werden konnten. */
+  /** Boss kills that could not be matched to any shown dungeon or raid boss. */
   otherKills: (KillRef & { instance: string | null })[];
 }
 
-/** Ruf eines Charakters, gruppiert; `available` ist false, solange der Datensatz noch keinen Ruf hat. */
+/** Reputation of a character, grouped; `available` is false while the record has no reputation yet. */
 export interface ReputationView {
   available: boolean;
   groups: {
@@ -163,17 +163,17 @@ export type AttributeGroupId = "basis" | "angriff" | "zauber" | "verteidigung";
 export type ResourceKind = "mana" | "rage" | "focus" | "energy" | "runic_power" | "other";
 
 export interface AttributeRow {
-  /** Feldname bei Blizzard, etwa `strength` oder `melee_crit`; die Seite beschriftet danach. */
+  /** Field name at Blizzard, such as `strength` or `melee_crit`; the page labels by it. */
   key: string;
   kind: "number" | "percent";
   value: number;
-  /** Grundwert ohne Ausrüstung, nur wenn er vom Wert abweicht. */
+  /** Base value without gear, only if it differs from the value. */
   base?: number;
 }
 
 export interface AttributesView {
   available: boolean;
-  /** Zeitpunkt des Abrufs; null, wenn noch nie geholt. */
+  /** Time of the fetch; null if never fetched. */
   fetchedAt: string | null;
   resource: { id: number; kind: ResourceKind; name: string } | null;
   groups: { id: AttributeGroupId; rows: AttributeRow[] }[];
@@ -188,17 +188,17 @@ export interface CharacterView {
   rank: number | null;
   rankName: string | null;
   former: boolean;
-  /** Schlüssel: itemId, nur für getragene Gegenstände */
+  /** Key: itemId, only for equipped items */
   itemIcons: Record<string, string | null>;
   instances: InstancesView;
   reputation: ReputationView;
-  /** Grundwerte wie im Arsenal; fehlt bei älteren Antworten. */
+  /** Attributes as in the Armory; missing in older responses. */
   attributes?: AttributesView;
-  /** Schlüssel: Rezept-ID, nur Rezepte des Charakters mit gespeicherten Details. */
+  /** Key: recipe ID, only the character's recipes with stored details. */
   recipes: Record<string, RecipeView>;
-  /** Spaßtitel der letzten ausgewerteten Woche; fehlt bei älteren Antworten. */
+  /** Fun titles of the last evaluated week; missing in older responses. */
   titles?: CharacterTitle[];
-  /** Zusatzdaten angemeldeter Erweiterungen je Kennung; fehlt, wenn keine etwas liefert. */
+  /** Extra data of registered extensions per id; missing if none provides anything. */
   erweiterungen?: Record<string, unknown>;
 }
 
@@ -208,7 +208,7 @@ export interface CharacterRef {
   surname: string | null;
   slug: string;
   classId: number;
-  /** Nur im Berufe-Verzeichnis gesetzt. */
+  /** Only set in the professions directory. */
   className?: string;
   former: boolean;
   guildSlug: string;
@@ -219,9 +219,9 @@ export interface ProfessionsView {
   professions: {
     id: number;
     name: string;
-    /** URL-Kürzel, z.B. "kraeuterkunde". */
+    /** URL slug, e.g. "kraeuterkunde". */
     slug: string;
-    /** "Handwerk", "Sammeln", "Nebenberufe" oder "Weitere Berufe". */
+    /** "Handwerk", "Sammeln", "Nebenberufe" or "Weitere Berufe". */
     group: string;
     icon: string | null;
     primary: boolean;
@@ -230,63 +230,63 @@ export interface ProfessionsView {
   characters: Record<string, CharacterRef>;
 }
 
-/** Rezeptdetails mit Icons der Materialien. */
+/** Recipe details with icons of the reagents. */
 export interface RecipeView extends Omit<RecipeDetail, "reagents"> {
   reagents: (RecipeReagent & { icon: string | null })[];
 }
 
-/** Ein Rezept eines Berufs mit allen aktiven Charakteren, die es kennen. */
+/** A recipe of a profession with all active characters who know it. */
 export interface ProfessionRecipe {
-  /** null bei älteren Daten ohne Rezept-ID. */
+  /** null for older data without a recipe ID. */
   id: number | null;
   name: string;
   characterIds: number[];
-  /** null, solange keine Details gespeichert sind. */
+  /** null while no details are stored. */
   recipe: RecipeView | null;
 }
 
-/** Antwort von `/api/professions/{slug}`, nach Name sortiert. */
+/** Response of `/api/professions/{slug}`, sorted by name. */
 export interface ProfessionRecipesView {
   professionId: number;
   slug: string;
   recipes: ProfessionRecipe[];
 }
 
-/** Antwort von `/api/activity`: Logins der letzten Wochen als Raster Wochentag mal Stunde. */
 /**
- * Ein Mitglied mit seinem Wert in einer Mitgliederliste, kompakt als Paar [Charakter-ID, Wert]. Name, Klasse, Volk
- * und Level holt die Seite aus `/api/guild`, damit die Antworten schlank bleiben.
+ * A member with their value in a member list, compactly as a pair [character ID, value]. The page takes name, class,
+ * race and level from `/api/guild`, so the responses stay lean.
  */
 export type MemberValue = [id: number, value: number];
 
+/** Response of `/api/activity`: logins of the last weeks as a grid of weekday by hour. */
 export interface ActivityView {
   guilds: GuildRef[];
-  /** Betrachtete Wochen, älteste zuerst (auch ohne Daten). */
+  /** Weeks considered, oldest first (also without data). */
   weeks: string[];
-  /** Wochen, für die Aufzeichnungen vorliegen. */
+  /** Weeks for which records exist. */
   weeksWithData: number;
-  /** Erster und letzter Tag des Zeitraums. */
+  /** First and last day of the period. */
   from: string;
   to: string;
-  /** Alle Gilden: 168 Werte (Montag 0 Uhr zuerst), dazu die Zahl der beteiligten Charaktere. */
+  /** All guilds: 168 values (Monday 0:00 first), plus the number of characters involved. */
   all: { cells: number[]; characters: number };
-  /** Je Gildenslug wie `all`. */
+  /** Per guild slug, like `all`. */
   byGuild: Record<string, { cells: number[]; characters: number }>;
-  /** Je Charakter (alle Gilden) die Zahl der Stunden mit Anmeldung im Zeitraum, für die Mitgliederliste. */
+  /** Per character (all guilds) the number of hours with a login in the period, for the member list. */
   logins: MemberValue[];
   testdaten: boolean;
 }
 
-/** Ein vergebener Titel für die Anzeige. */
+/** An awarded title for display. */
 export interface TitleAwardView {
   titleId: string;
   name: Fassungen;
   description: Fassungen;
   value: number;
   valueText: Fassungen;
-  /** Titelträger auf der Karte. */
+  /** Title holder on the card. */
   character: CharacterRef;
-  /** Wie viele den Titel noch haben (Gleichstand); 0 bei einem Gewinner. */
+  /** How many others also hold the title (tie); 0 for a single winner. */
   sharedWith: number;
 }
 
@@ -295,106 +295,106 @@ export interface TitleWeekView {
   from: string;
   to: string;
   awards: TitleAwardView[];
-  /** true, wenn für die Woche die ganze Rangliste je Titel gespeichert ist (siehe `/api/titles?titel=&woche=`). */
+  /** true if the full ranking per title is stored for the week (see `/api/titles?title=&week=`). */
   ranked: boolean;
 }
 
-/** Antwort von `/api/titles`. */
+/** Response of `/api/titles`. */
 export interface TitlesView {
-  /** Gilden der Gemeinschaft, für das Fraktionssymbol der Gewinner. */
+  /** Guilds of the community, for the faction icon of the winners. */
   guilds: GuildRef[];
-  /** Alle Titel mit Regel, auch ohne Gewinner. */
+  /** All titles with a rule, also without winners. */
   titles: { id: string; name: Fassungen; description: Fassungen }[];
-  /** Letzte ausgewertete Woche, null vor der ersten Auswertung. */
+  /** Last evaluated week, null before the first evaluation. */
   current: TitleWeekView | null;
-  /** Vorwochen, neueste zuerst. */
+  /** Previous weeks, newest first. */
   history: TitleWeekView[];
   testdaten: boolean;
 }
 
-/** Antwort von `/api/titles?titel=<id>&woche=<w>`: wer in der Woche wie viel für den Titel hatte. */
+/** Response of `/api/titles?title=<id>&week=<w>`: who had how much for the title in the week. */
 export interface TitleRankingView {
   titleId: string;
   week: string;
   from: string;
   to: string;
-  /** Alle Inhaber des Titels, Titelträger zuerst; leer, wenn der Titel nicht vergeben wurde. */
+  /** All holders of the title, title holder on the card first; empty if the title was not awarded. */
   winnerIds: number[];
-  /** [Charakter-ID, Wert], bester zuerst. */
+  /** [character ID, value], best first. */
   entries: MemberValue[];
-  /** Wert als Text wie auf der Kachel, je vorkommendem Wert (Schlüssel ist der Wert). */
+  /** Value as text as on the tile, per occurring value (the key is the value). */
   valueTexts: Record<string, Fassungen>;
-  /** false für Wochen vor der Rangliste: dann steht nur der Gewinner drin. */
+  /** false for weeks before the ranking: then only the winner is in it. */
   complete: boolean;
 }
 
-/** Titel eines Charakters aus der letzten ausgewerteten Woche, für die Abzeichen. */
+/** Title of a character from the last evaluated week, for the badges. */
 export interface CharacterTitle {
   titleId: string;
   name: Fassungen;
   week: string;
-  /** Erster und letzter gewerteter Tag der Woche. */
+  /** First and last scored day of the week. */
   from: string;
   to: string;
   valueText: Fassungen;
 }
 
-export interface ZeitungArticleView {
+export interface NewspaperArticleView {
   kind: string;
-  /** Rubrik; "Vermischtes" bei Ausgaben vor den Rubriken. */
+  /** Section; "Vermischtes" for issues from before sections. */
   section: Fassungen;
-  /** Spaßtitel der Meldung mit Namen, für das Abzeichen; null ohne Titel. */
+  /** Fun title of the article with its name, for the badge; null without a title. */
   title: { id: string; name: Fassungen } | null;
-  /** Ausgaben vor den Sprachvarianten haben nur eine Fassung, die dann überall steht. */
+  /** Issues from before the language variants have only one version, which then applies everywhere. */
   headline: Fassungen;
   text: Fassungen;
   characters: CharacterRef[];
 }
 
-/** Antwort von `/api/zeitung` und `/api/zeitung/{Woche}`. */
-export interface ZeitungView {
-  /** Fortlaufende Nummer der Ausgabe, ab 1. */
+/** Response of `/api/newspaper` and `/api/newspaper/{week}`. */
+export interface NewspaperView {
+  /** Running number of the issue, from 1. */
   issue: number;
   week: string;
   from: string;
   to: string;
-  lead: ZeitungArticleView;
-  articles: ZeitungArticleView[];
+  lead: NewspaperArticleView;
+  articles: NewspaperArticleView[];
   motto: Fassungen;
-  /** `claude`, wenn ein Sprachmodell geschrieben hat, sonst `bausteine`. */
+  /** `claude` if a language model wrote it, else `bausteine`. */
   generator: string;
-  /** Charakterbild (Avatar) je Charakter-ID der Ausgabe, null ohne Bild. */
+  /** Character image (avatar) per character ID of the issue, null without an image. */
   avatars: Record<string, string | null>;
-  /** Nachbarausgaben zum Blättern. */
+  /** Neighboring issues for paging. */
   previous: string | null;
   next: string | null;
   testdaten: boolean;
-  /** Woche in Zahlen; null in Ausgaben davor. */
-  zahlen?: ZeitungZahlenView | null;
-  /** Wetterbericht; null in Ausgaben davor. */
+  /** Week in numbers; null in issues from before. */
+  zahlen?: NewspaperNumbersView | null;
+  /** Weather report; null in issues from before. */
   wetter?: Fassungen | null;
-  /** Schlagzeile von vor vier Wochen; null, wenn es die Ausgabe nicht gibt. */
-  rueckblick?: ZeitungRueckblickView | null;
+  /** Headline from four weeks ago; null if that issue does not exist. */
+  rueckblick?: NewspaperLookbackView | null;
 }
 
-/** Eine Zeile im Infokasten „Woche in Zahlen“. */
-export interface ZeitungZahlView {
+/** A row in the info box "Woche in Zahlen" (week in numbers). */
+export interface NewspaperNumberView {
   art: WeeklyNumberKind;
   wert: number;
-  /** Wert der Vorwoche; null ohne Vergleich (dann kein Pfeil). */
+  /** Value of the previous week; null without a comparison (then no arrow). */
   vorwoche: number | null;
 }
 
-export interface ZeitungZahlenView {
+export interface NewspaperNumbersView {
   guilds: GuildRef[];
-  gesamt: ZeitungZahlView[];
-  /** Je Gilden-Slug. */
-  gilden: Record<string, ZeitungZahlView[]>;
+  gesamt: NewspaperNumberView[];
+  /** Per guild slug. */
+  gilden: Record<string, NewspaperNumberView[]>;
 }
 
-export interface ZeitungRueckblickView {
+export interface NewspaperLookbackView {
   week: string;
-  /** Nummer der damaligen Ausgabe. */
+  /** Number of the issue back then. */
   issue: number | null;
   from: string;
   to: string;
@@ -402,26 +402,26 @@ export interface ZeitungRueckblickView {
   characters: CharacterRef[];
 }
 
-/** Antwort von `/api/wrapped/{Charakter}[/{Monat}]`: Monatsbilanz. Werte null heißen "keine Daten". */
+/** Response of `/api/wrapped/{character}[/{month}]`: monthly summary. Values of null mean "no data". */
 export interface WrappedView {
   character: CharacterRef & { level: number; className: string };
-  /** JJJJ-MM */
+  /** YYYY-MM */
   month: string;
-  /** Monate mit Daten, neueste zuerst. */
+  /** Months with data, newest first. */
   months: string[];
-  /** Laufender Monat: Zwischenstand. */
+  /** Current month: interim result. */
   running: boolean;
-  /** Erster und letzter Tagesstand, die für diesen Charakter verglichen wurden. */
+  /** First and last daily snapshot compared for this character. */
   from: string | null;
   to: string | null;
-  /** Mit höherem Level beigetreten: Datum, ab dem gezählt wird; sonst null. */
+  /** Joined at a higher level: date from which counting starts; else null. */
   since: string | null;
-  /** Monat des Serverstarts: sein Datum. Dann zählt alles ab Level 1 und Zählerstand 0, sonst null. */
+  /** Month of the server start: its date. Then everything counts from level 1 and counters at 0; else null. */
   serverStart: string | null;
   levels: { gained: number; start: number; end: number } | null;
-  /** Platz in der Gemeinschaft nach gewonnenen Leveln. */
+  /** Place in the community by levels gained. */
   rank: { place: number; of: number } | null;
-  /** Zuwachs der Gegenstandsstufe; im Monat des Serverstarts der aktuelle Wert. */
+  /** Gain in item level; in the month of the server start the current value. */
   itemLevel: number | null;
   professionPoints: number | null;
   dungeons: number | null;
@@ -429,59 +429,59 @@ export interface WrappedView {
   deaths: number | null;
   logins: number;
   activeDays: number;
-  /** Häufigste Stunde (0 bis 23) und häufigster Wochentag (Montag 0); null ohne Logins. */
+  /** Most frequent hour (0 to 23) and most frequent weekday (Monday 0); null without logins. */
   favoriteHour: number | null;
   favoriteWeekday: number | null;
   titles: CharacterTitle[];
   testdaten: boolean;
 }
 
-/** Antwort von `/api/zeitung/archiv`: alle Ausgaben, neueste zuerst. */
-export interface ZeitungArchiveView {
+/** Response of `/api/newspaper/archive`: all issues, newest first. */
+export interface NewspaperArchiveView {
   issues: { issue: number; week: string; from: string; to: string; headline: Fassungen; testdaten: boolean }[];
 }
 
-/** Ein Spitzenreiter einer Statistik. */
+/** A leader of a statistic. */
 export interface StatLeaderView {
   character: CharacterRef;
   value: number;
 }
 
-/** Umrechnung für die Wusstest-du-Karte: `total / per` ergibt die Menge in `unit`. */
+/** Conversion for the did-you-know card: `total / per` gives the amount in `unit`. */
 export interface StatConversionView {
   per: number;
   unit: Fassungen<[string, string]>;
-  /** Erklärung der Umrechnung, etwa "wenn ein Fass hundert Krüge hergibt". */
+  /** Explanation of the conversion, such as "wenn ein Fass hundert Krüge hergibt". */
   text: Fassungen;
 }
 
-/** Eine Statistik im gewählten Zeitraum und für die gewählte Gilde. */
+/** A statistic in the chosen period and for the chosen guild. */
 export interface StatEntryView {
   id: number;
   name: string;
   art: "zaehler" | "stand";
-  /** Zähler: Summe im Zeitraum. Stand: höchster Wert eines Charakters. */
+  /** Counter: sum in the period. Current value: highest value of a character. */
   total: number;
-  /** Wie `total`, aber je Gilde (Slug) und immer über alle Gilden, für den Vergleich Horde gegen Allianz. */
+  /** Like `total`, but per guild (slug) and always across all guilds, for comparing Horde against Alliance. */
   perGuild: Record<string, number>;
-  /** Spitzenreiter, höchster Wert zuerst, nur Werte über 0. */
+  /** Leaders, highest value first, only values above 0. */
   leaders: StatLeaderView[];
-  /** Wie viele Charaktere (der gewählten Gilde) einen Wert über 0 haben. */
+  /** How many characters (of the chosen guild) have a value above 0. */
   holders: number;
-  /** Summe über die Charaktere (der gewählten Gilde); bei Zählern gleich `total`, bei Ständen etwa alle Haustiere zusammen. */
+  /** Sum over the characters (of the chosen guild); `total` for counters, e.g. all pets together for current values. */
   sum: number;
-  /** Klasse für die Farbe, etwa Paladin bei Erlösungen; null ohne. */
+  /** Class for the color, such as Paladin for redemptions; null without. */
   classId: number | null;
-  /** Kurze Beschriftung im Diagramm; null, dann der amtliche Name. */
+  /** Short label in the chart; null, then the official name. */
   short: Fassungen | null;
-  /** Einheit als [Einzahl, Mehrzahl], null ohne. */
+  /** Unit as [singular, plural], null without. */
   unit: Fassungen<[string, string]> | null;
-  /** Auszeichnung für den Spitzenreiter, null ohne. */
+  /** Honor for the leader, null without. */
   honor: Fassungen | null;
   conversion: StatConversionView | null;
 }
 
-/** Darstellungsform einer Karte der Gildenstatistik. */
+/** Display form of a guild statistics card. */
 export type StatCardForm =
   | "grabsteinfeld"
   | "piktogramm"
@@ -498,39 +498,39 @@ export type StatCardForm =
   | "schredder"
   | "verband";
 
-/** Eine Karte der Gildenstatistik mit ihren Statistiken in der Reihenfolge aus `config/statistik-karten.json`. */
+/** A guild statistics card with its statistics in the order from `config/statistik-karten.json`. */
 export interface StatCardView {
   slug: string;
   form: StatCardForm;
   title: Fassungen;
-  /** Lockere Unterzeile, null ohne. */
+  /** Casual subtitle, null without. */
   blurb: Fassungen | null;
-  /** Breite in Spalten der Wand, 1 bis 3. */
+  /** Width in columns of the wall, 1 to 3. */
   span: 1 | 2 | 3;
   stats: StatEntryView[];
 }
 
-/** Ein Dungeon über die ganze Gilde (oder die gewählte Gilde) zusammengezählt. */
+/** A dungeon totaled across the whole guild (or the chosen guild). */
 export interface GuildDungeonView {
-  /** Erste Alternative der Erfolgsbezeichnung, kleingeschrieben; fasst Gegenstücke beider Fraktionen zusammen. */
+  /** First alternative of the achievement label, lowercase; merges counterparts of both factions. */
   key: string;
-  /** Angezeigter Name: die Alternativen, die jemand abgeschlossen hat, sonst die erste. */
+  /** Displayed name: the alternatives someone has completed, else the first. */
   name: string;
-  /** "Novize", "Erfahren" oder "Meister". */
+  /** "Novize", "Erfahren" or "Meister". */
   tier: string;
   image: string | null;
   levels: LevelRange | null;
-  /** Charaktere, die den Dungeon abgeschlossen haben (eigener Endboss-Sieg laut Statistik). */
+  /** Characters who have completed the dungeon (own final boss victory according to the statistics). */
   completed: number;
-  /** false, wenn die Statistik den Endboss nicht führt: `completed` ist dann immer 0 und sagt nichts aus. */
+  /** false if the statistics do not track the final boss: `completed` is then always 0 and means nothing. */
   tracked: boolean;
-  /** Endboss-Siege aller Charaktere zusammen. */
+  /** Final boss victories of all characters together. */
   timesCompleted: number;
-  /** Wer den Endboss am öftesten gelegt hat, null ohne Siege. */
+  /** Who defeated the final boss most often, null without victories. */
   best: { character: CharacterRef; times: number } | null;
-  /** Letzter Endboss-Sieg in der Gilde. */
+  /** Last final boss victory in the guild. */
   lastAt: string | null;
-  /** Wer durch ist, mit seinen Endboss-Siegen. */
+  /** Who has completed it, with their final boss victories. */
   who: MemberValue[];
 }
 
@@ -538,67 +538,67 @@ export interface GuildRaidView {
   name: string;
   image: string | null;
   levels: LevelRange | null;
-  /** Charaktere, die laut eigener Statistik alle Bosse besiegt haben. */
+  /** Characters who have defeated all bosses according to their own statistics. */
   completed: number;
   bosses: { name: string; defeated: number }[];
-  /** Wer mindestens einen Boss gelegt hat, mit der Zahl seiner besiegten Bosse. */
+  /** Who has defeated at least one boss, with the number of bosses they defeated. */
   who: MemberValue[];
 }
 
-/** Antwort von `/api/dungeons[?gilde=Slug]`: Dungeons und Raids über alle Charaktere mit Profil. */
+/** Response of `/api/dungeons[?guild=slug]`: dungeons and raids across all characters with a profile. */
 export interface GuildDungeonsView {
-  /** false, solange die statischen Definitionen fehlen. */
+  /** false while the static definitions are missing. */
   available: boolean;
   guilds: GuildRef[];
   guild: string | null;
-  /** Ausgewertete Charaktere (aktive Mitglieder mit Profil, bei gewählter Gilde nur ihre). */
+  /** Evaluated characters (active members with a profile, only its own for a chosen guild). */
   characters: number;
-  /** Nach Mindestlevel, dann Name. */
+  /** By minimum level, then name. */
   dungeons: GuildDungeonView[];
   raids: GuildRaidView[];
-  /** Am weitesten gekommen: wer den Dungeon mit dem höchsten Mindestlevel abgeschlossen hat. */
+  /** Got the furthest: who has completed the dungeon with the highest minimum level. */
   frontier: { dungeon: string; characters: CharacterRef[] } | null;
 }
 
 export type StatsPeriodKind = "woche" | "monat" | "gesamt";
 
 /**
- * Antwort von `/api/stats`, `/api/stats/woche[/Samstag]` und `/api/stats/monat[/JJJJ-MM]`: Gildenstatistik als
- * Differenz der Wochenstände. `status` sagt, ob die Zahlen taugen: `keine` (noch gar kein Stand), `zu-wenig` (für
- * diesen Zeitraum fehlt der Vergleichsstand), sonst `ok`. Nur bei `ok` stehen Karten drin. Mit `?gilde=<Slug>`
- * zählen nur die Charaktere dieser Gilde.
+ * Response of `/api/stats`, `/api/stats/week[/saturday]` and `/api/stats/month[/YYYY-MM]`: guild statistics as the
+ * difference of weekly snapshots. `status` says whether the numbers are usable: `keine` (no snapshot at all yet),
+ * `zu-wenig` (the baseline snapshot for this period is missing), else `ok`. Only with `ok` are there cards. With
+ * `?guild=<slug>` only the characters of that guild count.
  */
 export interface StatsView {
   kind: StatsPeriodKind;
-  /** Samstag der Woche bzw. JJJJ-MM des Monats, null bei Gesamt. */
+  /** Saturday of the week or YYYY-MM of the month, null for total. */
   id: string | null;
   status: "ok" | "zu-wenig" | "keine";
-  /** Verglichener früherer Stand (Samstag), null für den Serverstart. */
+  /** Earlier snapshot compared (Saturday), null for the server start. */
   before: string | null;
-  /** Neuerer Stand (Samstag), null ohne Stand. */
+  /** Newer snapshot (Saturday), null without a snapshot. */
   after: string | null;
-  /** Zeitpunkt des letzten Laufs im neueren Stand. */
+  /** Time of the last run in the newer snapshot. */
   takenAt: string | null;
-  /** Tag des Serverstarts, null ohne. */
+  /** Day of the server start, null without. */
   serverStart: string | null;
-  /** Der neuere Stand ist eine Kopie, weil in der Woche kein Sammler lief. */
+  /** The newer snapshot is a copy because no collector ran that week. */
   nachgeholt: boolean;
-  /** Charaktere im neueren Stand (bei gewählter Gilde nur ihre). */
+  /** Characters in the newer snapshot (only its own for a chosen guild). */
   characters: number;
-  /** Wochen und Monate mit Stand, neueste zuerst, für die Auswahl. */
+  /** Weeks and months with a snapshot, newest first, for the selection. */
   weeks: string[];
   months: string[];
-  /** Gilden der Gemeinschaft für den Gildenfilter, Hauptgilde zuerst. */
+  /** Guilds of the community for the guild filter, main guild first. */
   guilds: GuildRef[];
-  /** Gewählte Gilde (Slug), null für alle. */
+  /** Chosen guild (slug), null for all. */
   guild: string | null;
   cards: StatCardView[];
 }
 
 /**
- * Antwort von `/api/stats…?karte=<Slug>`: die Mitglieder hinter einer Karte der Gildenstatistik, je Statistik in der
- * Reihenfolge der Karte. Werte wie auf der Karte (Zuwachs im Zeitraum bzw. aktueller Stand), immer über alle Gilden,
- * damit die Liste selbst nach Gilde filtern kann. Nur Werte über 0, beim Stall auch die Fußgänger mit 0.
+ * Response of `/api/stats…?card=<slug>`: the members behind a guild statistics card, per statistic in the card's
+ * order. Values as on the card (gain in the period or current value), always across all guilds, so the list can filter
+ * by guild itself. Only values above 0; for the stable also those on foot with 0.
  */
 export interface StatCardMembersView {
   slug: string;

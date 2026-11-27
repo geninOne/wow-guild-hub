@@ -6,19 +6,19 @@ import { buildInstancesView, instanceImage } from "./instances-view";
 import type { CharacterRef, GuildDungeonsView, GuildDungeonView, GuildRaidView, MemberValue } from "./types";
 
 interface DungeonAcc extends GuildDungeonView {
-  /** Abgeschlossene Alternativen der Bezeichnung mit der Zahl der Abschlüsse. */
+  /** Completed alternatives of the description with the number of completions. */
   alternatives: Map<string, number>;
   order: number;
 }
 
-/** Höchster Wert zuerst, bei Gleichstand nach ID, damit die Antwort stabil bleibt. */
+/** Highest value first, ties by ID, so the response stays stable. */
 const byValue = (list: MemberValue[]) => [...list].sort((a, b) => b[1] - a[1] || a[0] - b[0]);
 
 const firstAlternative = (description: string) => description.split(" oder ")[0];
 
 /**
- * Dungeons und Raids über alle übergebenen Charaktere. Gegenstücke beider Fraktionen ("Flammenschlund oder Halle der
- * Thanen") zählen als ein Dungeon; angezeigt werden die Alternativen, die jemand abgeschlossen hat.
+ * Dungeons and raids across all given characters. Counterparts of both factions ("Flammenschlund oder Halle der
+ * Thanen") count as one dungeon; the alternatives someone has completed are shown.
  */
 export function buildGuildDungeons(
   guild: GuildRecord,
@@ -67,7 +67,7 @@ export function buildGuildDungeons(
         if (d.completed) {
           acc.completed++;
           acc.who.push([ref.id, d.timesCompleted]);
-          // Ohne Kill weiß man nicht, welche Alternative es war, dann zählen alle.
+          // Without a kill there is no telling which alternative it was, so all of them count.
           for (const alt of d.name.split(" oder ")) acc.alternatives.set(alt, (acc.alternatives.get(alt) ?? 0) + 1);
         }
       }
@@ -99,13 +99,13 @@ export function buildGuildDungeons(
     .map(({ alternatives, order: _order, ...d }): GuildDungeonView & { order: number } => {
       const names = [...alternatives.keys()].sort((a, b) => (a === d.name ? -1 : b === d.name ? 1 : a.localeCompare(b, "de")));
       const name = names.length > 0 ? names.join(" oder ") : d.name;
-      // Bild zum angezeigten Namen, damit "Flammenschlund" nicht das Bild der Halle der Thanen erbt.
+      // Image for the displayed name, so "Flammenschlund" does not inherit the image of Halle der Thanen.
       return { ...d, name, image: instanceImage(name, images) ?? d.image, order: _order };
     })
     .sort((a, b) => (a.levels?.min ?? 99) - (b.levels?.min ?? 99) || a.order - b.order)
     .map(({ order: _o, ...d }) => ({ ...d, who: byValue(d.who) }));
 
-  // Gildenspitze: Dungeon mit dem höchsten Mindestlevel, den jemand geschafft hat, und wer.
+  // Guild frontier: the dungeon with the highest minimum level that someone has completed, and who.
   const top = [...list].reverse().find((d) => d.completed > 0);
   let frontier: GuildDungeonsView["frontier"] = null;
   if (top) {

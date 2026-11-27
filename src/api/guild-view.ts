@@ -7,7 +7,7 @@ export function lookupName(list: NamedList | null, id: number, fallback: string)
   return list?.items.find((item) => item.id === id)?.name ?? fallback;
 }
 
-/** Gilden der Gemeinschaft, Hauptgilde zuerst. Alte Blobs ohne `guilds` ergeben eine Gilde aus den Kopf-Feldern. */
+/** Guilds of the community, main guild first. Old blobs without `guilds` yield one guild from the header fields. */
 export function guildRefs(guild: GuildRecord): GuildRef[] {
   if (guild.guilds && guild.guilds.length > 0) {
     return guild.guilds.map(({ slug, name, faction, memberCount, main }) => ({ slug, name, faction, memberCount, main }));
@@ -15,7 +15,7 @@ export function guildRefs(guild: GuildRecord): GuildRef[] {
   return [{ slug: "", name: guild.name, faction: guild.faction, memberCount: guild.memberCount, main: true }];
 }
 
-/** Gilde eines Mitglieds; ohne oder mit unbekanntem `guildSlug` die Hauptgilde. */
+/** Guild of a member; the main guild if `guildSlug` is missing or unknown. */
 export function memberGuild(guild: GuildRecord, m: MemberSummary | null, refs: GuildRef[] = guildRefs(guild)): GuildRef {
   return refs.find((g) => g.slug === m?.guildSlug) ?? refs[0];
 }

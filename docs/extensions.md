@@ -178,7 +178,7 @@ model what it is about. The response is checked: it may mention only the charact
 from `zahlen`. If something doesn't match, the sentence templates step in. So `zahlen` should contain every number
 a good text might mention (including differences or digits from names such as "Stufe 30").
 
-**Sections (`rubriken`).** The core's sections are in `src/api/zeitung-view.ts`. A new section brings its names
+**Sections (`rubriken`).** The core's sections are in `src/api/newspaper-view.ts`. A new section brings its names
 in all languages through `rubriken`; the key is the German name:
 
 ```ts

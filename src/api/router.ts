@@ -14,7 +14,7 @@ import type { JsonStore } from "../store";
 import { isMonth, isGuildWeek, isWeekId } from "../lib/time";
 import { SERVER_START } from "../server-start";
 import { loadActivityView } from "./activity-view";
-import { loadZeitungArchive, loadZeitungView } from "./zeitung-view";
+import { loadNewspaperArchive, loadNewspaperView } from "./newspaper-view";
 import { buildCharacterView, findMember } from "./character-view";
 import { characterTitles, latestWeekly } from "./fun-common";
 import { EXTRA_DUNGEONS } from "../instance-images";
@@ -31,8 +31,24 @@ import { buildProfessionRecipesView, buildProfessionsView } from "./professions-
 import { layoutTalentTree } from "./talent-layout";
 import type { TalentView } from "./types";
 
-const NO_DATA = { error: "Noch keine Daten gesammelt" };
-const NOT_FOUND = { error: "Nicht gefunden" };
+const NO_DATA = { error: "No data collected yet" };
+const NOT_FOUND = { error: "Not found" };
+
+/**
+ * German route segments and query parameters of versions up to 2.x. They keep working as aliases, so bookmarks,
+ * cached pages and other clients do not break; the site itself uses the English names.
+ */
+const LEGACY_RESOURCES: Record<string, string> = { zeitung: "newspaper" };
+const LEGACY_KEYS: Record<string, Record<string, string>> = {
+  newspaper: { archiv: "archive" },
+  stats: { woche: "week", monat: "month" },
+};
+const LEGACY_PARAMS: Record<string, string> = { guild: "gilde", week: "woche", title: "titel", card: "karte" };
+
+/** Query parameter by its English name, or by its legacy German name. */
+function param(query: URLSearchParams, name: string): string | null {
+  return query.get(name) ?? (Object.hasOwn(LEGACY_PARAMS, name) ? query.get(LEGACY_PARAMS[name]) : null);
+}
 
 function safeDecode(s: string): string | null {
   try {
@@ -58,6 +74,9 @@ async function route(
 ): Promise<Response> {
   const parts = path.split("/").filter(Boolean); // ["api", ...]
   if (parts[0] !== "api") return json(NOT_FOUND, 404, "none");
+  if (parts[1] !== undefined && Object.hasOwn(LEGACY_RESOURCES, parts[1])) parts[1] = LEGACY_RESOURCES[parts[1]];
+  const legacyKeys = parts[1] !== undefined && Object.hasOwn(LEGACY_KEYS, parts[1]) ? LEGACY_KEYS[parts[1]] : undefined;
+  if (legacyKeys && parts[2] !== undefined && Object.hasOwn(legacyKeys, parts[2])) parts[2] = legacyKeys[parts[2]];
   const [, resource, key] = parts;
 
   if (resource === "talents" && key && parts.length === 3) {
@@ -87,8 +106,8 @@ async function route(
     (resource === "activity" && parts.length === 2) ||
     (resource === "titles" && parts.length === 2) ||
     (resource === "dungeons" && parts.length === 2) ||
-    (resource === "stats" && (parts.length === 2 || ((key === "woche" || key === "monat") && parts.length <= 4))) ||
-    (resource === "zeitung" && (parts.length === 2 || parts.length === 3)) ||
+    (resource === "stats" && (parts.length === 2 || ((key === "week" || key === "month") && parts.length <= 4))) ||
+    (resource === "newspaper" && (parts.length === 2 || parts.length === 3)) ||
     (resource === "wrapped" && key && (parts.length === 3 || parts.length === 4));
   if (!isKnown) return json(NOT_FOUND, 404, "none");
 
@@ -99,9 +118,9 @@ async function route(
     case "activity":
       return json(await loadActivityView(store, guild, now().toISOString()), 200, "live");
     case "titles": {
-      const titleId = query.get("titel");
+      const titleId = param(query, "title");
       if (titleId !== null) {
-        const week = query.get("woche");
+        const week = param(query, "week");
         if (week === null || !isWeekId(week)) return json(NOT_FOUND, 404, "none");
         const ranking = await loadTitleRanking(store, titleId, week);
         return ranking ? json(ranking, 200, "live") : json(NOT_FOUND, 404, "none");
@@ -109,20 +128,21 @@ async function route(
       return json(await loadTitlesView(store, guild), 200, "live");
     }
     case "stats": {
-      const kind = key === "woche" || key === "monat" ? key : "gesamt";
+      // `kind` keeps its German values: they are part of the API response (`StatsView.kind`).
+      const kind = key === "week" ? "woche" : key === "month" ? "monat" : "gesamt";
       const id = parts[3] ?? null;
       if (id !== null && !(kind === "woche" ? isGuildWeek(id) : isMonth(id))) return json(NOT_FOUND, 404, "none");
       const serverStart = options.serverStart === undefined ? SERVER_START : options.serverStart;
-      const card = query.get("karte");
+      const card = param(query, "card");
       if (card !== null) {
         const members = await loadStatCardMembers(store, kind, id, serverStart, card);
         return members ? json(members, 200, "live") : json(NOT_FOUND, 404, "none");
       }
-      const view = await loadStatsView(store, guild, kind, id, serverStart, query.get("gilde"));
+      const view = await loadStatsView(store, guild, kind, id, serverStart, param(query, "guild"));
       return view ? json(view, 200, "live") : json(NOT_FOUND, 404, "none");
     }
     case "dungeons": {
-      const slug = query.get("gilde");
+      const slug = param(query, "guild");
       if (slug !== null && !guildRefs(guild).some((g) => g.slug === slug)) return json(NOT_FOUND, 404, "none");
       const [records, defs, images] = await Promise.all([
         activeRecords(store, guild),
@@ -131,11 +151,11 @@ async function route(
       ]);
       return json(buildGuildDungeons(guild, records, defs, images, slug, EXTRA_DUNGEONS), 200, "live");
     }
-    case "zeitung": {
-      if (key === "archiv") return json(await loadZeitungArchive(store), 200, "live");
+    case "newspaper": {
+      if (key === "archive") return json(await loadNewspaperArchive(store), 200, "live");
       const week = key ? safeDecode(key) : null;
       if (key && (week === null || !isWeekId(week))) return json(NOT_FOUND, 404, "none");
-      const view = await loadZeitungView(store, guild, week);
+      const view = await loadNewspaperView(store, guild, week);
       return view ? json(view, 200, "live") : json(NOT_FOUND, 404, "none");
     }
     case "wrapped": {
@@ -156,8 +176,8 @@ async function route(
       const decoded = safeDecode(key);
       const member = decoded === null ? undefined : findMember(guild, decoded);
       if (!member) return json(NOT_FOUND, 404, "none");
-      const zusatz = Promise.all(erweiterungen.map(async (e) => [e.id, await e.charakter?.({ store, guild, member })] as const));
-      const [record, classes, races, itemIcons, recipeNames, recipeDetails, instanceDefs, reputationFactions, instanceImages, weekly, zusatzDaten, attributes, itemLevels] =
+      const extras = Promise.all(erweiterungen.map(async (e) => [e.id, await e.charakter?.({ store, guild, member })] as const));
+      const [record, classes, races, itemIcons, recipeNames, recipeDetails, instanceDefs, reputationFactions, instanceImages, weekly, extraData, attributes, itemLevels] =
         await Promise.all([
         store.get<CharacterRecord>(`characters/${member.id}`),
         store.get<NamedList>("static/classes"),
@@ -169,7 +189,7 @@ async function route(
         store.get<ReputationFactionsRecord>("static/reputation-factions"),
         store.get<IconMap>("static/instance-images"),
         latestWeekly(store),
-        zusatz,
+        extras,
         store.get<CharacterAttributesRecord>(`attributes/${member.id}`),
         store.get<Record<string, number | null>>("static/item-levels"),
       ]);
@@ -179,10 +199,10 @@ async function route(
       });
       if (!view) return json(NOT_FOUND, 404, "none");
       view.titles = weekly ? characterTitles(weekly, member.id) : [];
-      const daten = zusatzDaten.filter(([, d]) => d !== null && d !== undefined);
-      if (daten.length > 0) view.erweiterungen = Object.fromEntries(daten);
+      const provided = extraData.filter(([, d]) => d !== null && d !== undefined);
+      if (provided.length > 0) view.erweiterungen = Object.fromEntries(provided);
       const response = json(view, 200, "live");
-      // Erweiterungen mit eigenem Cache-Tag können die Charakterseiten nach einer Änderung erneuern lassen.
+      // Extensions with their own cache tag can have the character pages refreshed after a change.
       const tags = [...new Set(erweiterungen.flatMap((e) => e.charakterCacheTags ?? []))];
       if (tags.length > 0) response.headers.set("Netlify-Cache-Tag", tags.join(","));
       return response;
@@ -213,15 +233,15 @@ async function route(
 }
 
 export interface ApiOptions {
-  /** Tag des Serverstarts; Standard aus `config/serverstart.json`, null schaltet die Regel ab. */
+  /** Day of the server start; defaults to `config/serverstart.json`, null turns the rule off. */
   serverStart?: string | null;
-  /** Umgebungsvariablen für Erweiterungen (auf Netlify `process.env`); ohne Angabe keine. */
+  /** Environment variables for extensions (on Netlify `process.env`); none if not given. */
   env?: Readonly<Record<string, string | undefined>>;
-  /** IP des Aufrufers (auf Netlify `context.ip`), für Erweiterungen. */
+  /** IP of the caller (on Netlify `context.ip`), for extensions. */
   clientIp?: string | null;
-  /** Leert den CDN-Cache für Cache-Tags (auf Netlify `purgeCache`), für Erweiterungen. */
+  /** Purges the CDN cache for cache tags (on Netlify `purgeCache`), for extensions. */
   purgeCache?: (tags: string[]) => Promise<void>;
-  /** Angemeldete Erweiterungen; Standard aus `src/erweiterungen/index.ts`. */
+  /** Registered extensions; defaults to `src/erweiterungen/index.ts`. */
   erweiterungen?: readonly ServerErweiterung[];
 }
 
@@ -234,7 +254,7 @@ export async function handleApi(
   const url = new URL(req.url);
   const path = url.pathname.length > 1 ? url.pathname.replace(/\/+$/, "") : url.pathname;
   const erweiterungen = options.erweiterungen ?? SERVER_ERWEITERUNGEN;
-  const kontext: ApiKontext = {
+  const context: ApiKontext = {
     store,
     now,
     env: options.env ?? {},
@@ -242,17 +262,17 @@ export async function handleApi(
     ...(options.purgeCache ? { purgeCache: options.purgeCache } : {}),
   };
   try {
-    // Erweiterungen zuerst: Sie dürfen eigene Pfade und Methoden (etwa POST für einen Upload) übernehmen.
+    // Extensions first: they may take over their own paths and methods (such as POST for an upload).
     for (const e of erweiterungen) {
-      const antwort = e.api ? await e.api(req, path, kontext) : null;
-      if (antwort) return antwort;
+      const answer = e.api ? await e.api(req, path, context) : null;
+      if (answer) return answer;
     }
-    if (req.method !== "GET" && req.method !== "HEAD") return json({ error: "Methode nicht erlaubt" }, 405, "none");
+    if (req.method !== "GET" && req.method !== "HEAD") return json({ error: "Method not allowed" }, 405, "none");
     return await route(path, url.searchParams, store, now, options, erweiterungen);
   } catch (error) {
     console.error(
       JSON.stringify({ job: "api", path, error: error instanceof Error ? error.message : String(error) }),
     );
-    return json({ error: "Interner Fehler" }, 500, "none");
+    return json({ error: "Internal error" }, 500, "none");
   }
 }

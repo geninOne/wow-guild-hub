@@ -104,7 +104,8 @@ is done. Tests need no credentials; never add tests that call the real Blizzard 
    - the Blobs store name (`gilde`) and blob keys and prefixes (`guild`, `characters/<id>`, `attributes/<id>`,
      `weekly/…`, `stats/…`, `history/…`, `static/…`, `activity/…`, `levelups`, extension prefixes);
    - fields of stored records (`src/model.ts`) and of API responses (`src/api/types.ts`);
-   - API routes and query parameters (`/api/zeitung`, `/api/stats/woche`, `?gilde=`, `?woche=`, …);
+   - API routes and query parameters (`/api/newspaper`, `/api/stats/week`, `?guild=`, `?week=`, …), including the
+     German aliases of 2.x (`/api/zeitung`, `/api/stats/woche`, `?gilde=`, …) in `src/api/router.ts`;
    - page URLs and their redirects in `netlify.toml` (`/charakter/*`, `/berufe`, `/zeitung`, `?reiter=`, …);
    - environment variable names, Netlify function names and their schedules;
    - the extension interfaces (`src/erweiterungen/typen.ts`, `web/src/erweiterungen/typen.ts`).

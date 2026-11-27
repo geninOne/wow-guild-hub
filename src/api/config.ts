@@ -1,15 +1,15 @@
 import data from "../../config/talent-korrekturen.json";
 import type { TalentFix } from "./types";
 
-/** Rangnamen je Gilde: Gilden-Slug, darunter Rangnummer auf Name. */
+/** Rank names per guild: guild slug, below it rank number to name. */
 export type RankNames = Record<string, Record<string, string>>;
 
 export const TALENT_FIXES: TalentFix[] = data.korrekturen;
 
 /**
- * Rangnamen aus der Umgebungsvariable `GUILD_RANKS` (JSON). Je Gilden-Slug entweder eine Liste, deren Position
- * die Rangnummer ist (0 ist der höchste Rang), oder ein Objekt Rangnummer auf Name. Einträge mit Unterstrich
- * vorn sind Kommentare. Fehlt die Variable oder ist sie kaputt, zeigt die Seite überall `Rang N`.
+ * Rank names from the environment variable `GUILD_RANKS` (JSON). Per guild slug either a list whose position is
+ * the rank number (0 is the highest rank), or an object mapping rank number to name. Entries with a leading
+ * underscore are comments. If the variable is missing or broken, the page shows `Rang N` everywhere.
  */
 export function parseRankNames(raw: string | undefined): RankNames {
   if (raw === undefined || raw.trim() === "") return {};
@@ -17,7 +17,7 @@ export function parseRankNames(raw: string | undefined): RankNames {
   try {
     data = JSON.parse(raw);
   } catch {
-    console.warn("GUILD_RANKS ist kein gültiges JSON, Rangnamen fallen auf 'Rang N' zurück");
+    console.warn("GUILD_RANKS is not valid JSON, rank names fall back to 'Rang N'");
     return {};
   }
   if (data === null || typeof data !== "object" || Array.isArray(data)) return {};
@@ -39,12 +39,12 @@ function namesOf(names: RankNames, guildSlug: string): Record<string, string> {
   return key === undefined ? {} : names[key];
 }
 
-/** Rangname in der Gilde `guildSlug`; fehlt Gilde oder Rang, `Rang N`. */
+/** Rank name in the guild `guildSlug`; `Rang N` if the guild or the rank is missing. */
 export function rankName(rank: number, guildSlug: string, names: RankNames): string {
   return namesOf(names, guildSlug)[String(rank)] ?? `Rang ${rank}`;
 }
 
-/** Rangnummern, die für die Gilde in der Konfiguration stehen. */
+/** Rank numbers configured for the guild. */
 export function configuredRanks(guildSlug: string, names: RankNames): number[] {
   return Object.keys(namesOf(names, guildSlug)).map(Number).filter((n) => !Number.isNaN(n));
 }

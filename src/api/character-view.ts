@@ -59,7 +59,7 @@ export function buildCharacterView(input: {
   classes: NamedList | null;
   races: NamedList | null;
   itemIcons: IconMap | null;
-  /** Blob `static/item-levels`: Ersatz, wenn Blizzard die Stufe in der Ausrüstung nicht mehr mitliefert. */
+  /** Blob `static/item-levels`: fallback when Blizzard no longer includes the item level in the equipment. */
   itemLevels?: Record<string, number | null> | null;
   rankNames: RankNames;
   recipeNames?: RecipeNames | null;
@@ -72,7 +72,7 @@ export function buildCharacterView(input: {
   const { member, guild, classes, races, itemIcons, rankNames } = input;
   const stored = input.record ?? (member ? recordFromMember(member) : null);
   if (!stored) return null;
-  // Die vollständige Statistik bleibt im Speicher; die Seite braucht sie (noch) nicht.
+  // The full statistics stay in storage; the page does not need them (yet).
   const { statValues: _values, statTexts: _texts, ...shown } = stored;
   const character: CharacterRecord = {
     ...shown,
