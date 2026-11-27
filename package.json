@@ -21,7 +21,8 @@
     "netlify:umgebung": "node scripts/netlify-umgebung.mjs",
     "daten:uebernahme:live": "node scripts/daten-uebernahme-live.mjs",
     "statistik:erkunden": "node scripts/statistik-erkunden.mjs",
-    "lint": "oxlint --deny-warnings ."
+    "lint": "oxlint --deny-warnings .",
+    "check:english": "node scripts/check-english.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.12.0",
