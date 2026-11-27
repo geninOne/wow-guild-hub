@@ -21,6 +21,7 @@ import type { JsonStore } from "../store";
 import { toRecipeDetail } from "../transform/recipes";
 import { toAttributes } from "../transform/attributes";
 import { buildTalentTree, treeIdFromHref } from "../transform/talent-tree";
+import { workEndOf } from "./budget";
 import { CHARACTER_INDEX_KEY, toCharacterIndexEntry } from "./character-index";
 import type { CollectDeps } from "./guild";
 
@@ -338,13 +339,6 @@ export function attributesDue(candidates: AttributeCandidate[], index: Attribute
  */
 export const ATTRIBUTES_BUDGET_SHARE = 0.4;
 
-/**
- * Anteil des Budgets, in dem der Lauf nichts Neues mehr beginnt (2 s bei den üblichen 12 s). Der Rest gehört den
- * Anfragen, die noch unterwegs sind, und dem Schreiben am Ende. Der Planer von Netlify wartet höchstens etwa 15 s
- * auf die Antwort und startet den Lauf sonst ein zweites Mal; der Start der Function kostet davon schon bis zu 1 s.
- */
-export const END_RESERVE_SHARE = 1 / 6;
-
 /** Anteil des Budgets, den das Nachlesen von Charakteren ohne Indexeintrag höchstens bekommt. */
 export const BOOTSTRAP_SHARE = 0.25;
 /** Gleichzeitige Blob-Zugriffe beim Nachlesen der Charaktere. */
@@ -485,7 +479,7 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
   const { client, store, config } = deps;
   const started = Date.now();
   /** Ab hier beginnt nichts Neues mehr; danach nur noch laufende Anfragen und das Schreiben am Ende. */
-  const workEnd = started + Math.floor(config.budgetMs * (1 - END_RESERVE_SHARE));
+  const workEnd = workEndOf(started, config.budgetMs);
   const at = deps.now().toISOString();
   const report = emptyReport(at);
   const phases = report.phases;
