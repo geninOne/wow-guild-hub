@@ -1,45 +1,51 @@
-import data from "../config/instanz-bilder.json";
+import data from "../config/instance-images.json";
 import dungeons from "../config/dungeons.json";
-import extraDungeons from "../config/zusatz-dungeons.json";
+import extraDungeons from "../config/extra-dungeons.json";
 
 /** Maintained level range and boss list per instance (`config/dungeons.json`). */
 export interface DungeonInfo {
-  stufe: [number, number] | null;
-  bosse: string[];
+  levels: [number, number] | null;
+  bosses: string[];
   /**
    * Additional entries of the boss kill statistic that indicate completion when the statistic names the instance
    * or final boss differently than the achievement and boss list, e.g. a boss listed with an extra title.
    */
-  statistik: { instanz: string; endboss: string }[];
+  statisticEntries: { instance: string; finalBoss: string }[];
   /** The final boss is not in the boss kill statistic: completion cannot be proven per character. */
-  ohneStatistik: boolean;
+  withoutStatistic: boolean;
 }
 
 /** Reads an entry from `config/dungeons.json`; invalid level ranges become null, missing bosses become []. */
-export function toDungeonInfo(raw: { stufe?: unknown; bosse?: unknown; statistik?: unknown; ohneStatistik?: unknown }): DungeonInfo {
-  const levels = raw.stufe;
+export function toDungeonInfo(raw: {
+  levels?: unknown;
+  bosses?: unknown;
+  statisticEntries?: unknown;
+  withoutStatistic?: unknown;
+}): DungeonInfo {
+  const levels = raw.levels;
   const valid = Array.isArray(levels) && levels.length === 2 && levels.every((n) => typeof n === "number");
-  const bosses = Array.isArray(raw.bosse) ? raw.bosse.filter((b): b is string => typeof b === "string") : [];
-  const stats = (Array.isArray(raw.statistik) ? raw.statistik : []).flatMap((e: { instanz?: unknown; endboss?: unknown }) =>
-    typeof e?.instanz === "string" && typeof e.endboss === "string" ? [{ instanz: e.instanz, endboss: e.endboss }] : [],
+  const bosses = Array.isArray(raw.bosses) ? raw.bosses.filter((b): b is string => typeof b === "string") : [];
+  const entries = (Array.isArray(raw.statisticEntries) ? raw.statisticEntries : []).flatMap(
+    (e: { instance?: unknown; finalBoss?: unknown }) =>
+      typeof e?.instance === "string" && typeof e.finalBoss === "string" ? [{ instance: e.instance, finalBoss: e.finalBoss }] : [],
   );
   return {
-    stufe: valid ? [levels[0], levels[1]] : null,
-    bosse: bosses,
-    statistik: stats,
-    ohneStatistik: raw.ohneStatistik === true,
+    levels: valid ? [levels[0], levels[1]] : null,
+    bosses,
+    statisticEntries: entries,
+    withoutStatistic: raw.withoutStatistic === true,
   };
 }
 
 export const DUNGEON_INFO: Record<string, DungeonInfo> = Object.fromEntries(
-  Object.entries(dungeons.instanzen as Record<string, Parameters<typeof toDungeonInfo>[0]>).map(([name, raw]) => [
+  Object.entries(dungeons.instances as Record<string, Parameters<typeof toDungeonInfo>[0]>).map(([name, raw]) => [
     name,
     toDungeonInfo(raw),
   ]),
 );
 
 /**
- * Dungeon outside the dungeon explorer achievement criteria (`config/zusatz-dungeons.json`): one that is in no
+ * Dungeon outside the dungeon explorer achievement criteria (`config/extra-dungeons.json`): one that is in no
  * achievement, or one half of a criterion shared by counterparts of both factions. Completion comes from the boss kill
  * statistic `Siege über FINAL_BOSS (INSTANCE)`.
  */
@@ -60,27 +66,27 @@ export interface ExtraDungeon {
 }
 
 /**
- * Reads an entry from `config/zusatz-dungeons.json`; incomplete entries become null. If level range and bosses are
+ * Reads an entry from `config/extra-dungeons.json`; incomplete entries become null. If level range and bosses are
  * missing, those from `config/dungeons.json` (`known`) apply.
  */
 export function toExtraDungeon(raw: Record<string, unknown>, known: Record<string, DungeonInfo> = {}): ExtraDungeon | null {
-  const source = (raw.quelle ?? {}) as { instanz?: unknown; endboss?: unknown };
-  const { name, rang: tier, bild: image, fraktion: faction, ersetzt: replaces } = raw;
+  const source = (raw.source ?? {}) as { instance?: unknown; finalBoss?: unknown };
+  const { name, tier, image, faction, replaces } = raw;
   if (typeof name !== "string" || typeof tier !== "string") return null;
-  if (typeof source.instanz !== "string" || typeof source.endboss !== "string") return null;
+  if (typeof source.instance !== "string" || typeof source.finalBoss !== "string") return null;
   const own = toDungeonInfo(raw);
   const fallback = known[name];
   return {
     name,
     tier,
     info: {
-      stufe: own.stufe ?? fallback?.stufe ?? null,
-      bosse: own.bosse.length > 0 ? own.bosse : (fallback?.bosse ?? []),
-      statistik: own.statistik.length > 0 ? own.statistik : (fallback?.statistik ?? []),
-      // Extra dungeons always have an entry in the statistic via `quelle`.
-      ohneStatistik: false,
+      levels: own.levels ?? fallback?.levels ?? null,
+      bosses: own.bosses.length > 0 ? own.bosses : (fallback?.bosses ?? []),
+      statisticEntries: own.statisticEntries.length > 0 ? own.statisticEntries : (fallback?.statisticEntries ?? []),
+      // Extra dungeons always have an entry in the statistic via `source`.
+      withoutStatistic: false,
     },
-    source: { instance: source.instanz, finalBoss: source.endboss },
+    source: { instance: source.instance, finalBoss: source.finalBoss },
     image: typeof image === "number" || typeof image === "string" ? image : null,
     faction: typeof faction === "string" ? faction : null,
     replaces: Array.isArray(replaces) ? replaces.filter((e): e is string => typeof e === "string") : [],
@@ -93,10 +99,10 @@ export const EXTRA_DUNGEONS: ExtraDungeon[] = (extraDungeons.dungeons as Record<
 
 /**
  * German instance name to retail `journal-instance` ID (tile image via the API) or directly to an image URL,
- * maintained in `config/instanz-bilder.json`, plus the images of the extra dungeons.
+ * maintained in `config/instance-images.json`, plus the images of the extra dungeons.
  */
 export const INSTANCE_IMAGES: Record<string, number | string> = {
-  ...data.instanzen,
+  ...data.instances,
   ...Object.fromEntries(EXTRA_DUNGEONS.flatMap((d) => (d.image === null ? [] : [[d.name, d.image]]))),
 };
 

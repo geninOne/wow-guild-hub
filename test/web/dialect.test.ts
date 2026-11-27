@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { expect, test } from "vitest";
-import cards from "../../config/statistik-karten.json";
+import cards from "../../config/stat-cards.json";
 import { monthLabel } from "../../web/src/lib/fun";
 
 const root = resolve(__dirname, "../..");
@@ -24,7 +24,7 @@ test("Swabian text templates say net, not the Bavarian ned", () => {
   expect(schwaebisch.filter((z) => /\bned\b/.test(z))).toEqual([]);
 });
 
-/** All texts of one version from config/statistik-karten.json. */
+/** All texts of one version from config/stat-cards.json. */
 function cardTexts(language: "schwaebisch" | "bayrisch"): string[] {
   const out: string[] = [];
   const walk = (v: unknown): void => {

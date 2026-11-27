@@ -133,7 +133,7 @@ describe("buildGuildDungeons", () => {
 
 describe("extra dungeons", () => {
   const stockade: ExtraDungeon = {
-    name: "Das Verlies", tier: "Novize", info: { stufe: [24, 32], bosse: ["Bazil Thredd"], statistik: [], ohneStatistik: false },
+    name: "Das Verlies", tier: "Novize", info: { levels: [24, 32], bosses: ["Bazil Thredd"], statisticEntries: [], withoutStatistic: false },
     source: { instance: "Verlies von Stormwind", finalBoss: "Bazil Thredd" }, image: null, faction: null, replaces: [],
   };
   const thredd = (id: number, quantity: number) =>

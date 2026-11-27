@@ -1,4 +1,4 @@
-import cardsConfig from "../../config/statistik-karten.json";
+import cardsConfig from "../../config/stat-cards.json";
 import { addDays, monthOf, guildWeek } from "../lib/time";
 import type { GuildRecord } from "../model";
 import { statDefinition } from "../stats/definitions";
@@ -39,18 +39,18 @@ type ConfigUnit = string[] | ({ de: string[]; en?: string[]; schwaebisch?: strin
 interface CardConfig {
   slug: string;
   form: string;
-  titel: ConfigText;
-  spruch?: ConfigText;
-  breite?: number;
-  statistiken: number[];
+  title: ConfigText;
+  blurb?: ConfigText;
+  width?: number;
+  statistics: number[];
 }
 
 interface StatText {
-  kurz?: ConfigText;
-  einheit?: ConfigUnit;
-  ehrung?: ConfigText;
-  klasse?: number;
-  umrechnung?: { je: number; einheit: ConfigUnit; satz: ConfigText };
+  short?: ConfigText;
+  unit?: ConfigUnit;
+  honor?: ConfigText;
+  classId?: number;
+  conversion?: { per: number; unit: ConfigUnit; sentence: ConfigText };
 }
 
 const FORMS: StatCardForm[] = [
@@ -58,8 +58,8 @@ const FORMS: StatCardForm[] = [
   "fahrplan", "ekg", "stall", "schredder", "verband",
 ];
 
-const CARDS_CONFIG: CardConfig[] = cardsConfig.karten;
-const TEXTS: Record<string, StatText> = cardsConfig.texte;
+const CARDS_CONFIG: CardConfig[] = cardsConfig.cards;
+const TEXTS: Record<string, StatText> = cardsConfig.texts;
 
 const twoOf = (unit: string[] | undefined): [string, string] | null =>
   unit && unit.length === 2 ? [unit[0], unit[1]] : null;
@@ -82,25 +82,25 @@ const spanOf = (width: number | undefined): 1 | 2 | 3 => (width === 2 || width =
 const isForm = (form: string): form is StatCardForm => (FORMS as string[]).includes(form);
 
 /**
- * Cards from `config/statistik-karten.json`; unknown forms and statistics other than counters and current values
+ * Cards from `config/stat-cards.json`; unknown forms and statistics other than counters and current values
  * are dropped.
  */
 export function statCards(): StatCard[] {
   const shown = (id: number) => {
-    const kind = statDefinition(id)?.art;
+    const kind = statDefinition(id)?.kind;
     return kind === "zaehler" || kind === "stand";
   };
   return CARDS_CONFIG.flatMap((c): StatCard[] =>
     isForm(c.form)
-      ? [{ slug: c.slug, form: c.form, title: fromConfig(c.titel), blurb: fromConfig(c.spruch), span: spanOf(c.breite), ids: c.statistiken.filter(shown) }]
+      ? [{ slug: c.slug, form: c.form, title: fromConfig(c.title), blurb: fromConfig(c.blurb), span: spanOf(c.width), ids: c.statistics.filter(shown) }]
       : [],
   );
 }
 
 function conversionOf(text: StatText): StatConversionView | null {
-  const u = text.umrechnung;
-  const unit = pair(u?.einheit);
-  return u && unit && u.je > 0 ? { per: u.je, unit, text: fromConfig(u.satz) } : null;
+  const u = text.conversion;
+  const unit = pair(u?.unit);
+  return u && unit && u.per > 0 ? { per: u.per, unit, text: fromConfig(u.sentence) } : null;
 }
 
 /** Last Saturday before the first of the month, i.e. the snapshot that ends the previous month. */
@@ -178,7 +178,7 @@ export function buildStatCards(
     span: card.span,
     stats: card.ids.map((id): StatEntryView => {
       const def = statDefinition(id)!;
-      const kind = def.art === "stand" ? "stand" : "zaehler";
+      const kind = def.kind === "stand" ? "stand" : "zaehler";
       const key = String(id);
       const text = TEXTS[key] ?? {};
       const all = kind === "zaehler" ? counterRows : currentRows;
@@ -188,8 +188,8 @@ export function buildStatCards(
       );
       return {
         id, name: def.name, art: kind, total: aggregate(rows, key, kind), perGuild, leaders: leadersOf(rows, key),
-        holders: rows.filter((r) => (r.values[key] ?? 0) > 0).length, sum: aggregate(rows, key, "zaehler"), classId: text.klasse ?? null,
-        short: fromConfig(text.kurz), unit: pair(text.einheit), honor: fromConfig(text.ehrung), conversion: conversionOf(text),
+        holders: rows.filter((r) => (r.values[key] ?? 0) > 0).length, sum: aggregate(rows, key, "zaehler"), classId: text.classId ?? null,
+        short: fromConfig(text.short), unit: pair(text.unit), honor: fromConfig(text.honor), conversion: conversionOf(text),
       };
     }),
   }));
@@ -212,7 +212,7 @@ export function buildStatCardMembers(
     slug,
     stats: card.ids.map((id, i) => {
       const key = String(id);
-      const source = statDefinition(id)!.art === "stand" ? after.characters : counters;
+      const source = statDefinition(id)!.kind === "stand" ? after.characters : counters;
       const withZero = card.form === "stall" && i === 0;
       const entries = Object.entries(source)
         .map(([charId, values]): MemberValue => [Number(charId), values[key] ?? 0])

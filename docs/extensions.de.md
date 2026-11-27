@@ -2,6 +2,8 @@
 
 🇬🇧 [English](extensions.md)
 
+> Übersetzung von [extensions.md](extensions.md). Bei Abweichungen gilt die englische Fassung.
+
 Eine Erweiterung (ein Modul) bringt eigene Funktionen auf die Gildenseite, ohne Dateien des Kerns zu ändern. Sie
 liegt in eigenen Ordnern und meldet sich mit je einer Zeile in zwei Registry-Dateien an. So lässt sich ein Modul in
 einem eigenen (auch privaten) Fork pflegen, während der Fork weiter Änderungen aus diesem Repo zieht

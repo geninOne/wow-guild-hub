@@ -1,6 +1,6 @@
 {
-  "_hinweis": "Deutscher Instanzname (wie in den Erfolgen von WoW Forever) zu Retail-ID von /data/wow/media/journal-instance/{id} im Namespace static-eu oder direkt zu einer Bild-Adresse (für Instanzen, deren API-Bild nicht abrufbar ist). Hyjalgipfel nutzt das Bild des gleichnamigen Retail-Raids (Ort Hyjal). Orte, die es nur in WoW Forever gibt, zeigen eigene gemalte Kacheln unter web/public/dungeons/ (600x300, mit dem Canva-Bildgenerator erstellt, Originale in Dirks Canva-Konto). Ein Test verlangt für jede Instanz aus config/dungeons.json einen Eintrag.",
-  "instanzen": {
+  "_note": "German instance name (as in the achievements of WoW Forever) to the retail ID of /data/wow/media/journal-instance/{id} in the namespace static-eu, or directly to an image URL (for instances whose API image cannot be fetched). Hyjalgipfel uses the image of the retail raid of the same name (location Hyjal). Places that only exist in WoW Forever show their own painted tiles under web/public/dungeons/ (600x300, made with the Canva image generator, originals in Dirk's Canva account). A test requires an entry for every instance from config/dungeons.json.",
+  "instances": {
     "Flammenschlund": 226,
     "Ragefireabgrund": 226,
     "Halle der Thanen": "/dungeons/halle-der-thanen.jpg",

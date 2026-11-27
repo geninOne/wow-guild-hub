@@ -234,7 +234,7 @@ async function route(
 }
 
 export interface ApiOptions {
-  /** Day of the server start; defaults to `config/serverstart.json`, null turns the rule off. */
+  /** Day of the server start; defaults to `config/server-start.json`, null turns the rule off. */
   serverStart?: string | null;
   /** Environment variables for extensions (on Netlify `process.env`); none if not given. */
   env?: Readonly<Record<string, string | undefined>>;

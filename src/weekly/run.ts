@@ -23,7 +23,7 @@ export interface WeeklyDeps {
   generator?: TextGenerator;
   /** How many completed weeks are caught up at most. */
   maxWeeks?: number;
-  /** Day of the server start; default from `config/serverstart.json`, null turns the rule off. */
+  /** Day of the server start; default from `config/server-start.json`, null turns the rule off. */
   serverStart?: string | null;
   /** Extensions to use instead of the registered ones (tests); 2.x modules are converted. */
   extensions?: readonly AnyServerExtension[];

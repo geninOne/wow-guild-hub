@@ -18,11 +18,11 @@ All screenshots show a made-up demo guild with sample data.
 
 | Guild overview | Character page |
 |---|---|
-| ![Guild overview: member list with class, level, item level, main spec and rank, with search and filters](docs/bilder/gilde.webp) | ![Character page: equipment with item icons and item levels, title badges and tabs for talents, professions, dungeons and reputation](docs/bilder/charakter.webp) |
+| ![Guild overview: member list with class, level, item level, main spec and rank, with search and filters](docs/images/guild.webp) | ![Character page: equipment with item icons and item levels, title badges and tabs for talents, professions, dungeons and reputation](docs/images/character.webp) |
 | **Statistics** | **Titles of the week** |
-| ![Statistics: class distribution, race pie chart and level distribution of the guild](docs/bilder/statistik.webp) | ![Titles of the week: twelve fun titles such as Night Owl and Early Bird with winners, and the hall of fame of previous weeks](docs/bilder/titel.webp) |
+| ![Statistics: class distribution, race pie chart and level distribution of the guild](docs/images/stats.webp) | ![Titles of the week: twelve fun titles such as Night Owl and Early Bird with winners, and the hall of fame of previous weeks](docs/images/titles.webp) |
 | **Weekly newspaper** | **On the phone** |
-| ![Weekly newspaper Guild Gazette: headline, the week in numbers, rising stars and gossip](docs/bilder/zeitung.webp) | <img src="docs/bilder/handy-zeitung.webp" alt="The weekly newspaper at phone width" width="260"> |
+| ![Weekly newspaper Guild Gazette: headline, the week in numbers, rising stars and gossip](docs/images/newspaper.webp) | <img src="docs/images/phone-newspaper.webp" alt="The weekly newspaper at phone width" width="260"> |
 
 ## Features
 

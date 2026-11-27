@@ -2,6 +2,8 @@
 
 🇬🇧 [English](CONTRIBUTING.md)
 
+> Übersetzung von [CONTRIBUTING.md](CONTRIBUTING.md). Bei Abweichungen gilt die englische Fassung.
+
 Schön, dass du helfen willst! Fehlerberichte, Ideen, Übersetzungen und Code sind gleichermaßen willkommen.
 Mit deiner Teilnahme stimmst du dem [Verhaltenskodex](CODE_OF_CONDUCT.de.md) zu.
 
@@ -76,9 +78,11 @@ npm run build
 - Neuer Code, Bezeichner, Kommentare, Tests und Logmeldungen sind englisch. Älterer Code ist noch teils deutsch und
   wird in eigenen Pull Requests umgestellt; Felder der Blizzard-API bleiben, wie sie sind. Hinweise für
   KI-Coding-Agenten: [AGENTS.md](AGENTS.md).
-- Jeder sichtbare Text hat eine deutsche und eine englische Fassung (`Fassungen` aus `src/sprache.ts`).
+- Jeder sichtbare Text hat eine deutsche und eine englische Fassung (`Translations` aus `src/language.ts`).
   Schwäbisch und Bayrisch sind freiwillig.
 - Keine Gedankenstriche (U+2014) in Texten.
+- Die Doku ist englisch. Dateien mit einem `.de.md`-Gegenstück sind Übersetzungen: beide im selben Pull Request
+  ändern; bei Abweichungen gilt die englische Fassung.
 - Keine Werte fest im Code, die je Gilde verschieden sind: neue Einstellungen als Umgebungsvariable mit
   Standardwert und Kommentar in `.env.example`.
 - Geheimnisse nie loggen und nie in Fehlermeldungen ausgeben.

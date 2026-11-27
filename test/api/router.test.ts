@@ -156,7 +156,7 @@ describe("handleApi", () => {
     const after = await body(await handleApi(req("/api/characters/gelmar-soulvenn"), store));
     const dungeons = after.instances.dungeonTiers[0].dungeons as { name: string; completed: boolean }[];
     expect(dungeons.find((d) => d.name === "Todesminen")).toMatchObject({ completed: true, onAccount: false });
-    // Extra dungeons from config/zusatz-dungeons.json are included.
+    // Extra dungeons from config/extra-dungeons.json are included.
     expect(dungeons.map((d) => d.name)).toEqual(expect.arrayContaining(["Flammenschlund", "Halle der Thanen", "Das Verlies"]));
   });
 

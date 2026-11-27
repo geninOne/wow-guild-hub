@@ -3,17 +3,17 @@
 import type { DaySnapshot } from "../model";
 
 /**
- * Reads the date from the contents of `config/serverstart.json`.
- * If `datum` is missing or null, there is no server start (null); anything other than a valid calendar day throws.
+ * Reads the date from the contents of `config/server-start.json`.
+ * If `date` is missing or null, there is no server start (null); anything other than a valid calendar day throws.
  */
 export function parseServerStart(raw: unknown): string | null {
-  const date = (raw as { datum?: unknown } | null)?.datum;
+  const date = (raw as { date?: unknown } | null)?.date;
   if (date === undefined || date === null) return null;
   const valid =
     typeof date === "string" &&
     /^\d{4}-\d{2}-\d{2}$/.test(date) &&
     new Date(`${date}T00:00:00Z`).toISOString().slice(0, 10) === date;
-  if (!valid) throw new Error("config/serverstart.json: datum must be a calendar day in the form YYYY-MM-DD");
+  if (!valid) throw new Error("config/server-start.json: date must be a calendar day in the form YYYY-MM-DD");
   return date;
 }
 

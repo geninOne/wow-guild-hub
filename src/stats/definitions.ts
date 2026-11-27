@@ -1,27 +1,27 @@
-import list from "../../config/statistiken.json";
+import list from "../../config/statistics.json";
 
-/** How a statistic behaves; see `_hinweis` in `config/statistiken.json`. */
+/** How a statistic behaves; see `_note` in `config/statistics.json`. */
 export type StatKind = "zaehler" | "stand" | "text" | "schnitt";
 
 export interface StatCategory {
   id: number;
   name: string;
   /** Parent category, null for top-level categories. */
-  ober: number | null;
+  parent: number | null;
 }
 
 export interface StatDefinition {
   id: number;
   name: string;
-  kategorie: number;
-  art: StatKind;
+  category: number;
+  kind: StatKind;
 }
 
 /** Categories of the character statistics in API order. */
-export const STAT_CATEGORIES: StatCategory[] = list.kategorien;
+export const STAT_CATEGORIES: StatCategory[] = list.categories;
 
 /** All known statistics (extended from the responses seen so far). */
-export const STAT_DEFINITIONS: StatDefinition[] = list.statistiken as StatDefinition[];
+export const STAT_DEFINITIONS: StatDefinition[] = list.statistics as StatDefinition[];
 
 const byId = new Map(STAT_DEFINITIONS.map((s) => [s.id, s]));
 

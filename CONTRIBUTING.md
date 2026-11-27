@@ -75,9 +75,11 @@ npm run build
 - New code, identifiers, comments, tests and log messages are in English. Older code is still partly German and is
   being migrated in dedicated pull requests; fields from the Blizzard API stay as they are. Notes for AI coding
   agents: [AGENTS.md](AGENTS.md).
-- Every visible text has a German and an English version (`Fassungen` from `src/sprache.ts`). Swabian and
+- Every visible text has a German and an English version (`Translations` from `src/language.ts`). Swabian and
   Bavarian are optional.
 - No em dashes (U+2014) in texts.
+- Docs are written in English. Files with a `.de.md` twin are translations: change both in the same pull request;
+  if they differ, the English version applies.
 - No values hard-coded that differ per guild: add new settings as an environment variable with a default value
   and a comment in `.env.example`.
 - Never log secrets and never include them in error messages.

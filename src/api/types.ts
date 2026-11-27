@@ -118,7 +118,7 @@ export interface InstancesView {
        * character, or a dungeon whose final boss the statistics do not track). Counts in no guild evaluation.
        */
       onAccount: boolean;
-      /** false if the statistics do not track the final boss (`ohneStatistik`): completion per character unknown. */
+      /** false if the statistics do not track the final boss (`withoutStatistic`): completion per character unknown. */
       tracked: boolean;
       kills: KillRef[];
       image: string | null;
@@ -498,7 +498,7 @@ export type StatCardForm =
   | "schredder"
   | "verband";
 
-/** A guild statistics card with its statistics in the order from `config/statistik-karten.json`. */
+/** A guild statistics card with its statistics in the order from `config/stat-cards.json`. */
 export interface StatCardView {
   slug: string;
   form: StatCardForm;

@@ -1,991 +1,991 @@
 {
-  "_hinweis": "Namen und Kategorien der Charakterstatistik (Blizzard-Endpunkt achievements/statistics, deutsch). Einen Endpunkt mit allen Definitionen gibt es für WoW Forever nicht, deshalb wird die Liste aus den gesehenen Antworten fortgeschrieben: npm run stats:explore. Die Wochenstände unter stats/<Samstag> enthalten nur Statistik-ID und Wert. art: zaehler (Ereignisse, Differenz sinnvoll), stand (aktueller Stand oder Höchstwert), text (Häufigstes einer Sorte, Name im Charakterdatensatz unter statTexts), schnitt (Durchschnitt, Differenz sinnlos).",
-  "kategorien": [
+  "_note": "Names and categories of the character statistics (Blizzard endpoint achievements/statistics, German). WoW Forever has no endpoint with all definitions, so the list is extended from the responses seen: npm run stats:explore. The weekly snapshots under stats/<Saturday> contain only statistic ID and value. kind: zaehler (events, the difference is meaningful), stand (current value or maximum), text (most frequent of a sort, name in the character record under statTexts), schnitt (average, the difference is meaningless).",
+  "categories": [
     {
       "id": 130,
       "name": "Charakter",
-      "ober": null
+      "parent": null
     },
     {
       "id": 145,
       "name": "Verbrauchsgüter",
-      "ober": 130
+      "parent": 130
     },
     {
       "id": 147,
       "name": "Ruf",
-      "ober": 130
+      "parent": 130
     },
     {
       "id": 191,
       "name": "Ausrüstung",
-      "ober": 130
+      "parent": 130
     },
     {
       "id": 21,
       "name": "Spieler gegen Spieler",
-      "ober": null
+      "parent": null
     },
     {
       "id": 14807,
       "name": "Dungeons & Schlachtzüge",
-      "ober": null
+      "parent": null
     },
     {
       "id": 14821,
       "name": "Boss-Kills",
-      "ober": 14807
+      "parent": 14807
     },
     {
       "id": 128,
       "name": "Siege",
-      "ober": null
+      "parent": null
     },
     {
       "id": 135,
       "name": "Kreaturen",
-      "ober": 128
+      "parent": 128
     },
     {
       "id": 136,
       "name": "Ehrenhafte Siege",
-      "ober": 128
+      "parent": 128
     },
     {
       "id": 137,
       "name": "Todesstöße",
-      "ober": 128
+      "parent": 128
     },
     {
       "id": 122,
       "name": "Tode",
-      "ober": null
+      "parent": null
     },
     {
       "id": 125,
       "name": "Dungeons & Schlachtzüge",
-      "ober": 122
+      "parent": 122
     },
     {
       "id": 127,
       "name": "Wiederbelebung",
-      "ober": 122
+      "parent": 122
     },
     {
       "id": 133,
       "name": "Quests",
-      "ober": null
+      "parent": null
     },
     {
       "id": 132,
       "name": "Fertigkeiten",
-      "ober": null
+      "parent": null
     },
     {
       "id": 178,
       "name": "Sekundäre Fertigkeiten",
-      "ober": 132
+      "parent": 132
     },
     {
       "id": 173,
       "name": "Berufe",
-      "ober": 132
+      "parent": 132
     },
     {
       "id": 134,
       "name": "Reise",
-      "ober": null
+      "parent": null
     },
     {
       "id": 131,
       "name": "Geselligkeit",
-      "ober": null
+      "parent": null
     },
     {
       "id": 153,
       "name": "Schlachtfelder",
-      "ober": 21
+      "parent": 21
     },
     {
       "id": 124,
       "name": "Schlachtfelder",
-      "ober": 122
+      "parent": 122
     },
     {
       "id": 126,
       "name": "Welt",
-      "ober": 122
+      "parent": 122
     },
     {
       "id": 154,
       "name": "Welt",
-      "ober": 21
+      "parent": 21
     }
   ],
-  "statistiken": [
+  "statistics": [
     {
       "id": 64222,
       "name": "Ruhezeiten im Lager",
-      "kategorie": 130,
-      "art": "zaehler"
+      "category": 130,
+      "kind": "zaehler"
     },
     {
       "id": 344,
       "name": "Angelegte Verbände",
-      "kategorie": 145,
-      "art": "zaehler"
+      "category": 145,
+      "kind": "zaehler"
     },
     {
       "id": 345,
       "name": "Heiltränke verbraucht",
-      "kategorie": 145,
-      "art": "zaehler"
+      "category": 145,
+      "kind": "zaehler"
     },
     {
       "id": 346,
       "name": "Getränke verbraucht",
-      "kategorie": 145,
-      "art": "zaehler"
+      "category": 145,
+      "kind": "zaehler"
     },
     {
       "id": 347,
       "name": "Nahrung konsumiert",
-      "kategorie": 145,
-      "art": "zaehler"
+      "category": 145,
+      "kind": "zaehler"
     },
     {
       "id": 812,
       "name": "Gesundheitssteine benutzt",
-      "kategorie": 145,
-      "art": "zaehler"
+      "category": 145,
+      "kind": "zaehler"
     },
     {
       "id": 922,
       "name": "Manatränke verbraucht",
-      "kategorie": 145,
-      "art": "zaehler"
+      "category": 145,
+      "kind": "zaehler"
     },
     {
       "id": 923,
       "name": "Elixiere verbraucht",
-      "kategorie": 145,
-      "art": "zaehler"
+      "category": 145,
+      "kind": "zaehler"
     },
     {
       "id": 1125,
       "name": "Am häufigsten angelegter Verband",
-      "kategorie": 145,
-      "art": "text"
+      "category": 145,
+      "kind": "text"
     },
     {
       "id": 378,
       "name": "Höchste Anzahl Fraktionen auf Respektvoll oder höher",
-      "kategorie": 147,
-      "art": "stand"
+      "category": 147,
+      "kind": "stand"
     },
     {
       "id": 529,
       "name": "Höchste Anzahl Fraktionen auf Wohlwollend oder höher",
-      "kategorie": 147,
-      "art": "stand"
+      "category": 147,
+      "kind": "stand"
     },
     {
       "id": 926,
       "name": "Meiste Hordefraktionen auf Ehrfürchtig",
-      "kategorie": 147,
-      "art": "stand"
+      "category": 147,
+      "kind": "stand"
     },
     {
       "id": 931,
       "name": "Fraktionen begegnet insgesamt",
-      "kategorie": 147,
-      "art": "stand"
+      "category": 147,
+      "kind": "stand"
     },
     {
       "id": 1466,
       "name": "Meiste Allianzfraktionen auf Ehrfürchtig",
-      "kategorie": 147,
-      "art": "stand"
+      "category": 147,
+      "kind": "stand"
     },
     {
       "id": 338,
       "name": "Anzahl der besessenen Haustiere",
-      "kategorie": 191,
-      "art": "stand"
+      "category": 191,
+      "kind": "stand"
     },
     {
       "id": 339,
       "name": "Reittiere besessen",
-      "kategorie": 191,
-      "art": "stand"
+      "category": 191,
+      "kind": "stand"
     },
     {
       "id": 341,
       "name": "Geplünderte epische Gegenstände",
-      "kategorie": 191,
-      "art": "zaehler"
+      "category": 191,
+      "kind": "zaehler"
     },
     {
       "id": 342,
       "name": "Erhaltene epische Gegenstände",
-      "kategorie": 191,
-      "art": "zaehler"
+      "category": 191,
+      "kind": "zaehler"
     },
     {
       "id": 927,
       "name": "Angelegte epische Gegenstände",
-      "kategorie": 191,
-      "art": "zaehler"
+      "category": 191,
+      "kind": "zaehler"
     },
     {
       "id": 1043,
       "name": "Würfe für Gier bei Plünderungen",
-      "kategorie": 191,
-      "art": "zaehler"
+      "category": 191,
+      "kind": "zaehler"
     },
     {
       "id": 1044,
       "name": "Würfe für Bedarf bei Plünderungen",
-      "kategorie": 191,
-      "art": "zaehler"
+      "category": 191,
+      "kind": "zaehler"
     },
     {
       "id": 318,
       "name": "Gesamtzahl der Tode durch die gegnerische Fraktion",
-      "kategorie": 21,
-      "art": "zaehler"
+      "category": 21,
+      "kind": "zaehler"
     },
     {
       "id": 1501,
       "name": "Tode durch andere Spieler insgesamt",
-      "kategorie": 21,
-      "art": "zaehler"
+      "category": 21,
+      "kind": "zaehler"
     },
     {
       "id": 932,
       "name": "5-Spieler-Dungeons betreten",
-      "kategorie": 14807,
-      "art": "zaehler"
+      "category": 14807,
+      "kind": "zaehler"
     },
     {
       "id": 933,
       "name": "10-Spieler-Schlachtzügen beigetreten",
-      "kategorie": 14807,
-      "art": "zaehler"
+      "category": 14807,
+      "kind": "zaehler"
     },
     {
       "id": 1092,
       "name": "Siege über Erzmagier Arugal (Burg Schattenfang)",
-      "kategorie": 14821,
-      "art": "zaehler"
+      "category": 14821,
+      "kind": "zaehler"
     },
     {
       "id": 1093,
       "name": "Siege über Kommandant Mograine (Scharlachrotes Kloster)",
-      "kategorie": 14821,
-      "art": "zaehler"
+      "category": 14821,
+      "kind": "zaehler"
     },
     {
       "id": 1094,
       "name": "Siege über Häuptling Ukorz Sandskalp (Zul'Farrak)",
-      "kategorie": 14821,
-      "art": "zaehler"
+      "category": 14821,
+      "kind": "zaehler"
     },
     {
       "id": 6137,
       "name": "Siege über Aku'mai (Blackfathom-Tiefe)",
-      "kategorie": 14821,
-      "art": "zaehler"
+      "category": 14821,
+      "kind": "zaehler"
     },
     {
       "id": 6139,
       "name": "Siege über Charlga Razorflank (Kral von Razorfen)",
-      "kategorie": 14821,
-      "art": "zaehler"
+      "category": 14821,
+      "kind": "zaehler"
     },
     {
       "id": 6140,
       "name": "Siege über Robogenieur Thermadraht (Gnomeregan)",
-      "kategorie": 14821,
-      "art": "zaehler"
+      "category": 14821,
+      "kind": "zaehler"
     },
     {
       "id": 6141,
       "name": "Siege über Amnennar den Kältebringer (Hügel von Razorfen)",
-      "kategorie": 14821,
-      "art": "zaehler"
+      "category": 14821,
+      "kind": "zaehler"
     },
     {
       "id": 6142,
       "name": "Siege über Archaedas (Uldaman)",
-      "kategorie": 14821,
-      "art": "zaehler"
+      "category": 14821,
+      "kind": "zaehler"
     },
     {
       "id": 6143,
       "name": "Siege über Prinzessin Theradras (Maraudon)",
-      "kategorie": 14821,
-      "art": "zaehler"
+      "category": 14821,
+      "kind": "zaehler"
     },
     {
       "id": 6145,
       "name": "Siege über Oberanführer Wyrmthalak (Untere Schwarzfelsspitze)",
-      "kategorie": 14821,
-      "art": "zaehler"
+      "category": 14821,
+      "kind": "zaehler"
     },
     {
       "id": 6786,
       "name": "Siege über Flammenwirker Koegler (Scharlachrote Hallen)",
-      "kategorie": 14821,
-      "art": "zaehler"
+      "category": 14821,
+      "kind": "zaehler"
     },
     {
       "id": 15027,
       "name": "Siege über Bazzalan (Flammenschlund)",
-      "kategorie": 14821,
-      "art": "zaehler"
+      "category": 14821,
+      "kind": "zaehler"
     },
     {
       "id": 15028,
       "name": "Siege über Mutanus den Verschlinger (Höhlen des Wehklagens)",
-      "kategorie": 14821,
-      "art": "zaehler"
+      "category": 14821,
+      "kind": "zaehler"
     },
     {
       "id": 15029,
       "name": "Siege über Bazil Thredd (Verlies von Stormwind)",
-      "kategorie": 14821,
-      "art": "zaehler"
+      "category": 14821,
+      "kind": "zaehler"
     },
     {
       "id": 63570,
       "name": "Siege über Edwin van Cleef (Todesminen)",
-      "kategorie": 14821,
-      "art": "zaehler"
+      "category": 14821,
+      "kind": "zaehler"
     },
     {
       "id": 63571,
       "name": "Siege über Rath'mael (Ruinen von Lordaeron)",
-      "kategorie": 14821,
-      "art": "zaehler"
+      "category": 14821,
+      "kind": "zaehler"
     },
     {
       "id": 63572,
       "name": "Siege über den Schemen des Erzmagiers (Dalaran)",
-      "kategorie": 14821,
-      "art": "zaehler"
+      "category": 14821,
+      "kind": "zaehler"
     },
     {
       "id": 63573,
       "name": "Siege über Durgen Dirgehammer (Halle der Thanen)",
-      "kategorie": 14821,
-      "art": "zaehler"
+      "category": 14821,
+      "kind": "zaehler"
     },
     {
       "id": 63574,
       "name": "Siege über Nanaya (Terrasse des Formers)",
-      "kategorie": 14821,
-      "art": "zaehler"
+      "category": 14821,
+      "kind": "zaehler"
     },
     {
       "id": 63575,
       "name": "Siege über Blazeroar (Das Gefängnis von Alcaz)",
-      "kategorie": 14821,
-      "art": "zaehler"
+      "category": 14821,
+      "kind": "zaehler"
     },
     {
       "id": 63589,
       "name": "Siege über Lyn der Ignorierte (Dalaran)",
-      "kategorie": 14821,
-      "art": "zaehler"
+      "category": 14821,
+      "kind": "zaehler"
     },
     {
       "id": 1197,
       "name": "Siege insgesamt",
-      "kategorie": 128,
-      "art": "zaehler"
+      "category": 128,
+      "kind": "zaehler"
     },
     {
       "id": 1198,
       "name": "Siege insgesamt, die Erfahrung oder Ehrenpunkte verleihen",
-      "kategorie": 128,
-      "art": "zaehler"
+      "category": 128,
+      "kind": "zaehler"
     },
     {
       "id": 107,
       "name": "Kreaturen getötet",
-      "kategorie": 135,
-      "art": "zaehler"
+      "category": 135,
+      "kind": "zaehler"
     },
     {
       "id": 108,
       "name": "Kleintiere getötet",
-      "kategorie": 135,
-      "art": "zaehler"
+      "category": 135,
+      "kind": "zaehler"
     },
     {
       "id": 1336,
       "name": "Am häufigsten getöteter Kreaturtyp",
-      "kategorie": 135,
-      "art": "text"
+      "category": 135,
+      "kind": "text"
     },
     {
       "id": 1337,
       "name": "Unterschiedliche Arten von Kreaturen getötet",
-      "kategorie": 135,
-      "art": "stand"
+      "category": 135,
+      "kind": "stand"
     },
     {
       "id": 381,
       "name": "Weltweite ehrenhafte Siege",
-      "kategorie": 136,
-      "art": "zaehler"
+      "category": 136,
+      "kind": "zaehler"
     },
     {
       "id": 382,
       "name": "Ehrenhafte Siege auf Schlachtfeldern",
-      "kategorie": 136,
-      "art": "zaehler"
+      "category": 136,
+      "kind": "zaehler"
     },
     {
       "id": 588,
       "name": "Ehrenhafte Siege insgesamt",
-      "kategorie": 136,
-      "art": "zaehler"
+      "category": 136,
+      "kind": "zaehler"
     },
     {
       "id": 1114,
       "name": "Ehrenhafte Siege im Arathibecken",
-      "kategorie": 136,
-      "art": "zaehler"
+      "category": 136,
+      "kind": "zaehler"
     },
     {
       "id": 1115,
       "name": "Ehrenhafte Siege in der Kriegshymnenschlucht",
-      "kategorie": 136,
-      "art": "zaehler"
+      "category": 136,
+      "kind": "zaehler"
     },
     {
       "id": 1458,
       "name": "Kontinent mit den meisten ehrenhaften Siegen",
-      "kategorie": 136,
-      "art": "text"
+      "category": 136,
+      "kind": "text"
     },
     {
       "id": 1719,
       "name": "Schlachtfeld mit den meisten ehrenhaften Siegen",
-      "kategorie": 136,
-      "art": "text"
+      "category": 136,
+      "kind": "text"
     },
     {
       "id": 64180,
       "name": "Ehrenhafte Siege auf den Darkspear-Inseln",
-      "kategorie": 136,
-      "art": "zaehler"
+      "category": 136,
+      "kind": "zaehler"
     },
     {
       "id": 1487,
       "name": "Todesstöße insgesamt",
-      "kategorie": 137,
-      "art": "zaehler"
+      "category": 137,
+      "kind": "zaehler"
     },
     {
       "id": 1488,
       "name": "Todesstöße weltweit",
-      "kategorie": 137,
-      "art": "zaehler"
+      "category": 137,
+      "kind": "zaehler"
     },
     {
       "id": 1489,
       "name": "Kontinent mit den meisten Todesstößen",
-      "kategorie": 137,
-      "art": "text"
+      "category": 137,
+      "kind": "text"
     },
     {
       "id": 1491,
       "name": "Todesstöße auf dem Schlachtfeld",
-      "kategorie": 137,
-      "art": "zaehler"
+      "category": 137,
+      "kind": "zaehler"
     },
     {
       "id": 1496,
       "name": "Todesstöße im Arathibecken",
-      "kategorie": 137,
-      "art": "zaehler"
+      "category": 137,
+      "kind": "zaehler"
     },
     {
       "id": 1497,
       "name": "Todesstöße in der Kriegshymnenschlucht",
-      "kategorie": 137,
-      "art": "zaehler"
+      "category": 137,
+      "kind": "zaehler"
     },
     {
       "id": 1716,
       "name": "Schlachtfeld mit den meisten Todesstößen",
-      "kategorie": 137,
-      "art": "text"
+      "category": 137,
+      "kind": "text"
     },
     {
       "id": 64181,
       "name": "Todesstöße auf den Darkspear-Inseln",
-      "kategorie": 137,
-      "art": "zaehler"
+      "category": 137,
+      "kind": "zaehler"
     },
     {
       "id": 60,
       "name": "Tode insgesamt",
-      "kategorie": 122,
-      "art": "zaehler"
+      "category": 122,
+      "kind": "zaehler"
     },
     {
       "id": 321,
       "name": "Tode in Schlachtzügen und Dungeons insgesamt",
-      "kategorie": 125,
-      "art": "zaehler"
+      "category": 125,
+      "kind": "zaehler"
     },
     {
       "id": 917,
       "name": "Tode in 10-Spieler-Schlachtzügen insgesamt",
-      "kategorie": 125,
-      "art": "zaehler"
+      "category": 125,
+      "kind": "zaehler"
     },
     {
       "id": 918,
       "name": "Tode in 5-Spieler-Dungeons insgesamt",
-      "kategorie": 125,
-      "art": "zaehler"
+      "category": 125,
+      "kind": "zaehler"
     },
     {
       "id": 796,
       "name": "Wiederbelebungen durch Priester",
-      "kategorie": 127,
-      "art": "zaehler"
+      "category": 127,
+      "kind": "zaehler"
     },
     {
       "id": 798,
       "name": "Wiedergeburten durch Druiden",
-      "kategorie": 127,
-      "art": "zaehler"
+      "category": 127,
+      "kind": "zaehler"
     },
     {
       "id": 799,
       "name": "Wiederbelebungen durch Schamanen",
-      "kategorie": 127,
-      "art": "zaehler"
+      "category": 127,
+      "kind": "zaehler"
     },
     {
       "id": 800,
       "name": "Erlösungen durch Paladine",
-      "kategorie": 127,
-      "art": "zaehler"
+      "category": 127,
+      "kind": "zaehler"
     },
     {
       "id": 801,
       "name": "Wiederbelebungen durch Seelensteine",
-      "kategorie": 127,
-      "art": "zaehler"
+      "category": 127,
+      "kind": "zaehler"
     },
     {
       "id": 1229,
       "name": "Von Druiden wiederbelebt",
-      "kategorie": 127,
-      "art": "zaehler"
+      "category": 127,
+      "kind": "zaehler"
     },
     {
       "id": 94,
       "name": "Quests abgebrochen",
-      "kategorie": 133,
-      "art": "zaehler"
+      "category": 133,
+      "kind": "zaehler"
     },
     {
       "id": 95,
       "name": "Durchschnittlich abgeschlossene Quests pro Tag",
-      "kategorie": 133,
-      "art": "schnitt"
+      "category": 133,
+      "kind": "schnitt"
     },
     {
       "id": 98,
       "name": "Quests abgeschlossen",
-      "kategorie": 133,
-      "art": "zaehler"
+      "category": 133,
+      "kind": "zaehler"
     },
     {
       "id": 1199,
       "name": "Erlernte Berufe",
-      "kategorie": 132,
-      "art": "stand"
+      "category": 132,
+      "kind": "stand"
     },
     {
       "id": 1200,
       "name": "Sekundäre Fertigkeiten auf maximaler Stufe",
-      "kategorie": 132,
-      "art": "stand"
+      "category": 132,
+      "kind": "stand"
     },
     {
       "id": 1201,
       "name": "Berufe auf maximaler Stufe",
-      "kategorie": 132,
-      "art": "stand"
+      "category": 132,
+      "kind": "stand"
     },
     {
       "id": 1202,
       "name": "Waffenfertigkeiten auf maximaler Fertigkeit",
-      "kategorie": 132,
-      "art": "stand"
+      "category": 132,
+      "kind": "stand"
     },
     {
       "id": 281,
       "name": "Erste-Hilfe-Fertigkeit",
-      "kategorie": 178,
-      "art": "stand"
+      "category": 178,
+      "kind": "stand"
     },
     {
       "id": 1456,
       "name": "Fische und andere geangelte Dinge",
-      "kategorie": 178,
-      "art": "zaehler"
+      "category": 178,
+      "kind": "zaehler"
     },
     {
       "id": 1518,
       "name": "Gefangene Fische",
-      "kategorie": 178,
-      "art": "zaehler"
+      "category": 178,
+      "kind": "zaehler"
     },
     {
       "id": 1519,
       "name": "Angelfertigkeit",
-      "kategorie": 178,
-      "art": "stand"
+      "category": 178,
+      "kind": "stand"
     },
     {
       "id": 1524,
       "name": "Kochfertigkeit",
-      "kategorie": 178,
-      "art": "stand"
+      "category": 178,
+      "kind": "stand"
     },
     {
       "id": 1745,
       "name": "Bekannte Kochrezepte",
-      "kategorie": 178,
-      "art": "stand"
+      "category": 178,
+      "kind": "stand"
     },
     {
       "id": 1748,
       "name": "Erlernte Erste Hilfe-Anleitungen",
-      "kategorie": 178,
-      "art": "stand"
+      "category": 178,
+      "kind": "stand"
     },
     {
       "id": 178,
       "name": "Erlernte Verzauberungsformeln",
-      "kategorie": 173,
-      "art": "stand"
+      "category": 173,
+      "kind": "stand"
     },
     {
       "id": 181,
       "name": "Entzauberte Gegenstände",
-      "kategorie": 173,
-      "art": "zaehler"
+      "category": 173,
+      "kind": "zaehler"
     },
     {
       "id": 183,
       "name": "Durch Entzaubern produzierte Materialien",
-      "kategorie": 173,
-      "art": "zaehler"
+      "category": 173,
+      "kind": "zaehler"
     },
     {
       "id": 1527,
       "name": "Höchste Alchemiefertigkeit",
-      "kategorie": 173,
-      "art": "stand"
+      "category": 173,
+      "kind": "stand"
     },
     {
       "id": 1532,
       "name": "Höchste Schmiedefertigkeit",
-      "kategorie": 173,
-      "art": "stand"
+      "category": 173,
+      "kind": "stand"
     },
     {
       "id": 1535,
       "name": "Höchste Verzauberfertigkeit",
-      "kategorie": 173,
-      "art": "stand"
+      "category": 173,
+      "kind": "stand"
     },
     {
       "id": 1536,
       "name": "Höchste Lederverarbeitungsfertigkeit",
-      "kategorie": 173,
-      "art": "stand"
+      "category": 173,
+      "kind": "stand"
     },
     {
       "id": 1537,
       "name": "Höchste Bergbaufertigkeit",
-      "kategorie": 173,
-      "art": "stand"
+      "category": 173,
+      "kind": "stand"
     },
     {
       "id": 1538,
       "name": "Höchste Kräuterkundefertigkeit",
-      "kategorie": 173,
-      "art": "stand"
+      "category": 173,
+      "kind": "stand"
     },
     {
       "id": 1541,
       "name": "Höchste Kürschnerfertigkeit",
-      "kategorie": 173,
-      "art": "stand"
+      "category": 173,
+      "kind": "stand"
     },
     {
       "id": 1542,
       "name": "Höchste Schneiderfertigkeit",
-      "kategorie": 173,
-      "art": "stand"
+      "category": 173,
+      "kind": "stand"
     },
     {
       "id": 1544,
       "name": "Höchste Ingenieursfertigkeit",
-      "kategorie": 173,
-      "art": "stand"
+      "category": 173,
+      "kind": "stand"
     },
     {
       "id": 1729,
       "name": "Erlernte Alchemierezepte",
-      "kategorie": 173,
-      "art": "stand"
+      "category": 173,
+      "kind": "stand"
     },
     {
       "id": 1730,
       "name": "Erlernte Schmiedepläne",
-      "kategorie": 173,
-      "art": "stand"
+      "category": 173,
+      "kind": "stand"
     },
     {
       "id": 1734,
       "name": "Erlernte Ingenieurskunstschemata",
-      "kategorie": 173,
-      "art": "stand"
+      "category": 173,
+      "kind": "stand"
     },
     {
       "id": 1740,
       "name": "Erlernte Lederverarbeitungsmuster",
-      "kategorie": 173,
-      "art": "stand"
+      "category": 173,
+      "kind": "stand"
     },
     {
       "id": 1741,
       "name": "Erlernte Schnittmuster",
-      "kategorie": 173,
-      "art": "stand"
+      "category": 173,
+      "kind": "stand"
     },
     {
       "id": 3216,
       "name": "Erlernte Verhüttungsmethoden",
-      "kategorie": 173,
-      "art": "stand"
+      "category": 173,
+      "kind": "stand"
     },
     {
       "id": 349,
       "name": "Bereiste Flugrouten",
-      "kategorie": 134,
-      "art": "zaehler"
+      "category": 134,
+      "kind": "zaehler"
     },
     {
       "id": 350,
       "name": "Benutzte Magierportale",
-      "kategorie": 134,
-      "art": "zaehler"
+      "category": 134,
+      "kind": "zaehler"
     },
     {
       "id": 353,
       "name": "Anzahl der Nutzungen des Ruhesteins",
-      "kategorie": 134,
-      "art": "zaehler"
+      "category": 134,
+      "kind": "zaehler"
     },
     {
       "id": 1339,
       "name": "Am häufigsten benutztes Magierportal",
-      "kategorie": 134,
-      "art": "text"
+      "category": 134,
+      "kind": "text"
     },
     {
       "id": 2277,
       "name": "Beschwörungen angenommen",
-      "kategorie": 134,
-      "art": "zaehler"
+      "category": 134,
+      "kind": "zaehler"
     },
     {
       "id": 1042,
       "name": "Anzahl an Umarmungen",
-      "kategorie": 131,
-      "art": "zaehler"
+      "category": 131,
+      "kind": "zaehler"
     },
     {
       "id": 1045,
       "name": "Anzahl /jubeln",
-      "kategorie": 131,
-      "art": "zaehler"
+      "category": 131,
+      "kind": "zaehler"
     },
     {
       "id": 1047,
       "name": "Anzahl /ohgotts",
-      "kategorie": 131,
-      "art": "zaehler"
+      "category": 131,
+      "kind": "zaehler"
     },
     {
       "id": 1065,
       "name": "Anzahl /winken",
-      "kategorie": 131,
-      "art": "zaehler"
+      "category": 131,
+      "kind": "zaehler"
     },
     {
       "id": 1066,
       "name": "Anzahl /LOLs",
-      "kategorie": 131,
-      "art": "zaehler"
+      "category": 131,
+      "kind": "zaehler"
     },
     {
       "id": 1067,
       "name": "Anzahl des Musizierens auf der kleinsten Geige der Welt",
-      "kategorie": 131,
-      "art": "zaehler"
+      "category": 131,
+      "kind": "zaehler"
     },
     {
       "id": 51,
       "name": "Siege im Arathibecken",
-      "kategorie": 153,
-      "art": "zaehler"
+      "category": 153,
+      "kind": "zaehler"
     },
     {
       "id": 52,
       "name": "Schlachten in der Kriegshymnenschlucht",
-      "kategorie": 153,
-      "art": "zaehler"
+      "category": 153,
+      "kind": "zaehler"
     },
     {
       "id": 55,
       "name": "Schlachten im Arathibecken",
-      "kategorie": 153,
-      "art": "zaehler"
+      "category": 153,
+      "kind": "zaehler"
     },
     {
       "id": 105,
       "name": "Siege in der Kriegshymnenschlucht",
-      "kategorie": 153,
-      "art": "zaehler"
+      "category": 153,
+      "kind": "zaehler"
     },
     {
       "id": 395,
       "name": "In der Kriegshymnenschlucht eingenommene Flaggen",
-      "kategorie": 153,
-      "art": "zaehler"
+      "category": 153,
+      "kind": "zaehler"
     },
     {
       "id": 586,
       "name": "Verteidigte Flaggen in der Kriegshymnenschlucht",
-      "kategorie": 153,
-      "art": "zaehler"
+      "category": 153,
+      "kind": "zaehler"
     },
     {
       "id": 839,
       "name": "Gespielte Schlachtfelder",
-      "kategorie": 153,
-      "art": "zaehler"
+      "category": 153,
+      "kind": "zaehler"
     },
     {
       "id": 840,
       "name": "Schlachtfelder gewonnen",
-      "kategorie": 153,
-      "art": "zaehler"
+      "category": 153,
+      "kind": "zaehler"
     },
     {
       "id": 64176,
       "name": "Siege auf den Darkspear-Inseln",
-      "kategorie": 153,
-      "art": "zaehler"
+      "category": 153,
+      "kind": "zaehler"
     },
     {
       "id": 64179,
       "name": "Schlachten auf den Darkspear-Inseln",
-      "kategorie": 153,
-      "art": "zaehler"
+      "category": 153,
+      "kind": "zaehler"
     },
     {
       "id": 64348,
       "name": "Basen des Arathibeckens erobert",
-      "kategorie": 153,
-      "art": "zaehler"
+      "category": 153,
+      "kind": "zaehler"
     },
     {
       "id": 64350,
       "name": "Basen der Darkspear-Inseln erobert",
-      "kategorie": 153,
-      "art": "zaehler"
+      "category": 153,
+      "kind": "zaehler"
     },
     {
       "id": 64351,
       "name": "Basen der Darkspear-Inseln verteidigt",
-      "kategorie": 153,
-      "art": "zaehler"
+      "category": 153,
+      "kind": "zaehler"
     },
     {
       "id": 56,
       "name": "Tode in der Kriegshymnenschlucht",
-      "kategorie": 124,
-      "art": "zaehler"
+      "category": 124,
+      "kind": "zaehler"
     },
     {
       "id": 59,
       "name": "Tode im Arathibecken",
-      "kategorie": 124,
-      "art": "zaehler"
+      "category": 124,
+      "kind": "zaehler"
     },
     {
       "id": 64182,
       "name": "Tode auf den Darkspear-Inseln",
-      "kategorie": 124,
-      "art": "zaehler"
+      "category": 124,
+      "kind": "zaehler"
     },
     {
       "id": 112,
       "name": "Tode durch Ertrinken",
-      "kategorie": 126,
-      "art": "zaehler"
+      "category": 126,
+      "kind": "zaehler"
     },
     {
       "id": 113,
       "name": "Tode durch Erschöpfung",
-      "kategorie": 126,
-      "art": "zaehler"
+      "category": 126,
+      "kind": "zaehler"
     },
     {
       "id": 114,
       "name": "Tode durch Stürze",
-      "kategorie": 126,
-      "art": "zaehler"
+      "category": 126,
+      "kind": "zaehler"
     },
     {
       "id": 115,
       "name": "Tode durch Feuer und Lava",
-      "kategorie": 126,
-      "art": "zaehler"
+      "category": 126,
+      "kind": "zaehler"
     },
     {
       "id": 594,
       "name": "Tode durch Hogger",
-      "kategorie": 126,
-      "art": "zaehler"
+      "category": 126,
+      "kind": "zaehler"
     },
     {
       "id": 319,
       "name": "Duelle gewonnen",
-      "kategorie": 154,
-      "art": "zaehler"
+      "category": 154,
+      "kind": "zaehler"
     },
     {
       "id": 320,
       "name": "Duelle verloren",
-      "kategorie": 154,
-      "art": "zaehler"
+      "category": 154,
+      "kind": "zaehler"
     }
   ]
 }

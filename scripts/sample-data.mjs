@@ -1,7 +1,7 @@
 // Sample data ONLY for local development: fills activity (five completed guild weeks, Sunday to Saturday, and the
 // current one)
 // and missing daily snapshots, then triggers the weekly evaluation (titles and newspaper).
-// Nothing is created before the server start (config/serverstart.json): there all characters start at level 1.
+// Nothing is created before the server start (config/server-start.json): there all characters start at level 1.
 // Everything generated carries "testdaten": true and can be deleted again with --remove.
 //
 // Run in the container:  docker compose exec app npm run data:sample
@@ -30,7 +30,7 @@ const remove = values.remove || values["entfernen"];
 const log = (line) => console.log(line);
 
 async function serverStart() {
-  return parseServerStart(JSON.parse(await readFile(new URL("../config/serverstart.json", import.meta.url), "utf8")));
+  return parseServerStart(JSON.parse(await readFile(new URL("../config/server-start.json", import.meta.url), "utf8")));
 }
 
 try {

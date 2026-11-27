@@ -78,7 +78,7 @@ archiv
 richtung
 farbe
 
-# Stat card slugs (config/statistik-karten.json), used in URLs and as symbol keys.
+# Stat card slugs (config/stat-cards.json), used in URLs and as symbol keys.
 fische
 lagerfeuer
 
