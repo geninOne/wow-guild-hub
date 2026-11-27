@@ -62,7 +62,7 @@ In addition, depending on what the module needs:
   won't notice; `test/web/netlify-weiterleitungen.test.ts` checks it). Pages that should stay out of search
   engines also get `X-Robots-Tag = "noindex, nofollow"` there and render `<meta name="robots">`.
 - Environment variables: describe them in `.env.example` and, if they should end up on Netlify, add them to
-  `scripts/netlify-umgebung-lib.mjs` and `.github/workflows/release.yml`.
+  `scripts/netlify-env-lib.mjs` and `.github/workflows/release.yml`.
 - Scripts of its own as `npm run <id>:…` in `package.json`.
 
 ## Server: `ServerErweiterung`

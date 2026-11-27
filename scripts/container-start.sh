@@ -1,14 +1,14 @@
 #!/bin/sh
-# Startet den Dev-Container. node_modules liegt in einem benannten Volume, das einen Neubau des Images überlebt.
-# Deshalb hier nachinstallieren, sobald sich package-lock.json gegenüber dem Stand im Volume geändert hat.
+# Starts the dev container. node_modules lives in a named volume that survives an image rebuild.
+# So reinstall here as soon as package-lock.json differs from the state in the volume.
 set -e
 
 hash="$(sha256sum package-lock.json | cut -d' ' -f1)"
 if [ "$(cat node_modules/.lock-hash 2>/dev/null)" != "$hash" ]; then
-  echo "package-lock.json hat sich geändert, installiere Abhängigkeiten neu ..."
+  echo "package-lock.json changed, reinstalling dependencies ..."
   npm ci --no-audit --no-fund
   echo "$hash" > node_modules/.lock-hash
 fi
 
-node scripts/takt.mjs &
+node scripts/scheduler.mjs &
 exec netlify dev

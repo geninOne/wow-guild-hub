@@ -1,9 +1,9 @@
 import { expect, test } from "vitest";
-import { retryUntilOk, waitUntilReachable } from "../../scripts/takt-lib.mjs";
+import { retryUntilOk, waitUntilReachable } from "../../scripts/scheduler-lib.mjs";
 
 const noSleep = async () => {};
 
-test("wartet mit Wiederholung, bis die Adresse antwortet", async () => {
+test("retries until the URL responds", async () => {
   let n = 0;
   const fetchFn = async () => {
     if (++n < 3) throw new Error("ECONNREFUSED");
@@ -13,7 +13,7 @@ test("wartet mit Wiederholung, bis die Adresse antwortet", async () => {
   expect(n).toBe(3);
 });
 
-test("gibt nach den Versuchen auf und meldet false", async () => {
+test("gives up after the attempts and returns false", async () => {
   let n = 0;
   const fetchFn = async () => {
     n++;
@@ -23,16 +23,16 @@ test("gibt nach den Versuchen auf und meldet false", async () => {
   expect(n).toBe(4);
 });
 
-test("schläft zwischen den Versuchen, nicht nach dem letzten", async () => {
-  const pausen: number[] = [];
+test("sleeps between attempts, not after the last one", async () => {
+  const pauses: number[] = [];
   const fetchFn = async () => {
     throw new Error("x");
   };
-  await waitUntilReachable("http://x/", { fetchFn, attempts: 3, delayMs: 7, sleep: async (ms: number) => void pausen.push(ms) });
-  expect(pausen).toEqual([7, 7]);
+  await waitUntilReachable("http://x/", { fetchFn, attempts: 3, delayMs: 7, sleep: async (ms: number) => void pauses.push(ms) });
+  expect(pauses).toEqual([7, 7]);
 });
 
-test("erster Aufruf scheitert: wird wiederholt statt auf den nächsten Takt zu warten", async () => {
+test("first call fails: retried instead of waiting for the next tick", async () => {
   const results = [false, false, true];
   let n = 0;
   const ok = await retryUntilOk(async () => results[n++], { sleep: noSleep });
@@ -40,14 +40,14 @@ test("erster Aufruf scheitert: wird wiederholt statt auf den nächsten Takt zu w
   expect(n).toBe(3);
 });
 
-test("Wiederholung endet nach den Versuchen mit false", async () => {
+test("retrying ends with false after the attempts", async () => {
   let n = 0;
   const ok = await retryUntilOk(async () => (n++, false), { sleep: noSleep, attempts: 3 });
   expect(ok).toBe(false);
   expect(n).toBe(3);
 });
 
-test("erfolgreicher Aufruf wird nicht wiederholt", async () => {
+test("a successful call is not retried", async () => {
   let n = 0;
   expect(await retryUntilOk(async () => (n++, true), { sleep: noSleep })).toBe(true);
   expect(n).toBe(1);

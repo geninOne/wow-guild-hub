@@ -144,10 +144,10 @@ docker compose up -d --build --renew-anon-volumes
 ```
 
 Zum Ausprobieren ohne lange Wartezeit füllt ein Skript den lokalen Bestand mit erfundener Aktivität (die Seiten
-zeigen dann einen roten Hinweis), mit `-- --entfernen` ist alles wieder weg:
+zeigen dann einen roten Hinweis), mit `-- --remove` ist alles wieder weg:
 
 ```bash
-docker compose exec app npm run daten:beispiel
+docker compose exec app npm run data:sample
 ```
 
 Nur die Oberfläche mit Hot Reload (ohne `/api`) unter http://127.0.0.1:5173:

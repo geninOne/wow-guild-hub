@@ -33,6 +33,7 @@ export const FROZEN_NAMES = new Set([
   "schlagzeile",
   "rubrik",
   "hinweis",
+  "spruch",
   // Ids of the weekly fun titles, stored in every weekly result.
   "nachteule",
   "stammgast",
@@ -126,6 +127,15 @@ export function germanPathParts(path, words) {
   });
 }
 
+/** A `/` starts a regular expression when the code before it cannot end an expression. */
+function isRegexStart(piece, previous) {
+  if (piece.kind !== "code") return false;
+  const before = piece.text.trimEnd();
+  if (before === "") return previous === undefined;
+  // `<` and `>` are left out on purpose: in JSX they come before `/` in `</tag>` and `/>`.
+  return /[(,=:[!&|?{};+\-*%~^]$/.test(before) || /\b(return|typeof|case|of|in)$/.test(before);
+}
+
 /**
  * Splits JavaScript or TypeScript source into pieces: `code`, `comment` and `string`, each with its start line.
  * Template literals with `${}` are followed; regular expression literals are not (a quote inside one may hide the
@@ -165,6 +175,22 @@ export function tokenizeJs(source) {
       i += 2;
       while (i < source.length && !(source[i] === "*" && source[i + 1] === "/")) take();
       i += 2;
+      start("code");
+    } else if (ch === "/" && isRegexStart(current, pieces.at(-1))) {
+      // A regular expression literal: treated like a string, its letters are not identifiers.
+      start("string");
+      take();
+      let inClass = false;
+      while (i < source.length && source[i] !== "\n") {
+        const c = source[i];
+        if (c === "\\") take();
+        else if (c === "[") inClass = true;
+        else if (c === "]") inClass = false;
+        else if (c === "/" && !inClass) break;
+        take();
+      }
+      take();
+      while (i < source.length && /[a-z]/.test(source[i])) take();
       start("code");
     } else if (ch === '"' || ch === "'") {
       start("string");

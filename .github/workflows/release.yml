@@ -89,7 +89,7 @@ jobs:
         if: github.ref_type == 'tag'
         env:
           TAG: ${{ github.ref_name }}
-        run: node scripts/changelog-abschnitt.mjs --pruefe-tag "$TAG"
+        run: node scripts/changelog-section.mjs --check-tag "$TAG"
 
       # Idempotent: creates new variables, replaces differing ones, leaves equal ones alone. Prints names only.
       - name: Set environment variables of the Netlify site
@@ -133,7 +133,7 @@ jobs:
           WEBSITE_IMPRINT_EMAIL: ${{ vars.WEBSITE_IMPRINT_EMAIL }}
           WEBSITE_UMAMI_ID: ${{ vars.WEBSITE_UMAMI_ID }}
           WEBSITE_UMAMI_DOMAINS: ${{ vars.WEBSITE_UMAMI_DOMAINS }}
-        run: node scripts/netlify-umgebung.mjs --aus-umgebung
+        run: node scripts/netlify-env.mjs --from-env
 
       # The CLI builds by itself (npm run build with the site URL), bundles the functions with their schedules
       # (collect-guild hourly, collect-static every four hours, collect-weekly daily) and uploads netlify.toml

@@ -1,69 +1,69 @@
 import { describe, expect, test } from "vitest";
-import { changelogAbschnitt, heuteIso, pruefeTag } from "../../scripts/release-lib.mjs";
+import { changelogSection, checkTag, todayIso } from "../../scripts/release-lib.mjs";
 
-// So schreibt release-please: Überschrift mit Link, Unterabschnitte mit "###".
+// This is how release-please writes: heading with link, subsections with "###".
 const CHANGELOG = `# Changelog
 
-Einleitung.
+Introduction.
 
 ## [1.1.0](https://github.com/geninOne/wow-guild-hub/compare/v1.0.0...v1.1.0) (2026-12-01)
 
 
 ### Features
 
-* **berufe:** Filter nach Rezeptrang ([#7](https://github.com/geninOne/wow-guild-hub/issues/7))
+* **professions:** filter by recipe rank ([#7](https://github.com/geninOne/wow-guild-hub/issues/7))
 
 ### [1.0.1](https://github.com/geninOne/wow-guild-hub/compare/v1.0.0...v1.0.1) (2026-11-20)
 
-* Korrektur.
+* Fix.
 
 ## 1.0.0 (2026-11-06)
 
-- Erste Version.
-- Zweiter Punkt.
+- First version.
+- Second item.
 `;
 
-describe("changelogAbschnitt", () => {
-  test("liefert Datum und Inhalt eines von Hand geschriebenen Abschnitts", () => {
-    expect(changelogAbschnitt(CHANGELOG, "1.0.0")).toEqual({
-      datum: "2026-11-06",
-      inhalt: "- Erste Version.\n- Zweiter Punkt.",
+describe("changelogSection", () => {
+  test("returns date and content of a hand-written section", () => {
+    expect(changelogSection(CHANGELOG, "1.0.0")).toEqual({
+      date: "2026-11-06",
+      content: "- First version.\n- Second item.",
     });
   });
 
-  test("liest Überschriften von release-please mit Link und behält die Unterabschnitte", () => {
-    expect(changelogAbschnitt(CHANGELOG, "1.1.0")).toEqual({
-      datum: "2026-12-01",
-      inhalt: "### Features\n\n* **berufe:** Filter nach Rezeptrang ([#7](https://github.com/geninOne/wow-guild-hub/issues/7))",
+  test("reads release-please headings with a link and keeps the subsections", () => {
+    expect(changelogSection(CHANGELOG, "1.1.0")).toEqual({
+      date: "2026-12-01",
+      content: "### Features\n\n* **professions:** filter by recipe rank ([#7](https://github.com/geninOne/wow-guild-hub/issues/7))",
     });
   });
 
-  test("erkennt auch Versionsüberschriften mit drei Rauten", () => {
-    expect(changelogAbschnitt(CHANGELOG, "1.0.1")).toEqual({ datum: "2026-11-20", inhalt: "* Korrektur." });
+  test("also recognizes version headings with three hashes", () => {
+    expect(changelogSection(CHANGELOG, "1.0.1")).toEqual({ date: "2026-11-20", content: "* Fix." });
   });
 
-  test("liefert null für eine unbekannte Version", () => {
-    expect(changelogAbschnitt(CHANGELOG, "9.9.9")).toBeNull();
-    expect(changelogAbschnitt(CHANGELOG, "1.0")).toBeNull();
-  });
-});
-
-describe("pruefeTag", () => {
-  test("akzeptiert ein Tag, das zur Version passt und einen Abschnitt hat", () => {
-    expect(() => pruefeTag("v1.0.0", "1.0.0", CHANGELOG)).not.toThrow();
-    expect(() => pruefeTag("v1.1.0", "1.1.0", CHANGELOG)).not.toThrow();
-  });
-
-  test("lehnt ein Tag ab, das nicht zur Version in package.json passt", () => {
-    expect(() => pruefeTag("v1.1.0", "1.0.0", CHANGELOG)).toThrow(/v1\.1\.0.*1\.0\.0/);
-  });
-
-  test("lehnt eine Version ohne Changelog-Abschnitt ab", () => {
-    expect(() => pruefeTag("v2.0.0", "2.0.0", CHANGELOG)).toThrow(/CHANGELOG/);
+  test("returns null for an unknown version", () => {
+    expect(changelogSection(CHANGELOG, "9.9.9")).toBeNull();
+    expect(changelogSection(CHANGELOG, "1.0")).toBeNull();
   });
 });
 
-test("heuteIso rechnet in deutscher Zeit", () => {
-  expect(heuteIso(new Date("2026-11-06T23:30:00Z"))).toBe("2026-11-07");
-  expect(heuteIso(new Date("2026-11-06T12:00:00Z"))).toBe("2026-11-06");
+describe("checkTag", () => {
+  test("accepts a tag that matches the version and has a section", () => {
+    expect(() => checkTag("v1.0.0", "1.0.0", CHANGELOG)).not.toThrow();
+    expect(() => checkTag("v1.1.0", "1.1.0", CHANGELOG)).not.toThrow();
+  });
+
+  test("rejects a tag that does not match the version in package.json", () => {
+    expect(() => checkTag("v1.1.0", "1.0.0", CHANGELOG)).toThrow(/v1\.1\.0.*1\.0\.0/);
+  });
+
+  test("rejects a version without a changelog section", () => {
+    expect(() => checkTag("v2.0.0", "2.0.0", CHANGELOG)).toThrow(/CHANGELOG/);
+  });
+});
+
+test("todayIso computes in German time", () => {
+  expect(todayIso(new Date("2026-11-06T23:30:00Z"))).toBe("2026-11-07");
+  expect(todayIso(new Date("2026-11-06T12:00:00Z"))).toBe("2026-11-06");
 });

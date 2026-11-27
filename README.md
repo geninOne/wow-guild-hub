@@ -146,10 +146,10 @@ docker compose up -d --build --renew-anon-volumes
 ```
 
 To try things out without a long wait, a script fills the local store with made-up activity (the pages then
-show a red notice); `-- --entfernen` removes it all again:
+show a red notice); `-- --remove` removes it all again:
 
 ```bash
-docker compose exec app npm run daten:beispiel
+docker compose exec app npm run data:sample
 ```
 
 Only the interface with hot reload (without `/api`) at http://127.0.0.1:5173:

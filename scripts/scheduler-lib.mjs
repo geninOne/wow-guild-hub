@@ -1,8 +1,8 @@
-// Hilfen für den lokalen Taktgeber (scripts/takt.mjs), getrennt, damit sie testbar sind.
+// Helpers for the local scheduler (scripts/scheduler.mjs), kept separate so they can be tested.
 
 const defaultSleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-/** Wartet, bis die Adresse antwortet (irgendein HTTP-Status genügt). Gibt false zurück, wenn sie es nie tut. */
+/** Waits until the URL responds (any HTTP status will do). Returns false if it never does. */
 export async function waitUntilReachable(url, { fetchFn = fetch, attempts = 120, delayMs = 2000, sleep = defaultSleep } = {}) {
   for (let i = 1; i <= attempts; i++) {
     try {
@@ -16,7 +16,7 @@ export async function waitUntilReachable(url, { fetchFn = fetch, attempts = 120,
   return false;
 }
 
-/** Ruft fn (liefert true bei Erfolg) bis zum Erfolg auf, höchstens attempts-mal mit Pause dazwischen. */
+/** Calls fn (returns true on success) until it succeeds, at most `attempts` times with a pause in between. */
 export async function retryUntilOk(fn, { attempts = 5, delayMs = 60_000, sleep = defaultSleep } = {}) {
   for (let i = 1; i <= attempts; i++) {
     if (await fn()) return true;

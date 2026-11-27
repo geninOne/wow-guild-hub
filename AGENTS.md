@@ -51,7 +51,7 @@ Requires Node.js 22 (or Docker). Install with `npm ci`.
 | Full local stack (site, `/api`, Blobs, scheduler) at http://localhost:8888 | `cp .env.example .env`, then `docker compose up -d --build` |
 | Run a collector by hand | `docker compose exec app npm run collect:guild` (or `collect:static`, `collect:weekly`) |
 | Collector report | `docker compose logs app \| grep '"job"'` |
-| Fill the local store with sample data (`-- --entfernen` removes it) | `docker compose exec app npm run daten:beispiel` |
+| Fill the local store with sample data (`-- --remove` removes it) | `docker compose exec app npm run data:sample` |
 | Rebuild the container after `package.json` changes | `docker compose up -d --build --renew-anon-volumes` |
 | UI only with hot reload, no `/api` (http://127.0.0.1:5173) | `npm run dev:web` |
 | Lint (must have zero findings) | `npm run lint` |
@@ -75,7 +75,7 @@ is done. Tests need no credentials; never add tests that call the real Blizzard 
 - **Docs.** English is the source. Files with a `.de.md` twin (README, CONTRIBUTING, SECURITY, CODE_OF_CONDUCT,
   `docs/extensions`) must be updated in both languages in the same pull request.
 - **Configuration.** Nothing guild-specific is hard-coded. New settings become environment variables with a default
-  and a comment in `.env.example`; if Netlify needs them, also add them to `scripts/netlify-umgebung-lib.mjs` and
+  and a comment in `.env.example`; if Netlify needs them, also add them to `scripts/netlify-env-lib.mjs` and
   `.github/workflows/release.yml`. `WEBSITE_*` variables apply at build time.
 - **Code style.** TypeScript, React function components, no new dependencies without a strong reason. New logic
   gets vitest tests; components get Testing Library tests.
@@ -124,7 +124,7 @@ is done. Tests need no credentials; never add tests that call the real Blizzard 
   responses from `test/fixtures/`; prefer extending those over new mocks. Inject time via `now` instead of
   mocking the clock globally.
 - For a bug fix, write a failing test first.
-- UI changes: check them in the running app (`docker compose up`, then `npm run daten:beispiel` for data) at
+- UI changes: check them in the running app (`docker compose up`, then `npm run data:sample` for data) at
   desktop and phone width, in German and English, not only in tests.
 - Collector changes: run the collector in the container and read the JSON report line in the log; check that it
   finishes inside the budget and makes progress across runs.
