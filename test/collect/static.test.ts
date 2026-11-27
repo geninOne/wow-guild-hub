@@ -1,9 +1,10 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import type { ApiResult, BlizzardClient } from "../../src/blizzard/client";
 import type { Config } from "../../src/config";
-import { ATTRIBUTES_BUDGET_SHARE, MAX_RETRIES_PER_RUN, attributesDue, retriesDue, runStaticCollection } from "../../src/collect/static";
+import { ATTRIBUTES_BUDGET_SHARE, LOCK_KEY, LOCK_TTL_MS, MAX_RETRIES_PER_RUN, attributesDue, retriesDue, runStaticCollection } from "../../src/collect/static";
 import type {
   CharacterAttributesRecord,
+  CharacterIndex,
   CharacterRecord,
   IconMap,
   InstanceAchievementsRecord,
@@ -12,7 +13,7 @@ import type {
   ReputationFactionsRecord,
   TalentTreeRecord,
 } from "../../src/model";
-import { INSTANCE_IMAGE_IDS } from "../../src/instance-images";
+import { CHARACTER_INDEX_KEY, toCharacterIndexEntry } from "../../src/collect/character-index";
 import { createMemoryStore } from "../../src/store";
 import { buildCharacterRecord } from "../../src/transform/character";
 import { createFakeClient } from "../helpers/fake-client";
@@ -117,12 +118,12 @@ test("Gegenstands-Icons aus gespeicherten Charakteren", async () => {
   expect(Object.values(items ?? {}).filter((v) => v === null)).toHaveLength(11);
 });
 
-test("Zeitbudget 0: kein Baum geholt, Icon-Tabelle trotzdem geschrieben", async () => {
+test("Zeitbudget 0: keine Phase beginnt, keine Anfrage, nichts geschrieben außer der wieder gelösten Sperre", async () => {
   const rep = await run({ budgetMs: 0 });
-  // Ein Baum und alle Instanzbilder werden auf den nächsten Lauf verschoben.
-  expect(rep).toMatchObject({ treesAdded: 0, instanceImagesAdded: 0, skipped: 1 + INSTANCE_IMAGE_IDS.length + 12 });
-  expect(await store.get<IconMap>("static/spell-icons")).toEqual({});
-  expect(await store.get<NamedList>("static/classes")).not.toBeNull();
+  expect(rep).toMatchObject({ treesAdded: 0, instanceImagesAdded: 0, skipped: 0 });
+  expect(rep.notStarted).toEqual(["trees", "spells", "recipes", "items", "levels", "instances", "reputation", "professions", "images"]);
+  expect(fake.calls).toEqual([]);
+  expect(Object.keys(store.dump())).toEqual([]);
 });
 
 function category(id: number, keep: number[]): ApiResult {
@@ -279,6 +280,10 @@ describe("Werte der Charaktere", () => {
       "t",
     );
     await store.set(`characters/${id}`, { ...rec, hasProfile, lastLoginAt });
+    // Wie collect-guild: Datensatz und Indexeintrag zusammen.
+    const index = (await store.get<CharacterIndex>(CHARACTER_INDEX_KEY)) ?? {};
+    index[String(id)] = toCharacterIndexEntry({ ...rec, hasProfile, lastLoginAt });
+    await store.set(CHARACTER_INDEX_KEY, index);
   }
   async function guild(ids: number[], former: number[] = []) {
     const members = [...ids, ...former].map((id) => ({ id, former: former.includes(id) }));
@@ -376,6 +381,9 @@ describe("Werte der Charaktere", () => {
           slot: `S${i}`, slotName: `S${i}`, itemId: id * 100 + i, name: "x", quality: "EPIC", itemLevel: null, enchantments: [],
         }));
         await store.set(`characters/${id}`, { ...rec, equipment });
+        const index = (await store.get<CharacterIndex>(CHARACTER_INDEX_KEY)) ?? {};
+        index[String(id)] = toCharacterIndexEntry({ ...rec, equipment });
+        await store.set(CHARACTER_INDEX_KEY, index);
         routes[`/profile/wow/character/c${id}/statistics`] = stats(id);
       }
       await guild(Array.from({ length: CHARACTERS }, (_, i) => i + 1));
@@ -545,5 +553,108 @@ describe("Gegenstandsstufen", () => {
     await run();
     expect((await store.get<Record<string, number | null>>("static/item-levels"))?.[String(a)]).toBe(33);
     expect((await store.get<Record<string, string>>("static/item-levels-checked"))?.[String(a)]).toBeUndefined();
+  });
+});
+
+describe("Vorarbeit, Zeitlimit und Sperre", () => {
+  const minimal = (id: number, slug: string, lastLoginAt: string | null, equipment: CharacterRecord["equipment"] = []) => ({
+    ...buildCharacterRecord(
+      { id, name: slug, surname: null, slug, level: 30, classId: 1, raceId: 2, rank: 3 },
+      { profile: null, specializations: null, equipment: null, media: null, professions: null, raids: null, achievements: null, statistics: null, reputations: null },
+      "t",
+    ),
+    hasProfile: true,
+    lastLoginAt,
+    equipment,
+  });
+  const item = (itemId: number, itemLevel: number | null) => ({
+    slot: "HEAD", slotName: "Kopf", itemId, name: "x", quality: "EPIC", itemLevel, enchantments: [],
+  });
+
+  test("mit vollständigem Index liest der Lauf keinen einzigen Charakter-Blob", async () => {
+    const recs = [minimal(1, "eins", "2026-11-05T10:00:00.000Z", [item(10421, 20)]), minimal(2, "zwei", null, [item(777, null)])];
+    for (const r of recs) await store.set(`characters/${r.id}`, r);
+    await store.set(CHARACTER_INDEX_KEY, Object.fromEntries(recs.map((r) => [String(r.id), toCharacterIndexEntry(r)])));
+    await store.set("guild", { members: [{ id: 1, former: false }, { id: 2, former: false }] });
+    const gets: string[] = [];
+    const counting = { ...store, get: <T,>(key: string) => (gets.push(key), store.get<T>(key)) };
+    const rep = await runStaticCollection({ client: fake, store: counting, config, now: () => new Date("2026-11-06T03:00:00.000Z") });
+    expect(gets.filter((k) => k.startsWith("characters/"))).toEqual([]);
+    expect(rep).toMatchObject({ charactersRead: 0, charactersUnread: 0, attributesFetched: 2, itemIconsAdded: 2, itemLevelsAdded: 1 });
+    expect(await store.get("static/item-levels")).toEqual({ "10421": 20, "777": null });
+  });
+
+  test("Charaktere ohne Indexeintrag werden nachgelesen und zählen mit", async () => {
+    await store.set("characters/1", minimal(1, "eins", null, [item(555, 7)]));
+    await store.set("guild", { members: [{ id: 1, former: false }] });
+    const rep = await run();
+    expect(rep).toMatchObject({ charactersRead: 1, charactersUnread: 0, attributesFetched: 1 });
+    expect((await store.get<Record<string, number>>("static/item-levels"))?.["555"]).toBe(7);
+  });
+
+  test("Bericht nennt die Dauer je Phase", async () => {
+    const rep = await run();
+    expect(Object.keys(rep.phases)).toEqual(
+      expect.arrayContaining(["prep", "trees", "spells", "recipes", "items", "levels", "instances", "reputation", "professions", "images", "finish"]),
+    );
+    expect(rep.notStarted).toEqual([]);
+  });
+
+  test("laufende Sperre: zweiter Lauf endet sofort ohne Anfrage und ohne zu schreiben", async () => {
+    await store.set(LOCK_KEY, { startedAt: "x", until: new Date(Date.now() + LOCK_TTL_MS).toISOString() });
+    const before = JSON.stringify(store.dump());
+    const rep = await run();
+    expect(rep.busy).toBe(true);
+    expect(fake.calls).toEqual([]);
+    expect(JSON.stringify(store.dump())).toBe(before);
+  });
+
+  test("abgelaufene Sperre wird übergangen, nach dem Lauf ist sie gelöst", async () => {
+    await store.set(LOCK_KEY, { startedAt: "x", until: new Date(Date.now() - 1).toISOString() });
+    const rep = await run();
+    expect(rep.busy).toBeUndefined();
+    expect(rep.treesAdded).toBe(1);
+    expect(await store.get(LOCK_KEY)).toBeNull();
+  });
+
+  test("Sperre wird auch nach einem Fehler gelöst", async () => {
+    const broken: BlizzardClient = { get: async () => { throw new Error("kaputt"); } };
+    await expect(runStaticCollection({ client: broken, store, config, now: () => new Date() })).rejects.toThrow("kaputt");
+    expect(await store.get(LOCK_KEY)).toBeNull();
+  });
+
+  // Nachbildung des Live-Fehlers seit v2.1.2: 290 Charaktere, jeder Blob-Zugriff kostet Zeit, echte Uhr im Maßstab 1:10.
+  // Vorher las der Lauf alle Charaktere nacheinander (290 × 5 ms > Budget) und schaffte nichts.
+  test("Live-Größenordnung mit Blob-Latenz: der Lauf holt Werte und endet im Budget", async () => {
+    const CHARACTERS = 290;
+    const BLOB_MS = 5;
+    const API_MS = 15;
+    const BUDGET_MS = 1200;
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    const index: CharacterIndex = {};
+    for (let id = 1; id <= CHARACTERS; id++) {
+      const rec = minimal(id, `c${id}`, "2026-11-05T10:00:00.000Z", [item(id * 10, 100), item(id * 10 + 1, null)]);
+      await store.set(`characters/${id}`, rec);
+      index[String(id)] = toCharacterIndexEntry(rec);
+      routes[`/profile/wow/character/c${id}/statistics`] = { status: 200, data: { health: id } };
+    }
+    await store.set(CHARACTER_INDEX_KEY, index);
+    await store.set("guild", { members: Array.from({ length: CHARACTERS }, (_, i) => ({ id: i + 1, former: false })) });
+    const slowStore = {
+      ...store,
+      get: async <T,>(key: string) => (await sleep(BLOB_MS), store.get<T>(key)),
+      set: async (key: string, value: unknown) => (await sleep(BLOB_MS), store.set(key, value)),
+      list: async (prefix: string) => (await sleep(BLOB_MS * 3), store.list(prefix)),
+      delete: async (key: string) => (await sleep(BLOB_MS), store.delete(key)),
+    };
+    const slowClient: BlizzardClient = { get: async (p, ns) => (await sleep(API_MS), fake.get(p, ns)) };
+    const t0 = Date.now();
+    const rep = await runStaticCollection({ client: slowClient, store: slowStore, config: { ...config, budgetMs: BUDGET_MS }, now: () => new Date() });
+    const total = Date.now() - t0;
+    expect(rep.attributesFetched).toBeGreaterThan(30);
+    expect(rep.itemIconsAdded + rep.itemLevelsAdded).toBeGreaterThan(0);
+    expect(rep.phases.prep).toBeLessThan(BUDGET_MS / 10);
+    // Ende vor dem Budget: die Reserve fängt laufende Anfragen und das Schreiben ab.
+    expect(total).toBeLessThan(BUDGET_MS);
   });
 });

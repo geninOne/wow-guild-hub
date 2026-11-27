@@ -479,3 +479,22 @@ export interface CharacterAttributesRecord {
 
 /** Blob `attributes/index`: je Charakter-ID der Zeitpunkt des letzten Abrufs der Werte. */
 export type AttributesIndex = Record<string, string>;
+
+/**
+ * Was `collect-static` aus einem Charakterdatensatz braucht, damit er nicht alle `characters/*` lesen muss.
+ * Gepflegt von `collect-guild` beim Schreiben eines Charakters.
+ */
+export interface CharacterIndexEntry {
+  slug: string;
+  hasProfile: boolean;
+  lastLoginAt: string | null;
+  /** IDs der angelegten Gegenstände. */
+  itemIds: number[];
+  /** Gegenstandsstufen, die Blizzard in der Ausrüstung noch mitliefert, Gegenstands-ID auf Stufe. */
+  itemLevels: Record<string, number>;
+  /** Bekannte Rezepte über alle Berufe. */
+  recipeIds: number[];
+}
+
+/** Blob `character-index`: Charakter-ID auf `CharacterIndexEntry`. */
+export type CharacterIndex = Record<string, CharacterIndexEntry>;
