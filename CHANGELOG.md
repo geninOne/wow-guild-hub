@@ -8,6 +8,13 @@ This file is maintained by [release-please](https://github.com/googleapis/releas
 [Conventional Commits](https://www.conventionalcommits.org/) on `main`. Please do not edit it by hand; see
 [CONTRIBUTING.md](CONTRIBUTING.md#commits-and-versions).
 
+## [3.1.0](https://github.com/geninOne/wow-guild-hub/compare/v3.0.0...v3.1.0) (2026-11-27)
+
+
+### Features
+
+* **ci:** fork-specific exceptions for check:english ([#33](https://github.com/geninOne/wow-guild-hub/issues/33)) ([0af7282](https://github.com/geninOne/wow-guild-hub/commit/0af7282eb4454c0591d3a7b223a688d58bef7fdb))
+
 ## [3.0.0](https://github.com/geninOne/wow-guild-hub/compare/v2.1.5...v3.0.0) (2026-11-27)
 
 
