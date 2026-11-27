@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any -- Rohantworten der API sind untypisiert */
+/* eslint-disable @typescript-eslint/no-explicit-any -- raw API responses are untyped */
 import type { TalentNode, TalentTreeRecord } from "../model";
 
-/** Zahl nach /talent-tree/ in einem Link. */
+/** Number after /talent-tree/ in a link. */
 export function treeIdFromHref(href: string): number {
   const m = /\/talent-tree\/(\d+)/.exec(href);
-  if (!m) throw new Error(`Kein Talentbaum-Link: ${href}`);
+  if (!m) throw new Error(`Not a talent tree link: ${href}`);
   return Number(m[1]);
 }
 
@@ -31,8 +31,8 @@ function mapNode(n: any): TalentNode {
 }
 
 /**
- * Knoten und Positionen stammen aus dem Klassenbaum, die Zuordnung zum Spec aus den Spec-Bäumen.
- * Spalten bleiben wie geliefert (pro Baum bereits versetzt).
+ * Nodes and positions come from the class tree, the assignment to a spec from the spec trees.
+ * Columns stay as delivered (already offset per tree).
  */
 export function buildTalentTree(classTree: any, specTrees: any[]): TalentTreeRecord {
   const order: number[] = (classTree.spec_talent_trees ?? [])

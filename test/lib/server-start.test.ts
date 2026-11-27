@@ -1,21 +1,21 @@
 import { expect, test } from "vitest";
-import { parseServerStart, serverStartSnapshot, sinceServerStart, startsWithin } from "../../src/lib/serverstart";
-import { SERVER_START } from "../../src/serverstart";
+import { parseServerStart, serverStartSnapshot, sinceServerStart, startsWithin } from "../../src/lib/server-start";
+import { SERVER_START } from "../../src/server-start";
 
-test("parseServerStart liest das Datum, null heißt kein Serverstart, Unsinn bricht ab", () => {
+test("parseServerStart reads the date, null means no server start, garbage throws", () => {
   expect(parseServerStart({ _hinweis: "x", datum: "2026-11-05" })).toBe("2026-11-05");
   expect(parseServerStart({ datum: null })).toBeNull();
   expect(parseServerStart({})).toBeNull();
-  for (const datum of ["05.11.2026", "2026-11-5", "2026-02-30", "", 20261105]) {
-    expect(() => parseServerStart({ datum })).toThrow("config/serverstart.json");
+  for (const date of ["05.11.2026", "2026-11-5", "2026-02-30", "", 20261105]) {
+    expect(() => parseServerStart({ datum: date })).toThrow("config/serverstart.json");
   }
 });
 
-test("config/serverstart.json enthält einen gültigen Serverstart", () => {
+test("config/serverstart.json contains a valid server start", () => {
   expect(SERVER_START).toBe("2026-11-05");
 });
 
-test("startsWithin und sinceServerStart", () => {
+test("startsWithin and sinceServerStart", () => {
   expect(startsWithin("2026-11-05", "2026-11-01", "2026-11-30")).toBe(true);
   expect(startsWithin("2026-11-05", "2026-11-02", "2026-11-05")).toBe(true);
   expect(startsWithin("2026-11-05", "2026-11-09", "2026-11-15")).toBe(false);
@@ -25,7 +25,7 @@ test("startsWithin und sinceServerStart", () => {
   expect(sinceServerStart(dates, null)).toEqual(dates);
 });
 
-test("serverStartSnapshot: alle Charaktere des Endstands mit Level 1 und Zählern auf 0", () => {
+test("serverStartSnapshot: all characters of the end snapshot at level 1 with counters at 0", () => {
   const end = {
     date: "2026-11-16", takenAt: "2026-11-16T20:00:00.000Z", testdaten: true,
     characters: { "1": { level: 26, equippedItemLevel: 20, professions: { "186": 80 }, deaths: 4 }, "2": { level: 3, equippedItemLevel: null, professions: {} } },

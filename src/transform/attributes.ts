@@ -1,13 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any -- Rohantworten der API sind untypisiert */
+/* eslint-disable @typescript-eslint/no-explicit-any -- raw API responses are untyped */
 import type { AttributeField, CharacterAttributesRecord } from "../model";
 
-/** Felder ohne Werte: Verweise und der Charakter selbst. */
+/** Fields without values: links and the character itself. */
 const SKIP = new Set(["_links", "character", "power_type"]);
 
 /**
- * Bereinigt die Antwort von `/profile/wow/character/<slug>/statistics`: Es bleiben nur Zahlen, bei Objekten deren
- * Zahlenfelder. Welche Felder die Seite zeigt, entscheidet erst die Ansicht; so kostet eine andere Form der Antwort
- * höchstens eine Zeile in der Tabelle der Ansicht, keinen neuen Abruf.
+ * Cleans up the response of `/profile/wow/character/<slug>/statistics`: only numbers remain, and for objects their
+ * number fields. Which fields the page shows is decided by the view alone; so a different response shape costs at
+ * most one line in the view's table, not a new fetch.
  */
 export function toAttributes(raw: any, fetchedAt: string): CharacterAttributesRecord {
   const fields: Record<string, AttributeField> = {};

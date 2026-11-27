@@ -2,7 +2,7 @@ import { expect, test } from "vitest";
 import { buildSnapshot } from "../../src/collect/snapshot";
 import { member } from "../helpers/members";
 
-test("Tagesstand: Berliner Datum, nur aktive Mitglieder", () => {
+test("daily snapshot: Berlin date, only active members", () => {
   const at = "2026-11-06T23:30:00.000Z";
   const s = buildSnapshot(
     [

@@ -11,7 +11,7 @@ import { fetchCharacter } from "./fetch-character";
 import { appendLevelUps, detectLevelUps } from "./levelups";
 import { ACCOUNT_WIDE_KEY, applyRecord, fetchOrder, isTwink, mergeRoster, parseRoster, type GuildRosterEntry } from "./roster";
 import { buildSnapshot } from "./snapshot";
-import { saveStatsStand, type StatValues } from "../stats/stand";
+import { saveStatsSnapshot, type StatValues } from "../stats/snapshot";
 
 export interface CollectDeps {
   client: BlizzardClient;
@@ -26,17 +26,17 @@ export interface GuildRunReport {
   failed: number;
   skipped: number;
   levelUps: number;
-  /** Neu aufgezeichnete Logins (Charakter und Wochenstunde). */
+  /** Newly recorded logins (character and week hour). */
   logins: number;
   durationMs: number;
   errors: { id: number; message: string }[];
-  /** Nicht abrufbare Nebengilden; deren Mitglieder blieben unverändert. */
+  /** Secondary guilds that could not be fetched; their members stayed unchanged. */
   guildErrors: { slug: string; message: string }[];
-  /** Wertungswoche (Samstag), deren Statistik-Stand dieser Lauf geschrieben hat. */
+  /** Scoring week (Saturday) whose stats snapshot this run wrote. */
   statsWeek: string;
-  /** Wochen ohne Lauf, deren Statistik-Stand mit dem letzten bekannten aufgefüllt wurde. */
+  /** Weeks without a run whose stats snapshot was filled with the last known one. */
   statsFilled: string[];
-  /** Dauer je Phase in Millisekunden: Gildenabruf, Charaktere, Schreiben am Ende. */
+  /** Duration per phase in milliseconds: guild fetch, characters, writes at the end. */
   phases: { guild: number; characters: number; write: number };
 }
 
@@ -44,16 +44,16 @@ function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
-/* eslint-disable-next-line @typescript-eslint/no-explicit-any -- Rohantwort der API */
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any -- raw API response */
 type RawGuild = any;
 
-/** Gildendaten und Roster einer Gilde; wirft bei allem außer 200. */
+/** Guild data and roster of one guild; throws on anything but 200. */
 async function fetchGuild(client: BlizzardClient, slug: string): Promise<{ guild: RawGuild; roster: unknown }> {
   const guildPath = `/data/wow/guild/${encodeURIComponent(slug)}`;
   const guildRes = await client.get(guildPath, "profile");
-  if (guildRes.status !== 200) throw new BlizzardError(`Gilde ${slug} nicht abrufbar: HTTP ${guildRes.status}`);
+  if (guildRes.status !== 200) throw new BlizzardError(`Guild ${slug} not available: HTTP ${guildRes.status}`);
   const rosterRes = await client.get(`${guildPath}/roster`, "profile");
-  if (rosterRes.status !== 200) throw new BlizzardError(`Roster ${slug} nicht abrufbar: HTTP ${rosterRes.status}`);
+  if (rosterRes.status !== 200) throw new BlizzardError(`Roster ${slug} not available: HTTP ${rosterRes.status}`);
   return { guild: guildRes.data, roster: rosterRes.data };
 }
 
@@ -72,11 +72,11 @@ function guildInfo(slug: string, g: RawGuild, members: MemberSummary[], main: bo
 export async function runGuildCollection(deps: CollectDeps): Promise<GuildRunReport> {
   const { client, store, config } = deps;
   const started = Date.now();
-  // Neue Charaktere nur bis kurz vor Budgetende; der Rest gehört den laufenden Abrufen und dem Schreiben am Ende.
+  // New characters only until shortly before the budget ends; the rest belongs to running fetches and the final writes.
   const deadline = workEndOf(started, config.budgetMs);
   const at = deps.now().toISOString();
 
-  // Die Hauptgilde muss gelingen, sonst scheitert der Lauf ohne zu schreiben. Nebengilden dürfen ausfallen.
+  // The main guild must succeed, otherwise the run fails without writing. Secondary guilds may fail.
   const [mainSlug] = config.guildSlugs;
   const fetched: { slug: string; guild: RawGuild }[] = [];
   const roster: GuildRosterEntry[] = [];
@@ -101,10 +101,10 @@ export async function runGuildCollection(deps: CollectDeps): Promise<GuildRunRep
     store.get<AchievementAccountWide>(ACCOUNT_WIDE_KEY),
   ]);
   const accountWide = accountWideStored ?? {};
-  // Was collect-static aus den Charakteren braucht; ersetzt dort das Lesen aller Datensätze.
+  // What collect-static needs from the characters; replaces reading all records there.
   const nextIndex: CharacterIndex = { ...characterIndex };
-  // Basislinie nur für Mitglieder, die schon einmal erfolgreich geholt wurden: Das Rosterlevel eines
-  // neuen Mitglieds kann hinter dem echten Level liegen und würde sonst Aufstiege vor dem Beitritt erfinden.
+  // Baseline only for members fetched successfully at least once: the roster level of a new member can lag
+  // behind the real level and would otherwise invent level-ups from before they joined.
   const prevLevels = new Map(
     (prev?.members ?? []).filter((m) => !m.former && m.lastFetchedAt !== null).map((m) => [m.id, m.level]),
   );
@@ -119,7 +119,7 @@ export async function runGuildCollection(deps: CollectDeps): Promise<GuildRunRep
       const previous = await store.get<CharacterRecord>(`characters/${member.id}`);
       const record = await fetchCharacter(client, { ...member }, at, previous);
       if (member.hasProfile && !record.hasProfile) {
-        throw new Error("Profil nicht mehr abrufbar, letzter Stand bleibt");
+        throw new Error("Profile no longer available, last state is kept");
       }
       await store.set(`characters/${member.id}`, record);
       nextIndex[String(member.id)] = toCharacterIndexEntry(record);
@@ -135,13 +135,13 @@ export async function runGuildCollection(deps: CollectDeps): Promise<GuildRunRep
     .filter((m) => !m.former && prevLevels.has(m.id))
     .flatMap((m) => detectLevelUps(m.id, prevLevels.get(m.id), m.level, at));
 
-  // Für ausgefallene Nebengilden bleibt der Eintrag des vorigen Laufs stehen.
+  // For failed secondary guilds the entry from the previous run is kept.
   const guilds = config.guildSlugs.flatMap((slug): GuildInfo[] => {
     const hit = fetched.find((f) => f.slug === slug);
     if (hit) return [guildInfo(slug, hit.guild, members, slug === mainSlug)];
     return (prev?.guilds ?? []).filter((info) => info.slug === slug);
   });
-  // Kopf-Felder aus der Hauptgilde, damit Leser aus Plan 1 und 2 unverändert funktionieren.
+  // Header fields from the main guild so readers from plan 1 and 2 keep working unchanged.
   const main = guilds[0];
   const guild: GuildRecord = {
     fetchedAt: at,
@@ -154,8 +154,8 @@ export async function runGuildCollection(deps: CollectDeps): Promise<GuildRunRep
     guilds,
   };
 
-  // Die Blobs am Ende hängen nicht voneinander ab und werden gleichzeitig geschrieben; das hält den Lauf
-  // sicher unter der Wartezeit des Planers von Netlify (etwa 15 s).
+  // The blobs at the end do not depend on each other and are written concurrently; this keeps the run
+  // safely below the wait time of the Netlify scheduler (about 15 s).
   const tWrite = Date.now();
   const appendEvents = async (): Promise<number> => {
     if (events.length === 0) return 0;
@@ -170,7 +170,7 @@ export async function runGuildCollection(deps: CollectDeps): Promise<GuildRunRep
     store.set("guild", guild),
     store.set(`history/${berlinDate(at)}`, buildSnapshot(members, at)),
     recordActivity(store, seen),
-    saveStatsStand(store, {
+    saveStatsSnapshot(store, {
       at,
       active: members.filter((m) => !m.former).map((m) => m.id),
       updates: statUpdates,

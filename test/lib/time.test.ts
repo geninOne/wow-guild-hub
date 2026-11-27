@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 import { berlinDate } from "../../src/lib/time";
 
-test("berlinDate rechnet in Europe/Berlin", () => {
+test("berlinDate computes in Europe/Berlin", () => {
   expect(berlinDate("2026-11-06T22:59:00Z")).toBe("2026-11-06");
   expect(berlinDate("2026-11-06T23:30:00Z")).toBe("2026-11-07");
   expect(berlinDate("2026-07-01T22:30:00Z")).toBe("2026-07-02");
@@ -9,7 +9,7 @@ test("berlinDate rechnet in Europe/Berlin", () => {
 
 import { addDays, berlinParts, dateOfWeekHour, isMonth, isWeek, isoWeek, shiftWeek, weekHour, weekRange, weekdayOf } from "../../src/lib/time";
 
-test("isoWeek und weekRange, auch über den Jahreswechsel", () => {
+test("isoWeek and weekRange, also across the turn of the year", () => {
   expect(isoWeek("2026-11-16")).toBe("2026-W47");
   expect(isoWeek("2026-11-15")).toBe("2026-W46");
   expect(isoWeek("2027-01-01")).toBe("2026-W53");
@@ -21,7 +21,7 @@ test("isoWeek und weekRange, auch über den Jahreswechsel", () => {
   expect(shiftWeek("2026-W47", -5)).toBe("2026-W42");
 });
 
-test("isWeek und isMonth prüfen die Schreibweise", () => {
+test("isWeek and isMonth check the format", () => {
   expect(isWeek("2026-W47")).toBe(true);
   expect(isWeek("2025-W53")).toBe(false);
   expect(isWeek("2026-47")).toBe(false);
@@ -29,38 +29,38 @@ test("isWeek und isMonth prüfen die Schreibweise", () => {
   expect(isMonth("2026-13")).toBe(false);
 });
 
-test("addDays und weekdayOf", () => {
+test("addDays and weekdayOf", () => {
   expect(addDays("2026-03-01", -1)).toBe("2026-02-28");
   expect(weekdayOf("2026-11-16")).toBe(0);
   expect(weekdayOf("2026-11-15")).toBe(6);
 });
 
-test("berlinParts und weekHour rechnen in Berliner Ortszeit, auch in der Sommerzeit", () => {
+test("berlinParts and weekHour compute in Berlin local time, also during summer time", () => {
   expect(berlinParts("2026-11-16T00:30:00Z")).toEqual({ date: "2026-11-16", hour: 1, weekday: 0 });
-  // Sonntag 23:50 Berlin gehört noch zur alten Woche.
+  // Sunday 23:50 Berlin still belongs to the old week.
   expect(weekHour("2026-11-15T22:50:00Z")).toEqual({ week: "2026-W46", hour: 6 * 24 + 23 });
   expect(weekHour("2026-11-15T23:05:00Z")).toEqual({ week: "2026-W47", hour: 0 });
-  // Sommerzeit: 20:30 UTC ist 22:30 in Berlin.
+  // Summer time: 20:30 UTC is 22:30 in Berlin.
   expect(weekHour("2026-07-01T20:30:00Z")).toEqual({ week: "2026-W27", hour: 2 * 24 + 22 });
   expect(dateOfWeekHour("2026-W47", 25)).toBe("2026-11-17");
 });
 
 import { compareWeeks, isoWeeksBetween, isGuildWeek, isWeekId, shiftGuildWeek, guildRange, guildWeek, weekBounds } from "../../src/lib/time";
 
-test("Bärenklaue-Woche: Sonntag bis Samstag, benannt nach ihrem Samstag", () => {
-  expect(guildWeek("2026-11-15")).toBe("2026-11-21"); // Sonntag gehört zur folgenden Woche
+test("guild week: Sunday to Saturday, named after its Saturday", () => {
+  expect(guildWeek("2026-11-15")).toBe("2026-11-21"); // Sunday belongs to the following week
   expect(guildWeek("2026-11-16")).toBe("2026-11-21");
   expect(guildWeek("2026-11-21")).toBe("2026-11-21");
   expect(guildWeek("2026-11-22")).toBe("2026-11-28");
-  expect(guildWeek("2026-12-31")).toBe("2027-01-02"); // über den Jahreswechsel
+  expect(guildWeek("2026-12-31")).toBe("2027-01-02"); // across the turn of the year
   expect(guildRange("2026-11-21")).toEqual({ from: "2026-11-15", to: "2026-11-21" });
   expect(shiftGuildWeek("2026-11-21", -1)).toBe("2026-11-14");
   expect(shiftGuildWeek("2026-12-26", 1)).toBe("2027-01-02");
 });
 
-test("Wochenkennungen: Bärenklaue-Wochen und alte ISO-Wochen nebeneinander", () => {
+test("week IDs: guild weeks and old ISO weeks side by side", () => {
   expect(isGuildWeek("2026-11-21")).toBe(true);
-  expect(isGuildWeek("2026-11-22")).toBe(false); // ein Sonntag
+  expect(isGuildWeek("2026-11-22")).toBe(false); // a Sunday
   expect(isGuildWeek("2026-02-30")).toBe(false);
   expect(isWeekId("2026-11-21")).toBe(true);
   expect(isWeekId("2026-W46")).toBe(true);
@@ -71,7 +71,7 @@ test("Wochenkennungen: Bärenklaue-Wochen und alte ISO-Wochen nebeneinander", ()
   expect(sorted).toEqual(["2026-W45", "2026-W46", "2026-11-21", "2026-11-28"]);
 });
 
-test("isoWeeksBetween: alle ISO-Wochen, die einen Zeitraum berühren", () => {
+test("isoWeeksBetween: all ISO weeks touching a period", () => {
   expect(isoWeeksBetween("2026-11-15", "2026-11-21")).toEqual(["2026-W46", "2026-W47"]);
   expect(isoWeeksBetween("2026-11-16", "2026-11-21")).toEqual(["2026-W47"]);
   expect(isoWeeksBetween("2026-11-01", "2026-11-30")).toEqual(["2026-W44", "2026-W45", "2026-W46", "2026-W47", "2026-W48", "2026-W49"]);

@@ -1,11 +1,11 @@
 /**
- * Anteil des Budgets, in dem ein Sammler nichts Neues mehr beginnt (2 s bei den üblichen 12 s). Der Rest gehört den
- * Anfragen, die noch unterwegs sind, und dem Schreiben am Ende. Der Planer von Netlify wartet höchstens etwa 15 s
- * auf die Antwort und startet den Lauf sonst ein zweites Mal; der Start der Function kostet davon schon bis zu 1 s.
+ * Share of the budget in which a collector starts nothing new (2 s of the usual 12 s). The rest belongs to the
+ * requests still in flight and to the writes at the end. The Netlify scheduler waits at most about 15 s for the
+ * response and otherwise starts the run a second time; starting the function already takes up to 1 s of that.
  */
 export const END_RESERVE_SHARE = 1 / 6;
 
-/** Zeitpunkt, ab dem ein Lauf mit Start `started` keine neue Arbeit mehr beginnt. */
+/** Time from which a run that began at `started` starts no new work. */
 export function workEndOf(started: number, budgetMs: number): number {
   return started + Math.floor(budgetMs * (1 - END_RESERVE_SHARE));
 }

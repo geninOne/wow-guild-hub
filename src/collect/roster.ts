@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any -- Rohantworten der API sind untypisiert */
+/* eslint-disable @typescript-eslint/no-explicit-any -- raw API responses are untyped */
 import type { AchievementAccountWide, CharacterRecord, MemberSummary } from "../model";
 import type { RosterEntry } from "../transform/character";
 
@@ -18,15 +18,15 @@ export function parseRoster(raw: any): RosterEntry[] {
   });
 }
 
-/** Rostereintrag mit der Gilde, aus deren Roster er stammt. */
+/** Roster entry with the guild whose roster it comes from. */
 export type GuildRosterEntry = RosterEntry & { guildSlug: string };
 
 /**
- * Gleicht gespeicherte Mitglieder mit den aktuellen Rostern aller Gilden ab. Ehemalige bleiben erhalten
- * und werden markiert. Das Level kommt nur bei Mitgliedern ohne Profil aus dem Roster.
- * Steht ein Charakter in mehreren Rostern, zählt der erste Eintrag.
- * Aktive Mitglieder einer Gilde aus `unavailable` (Roster nicht abrufbar) bleiben unverändert.
- * Mitglieder ohne `guildSlug` (Daten vor mehreren Gilden) gelten als Mitglieder der Hauptgilde.
+ * Reconciles stored members with the current rosters of all guilds. Former members are kept
+ * and marked. The level comes from the roster only for members without a profile.
+ * If a character appears in several rosters, the first entry counts.
+ * Active members of a guild from `unavailable` (roster not available) stay unchanged.
+ * Members without `guildSlug` (data from before multiple guilds) count as members of the main guild.
  */
 export function mergeRoster(
   prev: MemberSummary[],
@@ -71,19 +71,19 @@ export function mergeRoster(
   return [...current, ...gone];
 }
 
-/** Blob mit `is_account_wide` je Erfolg; der statische Sammler füllt ihn, der Gildensammler liest ihn. */
+/** Blob with `is_account_wide` per achievement; the static collector fills it, the guild collector reads it. */
 export const ACCOUNT_WIDE_KEY = "static/achievement-account-wide";
 
-/** Hat das Mitglied einen Twink-Rang seiner Gilde? Ohne `guildSlug` gilt die Hauptgilde. */
+/** Does the member have an alt rank in its guild? Without `guildSlug` the main guild applies. */
 export function isTwink(member: MemberSummary, mainSlug: string, twinkRanks: Record<string, number[]> = {}): boolean {
   const slug = (member.guildSlug ?? mainSlug).normalize("NFC");
   return twinkRanks[slug]?.includes(member.rank) ?? false;
 }
 
 /**
- * Abgeschlossene Erfolge. Accountweite Erfolge (Klasse, Berufe, Dungeonerforscher) liefert WoW Forever bei jedem
- * Charakter des Accounts als erledigt; sie zählen nur beim Hauptcharakter, bei Twinks nicht. Erfolge, deren Angabe
- * der statische Sammler noch nicht kennt, zählen vorerst auch beim Twink.
+ * Completed achievements. WoW Forever reports account-wide achievements (class, professions, dungeon explorer) as
+ * completed for every character of the account; they count only for the main character, not for alts. Achievements
+ * whose flag the static collector does not know yet count for alts too for now.
  */
 export function ownAchievementCount(
   record: CharacterRecord,
@@ -120,7 +120,7 @@ export function applyRecord(
   };
 }
 
-/** Aktive Mitglieder; nie geholte zuerst, dann die am längsten nicht geholten. */
+/** Active members; never fetched ones first, then the ones not fetched for the longest time. */
 export function fetchOrder(members: MemberSummary[]): MemberSummary[] {
   return members
     .filter((m) => !m.former)

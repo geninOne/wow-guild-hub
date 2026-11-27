@@ -1,6 +1,6 @@
 import type { CharacterIndexEntry, CharacterRecord } from "../model";
 
-/** Ein Blob statt eines Blobs je Charakter: `collect-static` liest nur noch diesen. */
+/** One blob instead of one blob per character: `collect-static` only reads this one. */
 export const CHARACTER_INDEX_KEY = "character-index";
 
 export function toCharacterIndexEntry(rec: CharacterRecord): CharacterIndexEntry {

@@ -2,8 +2,8 @@ import karten from "../../config/statistik-karten.json";
 import { addDays, monthOf, guildWeek } from "../lib/time";
 import type { GuildRecord } from "../model";
 import { statDefinition } from "../stats/definitions";
-import { pickStands, statDiff, type StatsPeriod } from "../stats/diff";
-import type { StatsStand, StatValues } from "../stats/stand";
+import { pickSnapshots, statDiff, type StatsPeriod } from "../stats/diff";
+import type { StatsSnapshot, StatValues } from "../stats/snapshot";
 import { ausKonfig, type Fassungen, type KonfigText } from "../sprache";
 import type { JsonStore } from "../store";
 import { refOf } from "./fun-common";
@@ -117,7 +117,7 @@ export function resolveStatsPeriod(
   period: StatsPeriod,
   serverStart: string | null,
 ): { before: string | null; after: string | null; status: StatsView["status"] } {
-  const { before, after } = pickStands(available, period, serverStart);
+  const { before, after } = pickSnapshots(available, period, serverStart);
   if (after === null) return { before: null, after: null, status: available.length === 0 ? "keine" : "zu-wenig" };
   if (period.kind === "total") return { before: null, after, status: "ok" };
   const expected = period.kind === "week" ? addDays(period.week, -7) : lastWeekBeforeMonth(period.month);
@@ -158,8 +158,8 @@ function aggregate(rows: Rows, stat: string, art: "zaehler" | "stand"): number {
  */
 export function buildStatCards(
   guild: GuildRecord,
-  before: StatsStand | null,
-  after: StatsStand,
+  before: StatsSnapshot | null,
+  after: StatsSnapshot,
   guildSlug: string | null = null,
 ): StatCardView[] {
   const slugs = guildRefs(guild).map((g) => g.slug);
@@ -197,8 +197,8 @@ export function buildStatCards(
  * auch die Fußgänger mit 0 dabei, denn um sie geht es dort. Immer über alle Gilden; null für eine unbekannte Karte.
  */
 export function buildStatCardMembers(
-  before: StatsStand | null,
-  after: StatsStand,
+  before: StatsSnapshot | null,
+  after: StatsSnapshot,
   slug: string,
 ): StatCardMembersView | null {
   const card = statCards().find((c) => c.slug === slug);
@@ -229,10 +229,10 @@ function toPeriod(kind: StatsPeriodKind, id: string): StatsPeriod {
 async function loadStands(
   store: JsonStore,
   resolved: { before: string | null; after: string },
-): Promise<{ before: StatsStand | null; after: StatsStand } | null> {
+): Promise<{ before: StatsSnapshot | null; after: StatsSnapshot } | null> {
   const [after, before] = await Promise.all([
-    store.get<StatsStand>(`stats/${resolved.after}`),
-    resolved.before === null ? null : store.get<StatsStand>(`stats/${resolved.before}`),
+    store.get<StatsSnapshot>(`stats/${resolved.after}`),
+    resolved.before === null ? null : store.get<StatsSnapshot>(`stats/${resolved.before}`),
   ]);
   if (!after || (resolved.before !== null && !before)) return null;
   return { before, after };

@@ -13,7 +13,7 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { parseArgs } from "node:util";
-import { parseServerStart } from "../src/lib/serverstart.ts";
+import { parseServerStart } from "../src/lib/server-start.ts";
 import { checkEnvironment, fillSampleData, localStore, removeSampleData } from "./sample-data-lib.mjs";
 
 const { values } = parseArgs({

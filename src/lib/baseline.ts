@@ -3,9 +3,9 @@ import type { JsonStore } from "../store";
 import { berlinDate } from "./time";
 
 export interface Baseline {
-  /** Vergleichsstand, ergänzt um den ersten bekannten Stand der Nachzügler. */
+  /** Comparison snapshot, extended with the first known snapshot of each late starter. */
   before: DaySnapshot | null;
-  /** Nachzügler: Charakter-ID auf das Datum des Tagesstands, ab dem für ihn gezählt wird. */
+  /** Late starters: character ID to the date of the day snapshot from which they are counted. */
   since: Record<string, string>;
 }
 
@@ -15,16 +15,16 @@ function firstSeenDay(m: MemberSummary): string {
 }
 
 /**
- * Ergänzt den Vergleichsstand um Charaktere, die darin fehlen, aber im Endstand stehen
- * (neu erstellt, beigetreten oder zurückgekehrt): Für sie gilt ihr frühester Tagesstand im Zeitraum.
+ * Extends the comparison snapshot with characters that are missing from it but present in the end snapshot
+ * (newly created, joined or returned): for them, their earliest day snapshot within the period applies.
  *
- * Geladen wird sparsam: gar nichts, wenn niemand fehlt; sonst je Nachzügler zuerst der Stand
- * seines ersten Tages (`firstSeenAt`), und nur wenn er dort fehlt, schrittweise der nächste.
- * Jeder Tagesstand wird höchstens einmal geladen. Dazu kommt einmal das Level-Protokoll,
- * weil der Tagesstand des ersten Tages erst den Abend zeigt: Aufstiege seit dem ersten
- * Auftauchen stehen dort und senken das Startlevel auf den Wert vor dem ersten Aufstieg.
+ * Loading is frugal: nothing at all if nobody is missing; otherwise, per late starter, first the snapshot of
+ * their first day (`firstSeenAt`), and only if they are missing there, the next one step by step.
+ * Each day snapshot is loaded at most once. On top of that the level-up log is loaded once,
+ * because the day snapshot of the first day only shows the evening: level-ups since the first
+ * appearance are logged there and lower the starting level to the value before the first level-up.
  *
- * @param dates Alle Tagesstand-Daten, die es gibt (Reihenfolge egal).
+ * @param dates All existing day snapshot dates (any order).
  */
 export async function withLateStarts(
   store: JsonStore,
@@ -55,7 +55,7 @@ export async function withLateStarts(
     const next: typeof pending = [];
     await Promise.all(
       pending.map(async (p) => {
-        // Kein früherer Stand mehr: Der Endstand ist zugleich der Startwert.
+        // No earlier snapshot left: the end snapshot is also the starting value.
         const snap = p.index < between.length ? await load(between[p.index]) : end;
         const entry = snap?.characters[p.id];
         if (snap && entry) {

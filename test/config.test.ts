@@ -1,12 +1,12 @@
 import { expect, test } from "vitest";
 import { loadConfig } from "../src/config";
 
-test("Standardwerte", () => {
-  const c = loadConfig({ BNET_CLIENT_ID: "id", BNET_CLIENT_SECRET: "geheim", GUILD_SLUG: "meine-gilde" });
+test("defaults", () => {
+  const c = loadConfig({ BNET_CLIENT_ID: "id", BNET_CLIENT_SECRET: "secret", GUILD_SLUG: "my-guild" });
   expect(c).toEqual({
     clientId: "id",
-    clientSecret: "geheim",
-    guildSlugs: ["meine-gilde"],
+    clientSecret: "secret",
+    guildSlugs: ["my-guild"],
     gameVersion: "forever",
     region: "eu",
     locale: "de_DE",
@@ -15,80 +15,80 @@ test("Standardwerte", () => {
   });
 });
 
-test("Werte aus der Umgebung, GUILD_SLUG allein gilt als einzige Gilde", () => {
+test("values from the environment, GUILD_SLUG alone counts as the only guild", () => {
   const c = loadConfig({
     BNET_CLIENT_ID: "id",
     BNET_CLIENT_SECRET: "s",
-    GUILD_SLUG: "andere",
+    GUILD_SLUG: "other",
     COLLECT_CONCURRENCY: "4",
     COLLECT_BUDGET_MS: "8000",
   });
-  expect([c.guildSlugs, c.concurrency, c.budgetMs]).toEqual([["andere"], 4, 8000]);
+  expect([c.guildSlugs, c.concurrency, c.budgetMs]).toEqual([["other"], 4, 8000]);
 });
 
-test("ohne GUILD_SLUGS und GUILD_SLUG bricht die Konfiguration ab", () => {
+test("without GUILD_SLUGS and GUILD_SLUG the configuration aborts", () => {
   expect(() => loadConfig({ BNET_CLIENT_ID: "id", BNET_CLIENT_SECRET: "s" })).toThrow("GUILD_SLUGS");
 });
 
-test("WOW_VERSION: Standard forever, Groß- und Kleinschreibung egal, Unbekanntes bricht ab", () => {
-  const basis = { BNET_CLIENT_ID: "id", BNET_CLIENT_SECRET: "s", GUILD_SLUG: "g" };
-  expect(loadConfig({ ...basis, WOW_VERSION: " Forever " }).gameVersion).toBe("forever");
-  expect(() => loadConfig({ ...basis, WOW_VERSION: "retail" })).toThrow("WOW_VERSION");
+test("WOW_VERSION: default forever, case-insensitive, unknown values abort", () => {
+  const base = { BNET_CLIENT_ID: "id", BNET_CLIENT_SECRET: "s", GUILD_SLUG: "g" };
+  expect(loadConfig({ ...base, WOW_VERSION: " Forever " }).gameVersion).toBe("forever");
+  expect(() => loadConfig({ ...base, WOW_VERSION: "retail" })).toThrow("WOW_VERSION");
 });
 
-test("fehlende Zugangsdaten nennen nur den Variablennamen", () => {
+test("missing credentials name only the variable", () => {
   expect(() => loadConfig({ BNET_CLIENT_ID: "id" })).toThrow("BNET_CLIENT_SECRET");
-  expect(() => loadConfig({ BNET_CLIENT_SECRET: "geheim" })).toThrow("BNET_CLIENT_ID");
+  expect(() => loadConfig({ BNET_CLIENT_SECRET: "secret" })).toThrow("BNET_CLIENT_ID");
 });
 
-test.each(["abc", "0", "-3", "2.5", "1e400"])("ungültige COLLECT_CONCURRENCY %s nennt nur den Variablennamen", (wert) => {
-  const env = { BNET_CLIENT_ID: "id", BNET_CLIENT_SECRET: "geheim", GUILD_SLUG: "g", COLLECT_CONCURRENCY: wert };
+test.each(["abc", "0", "-3", "2.5", "1e400"])("invalid COLLECT_CONCURRENCY %s names only the variable", (value) => {
+  const env = { BNET_CLIENT_ID: "id", BNET_CLIENT_SECRET: "secret", GUILD_SLUG: "g", COLLECT_CONCURRENCY: value };
   expect(() => loadConfig(env)).toThrow("COLLECT_CONCURRENCY");
-  expect(() => loadConfig(env)).not.toThrow(/geheim/);
+  expect(() => loadConfig(env)).not.toThrow(/secret/);
 });
 
-test.each(["abc", "-1", "Infinity"])("ungültiges COLLECT_BUDGET_MS %s nennt nur den Variablennamen", (wert) => {
-  const env = { BNET_CLIENT_ID: "id", BNET_CLIENT_SECRET: "geheim", GUILD_SLUG: "g", COLLECT_BUDGET_MS: wert };
+test.each(["abc", "-1", "Infinity"])("invalid COLLECT_BUDGET_MS %s names only the variable", (value) => {
+  const env = { BNET_CLIENT_ID: "id", BNET_CLIENT_SECRET: "secret", GUILD_SLUG: "g", COLLECT_BUDGET_MS: value };
   expect(() => loadConfig(env)).toThrow("COLLECT_BUDGET_MS");
-  expect(() => loadConfig(env)).not.toThrow(/geheim/);
+  expect(() => loadConfig(env)).not.toThrow(/secret/);
 });
 
-test("Budget 0 ist erlaubt", () => {
+test("budget 0 is allowed", () => {
   const c = loadConfig({ BNET_CLIENT_ID: "id", BNET_CLIENT_SECRET: "s", GUILD_SLUG: "g", COLLECT_BUDGET_MS: "0" });
   expect(c.budgetMs).toBe(0);
 });
 
-test("GUILD_SLUGS hat Vorrang vor GUILD_SLUG", () => {
+test("GUILD_SLUGS takes precedence over GUILD_SLUG", () => {
   const c = loadConfig({ BNET_CLIENT_ID: "id", BNET_CLIENT_SECRET: "s", GUILD_SLUGS: "a,b", GUILD_SLUG: "x" });
   expect(c.guildSlugs).toEqual(["a", "b"]);
 });
 
-test("GUILD_SLUGS wird getrimmt, leere und doppelte Einträge fallen weg", () => {
+test("GUILD_SLUGS is trimmed, empty and duplicate entries are dropped", () => {
   const c = loadConfig({
     BNET_CLIENT_ID: "id", BNET_CLIENT_SECRET: "s", GUILD_SLUGS: " bärenklaue, ,bärenklaue,goldene-bärenklaue ",
   });
   expect(c.guildSlugs).toEqual(["bärenklaue", "goldene-bärenklaue"]);
 });
 
-test("GUILD_SLUGS ohne Eintrag ist ungültig", () => {
+test("GUILD_SLUGS without an entry is invalid", () => {
   expect(() => loadConfig({ BNET_CLIENT_ID: "id", BNET_CLIENT_SECRET: "s", GUILD_SLUGS: " , " })).toThrow("GUILD_SLUGS");
 });
 
-test("Zeitbudget des Sammlers bleibt mit Reserve unter dem 15-s-Abbruch von Netlify, Standard überall gleich", async () => {
-  // Netlify bricht geplante Läufe nach 15 s ab (Status 499) und wiederholt sie teils; Vor- und Nacharbeit brauchen gut 1 s.
+test("collector time budget stays below the Netlify 15 s abort with a reserve, same default everywhere", async () => {
+  // Netlify aborts scheduled runs after 15 s (status 499) and sometimes repeats them; setup and teardown take a good 1 s.
   const c = loadConfig({ BNET_CLIENT_ID: "id", BNET_CLIENT_SECRET: "s", GUILD_SLUG: "g" });
   expect(c.budgetMs).toBeLessThanOrEqual(12000);
   const { DEFAULTS } = await import("../scripts/netlify-env-lib.mjs");
   expect(DEFAULTS.COLLECT_BUDGET_MS).toBe(String(c.budgetMs));
 });
 
-test("TWINK_RANKS löst Rangnamen aus GUILD_RANKS je Gilde zu Rangnummern auf", () => {
-  const basis = { BNET_CLIENT_ID: "id", BNET_CLIENT_SECRET: "s", GUILD_SLUGS: "meine-gilde,zweite" };
-  const GUILD_RANKS = JSON.stringify({ "meine-gilde": ["GM", "Offizier", "Twink", "Mitglied", "twink gl"], zweite: { "3": "Twink" }, dritte: ["Twink"] });
-  expect(loadConfig({ ...basis, GUILD_RANKS, TWINK_RANKS: " Twink , Twink GL" }).twinkRanks).toEqual({
-    "meine-gilde": [2, 4], zweite: [3], dritte: [0],
+test("TWINK_RANKS resolves rank names from GUILD_RANKS to rank numbers per guild", () => {
+  const base = { BNET_CLIENT_ID: "id", BNET_CLIENT_SECRET: "s", GUILD_SLUGS: "my-guild,second" };
+  const GUILD_RANKS = JSON.stringify({ "my-guild": ["GM", "Offizier", "Twink", "Mitglied", "twink gl"], second: { "3": "Twink" }, third: ["Twink"] });
+  expect(loadConfig({ ...base, GUILD_RANKS, TWINK_RANKS: " Twink , Twink GL" }).twinkRanks).toEqual({
+    "my-guild": [2, 4], second: [3], third: [0],
   });
-  expect(loadConfig({ ...basis, GUILD_RANKS }).twinkRanks).toBeUndefined();
-  expect(loadConfig({ ...basis, TWINK_RANKS: "Twink" }).twinkRanks).toBeUndefined();
-  expect(loadConfig({ ...basis, GUILD_RANKS, TWINK_RANKS: "Gibtsnicht" }).twinkRanks).toBeUndefined();
+  expect(loadConfig({ ...base, GUILD_RANKS }).twinkRanks).toBeUndefined();
+  expect(loadConfig({ ...base, TWINK_RANKS: "Twink" }).twinkRanks).toBeUndefined();
+  expect(loadConfig({ ...base, GUILD_RANKS, TWINK_RANKS: "DoesNotExist" }).twinkRanks).toBeUndefined();
 });

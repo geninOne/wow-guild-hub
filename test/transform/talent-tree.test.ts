@@ -5,7 +5,7 @@ import { loadFixture } from "../helpers/fixtures";
 const cls = loadFixture("talent-tree-1117").data;
 const arms = loadFixture("talent-tree-1117-spec-26").data;
 
-test("Waffen-Baum des Kriegers", () => {
+test("Arms tree of the warrior", () => {
   const t = buildTalentTree(cls, [arms]);
   expect([t.classTreeId, t.classId, t.className]).toEqual([1117, 1, "Krieger"]);
   expect(t.specs.map((s) => [s.specId, s.name, s.nodes.length])).toEqual([[26, "Waffen", 17]]);
@@ -19,7 +19,7 @@ test("Waffen-Baum des Kriegers", () => {
   expect(imp.ranks[0].description).toBe("Verringert die Kosten Eurer Fähigkeit 'Heldenhafter Stoß' um 1 Wut.");
 });
 
-test("zweiter Spec aus versetzten Spalten, Reihenfolge wie im Klassenbaum", () => {
+test("second spec from offset columns, order as in the class tree", () => {
   const fury = {
     playable_class: { id: 1, name: "Krieger" },
     playable_specialization: { id: 256, name: "Furor" },

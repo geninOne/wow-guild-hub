@@ -57,7 +57,7 @@ beforeEach(() => {
 const run = (cfg: Partial<Config> = {}) =>
   runStaticCollection({ client: fake, store, config: { ...config, ...cfg }, now: () => new Date("2026-11-06T03:00:00.000Z") });
 
-test("statischer Lauf holt Klassen, Völker, Bäume und Zauber-Icons", async () => {
+test("static run fetches classes, races, trees and spell icons", async () => {
   const rep = await run();
   expect(rep).toMatchObject({ treesAdded: 1, spellIconsAdded: 17, itemIconsAdded: 0, skipped: 0 });
   expect(await store.get<NamedList>("static/classes")).toEqual({ items: [{ id: 1, name: "Krieger" }, { id: 2, name: "Paladin" }] });
@@ -70,7 +70,7 @@ test("statischer Lauf holt Klassen, Völker, Bäume und Zauber-Icons", async () 
   expect(fake.calls.every((p) => !p.includes("?"))).toBe(true);
 });
 
-test("zweiter Lauf holt nur Fehlendes", async () => {
+test("second run fetches only what is missing", async () => {
   await run();
   fake.calls.length = 0;
   const rep = await run();
@@ -84,7 +84,7 @@ test("zweiter Lauf holt nur Fehlendes", async () => {
   expect(await store.get<IconMap>("static/instance-images")).toMatchObject({ "63": null, "760": null });
 });
 
-test("Spec-Baum nicht abrufbar: Klassenbaum wird nicht gespeichert und später erneut versucht", async () => {
+test("spec tree not available: class tree is not stored and retried later", async () => {
   routes["/data/wow/talent-tree/1117/playable-specialization/26"] = { status: 503, data: null };
   const rep = await run();
   expect(rep.treesAdded).toBe(0);
@@ -93,7 +93,7 @@ test("Spec-Baum nicht abrufbar: Klassenbaum wird nicht gespeichert und später e
   expect((await run()).treesAdded).toBe(1);
 });
 
-test("Icon-Abruf mit Serverfehler wird nicht als null gespeichert", async () => {
+test("icon fetch with server error is not stored as null", async () => {
   routes["/data/wow/media/spell/16462"] = { status: 500, data: null };
   await run();
   expect((await store.get<IconMap>("static/spell-icons"))?.["16462"]).toBeUndefined();
@@ -102,7 +102,7 @@ test("Icon-Abruf mit Serverfehler wird nicht als null gespeichert", async () => 
   expect((await store.get<IconMap>("static/spell-icons"))?.["16462"]).toBe(ICON);
 });
 
-test("Gegenstands-Icons aus gespeicherten Charakteren", async () => {
+test("item icons from stored characters", async () => {
   const f = (n: string) => loadFixture(n).data;
   const rec = buildCharacterRecord(
     { id: 382219, name: "Luvia", surname: "Stav", slug: "luvia-stav", level: 21, classId: 1, raceId: 96, rank: 3 },
@@ -118,7 +118,7 @@ test("Gegenstands-Icons aus gespeicherten Charakteren", async () => {
   expect(Object.values(items ?? {}).filter((v) => v === null)).toHaveLength(11);
 });
 
-test("Zeitbudget 0: keine Phase beginnt, keine Anfrage, nichts geschrieben außer der wieder gelösten Sperre", async () => {
+test("time budget 0: no phase starts, no request, nothing written except the lock that is released again", async () => {
   const rep = await run({ budgetMs: 0 });
   expect(rep).toMatchObject({ treesAdded: 0, instanceImagesAdded: 0, skipped: 0 });
   expect(rep.notStarted).toEqual(["trees", "spells", "recipes", "items", "levels", "instances", "accountWide", "reputation", "professions", "images"]);
@@ -139,7 +139,7 @@ function withInstanceRoutes() {
   routes["/data/wow/achievement/684"] = loadFixture("achievement-684");
 }
 
-test("Instanz-Erfolge der Kategorien Dungeons und Schlachtzüge", async () => {
+test("instance achievements of the dungeon and raid categories", async () => {
   withInstanceRoutes();
   const rep = await run();
   expect(rep.instanceAchievementsAdded).toBe(3);
@@ -149,10 +149,10 @@ test("Instanz-Erfolge der Kategorien Dungeons und Schlachtzüge", async () => {
     [62034, "raid", 0],
     [684, "raid", 1],
   ]);
-  const novize = defs!.achievements[0];
-  expect(novize.name).toBe("Novize: Dungeonerforscher");
-  expect(novize.criteria).toHaveLength(6);
-  expect(novize.criteria[0]).toEqual({ id: 230766, description: "Flammenschlund oder Halle der Thanen" });
+  const novice = defs!.achievements[0];
+  expect(novice.name).toBe("Novize: Dungeonerforscher");
+  expect(novice.criteria).toHaveLength(6);
+  expect(novice.criteria[0]).toEqual({ id: 230766, description: "Flammenschlund oder Halle der Thanen" });
   expect(defs!.achievements[2]).toMatchObject({ criteria: [], rootDescription: "Tötet Onyxia" });
 
   fake.calls.length = 0;
@@ -160,7 +160,7 @@ test("Instanz-Erfolge der Kategorien Dungeons und Schlachtzüge", async () => {
   expect(fake.calls.filter((c) => c.startsWith("/data/wow/achievement/"))).toEqual([]);
 });
 
-test("Instanz-Erfolg mit Serverfehler wird später geholt", async () => {
+test("instance achievement with server error is fetched later", async () => {
   withInstanceRoutes();
   routes["/data/wow/achievement/684"] = { status: 503, data: null };
   expect((await run()).instanceAchievementsAdded).toBe(2);
@@ -182,7 +182,7 @@ async function withRecipeCharacter(recipeIds: number[]) {
   await store.set("characters/1", rec);
 }
 
-test("Rezeptdetails mit Icon und Gegenstand, 404 als null, Material-Icons", async () => {
+test("recipe details with icon and item, 404 as null, reagent icons", async () => {
   await withRecipeCharacter([2408, 999]);
   routes["/data/wow/recipe/2408"] = loadFixture("recipe-2408");
   routes["/data/wow/media/recipe/2408"] = loadFixture("recipe-media-2408");
@@ -206,7 +206,7 @@ test("Rezeptdetails mit Icon und Gegenstand, 404 als null, Material-Icons", asyn
   expect(fake.calls.filter((c) => c.startsWith("/data/wow/recipe/") || c.startsWith("/data/wow/media/item/"))).toEqual([]);
 });
 
-test("Rezept, dessen Gegenstand mit Serverfehler antwortet, wird im nächsten Lauf ganz geholt", async () => {
+test("recipe whose item responds with a server error is fetched completely in the next run", async () => {
   await withRecipeCharacter([2408]);
   routes["/data/wow/recipe/2408"] = loadFixture("recipe-2408");
   routes["/data/wow/item/4343"] = { status: 503, data: null };
@@ -221,7 +221,7 @@ test("Rezept, dessen Gegenstand mit Serverfehler antwortet, wird im nächsten La
   expect(r?.item?.tooltip?.armor).toBe("17 Rüstung");
 });
 
-test("Fraktionsnamen aus dem Verzeichnis, Gruppen inkrementell aus den Wurzelfraktionen", async () => {
+test("faction names from the index, groups incrementally from the root factions", async () => {
   routes["/data/wow/reputation-faction/index"] = loadFixture("reputation-faction-index");
   routes["/data/wow/reputation-faction/67"] = loadFixture("reputation-faction-67");
   routes["/data/wow/reputation-faction/169"] = loadFixture("reputation-faction-169");
@@ -241,7 +241,7 @@ test("Fraktionsnamen aus dem Verzeichnis, Gruppen inkrementell aus den Wurzelfra
   expect((await store.get<ReputationFactionsRecord>("static/reputation-factions"))?.groups.find((g) => g.id === 67)).toBeTruthy();
 });
 
-test("Instanzbilder aus dem Retail-Namespace, Asset tile, nur einmal je ID", async () => {
+test("instance images from the retail namespace, asset tile, only once per ID", async () => {
   const seen: string[] = [];
   const client = {
     async get(path: string, ns: string) {
@@ -263,7 +263,7 @@ test("Instanzbilder aus dem Retail-Namespace, Asset tile, nur einmal je ID", asy
   expect(seen).toEqual([]);
 });
 
-test("Berufssymbole für alle bekannten Berufe", async () => {
+test("profession icons for all known professions", async () => {
   routes["/data/wow/media/profession/186"] = { status: 200, data: { assets: [{ key: "icon", value: "https://render.worldofwarcraft.com/forever-eu/icons/56/136248.jpg" }] } };
   const rep = await run();
   expect(rep.professionIconsAdded).toBe(12);
@@ -272,7 +272,7 @@ test("Berufssymbole für alle bekannten Berufe", async () => {
   expect(icons?.["171"]).toBeNull();
 });
 
-describe("Werte der Charaktere", () => {
+describe("character attributes", () => {
   async function character(id: number, slug: string, lastLoginAt: string | null, hasProfile = true) {
     const rec = buildCharacterRecord(
       { id, name: slug, surname: null, slug, level: 30, classId: 1, raceId: 2, rank: 3 },
@@ -280,7 +280,7 @@ describe("Werte der Charaktere", () => {
       "t",
     );
     await store.set(`characters/${id}`, { ...rec, hasProfile, lastLoginAt });
-    // Wie collect-guild: Datensatz und Indexeintrag zusammen.
+    // Like collect-guild: record and index entry together.
     const index = (await store.get<CharacterIndex>(CHARACTER_INDEX_KEY)) ?? {};
     index[String(id)] = toCharacterIndexEntry({ ...rec, hasProfile, lastLoginAt });
     await store.set(CHARACTER_INDEX_KEY, index);
@@ -295,15 +295,15 @@ describe("Werte der Charaktere", () => {
   });
   const attributeCalls = () => fake.calls.filter((p) => p.endsWith("/statistics"));
 
-  test("holt fehlende Werte aktiver Charaktere mit Profil, nicht Ehemalige und nicht ohne Profil", async () => {
-    await character(1, "eins", "2026-11-05T10:00:00.000Z");
-    await character(2, "zwei", null, false);
-    await character(3, "drei", "2026-11-05T10:00:00.000Z");
+  test("fetches missing attributes of active characters with a profile, not former ones and not without a profile", async () => {
+    await character(1, "one", "2026-11-05T10:00:00.000Z");
+    await character(2, "two", null, false);
+    await character(3, "three", "2026-11-05T10:00:00.000Z");
     await guild([1, 2], [3]);
-    routes["/profile/wow/character/eins/statistics"] = stats(1000);
+    routes["/profile/wow/character/one/statistics"] = stats(1000);
     const rep = await run();
     expect(rep).toMatchObject({ attributesFetched: 1, attributesPending: 0 });
-    expect(attributeCalls()).toEqual(["/profile/wow/character/eins/statistics"]);
+    expect(attributeCalls()).toEqual(["/profile/wow/character/one/statistics"]);
     expect(await store.get<CharacterAttributesRecord>("attributes/1")).toEqual({
       fetchedAt: "2026-11-06T03:00:00.000Z",
       fields: { health: 1000, power: 100, strength: { base: 50, effective: 70 } },
@@ -312,28 +312,28 @@ describe("Werte der Charaktere", () => {
     expect(await store.get("attributes/index")).toEqual({ "1": "2026-11-06T03:00:00.000Z" });
   });
 
-  test("zweiter Lauf holt nur nach neuem Login", async () => {
-    await character(1, "eins", "2026-11-05T10:00:00.000Z");
-    await character(4, "vier", "2026-11-05T10:00:00.000Z");
+  test("second run fetches only after a new login", async () => {
+    await character(1, "one", "2026-11-05T10:00:00.000Z");
+    await character(4, "four", "2026-11-05T10:00:00.000Z");
     await guild([1, 4]);
-    routes["/profile/wow/character/eins/statistics"] = stats(1000);
-    routes["/profile/wow/character/vier/statistics"] = stats(2000);
+    routes["/profile/wow/character/one/statistics"] = stats(1000);
+    routes["/profile/wow/character/four/statistics"] = stats(2000);
     await run();
     fake.calls.length = 0;
     expect((await run()).attributesFetched).toBe(0);
     expect(attributeCalls()).toEqual([]);
-    await character(4, "vier", "2026-11-06T12:00:00.000Z");
-    routes["/profile/wow/character/vier/statistics"] = stats(2500);
+    await character(4, "four", "2026-11-06T12:00:00.000Z");
+    routes["/profile/wow/character/four/statistics"] = stats(2500);
     await runStaticCollection({ client: fake, store, config, now: () => new Date("2026-11-07T03:00:00.000Z") });
-    expect(attributeCalls()).toEqual(["/profile/wow/character/vier/statistics"]);
+    expect(attributeCalls()).toEqual(["/profile/wow/character/four/statistics"]);
     expect((await store.get<CharacterAttributesRecord>("attributes/4"))?.fields?.health).toBe(2500);
   });
 
-  test("404 legt einen Datensatz ohne Werte an, behält aber vorhandene Werte", async () => {
-    await character(1, "eins", "2026-11-05T10:00:00.000Z");
-    await character(5, "fuenf", "2026-11-05T10:00:00.000Z");
+  test("404 creates a record without attributes but keeps existing attributes", async () => {
+    await character(1, "one", "2026-11-05T10:00:00.000Z");
+    await character(5, "five", "2026-11-05T10:00:00.000Z");
     await guild([1, 5]);
-    await store.set("attributes/1", { fetchedAt: "alt", fields: { health: 7 }, powerType: null });
+    await store.set("attributes/1", { fetchedAt: "old", fields: { health: 7 }, powerType: null });
     await store.set("attributes/index", { "1": "2026-11-01T00:00:00.000Z" });
     const rep = await run();
     expect(rep.attributesFetched).toBe(2);
@@ -341,19 +341,19 @@ describe("Werte der Charaktere", () => {
     expect((await store.get<CharacterAttributesRecord>("attributes/1"))?.fields).toEqual({ health: 7 });
   });
 
-  test("Serverfehler und knappes Budget: offen für den nächsten Lauf", async () => {
-    await character(1, "eins", null);
+  test("server error and tight budget: open for the next run", async () => {
+    await character(1, "one", null);
     await guild([1]);
-    routes["/profile/wow/character/eins/statistics"] = { status: 503, data: null };
+    routes["/profile/wow/character/one/statistics"] = { status: 503, data: null };
     expect(await run()).toMatchObject({ attributesFetched: 0, attributesPending: 1 });
     expect(await store.get("attributes/1")).toBeNull();
     expect(await store.get("attributes/index")).toBeNull();
-    routes["/profile/wow/character/eins/statistics"] = stats(1);
+    routes["/profile/wow/character/one/statistics"] = stats(1);
     expect(await run({ budgetMs: 0 })).toMatchObject({ attributesFetched: 0, attributesPending: 1 });
   });
 
-  describe("Simulation: voller Nachholbedarf bei langsamer API", () => {
-    // Jede Anfrage kostet 100 ms auf der vorgetäuschten Uhr; Date.now() steht sonst still.
+  describe("simulation: full backlog with a slow API", () => {
+    // Each request costs 100 ms on the fake clock; Date.now() stands still otherwise.
     const LATENCY_MS = 100;
     const BUDGET_MS = 10_000;
     const CHARACTERS = 30;
@@ -373,7 +373,7 @@ describe("Werte der Charaktere", () => {
     });
 
     async function backlog() {
-      // Je Charakter 20 Gegenstände ohne Stufe und ohne Icon: 600 fehlende Icons, 300 Stufen je Lauf.
+      // 20 items per character without level and without icon: 600 missing icons, 300 levels per run.
       for (let id = 1; id <= CHARACTERS; id++) {
         await character(id, `c${id}`, "2026-11-05T10:00:00.000Z");
         const rec = (await store.get<CharacterRecord>(`characters/${id}`))!;
@@ -387,7 +387,7 @@ describe("Werte der Charaktere", () => {
         routes[`/profile/wow/character/c${id}/statistics`] = stats(id);
       }
       await guild(Array.from({ length: CHARACTERS }, (_, i) => i + 1));
-      // Alte Leereinträge ohne Zeitstempel, wie vor v2.1.1: werden alle erneut geprüft.
+      // Old empty entries without a timestamp, as before v2.1.1: all are checked again.
       const nulls = Object.fromEntries(Array.from({ length: 200 }, (_, i) => [String(90_000 + i), null]));
       await store.set("static/spell-icons", nulls);
     }
@@ -395,14 +395,14 @@ describe("Werte der Charaktere", () => {
     const simulate = () =>
       runStaticCollection({ client: slow(fake), store, config: { ...config, budgetMs: BUDGET_MS }, now: () => new Date(Date.now()) });
 
-    test("die Werte bekommen schon im ersten Lauf ihren Anteil und sind nach wenigen Läufen vollständig", async () => {
+    test("attributes get their share in the first run already and are complete after a few runs", async () => {
       await backlog();
       const first = await simulate();
-      // Ohne eigenes Budget waren es hier 0: Icons und Stufen fraßen die ganze Zeit.
+      // Without their own budget this was 0: icons and levels ate up all the time.
       expect(first.attributesFetched).toBeGreaterThanOrEqual(10);
-      // Die Nachholaufgaben kommen trotzdem voran.
+      // The catch-up tasks still make progress.
       expect(first.itemIconsAdded + first.itemLevelsAdded).toBeGreaterThan(0);
-      // Nicht länger als das Budget plus die Anfragen, die beim Ablauf noch unterwegs sind.
+      // No longer than the budget plus the requests still in flight when it runs out.
       expect(first.durationMs).toBeLessThanOrEqual(BUDGET_MS + config.concurrency * LATENCY_MS);
 
       let runs = 1;
@@ -416,19 +416,19 @@ describe("Werte der Charaktere", () => {
       expect(Object.keys((await store.get("attributes/index")) ?? {})).toHaveLength(CHARACTERS);
     });
 
-    test("ohne fällige Werte bekommen die Nachholaufgaben das ganze Budget", async () => {
+    test("without due attributes the catch-up tasks get the whole budget", async () => {
       await backlog();
       const index = Object.fromEntries(Array.from({ length: CHARACTERS }, (_, i) => [String(i + 1), "2026-11-06T00:00:00.000Z"]));
       await store.set("attributes/index", index);
       const rep = await simulate();
       expect(rep.attributesFetched).toBe(0);
-      // Deutlich mehr als der Anteil ohne Reserve hergäbe.
+      // Clearly more than the share without reserve would allow.
       expect(rep.durationMs).toBeGreaterThan(BUDGET_MS * (1 - ATTRIBUTES_BUDGET_SHARE) + LATENCY_MS * config.concurrency);
     });
 
-    test("neue Charaktere vor fälligen Aktualisierungen", async () => {
+    test("new characters before due updates", async () => {
       await backlog();
-      // Charaktere 1 bis 20 haben alte Werte und waren seitdem eingeloggt, 21 bis 30 sind neu.
+      // Characters 1 to 20 have old attributes and have logged in since, 21 to 30 are new.
       const index = Object.fromEntries(Array.from({ length: 20 }, (_, i) => [String(i + 1), "2026-11-01T00:00:00.000Z"]));
       await store.set("attributes/index", index);
       fake.calls.length = 0;
@@ -440,7 +440,7 @@ describe("Werte der Charaktere", () => {
   });
 });
 
-test("attributesDue: fehlende zuerst, dann die ältesten, nur nach neuem Login", () => {
+test("attributesDue: missing first, then the oldest, only after a new login", () => {
   const due = attributesDue(
     [
       { id: 1, slug: "a", lastLoginAt: "2026-11-05T00:00:00.000Z" },
@@ -453,12 +453,12 @@ test("attributesDue: fehlende zuerst, dann die ältesten, nur nach neuem Login",
   expect(due.map((c) => c.id)).toEqual([3, 4, 1]);
 });
 
-describe("Leereinträge erneut abfragen", () => {
+describe("requesting empty entries again", () => {
   const runAt = (iso: string) => runStaticCollection({ client: fake, store, config, now: () => new Date(iso) });
   const NOW = "2026-11-06T03:00:00.000Z";
   const spellCalls = () => fake.calls.filter((c) => c.startsWith("/data/wow/media/spell/"));
 
-  test("alter Blob mit bloßem null wird sofort erneut abgefragt und gefüllt", async () => {
+  test("old blob with a bare null is requested again right away and filled", async () => {
     await run();
     const icons = (await store.get<IconMap>("static/spell-icons"))!;
     icons["16462"] = null;
@@ -467,12 +467,12 @@ describe("Leereinträge erneut abfragen", () => {
     fake.calls.length = 0;
     const rep = await run();
     expect((await store.get<IconMap>("static/spell-icons"))?.["16462"]).toBe(ICON);
-    // Alle 16 übrigen Leereinträge hatten nach dem Löschen des Nebenblobs keinen Zeitstempel mehr.
+    // All 16 other empty entries had no timestamp anymore after the side blob was deleted.
     expect(rep.spellIconsAdded).toBe(17);
     expect((await store.get<Record<string, string>>("static/spell-icons-checked"))?.["16462"]).toBeUndefined();
   });
 
-  test("null mit Zeitstempel wartet sieben Tage, dann wird erneut gefragt", async () => {
+  test("null with a timestamp waits seven days, then it is requested again", async () => {
     routes["/data/wow/media/spell/16462"] = { status: 404, data: null };
     await runAt(NOW);
     expect((await store.get<Record<string, string>>("static/spell-icons-checked"))?.["16462"]).toBe(NOW);
@@ -487,7 +487,7 @@ describe("Leereinträge erneut abfragen", () => {
     expect((await store.get<IconMap>("static/spell-icons"))?.["16462"]).toBe(ICON);
   });
 
-  test("Serverfehler bei der Neuprüfung lässt Eintrag und Zeitstempel stehen", async () => {
+  test("server error during the recheck leaves entry and timestamp in place", async () => {
     routes["/data/wow/media/spell/16462"] = { status: 404, data: null };
     await runAt(NOW);
     routes["/data/wow/media/spell/16462"] = { status: 503, data: null };
@@ -496,14 +496,14 @@ describe("Leereinträge erneut abfragen", () => {
     expect((await store.get<Record<string, string>>("static/spell-icons-checked"))?.["16462"]).toBe(NOW);
   });
 
-  test("Neuprüfungen je Lauf begrenzt, älteste zuerst", async () => {
+  test("rechecks per run are limited, oldest first", async () => {
     expect(retriesDue([3, 1, 2, 4], (id) => id !== "4", { "1": "2026-11-01T00:00:00.000Z", "3": "2026-10-01T00:00:00.000Z" }, Date.parse(NOW), 2)).toEqual([2, 3]);
     const many = Array.from({ length: MAX_RETRIES_PER_RUN + 20 }, (_, i) => i + 1);
     expect(retriesDue(many, () => true, {}, Date.parse(NOW))).toHaveLength(MAX_RETRIES_PER_RUN);
     expect(retriesDue([1], () => true, { "1": "2026-11-05T00:00:00.000Z" }, Date.parse(NOW))).toEqual([]);
   });
 
-  test("Rezept ohne Icon wird später ergänzt, ein inzwischen fehlendes Rezept bleibt stehen", async () => {
+  test("recipe without icon is completed later, a recipe missing in the meantime is kept", async () => {
     await withRecipeCharacter([2408]);
     routes["/data/wow/recipe/2408"] = loadFixture("recipe-2408");
     routes["/data/wow/item/4343"] = loadFixture("item-4343");
@@ -515,14 +515,14 @@ describe("Leereinträge erneut abfragen", () => {
     expect((await store.get<RecipeDetails>("static/recipes"))?.["2408"]?.icon).toBe("https://render.worldofwarcraft.com/forever-eu/icons/56/134586.jpg");
     expect((await store.get<Record<string, string>>("static/recipes-checked"))?.["2408"]).toBeUndefined();
 
-    // Vollständige Rezepte werden nicht mehr abgefragt.
+    // Complete recipes are not requested anymore.
     fake.calls.length = 0;
     await runAt("2026-12-30T03:00:00.000Z");
     expect(fake.calls.filter((c) => c.startsWith("/data/wow/recipe/"))).toEqual([]);
   });
 });
 
-describe("Gegenstandsstufen", () => {
+describe("item levels", () => {
   async function withEquipment(levels: (number | null)[]) {
     const f = (n: string) => loadFixture(n).data;
     const rec = buildCharacterRecord(
@@ -535,7 +535,7 @@ describe("Gegenstandsstufen", () => {
     return rec.equipment.map((e) => e.itemId);
   }
 
-  test("fehlende Stufe aus /data/wow/item, bekannte Stufe ohne Anfrage übernommen", async () => {
+  test("missing level from /data/wow/item, known level taken over without a request", async () => {
     const [a, b, c] = await withEquipment([12, null, null]);
     routes[`/data/wow/item/${b}`] = { status: 200, data: { id: b, level: 17 } };
     const rep = await run();
@@ -545,7 +545,7 @@ describe("Gegenstandsstufen", () => {
     expect((await store.get<Record<string, string>>("static/item-levels-checked"))?.[String(c)]).toBe("2026-11-06T03:00:00.000Z");
   });
 
-  test("später mitgelieferte Stufe ersetzt einen Leereintrag", async () => {
+  test("level delivered later replaces an empty entry", async () => {
     const [a] = await withEquipment([null]);
     await run();
     expect((await store.get<Record<string, number | null>>("static/item-levels"))?.[String(a)]).toBeNull();
@@ -556,7 +556,7 @@ describe("Gegenstandsstufen", () => {
   });
 });
 
-describe("Accountweite Erfolge", () => {
+describe("account-wide achievements", () => {
   const withAchievements = async (id: number, done: number[], open: number[] = []) => {
     const rec = buildCharacterRecord(
       { id, name: `c${id}`, surname: null, slug: `c${id}`, level: 30, classId: 1, raceId: 2, rank: 3 },
@@ -570,7 +570,7 @@ describe("Accountweite Erfolge", () => {
     await store.set(`characters/${id}`, { ...rec, id });
   };
 
-  test("holt is_account_wide je abgeschlossenem Erfolg, offene Erfolge nicht", async () => {
+  test("fetches is_account_wide per completed achievement, not for open achievements", async () => {
     await withAchievements(1, [62031, 627], [999]);
     await withAchievements(2, [62031, 1176]);
     routes["/data/wow/achievement/62031"] = { status: 200, data: { id: 62031, is_account_wide: true } };
@@ -582,13 +582,13 @@ describe("Accountweite Erfolge", () => {
     expect(fake.calls.filter((c) => c === "/data/wow/achievement/62031")).toHaveLength(1);
     expect((await store.get<Record<string, string>>("static/achievement-account-wide-checked"))?.["1176"]).toBe("2026-11-06T03:00:00.000Z");
 
-    // Bekannte Angaben werden nicht erneut abgefragt.
+    // Known flags are not requested again.
     fake.calls.length = 0;
     expect((await run()).accountWideAdded).toBe(0);
     expect(fake.calls.filter((c) => c.startsWith("/data/wow/achievement/"))).toEqual([]);
   });
 
-  test("Serverfehler speichert nichts, der nächste Lauf versucht es erneut", async () => {
+  test("server error stores nothing, the next run tries again", async () => {
     await withAchievements(1, [62031]);
     routes["/data/wow/achievement/62031"] = { status: 503, data: null };
     await run();
@@ -598,7 +598,7 @@ describe("Accountweite Erfolge", () => {
     expect((await store.get<Record<string, boolean | null>>("static/achievement-account-wide"))?.["62031"]).toBe(true);
   });
 
-  test("Indexeinträge ohne Erfolgsliste (ältere Daten) lösen keine Anfrage aus", async () => {
+  test("index entries without an achievement list (older data) trigger no request", async () => {
     await store.set(CHARACTER_INDEX_KEY, { "1": { slug: "c1", hasProfile: false, lastLoginAt: null, itemIds: [], itemLevels: {}, recipeIds: [] } });
     await store.set("characters/1", { id: 1 });
     expect((await run()).accountWideAdded).toBe(0);
@@ -606,7 +606,7 @@ describe("Accountweite Erfolge", () => {
   });
 });
 
-describe("Vorarbeit, Zeitlimit und Sperre", () => {
+describe("preparation, time limit and lock", () => {
   const minimal = (id: number, slug: string, lastLoginAt: string | null, equipment: CharacterRecord["equipment"] = []) => ({
     ...buildCharacterRecord(
       { id, name: slug, surname: null, slug, level: 30, classId: 1, raceId: 2, rank: 3 },
@@ -621,8 +621,8 @@ describe("Vorarbeit, Zeitlimit und Sperre", () => {
     slot: "HEAD", slotName: "Kopf", itemId, name: "x", quality: "EPIC", itemLevel, enchantments: [],
   });
 
-  test("mit vollständigem Index liest der Lauf keinen einzigen Charakter-Blob", async () => {
-    const recs = [minimal(1, "eins", "2026-11-05T10:00:00.000Z", [item(10421, 20)]), minimal(2, "zwei", null, [item(777, null)])];
+  test("with a complete index the run reads not a single character blob", async () => {
+    const recs = [minimal(1, "one", "2026-11-05T10:00:00.000Z", [item(10421, 20)]), minimal(2, "two", null, [item(777, null)])];
     for (const r of recs) await store.set(`characters/${r.id}`, r);
     await store.set(CHARACTER_INDEX_KEY, Object.fromEntries(recs.map((r) => [String(r.id), toCharacterIndexEntry(r)])));
     await store.set("guild", { members: [{ id: 1, former: false }, { id: 2, former: false }] });
@@ -634,15 +634,15 @@ describe("Vorarbeit, Zeitlimit und Sperre", () => {
     expect(await store.get("static/item-levels")).toEqual({ "10421": 20, "777": null });
   });
 
-  test("Charaktere ohne Indexeintrag werden nachgelesen und zählen mit", async () => {
-    await store.set("characters/1", minimal(1, "eins", null, [item(555, 7)]));
+  test("characters without an index entry are read as well and count", async () => {
+    await store.set("characters/1", minimal(1, "one", null, [item(555, 7)]));
     await store.set("guild", { members: [{ id: 1, former: false }] });
     const rep = await run();
     expect(rep).toMatchObject({ charactersRead: 1, charactersUnread: 0, attributesFetched: 1 });
     expect((await store.get<Record<string, number>>("static/item-levels"))?.["555"]).toBe(7);
   });
 
-  test("Bericht nennt die Dauer je Phase", async () => {
+  test("report states the duration per phase", async () => {
     const rep = await run();
     expect(Object.keys(rep.phases)).toEqual(
       expect.arrayContaining(["prep", "trees", "spells", "recipes", "items", "levels", "instances", "accountWide", "reputation", "professions", "images", "finish"]),
@@ -650,7 +650,7 @@ describe("Vorarbeit, Zeitlimit und Sperre", () => {
     expect(rep.notStarted).toEqual([]);
   });
 
-  test("laufende Sperre: zweiter Lauf endet sofort ohne Anfrage und ohne zu schreiben", async () => {
+  test("active lock: second run ends right away without a request and without writing", async () => {
     await store.set(LOCK_KEY, { startedAt: "x", until: new Date(Date.now() + LOCK_TTL_MS).toISOString() });
     const before = JSON.stringify(store.dump());
     const rep = await run();
@@ -659,7 +659,7 @@ describe("Vorarbeit, Zeitlimit und Sperre", () => {
     expect(JSON.stringify(store.dump())).toBe(before);
   });
 
-  test("abgelaufene Sperre wird übergangen, nach dem Lauf ist sie gelöst", async () => {
+  test("expired lock is ignored, after the run it is released", async () => {
     await store.set(LOCK_KEY, { startedAt: "x", until: new Date(Date.now() - 1).toISOString() });
     const rep = await run();
     expect(rep.busy).toBeUndefined();
@@ -667,15 +667,15 @@ describe("Vorarbeit, Zeitlimit und Sperre", () => {
     expect(await store.get(LOCK_KEY)).toBeNull();
   });
 
-  test("Sperre wird auch nach einem Fehler gelöst", async () => {
-    const broken: BlizzardClient = { get: async () => { throw new Error("kaputt"); } };
-    await expect(runStaticCollection({ client: broken, store, config, now: () => new Date() })).rejects.toThrow("kaputt");
+  test("lock is released after an error too", async () => {
+    const broken: BlizzardClient = { get: async () => { throw new Error("broken"); } };
+    await expect(runStaticCollection({ client: broken, store, config, now: () => new Date() })).rejects.toThrow("broken");
     expect(await store.get(LOCK_KEY)).toBeNull();
   });
 
-  // Nachbildung des Live-Fehlers seit v2.1.2: 290 Charaktere, jeder Blob-Zugriff kostet Zeit, echte Uhr im Maßstab 1:10.
-  // Vorher las der Lauf alle Charaktere nacheinander (290 × 5 ms > Budget) und schaffte nichts.
-  test("Live-Größenordnung mit Blob-Latenz: der Lauf holt Werte und endet im Budget", async () => {
+  // Reproduction of the live bug since v2.1.2: 290 characters, every blob access costs time, real clock at 1:10 scale.
+  // Before, the run read all characters one after another (290 × 5 ms > budget) and got nothing done.
+  test("live scale with blob latency: the run fetches attributes and ends within the budget", async () => {
     const CHARACTERS = 290;
     const BLOB_MS = 5;
     const API_MS = 15;
@@ -704,7 +704,7 @@ describe("Vorarbeit, Zeitlimit und Sperre", () => {
     expect(rep.attributesFetched).toBeGreaterThan(30);
     expect(rep.itemIconsAdded + rep.itemLevelsAdded).toBeGreaterThan(0);
     expect(rep.phases.prep).toBeLessThan(BUDGET_MS / 10);
-    // Ende vor dem Budget: die Reserve fängt laufende Anfragen und das Schreiben ab.
+    // Ends before the budget: the reserve absorbs running requests and the writes.
     expect(total).toBeLessThan(BUDGET_MS);
   });
 });

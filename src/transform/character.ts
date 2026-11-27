@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any -- Rohantworten der API sind untypisiert */
+/* eslint-disable @typescript-eslint/no-explicit-any -- raw API responses are untyped */
 import type {
   ItemTooltip,
   CharacterProfession,
@@ -24,7 +24,7 @@ export interface RosterEntry {
   rank: number;
 }
 
-/** Je Teil das `data` einer 200-Antwort oder null (404 oder nicht abgefragt). */
+/** Per part the `data` of a 200 response, or null (404 or not requested). */
 export interface CharacterParts {
   profile: any | null;
   specializations: any | null;
@@ -37,12 +37,12 @@ export interface CharacterParts {
   reputations: any | null;
 }
 
-/** Statistik-Kategorie "Dungeons & Schlachtzüge" und deren Unterkategorie "Boss-Kills". */
+/** Statistics category "Dungeons & Schlachtzüge" (dungeons and raids) and its subcategory "Boss-Kills". */
 const STATS_INSTANCES = 14807;
 const STATS_BOSS_KILLS = 14821;
-/** "5-Spieler-Dungeons betreten" in "Dungeons & Schlachtzüge". */
+/** "5-Spieler-Dungeons betreten" (5-player dungeons entered) in "Dungeons & Schlachtzüge". */
 const STAT_DUNGEONS_ENTERED = 932;
-/** Statistik-Kategorie "Tode" und darin "Tode insgesamt". */
+/** Statistics category "Tode" (deaths) and within it "Tode insgesamt" (total deaths). */
 const STATS_DEATHS = 122;
 const STAT_DEATHS_TOTAL = 60;
 
@@ -101,7 +101,7 @@ export function mapSpecs(raw: any | null): CharacterSpec[] {
   }));
 }
 
-/** Baum mit den meisten Punkten; bei Gleichstand an der Spitze oder 0 Punkten null. */
+/** Tree with the most points; null on a tie at the top or with 0 points. */
 export function pickMainSpec(specs: CharacterSpec[]): number | null {
   const max = Math.max(0, ...specs.map((s) => s.spentPoints));
   if (max === 0) return null;
@@ -137,10 +137,11 @@ export function mapMedia(raw: any | null): Record<string, string> | null {
 }
 
 /**
- * Nur Erfolge mit Fortschritt, nur IDs: Namen kommen deutsch aus den statischen Definitionen. `completed_timestamp`
- * gilt bei WoW Forever für den ganzen Account (ein Twink "hat" dann etwa "Erkundet Steinkrallengebirge", ohne dort
- * gewesen zu sein); maßgeblich ist deshalb das Wurzelkriterium des Charakters, nur ohne Kriterien der Zeitstempel.
- * Bei accountweiten Erfolgen (`is_account_wide`, etwa "Dungeonerforscher") gilt auch das Kriterium für den Account.
+ * Only achievements with progress, only IDs: German names come from the static definitions. On WoW Forever,
+ * `completed_timestamp` applies to the whole account (an alt then "has" e.g. "Erkundet Steinkrallengebirge" without
+ * ever having been there); so the character's root criterion decides, and the timestamp only when there are no
+ * criteria. For account-wide achievements (`is_account_wide`, e.g. "Dungeonerforscher") the criterion is account-wide
+ * too.
  */
 export function mapAchievementProgress(raw: any | null): AchievementProgress[] {
   const list: any[] = raw?.achievements ?? [];
@@ -155,6 +156,7 @@ export function mapAchievementProgress(raw: any | null): AchievementProgress[] {
 }
 
 export function parseBossKillName(name: string): { boss: string; instance: string | null } {
+  // Blizzard de_DE statistic name: "Siege über BOSS (INSTANCE)" ("Victories over ...").
   const match = /^Siege über (.+?)(?: \((.+)\))?$/.exec(name);
   if (!match) return { boss: name, instance: null };
   return { boss: match[1], instance: match[2] ?? null };
@@ -172,7 +174,7 @@ export function mapBossKills(raw: any | null): BossKill[] {
     }));
 }
 
-/** Zähler direkt in einer Statistik-Kategorie; fehlt der Eintrag, ist der Wert 0 (Blizzard lässt Nullwerte weg). */
+/** Counter directly in a statistics category; if the entry is missing, the value is 0 (Blizzard omits zero values). */
 function statQuantity(raw: any, categoryId: number, statId: number): number {
   const category = (raw?.categories ?? []).find((c: any) => c?.id === categoryId);
   const stat = (category?.statistics ?? []).find((s: any) => s?.id === statId);
@@ -188,8 +190,8 @@ export function mapStats(raw: any | null): CharacterStats | null {
 }
 
 /**
- * Alle Statistiken kompakt: Statistik-ID auf Wert, dazu die Texte der Am-häufigsten-Statistiken
- * (etwa der meistgetötete Kreaturtyp). Namen und Kategorien stehen in `config/statistiken.json`.
+ * All statistics in compact form: statistic ID to value, plus the texts of the "most often" statistics
+ * (e.g. the most killed creature type). Names and categories are stored in `config/statistiken.json`.
  */
 export function mapStatValues(raw: any | null): { values: Record<string, number>; texts: Record<string, string> } | null {
   if (raw === null || raw === undefined) return null;

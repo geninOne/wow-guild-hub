@@ -1,7 +1,7 @@
 import { expect, test, vi } from "vitest";
 import { runAndRespond } from "../src/handler";
 
-test("Erfolg: Bericht als JSON mit Status 200 und eine Logzeile", async () => {
+test("success: report as JSON with status 200 and one log line", async () => {
   const log = vi.spyOn(console, "log").mockImplementation(() => {});
   const res = await runAndRespond("collect-guild", async () => ({ fetched: 3 }));
   expect(res.status).toBe(200);
@@ -10,13 +10,13 @@ test("Erfolg: Bericht als JSON mit Status 200 und eine Logzeile", async () => {
   log.mockRestore();
 });
 
-test("Fehler: Status 500 nur mit der Meldung, ohne Stacktrace", async () => {
+test("error: status 500 with the message only, without stack trace", async () => {
   const err = vi.spyOn(console, "error").mockImplementation(() => {});
   const res = await runAndRespond("collect-static", async () => {
-    throw new Error("Umgebungsvariable BNET_CLIENT_ID fehlt");
+    throw new Error("Environment variable BNET_CLIENT_ID is missing");
   });
   expect(res.status).toBe(500);
-  expect(await res.json()).toEqual({ error: "Umgebungsvariable BNET_CLIENT_ID fehlt" });
-  expect(err).toHaveBeenCalledWith(JSON.stringify({ job: "collect-static", error: "Umgebungsvariable BNET_CLIENT_ID fehlt" }));
+  expect(await res.json()).toEqual({ error: "Environment variable BNET_CLIENT_ID is missing" });
+  expect(err).toHaveBeenCalledWith(JSON.stringify({ job: "collect-static", error: "Environment variable BNET_CLIENT_ID is missing" }));
   err.mockRestore();
 });

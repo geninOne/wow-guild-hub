@@ -1,6 +1,6 @@
 import { getStore } from "@netlify/blobs";
 
-/** Schlüssel-Wert-Speicher für JSON. Im Betrieb Netlify Blobs, in Tests der RAM. */
+/** Key-value store for JSON. Netlify Blobs in production, RAM in tests. */
 export interface JsonStore {
   get<T>(key: string): Promise<T | null>;
   set(key: string, value: unknown): Promise<void>;

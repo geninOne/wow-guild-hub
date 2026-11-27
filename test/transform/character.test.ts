@@ -31,7 +31,7 @@ const parts = {
   reputations: null,
 };
 
-test("Kopfdaten kommen aus dem Profil, Level vor Rosterwert", () => {
+test("header data comes from the profile, level takes precedence over the roster value", () => {
   const r = buildCharacterRecord(luvia, parts, "2026-11-06T10:00:00.000Z");
   expect(r).toMatchObject({
     id: 382219,
@@ -54,7 +54,7 @@ test("Kopfdaten kommen aus dem Profil, Level vor Rosterwert", () => {
   expect(r.professions).toHaveLength(5);
 });
 
-test("Ausrüstung: 12 Slots mit Gegenstandsstufe und Qualität", () => {
+test("equipment: 12 slots with item level and quality", () => {
   const e = mapEquipment(parts.equipment);
   expect(e).toHaveLength(12);
   expect(e[0]).toMatchObject({
@@ -69,7 +69,7 @@ test("Ausrüstung: 12 Slots mit Gegenstandsstufe und Qualität", () => {
   expect(mapEquipment(null)).toEqual([]);
 });
 
-test("Tooltip-Felder einer Rüstung", () => {
+test("tooltip fields of an armor piece", () => {
   const waist = mapEquipment(parts.equipment).find((i) => i.slot === "WAIST")!;
   expect(waist.tooltip).toEqual({
     binding: "Wird beim Aufheben gebunden", unique: null, slotType: "Taille", subclass: "Schwere Rüstung", containerSlots: null,
@@ -80,7 +80,7 @@ test("Tooltip-Felder einer Rüstung", () => {
   });
 });
 
-test("Tooltip-Felder einer Waffe und eines Schildes", () => {
+test("tooltip fields of a weapon and a shield", () => {
   const items = mapEquipment(parts.equipment);
   expect(items.find((i) => i.slot === "MAIN_HAND")!.tooltip).toMatchObject({
     slotType: "Einhändig", subclass: "Schwert", damage: "26 - 50 Schaden", speed: "Tempo 2,60",
@@ -89,19 +89,19 @@ test("Tooltip-Felder einer Waffe und eines Schildes", () => {
   expect(items.find((i) => i.slot === "OFF_HAND")!.tooltip!.block).toBe("1.367 Blocken");
 });
 
-test("versteckte Unterklasse, Anlegen-Effekt und Beschreibung", () => {
+test("hidden subclass, equip effect and description", () => {
   expect(mapEquipment(parts.equipment).find((i) => i.slot === "BACK")!.tooltip!.subclass).toBeNull();
   const t = mapItemTooltip({ spells: [{ description: "Anlegen: Erhöht X." }], description: "Für Deliah",
     unique_equipped: "Einzigartig" });
   expect([t.spells, t.description, t.unique, t.stats, t.sellPrice]).toEqual([["Anlegen: Erhöht X."], "Für Deliah", "Einzigartig", [], null]);
 });
 
-test("Verzauberungen als Anzeigetext", () => {
+test("enchantments as display text", () => {
   const main = mapEquipment(f("exalor-equipment")).find((i) => i.slot === "MAIN_HAND");
   expect(main?.enchantments).toEqual(["Beschwert +2"]);
 });
 
-test("Skillung und Hauptbaum", () => {
+test("specialization and main tree", () => {
   const s = mapSpecs(parts.specializations);
   expect(s.map((x) => [x.specId, x.spentPoints, x.talents.length])).toEqual([
     [26, 5, 1],
@@ -117,7 +117,7 @@ test("Skillung und Hauptbaum", () => {
   expect(pickMainSpec(s)).toBe(256);
 });
 
-test("Hauptbaum null bei Gleichstand an der Spitze oder ohne Punkte", () => {
+test("main tree null on a tie at the top or without points", () => {
   const spec = (id: number, p: number) => ({ specId: id, name: "x", spentPoints: p, talents: [] });
   expect(pickMainSpec([spec(1, 4), spec(2, 4), spec(3, 1)])).toBeNull();
   expect(pickMainSpec([spec(1, 0), spec(2, 0)])).toBeNull();
@@ -125,12 +125,12 @@ test("Hauptbaum null bei Gleichstand an der Spitze oder ohne Punkte", () => {
   expect(pickMainSpec([spec(1, 2), spec(2, 2), spec(3, 4)])).toBe(3);
 });
 
-test("keine Skillung (Feld fehlt) ergibt leere Liste", () => {
+test("no specialization (field missing) yields an empty list", () => {
   expect(mapSpecs(f("thulmor-specializations"))).toEqual([]);
   expect(mapSpecs(null)).toEqual([]);
 });
 
-test("Berufe deutsch, Rezepte englisch", () => {
+test("professions in German, recipes in English", () => {
   const p = mapProfessions(parts.professions);
   expect(p.map((x) => [x.id, x.name, x.skill, x.max, x.primary, x.recipes.length])).toEqual([
     [186, "Bergbau", 91, 150, true, 6],
@@ -143,7 +143,7 @@ test("Berufe deutsch, Rezepte englisch", () => {
   expect(p[0].nameEn).toBe("Mining");
 });
 
-test("unbekannter Beruf behält den englischen Namen, fehlende Listen gelten als leer", () => {
+test("unknown profession keeps the English name, missing lists count as empty", () => {
   const p = mapProfessions({
     primaries: [{ profession: { id: 999, name: "Archaeology" }, tiers: [{ skill_points: 3, max_skill_points: 75 }] }],
   });
@@ -153,7 +153,7 @@ test("unbekannter Beruf behält den englischen Namen, fehlende Listen gelten als
   expect(mapProfessions(null)).toEqual([]);
 });
 
-test("Bilder als Schlüssel-URL-Tabelle, ohne Bild null", () => {
+test("images as a key to URL table, null without images", () => {
   expect(mapMedia(parts.media)?.["main-raw"]).toBe(
     "https://render.worldofwarcraft.com/forever-eu/character/11/382219-main-raw.png",
   );
@@ -161,7 +161,7 @@ test("Bilder als Schlüssel-URL-Tabelle, ohne Bild null", () => {
   expect(mapMedia(null)).toBeNull();
 });
 
-test("ohne Profil (404) nur Rosterdaten", () => {
+test("without a profile (404) only roster data", () => {
   const seeroth: RosterEntry = {
     id: 374723, name: "Seeroth", surname: "Totenglanz", slug: "seeroth-totenglanz", level: 6, classId: 2, raceId: 5, rank: 3,
   };
@@ -178,27 +178,27 @@ test("ohne Profil (404) nur Rosterdaten", () => {
   });
 });
 
-test("Profil ohne Bild und ohne Skillung", () => {
+test("profile without images and without specialization", () => {
   const r = buildCharacterRecord(luvia, { ...parts, media: null, specializations: f("thulmor-specializations") }, "t");
   expect(r.media).toBeNull();
   expect(r.specs).toEqual([]);
   expect(r.mainSpecId).toBeNull();
 });
 
-test("Raid-Antwort wird ohne _links und character unverändert mitgespeichert", () => {
+test("raid response is stored unchanged without _links and character", () => {
   expect(buildCharacterRecord(luvia, parts, "t").raidsRaw).toEqual({});
   const withData = { ...parts, raids: { _links: {}, character: {}, expansions: [{ id: 1 }] } };
   expect(buildCharacterRecord(luvia, withData, "t").raidsRaw).toEqual({ expansions: [{ id: 1 }] });
 });
 
-test("Rezept-IDs parallel zu den Rezeptnamen", () => {
+test("recipe IDs parallel to the recipe names", () => {
   const p = mapProfessions(parts.professions);
   expect(p[0].recipes[0]).toBe("Smelt Tin");
   expect(p[0].recipeIds?.[0]).toBe(1848);
   for (const x of p) expect(x.recipeIds).toHaveLength(x.recipes.length);
 });
 
-test("Erfolgsfortschritt: nur Erfolge mit erledigten Kriterien, nur deren IDs", () => {
+test("achievement progress: only achievements with completed criteria, only their IDs", () => {
   expect(mapAchievementProgress(f("chordrak-achievements"))).toEqual([
     { id: 62031, completed: false, criteria: [230766, 230760] },
   ]);
@@ -207,8 +207,8 @@ test("Erfolgsfortschritt: nur Erfolge mit erledigten Kriterien, nur deren IDs", 
   expect(mapAchievementProgress(null)).toEqual([]);
 });
 
-test("Erfolg mit accountweitem Zeitstempel, aber offenem eigenem Kriterium zählt nicht (Twink)", () => {
-  // So liefert Blizzard "Erkundet Steinkrallengebirge" für einen Twink, dessen Hauptcharakter das Gebiet erkundet hat.
+test("achievement with an account-wide timestamp but an open own criterion does not count (alt)", () => {
+  // This is how Blizzard returns "Erkundet Steinkrallengebirge" for an alt whose main character explored the zone.
   const twink = {
     achievements: [
       {
@@ -222,7 +222,7 @@ test("Erfolg mit accountweitem Zeitstempel, aber offenem eigenem Kriterium zähl
   expect(mapAchievementProgress(twink)).toEqual([{ id: 62000, completed: true, criteria: [] }]);
 });
 
-test("Boss-Kills aus der Statistik-Kategorie Dungeons & Schlachtzüge", () => {
+test("boss kills from the dungeons and raids statistics category", () => {
   const kills = mapBossKills(f("chordrak-statistics"));
   expect(kills).toContainEqual({
     boss: "Bazzalan",
@@ -235,20 +235,20 @@ test("Boss-Kills aus der Statistik-Kategorie Dungeons & Schlachtzüge", () => {
   expect(mapBossKills(null)).toEqual([]);
 });
 
-test("Bossname mit und ohne Instanz in Klammern", () => {
+test("boss name with and without instance in parentheses", () => {
   expect(parseBossKillName("Siege über Bazzalan (Flammenschlund)")).toEqual({ boss: "Bazzalan", instance: "Flammenschlund" });
   expect(parseBossKillName("Siege über Onyxia")).toEqual({ boss: "Onyxia", instance: null });
   expect(parseBossKillName("Etwas anderes")).toEqual({ boss: "Etwas anderes", instance: null });
 });
 
-test("Dungeon- und Raidfortschritt im Datensatz, ohne beide Teile null", () => {
+test("dungeon and raid progress in the record, null without both parts", () => {
   expect(buildCharacterRecord(luvia, parts, "t").instances).toBeNull();
   const r = buildCharacterRecord(luvia, { ...parts, achievements: f("chordrak-achievements"), statistics: f("chordrak-statistics") }, "t");
   expect(r.instances?.achievements).toHaveLength(1);
   expect(r.instances?.bossKills).toHaveLength(2);
 });
 
-test("Ruf: Fraktion, Stufe und Fortschritt innerhalb der Stufe", () => {
+test("reputation: faction, tier and progress within the tier", () => {
   const reps = mapReputations(f("chordrak-reputations"));
   expect(reps).toHaveLength(11);
   expect(reps.find((r) => r.factionId === 76)).toEqual({
@@ -259,7 +259,7 @@ test("Ruf: Fraktion, Stufe und Fortschritt innerhalb der Stufe", () => {
   expect(buildCharacterRecord(luvia, { ...parts, reputations: f("chordrak-reputations") }, "t").reputations).toHaveLength(11);
 });
 
-test("Vollständige Statistik kompakt: ID auf Wert, Texte der Am-häufigsten-Statistiken getrennt", () => {
+test("complete statistics in compact form: ID to value, texts of the \"most often\" statistics separately", () => {
   const s = mapStatValues(f("chordrak-statistics"));
   expect(Object.keys(s!.values)).toHaveLength(41);
   expect(s!.values["60"]).toBe(4);
@@ -270,7 +270,7 @@ test("Vollständige Statistik kompakt: ID auf Wert, Texte der Am-häufigsten-Sta
   expect(mapStatValues({ categories: [{ id: 1, statistics: [{ id: 2, quantity: "x" }, { id: 3, quantity: 5 }] }] })).toEqual({ values: { "3": 5 }, texts: {} });
 });
 
-test("Datensatz trägt die vollständige Statistik, ohne Statistik null", () => {
+test("record carries the complete statistics, null without statistics", () => {
   expect(buildCharacterRecord(luvia, parts, "t").statValues).toBeNull();
   const r = buildCharacterRecord(luvia, { ...parts, statistics: f("chordrak-statistics") }, "t");
   expect(r.statValues?.["1197"]).toBe(1590);
