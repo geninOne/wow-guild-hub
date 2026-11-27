@@ -8,6 +8,13 @@ This file is maintained by [release-please](https://github.com/googleapis/releas
 [Conventional Commits](https://www.conventionalcommits.org/) on `main`. Please do not edit it by hand; see
 [CONTRIBUTING.md](CONTRIBUTING.md#commits-and-versions).
 
+## [2.1.4](https://github.com/geninOne/wow-guild-hub/compare/v2.1.3...v2.1.4) (2026-11-27)
+
+
+### Bug Fixes
+
+* per-character dungeon progress instead of account-wide achievements ([#13](https://github.com/geninOne/wow-guild-hub/issues/13)) ([cfab77d](https://github.com/geninOne/wow-guild-hub/commit/cfab77d13b034a9632cc7da15f8f0a0b1cd94dea))
+
 ## [2.1.3](https://github.com/geninOne/wow-guild-hub/compare/v2.1.2...v2.1.3) (2026-11-27)
 
 
