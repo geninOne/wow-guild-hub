@@ -8,6 +8,7 @@
 ## How was it tested?
 
 - [ ] `npm run lint`
+- [ ] `npm run check:english -- --all --strict`
 - [ ] `npm test`
 - [ ] `npm run typecheck`
 - [ ] `npm run build`

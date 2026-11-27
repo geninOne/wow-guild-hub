@@ -16,7 +16,7 @@ jobs:
   check:
     # The job name is a required status check in the branch protection of main. Rename it only together with the
     # branch protection setting.
-    name: Lint, Tests, Typen, Build
+    name: Lint, test, typecheck, build
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -31,6 +31,8 @@ jobs:
 
       - run: npm ci
       - run: npm run lint
+      # Code, comments, tests and messages stay English; UI texts, translations and frozen names are left out.
+      - run: npm run check:english -- --all --strict
       - run: npm test
       - run: npm run typecheck
       - run: npm run build
