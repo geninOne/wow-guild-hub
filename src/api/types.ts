@@ -199,7 +199,7 @@ export interface CharacterView {
   /** Fun titles of the last evaluated week; missing in older responses. */
   titles?: CharacterTitle[];
   /** Extra data of registered extensions per id; missing if none provides anything. */
-  erweiterungen?: Record<string, unknown>;
+  extensions?: Record<string, unknown>;
 }
 
 export interface CharacterRef {

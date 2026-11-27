@@ -22,8 +22,9 @@ import { buildGuildDungeons } from "./dungeons-view";
 import { loadStatCardMembers, loadStatsView } from "./stats-view";
 import { loadTitleRanking, loadTitlesView } from "./titles-view";
 import { loadWrappedView } from "./wrapped-view";
-import { SERVER_ERWEITERUNGEN } from "../erweiterungen";
-import type { ApiKontext, ServerErweiterung } from "../erweiterungen/typen";
+import { serverExtensions, type AnyServerExtension } from "../extensions/legacy";
+import { REGISTERED_SERVER_EXTENSIONS } from "../extensions/registry";
+import type { ApiContext, ServerExtension } from "../extensions/types";
 import { RANK_NAMES, TALENT_FIXES } from "./config";
 import { buildGuildView, guildRefs } from "./guild-view";
 import { json } from "./http";
@@ -70,7 +71,7 @@ async function route(
   store: JsonStore,
   now: () => Date,
   options: ApiOptions,
-  erweiterungen: readonly ServerErweiterung[],
+  extensions: readonly ServerExtension[],
 ): Promise<Response> {
   const parts = path.split("/").filter(Boolean); // ["api", ...]
   if (parts[0] !== "api") return json(NOT_FOUND, 404, "none");
@@ -176,7 +177,7 @@ async function route(
       const decoded = safeDecode(key);
       const member = decoded === null ? undefined : findMember(guild, decoded);
       if (!member) return json(NOT_FOUND, 404, "none");
-      const extras = Promise.all(erweiterungen.map(async (e) => [e.id, await e.charakter?.({ store, guild, member })] as const));
+      const extras = Promise.all(extensions.map(async (e) => [e.id, await e.character?.({ store, guild, member })] as const));
       const [record, classes, races, itemIcons, recipeNames, recipeDetails, instanceDefs, reputationFactions, instanceImages, weekly, extraData, attributes, itemLevels] =
         await Promise.all([
         store.get<CharacterRecord>(`characters/${member.id}`),
@@ -200,10 +201,10 @@ async function route(
       if (!view) return json(NOT_FOUND, 404, "none");
       view.titles = weekly ? characterTitles(weekly, member.id) : [];
       const provided = extraData.filter(([, d]) => d !== null && d !== undefined);
-      if (provided.length > 0) view.erweiterungen = Object.fromEntries(provided);
+      if (provided.length > 0) view.extensions = Object.fromEntries(provided);
       const response = json(view, 200, "live");
       // Extensions with their own cache tag can have the character pages refreshed after a change.
-      const tags = [...new Set(erweiterungen.flatMap((e) => e.charakterCacheTags ?? []))];
+      const tags = [...new Set(extensions.flatMap((e) => e.characterCacheTags ?? []))];
       if (tags.length > 0) response.headers.set("Netlify-Cache-Tag", tags.join(","));
       return response;
     }
@@ -241,8 +242,10 @@ export interface ApiOptions {
   clientIp?: string | null;
   /** Purges the CDN cache for cache tags (on Netlify `purgeCache`), for extensions. */
   purgeCache?: (tags: string[]) => Promise<void>;
-  /** Registered extensions; defaults to `src/erweiterungen/index.ts`. */
-  erweiterungen?: readonly ServerErweiterung[];
+  /** Extensions to use instead of the registered ones (tests); 2.x modules are converted. */
+  extensions?: readonly AnyServerExtension[];
+  /** @deprecated 2.x name of `extensions`. */
+  erweiterungen?: readonly AnyServerExtension[];
 }
 
 export async function handleApi(
@@ -253,8 +256,9 @@ export async function handleApi(
 ): Promise<Response> {
   const url = new URL(req.url);
   const path = url.pathname.length > 1 ? url.pathname.replace(/\/+$/, "") : url.pathname;
-  const erweiterungen = options.erweiterungen ?? SERVER_ERWEITERUNGEN;
-  const context: ApiKontext = {
+  const given = options.extensions ?? options.erweiterungen;
+  const extensions = given ? serverExtensions(given) : REGISTERED_SERVER_EXTENSIONS;
+  const context: ApiContext = {
     store,
     now,
     env: options.env ?? {},
@@ -263,12 +267,12 @@ export async function handleApi(
   };
   try {
     // Extensions first: they may take over their own paths and methods (such as POST for an upload).
-    for (const e of erweiterungen) {
+    for (const e of extensions) {
       const answer = e.api ? await e.api(req, path, context) : null;
       if (answer) return answer;
     }
     if (req.method !== "GET" && req.method !== "HEAD") return json({ error: "Method not allowed" }, 405, "none");
-    return await route(path, url.searchParams, store, now, options, erweiterungen);
+    return await route(path, url.searchParams, store, now, options, extensions);
   } catch (error) {
     console.error(
       JSON.stringify({ job: "api", path, error: error instanceof Error ? error.message : String(error) }),

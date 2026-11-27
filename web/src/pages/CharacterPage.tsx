@@ -12,8 +12,8 @@ import { RecipeGrid } from "../components/RecipeGrid";
 import { ReputationPanel } from "../components/ReputationPanel";
 import { TalentTree } from "../components/TalentTree";
 import { WrappedPanel } from "../components/WrappedCard";
-import { OBERFLAECHEN_ERWEITERUNGEN } from "../erweiterungen";
-import type { CharakterReiter } from "../erweiterungen/typen";
+import { registeredUiExtensions } from "../extensions/registry";
+import type { CharacterTab } from "../extensions/types";
 import { hasTitleBadge, TitleBadge } from "../components/TitleBadge";
 import { weekLabel } from "../lib/fun";
 import { useApi } from "../lib/api";
@@ -80,8 +80,8 @@ type TabId = (typeof TABS)[number]["id"];
 const DEFAULT_TAB: TabId = "ausruestung";
 
 /** Tabs of the extensions, after the core ones; each with its extension's id for the extra data. */
-function extensionTabs(): (CharakterReiter & { extension: string })[] {
-  return OBERFLAECHEN_ERWEITERUNGEN.flatMap((e) => (e.charakterReiter ?? []).map((r) => ({ ...r, extension: e.id }))).filter(
+function extensionTabs(): (CharacterTab & { extension: string })[] {
+  return registeredUiExtensions().flatMap((e) => (e.characterTabs ?? []).map((r) => ({ ...r, extension: e.id }))).filter(
     (r) => !TABS.some((t) => t.id === r.id),
   );
 }
@@ -92,7 +92,7 @@ function isTabId(value: string | null): value is TabId {
 
 /** Extra data of an extension from the server's response. */
 function extensionData(view: CharacterView, id: string): unknown {
-  const all = view.erweiterungen;
+  const all = view.extensions;
   return all && Object.hasOwn(all, id) ? all[id] : undefined;
 }
 
@@ -121,9 +121,9 @@ function CharacterHeader({ view }: { view: CharacterView }) {
       <p className="character-facts">
         {c.equippedItemLevel !== null && <span className="badge">{t(T.gs)} {c.equippedItemLevel}</span>}
         {view.rankName && <span className="badge badge-muted">{view.rankName}</span>}
-        {OBERFLAECHEN_ERWEITERUNGEN.map(({ id, charakterKopf: Header }) => {
+        {registeredUiExtensions().map(({ id, characterHeader: Header }) => {
           const data = extensionData(view, id);
-          return Header && data !== undefined && <Header key={id} daten={data} view={view} />;
+          return Header && data !== undefined && <Header key={id} data={data} view={view} />;
         })}
         {view.former && <span className="badge character-former">{t(T.former)}</span>}
         {(view.titles ?? []).map((title) => {
@@ -230,7 +230,7 @@ function ProfessionsTab({ view }: { view: CharacterView }) {
 
 function TabContent({ tab, view }: { tab: string; view: CharacterView }) {
   const extensionTab = extensionTabs().find((r) => r.id === tab);
-  if (extensionTab) return <extensionTab.Komponente daten={extensionData(view, extensionTab.extension)} view={view} />;
+  if (extensionTab) return <extensionTab.Component data={extensionData(view, extensionTab.extension)} view={view} />;
   if (!isTabId(tab)) return null;
   switch (tab) {
     case "ausruestung":
@@ -267,7 +267,7 @@ function CharacterContent({ view }: { view: CharacterView }) {
         {/* Without a profile there are no tabs; extension tabs with data are then shown below. */}
         {extensionTabs().map((r) => {
           const data = extensionData(view, r.extension);
-          return data !== undefined && <r.Komponente key={r.id} daten={data} view={view} />;
+          return data !== undefined && <r.Component key={r.id} data={data} view={view} />;
         })}
       </>
     );

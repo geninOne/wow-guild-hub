@@ -175,7 +175,7 @@ describe("weather report", () => {
   });
 
   const situation: WeatherSituation = { elemente: [{ art: "sturm", strength: 3, ueber: "Goldene Bärenklaue" }, { art: "sternklar", strength: 2 }] };
-  const ctx = { week: "2026-11-21", name: (id: number) => ["", "Anna", "Bodo"][id], allNames: ["Anna", "Bodo"], wetter: situation, sprachen: LANGUAGES };
+  const ctx = { week: "2026-11-21", name: (id: number) => ["", "Anna", "Bodo"][id], allNames: ["Anna", "Bodo"], wetter: situation, languages: LANGUAGES };
 
   test("phrases write the weather report in all languages, without numbers and without em dashes", async () => {
     const r = await phraseGenerator([{ kind: "ruhig" }], ctx);
@@ -240,7 +240,7 @@ describe("new articles in the newspaper", () => {
     { kind: "rekord", entries: [{ art: "tode", characterId: null, value: 31, previous: 30 }, { art: "level", characterId: 1, value: 12, previous: 9 }] },
   ];
   const names: Record<number, string> = { 1: "Anna", 2: "Bodo", 3: "Cleo" };
-  const ctx = { week: "2026-11-21", name: (id: number) => names[id], allNames: Object.values(names), sprachen: LANGUAGES };
+  const ctx = { week: "2026-11-21", name: (id: number) => names[id], allNames: Object.values(names), languages: LANGUAGES };
 
   test("sections, numbers and phrases", async () => {
     expect(facts.map(sectionOf)).toEqual(["Rekorde"]);

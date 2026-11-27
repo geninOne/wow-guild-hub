@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { OBERFLAECHEN_ERWEITERUNGEN } from "../../web/src/erweiterungen";
+import { registeredUiExtensions } from "../../web/src/extensions/registry";
 
 /**
  * On Netlify only a redirect in netlify.toml serves the app for subpages. Locally Vite catches every path, so a missing
@@ -18,7 +18,7 @@ const redirects = [...toml.matchAll(/\[\[redirects\]\]([\s\S]*?)(?=\n\[|$)/g)].m
 }));
 const routes = [...app.matchAll(/<Route\s+path="([^"]+)"/g)].map((m) => m[1]);
 /** Pages of the registered extensions need their redirect just the same. */
-const extensionRoutes = OBERFLAECHEN_ERWEITERUNGEN.flatMap((e) => (e.routen ?? []).map((r) => r.pfad));
+const extensionRoutes = registeredUiExtensions().flatMap((e) => (e.routes ?? []).map((r) => r.path));
 
 /** Does a redirect cover the path? Parameters like :key stand for any segment. */
 function covered(path: string): boolean {

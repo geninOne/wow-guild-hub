@@ -1,5 +1,5 @@
-import { SERVER_ERWEITERUNGEN } from "../erweiterungen";
-import type { ServerErweiterung } from "../erweiterungen/typen";
+import { serverExtensions, type AnyServerExtension } from "../extensions/legacy";
+import { REGISTERED_SERVER_EXTENSIONS } from "../extensions/registry";
 import { weekBounds } from "../lib/time";
 import type { NewspaperArticle, CharacterRecord, GuildRecord, WeeklyIndex, WeeklyRecord, WeeklySums, WeeklyNumbers } from "../model";
 import { withDialects, sameInAll, type OtherTranslations, type Translations } from "../language";
@@ -27,9 +27,11 @@ export const SECTIONS: Record<string, Translations> = {
 };
 
 /** Section in all languages: from the core, else from the extensions' sections, else the German name everywhere. */
-export function rubrik(name: string, erweiterungen: readonly ServerErweiterung[] = SERVER_ERWEITERUNGEN): Translations {
+export function sectionName(name: string, extensions?: readonly AnyServerExtension[]): Translations {
   if (Object.hasOwn(SECTIONS, name)) return SECTIONS[name];
-  for (const e of erweiterungen) if (e.rubriken && Object.hasOwn(e.rubriken, name)) return e.rubriken[name];
+  for (const e of extensions ? serverExtensions(extensions) : REGISTERED_SERVER_EXTENSIONS) {
+    if (e.sections && Object.hasOwn(e.sections, name)) return e.sections[name];
+  }
   return sameInAll(name);
 }
 
@@ -51,7 +53,7 @@ function article(guild: GuildRecord, a: NewspaperArticle): NewspaperArticleView 
   const version = versions({ headline: a.headline, text: a.text }, a.dialekte);
   return {
     kind: a.kind,
-    section: rubrik(a.section ?? "Vermischtes"),
+    section: sectionName(a.section ?? "Vermischtes"),
     title: def ? { id: def.id, name: def.name } : null,
     headline: field(version, "headline"),
     text: field(version, "text"),

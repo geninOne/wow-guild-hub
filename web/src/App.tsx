@@ -1,6 +1,6 @@
 import { Link, Navigate, NavLink, Route, Routes } from "react-router";
 import { DiscordLink } from "./components/DiscordLink";
-import { OBERFLAECHEN_ERWEITERUNGEN } from "./erweiterungen";
+import { registeredUiExtensions } from "./extensions/registry";
 import { LanguageSwitcher } from "./components/LanguageSwitcher";
 import { site } from "./lib/site";
 import { LanguageProvider, useLanguage, type Translations } from "./lib/language";
@@ -43,9 +43,6 @@ const T = {
   privacy: { de: "Datenschutz", en: "Privacy" },
 } satisfies Record<string, Translations>;
 
-/** Legal texts from a module, otherwise the core's placeholder templates. */
-const CustomImprint = OBERFLAECHEN_ERWEITERUNGEN.find((e) => e.impressumSeite)?.impressumSeite ?? ImprintPage;
-const CustomPrivacy = OBERFLAECHEN_ERWEITERUNGEN.find((e) => e.datenschutzSeite)?.datenschutzSeite ?? PrivacyPage;
 
 /** Layout and routes. The caller provides the router (main.tsx or tests). */
 export default function App() {
@@ -57,6 +54,10 @@ export default function App() {
 }
 
 function Site() {
+  const extensions = registeredUiExtensions();
+  // Legal texts from a module, otherwise the core's placeholder templates.
+  const CustomImprint = extensions.find((e) => e.imprintPage)?.imprintPage ?? ImprintPage;
+  const CustomPrivacy = extensions.find((e) => e.privacyPage)?.privacyPage ?? PrivacyPage;
   const { t, language } = useLanguage();
   const version = versionText(import.meta.env.VITE_VERSION, import.meta.env.VITE_VERSION_DATE, language === "en");
   const { name, logo, logoAlt, tagline, imprint } = site();
@@ -96,8 +97,8 @@ function Site() {
           <Route path="/statistik/:reiter" element={<StatsPage />} />
           <Route path="/aktivitaet" element={<Navigate to="/statistik/aktivitaet" replace />} />
           <Route path="/titel" element={<TitlesPage />} />
-          {OBERFLAECHEN_ERWEITERUNGEN.flatMap((e) =>
-            (e.routen ?? []).map(({ pfad, Komponente }) => <Route key={`${e.id}:${pfad}`} path={pfad} element={<Komponente />} />),
+          {extensions.flatMap((e) =>
+            (e.routes ?? []).map(({ path, Component }) => <Route key={`${e.id}:${path}`} path={path} element={<Component />} />),
           )}
           <Route path="/zeitung" element={<NewspaperPage />} />
           <Route path="/zeitung/archiv" element={<NewspaperArchivePage />} />

@@ -4,7 +4,7 @@ import { SERVER_START } from "../server-start";
 import { addDays, berlinDate, compareWeeks, dateOfWeekHour, isoWeeksBetween, isWeek, shiftGuildWeek, guildRange, guildWeek, weekBounds, weekRange } from "../lib/time";
 import type { ActivityWeek, DaySnapshot, GuildRecord, WeekMetrics, WeeklyIndex, WeeklyRecord } from "../model";
 import type { JsonStore } from "../store";
-import type { ServerErweiterung } from "../erweiterungen/typen";
+import type { AnyServerExtension } from "../extensions/legacy";
 import { issueExtras } from "./issue-extras";
 import { RECENT_ISSUES } from "./phrases";
 import { collectFacts, factKey, type RecentFacts } from "./newspaper-facts";
@@ -25,8 +25,10 @@ export interface WeeklyDeps {
   maxWeeks?: number;
   /** Day of the server start; default from `config/serverstart.json`, null turns the rule off. */
   serverStart?: string | null;
-  /** Extensions with their own articles; default from `src/erweiterungen/index.ts`. */
-  erweiterungen?: readonly ServerErweiterung[];
+  /** Extensions to use instead of the registered ones (tests); 2.x modules are converted. */
+  extensions?: readonly AnyServerExtension[];
+  /** @deprecated 2.x name of `extensions`. */
+  erweiterungen?: readonly AnyServerExtension[];
 }
 
 export interface WeeklyRunReport {
@@ -148,7 +150,7 @@ export async function evaluateWeek(
   // Opted-out members do not appear in the newspaper at all, not even in overtakes or as newcomers.
   const excluded = new Set(guild.members.filter((m) => isOptedOut(m, optOuts)).map((m) => m.id));
   const extras = await issueExtras({
-    store: deps.store, guild, from, to, metrics, excluded, previous, erweiterungen: deps.erweiterungen,
+    store: deps.store, guild, from, to, metrics, excluded, previous, extensions: deps.extensions, erweiterungen: deps.erweiterungen,
     keyFigures: async (f, t) => (await weekBasis(deps, t, guild, historyDates, { from: f, to: t }))?.metrics ?? null,
   });
   const facts = collectFacts({ from, to, metrics, members: guild.members, before, end, activity, titles, excluded, recent: recent.facts, extraFacts: extras.extraFacts });

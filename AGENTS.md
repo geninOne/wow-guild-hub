@@ -27,20 +27,22 @@ Blizzard API ──> collectors (scheduled functions) ──> Netlify Blobs ─�
 | `src/api/` | `router.ts` dispatches `/api/*`; one `*-view.ts` per view; `http.ts` builds JSON responses with cache headers |
 | `src/store.ts` | `JsonStore` interface: Netlify Blobs in production, in-memory store in tests |
 | `src/model.ts`, `src/api/types.ts` | Stored records and API response types (shared with `web/`) |
-| `src/sprache.ts` | `Fassungen`: a text in every UI language |
+| `src/language.ts` | `Translations`: a text in every UI language |
 | `web/src/` | React app: `pages/`, `components/`, `lib/`, `styles/theme.css` |
 | `web/build/` | Build-time helpers (HTML head, error page, site URL from `WEBSITE_*` variables) |
 | `config/*.json` | Static game data the API does not provide (dungeons, instance images, stat cards) |
 | `scripts/` | Local tools: trigger collectors, sample data, blob copy, release helpers |
 | `test/` | vitest, mirrors `src/` and `web/`; recorded API responses in `test/fixtures` |
 
-**Extension points.** Modules add features without touching core files. They live in `src/erweiterungen/<id>/`
-and `web/src/erweiterungen/<id>/` and register with one line each in `src/erweiterungen/index.ts` and
-`web/src/erweiterungen/index.ts`. Hooks: own API routes, extra data on the character page, newspaper articles,
+**Extension points.** Modules add features without touching core files. They live in `src/extensions/<id>/` and
+`web/src/extensions/<id>/` and register with one line each in `src/extensions/index.ts` and
+`web/src/extensions/index.ts`. Hooks: own API routes, extra data on the character page, newspaper articles,
 statistics and character tabs, own pages, legal pages. Full reference: [docs/extensions.md](docs/extensions.md).
-Downstream forks keep private modules there, so the interfaces in `src/erweiterungen/typen.ts` and
-`web/src/erweiterungen/typen.ts` are a public API: change them only in a backwards-compatible way or as a
-breaking change (see below).
+Downstream forks keep private modules there, so the interfaces in `src/extensions/types.ts` and
+`web/src/extensions/types.ts` are a public API: change them only in a backwards-compatible way or as a breaking
+change (see below). Until 4.0 the 2.x registries (`src/erweiterungen/index.ts`, `web/src/erweiterungen/index.ts`)
+and the deprecated aliases at the 2.x paths stay as well; `src/extensions/legacy.ts` and
+`web/src/extensions/legacy.tsx` convert 2.x modules.
 
 ## Commands
 
@@ -65,10 +67,10 @@ is done. Tests need no credentials; never add tests that call the real Blizzard 
 ## Conventions
 
 - **Language.** Write new code, identifiers, comments, test names, log and error messages, scripts, workflows and
-  docs in English. Much of the existing code is still German; it is being migrated area by area in dedicated pull
-  requests. Do not mix renames into feature or fix pull requests, and do not rename German identifiers you merely
+  docs in English. Some existing code and comments are still German; they are migrated area by area in dedicated
+  pull requests. Do not mix renames into feature or fix pull requests, and do not rename German identifiers you merely
   touch. Fields from the Blizzard API keep their original names.
-- **UI texts are translations, not code.** Every visible text is a `Fassungen` object with `de` and `en`
+- **UI texts are translations, not code.** Every visible text is a `Translations` object with `de` and `en`
   (required) and optionally `schwaebisch` and `bayrisch`. Add or change all languages you can; missing dialects fall
   back to German. Do not remove dialects.
 - **No em dashes** (U+2014) anywhere in texts, comments or docs.
@@ -108,10 +110,12 @@ is done. Tests need no credentials; never add tests that call the real Blizzard 
      German aliases of 2.x (`/api/zeitung`, `/api/stats/woche`, `?gilde=`, …) in `src/api/router.ts`;
    - page URLs and their redirects in `netlify.toml` (`/charakter/*`, `/berufe`, `/zeitung`, `?reiter=`, …);
    - environment variable names, Netlify function names and their schedules;
-   - the extension interfaces (`src/erweiterungen/typen.ts`, `web/src/erweiterungen/typen.ts`).
+   - the extension interfaces (`src/extensions/types.ts`, `web/src/extensions/types.ts`) and, until 4.0, the
+     deprecated 2.x paths (`src/erweiterungen/`, `web/src/erweiterungen/`, `src/sprache.ts`,
+     `web/src/lib/sprache.tsx`, `src/weekly/zeitung-facts.ts`, `src/weekly/bausteine.ts`).
    Readers must tolerate old data (missing fields, old shapes). If a change here is unavoidable, it is a breaking
    change (`!`) with upgrade notes.
-5. **UI texts in every language.** See Conventions: `de` and `en` are required by the `Fassungen` type, keep the
+5. **UI texts in every language.** See Conventions: `de` and `en` are required by the `Translations` type, keep the
    dialects in step where they exist.
 6. **Fork safety in workflows.** Never use `pull_request_target`, never check out or run fork code with secrets,
    keep `permissions:` minimal (default `contents: read`), use `persist-credentials: false` on checkout, and pin

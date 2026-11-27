@@ -1,13 +1,17 @@
+// Extension tests of 2.1.5, kept to prove that modules written for 2.x still work in 3.x through the deprecated names
+// (src/erweiterungen/typen.ts, src/weekly/zeitung-facts.ts). Changed against 2.1.5: only imports and calls of core
+// internals that changed in 3.x (marked `3.x`), and the API field `erweiterungen`, which is now `extensions`. Removed in 4.0.
 // Erweiterungspunkte des Servers: ohne Module bleibt der Kern für sich, eine Test-Erweiterung hängt sich an alle Stellen.
 import { describe, expect, test } from "vitest";
-import { buildNewspaperView, rubrik } from "../../src/api/newspaper-view";
+import { buildNewspaperView as buildZeitungView, sectionName as rubrik } from "../../src/api/newspaper-view";
 import { handleApi } from "../../src/api/router";
+import { fromLegacyFact } from "../../src/extensions/legacy";
 import type { CharacterView } from "../../src/api/types";
 import type { ServerErweiterung } from "../../src/erweiterungen/typen";
 import type { DaySnapshot, GuildRecord, WeeklyRecord } from "../../src/model";
 import { createMemoryStore } from "../../src/store";
-import type { ErweiterungsFakt } from "../../src/weekly/newspaper-facts";
-import { phraseGenerator } from "../../src/weekly/newspaper-text";
+import type { ErweiterungsFakt } from "../../src/weekly/zeitung-facts";
+import { phraseGenerator as bausteinGenerator } from "../../src/weekly/newspaper-text";
 import { factsForModel } from "../../src/weekly/claude-text";
 import { runWeeklyEvaluation } from "../../src/weekly/run";
 import { member } from "../helpers/members";
@@ -71,13 +75,13 @@ describe("Kern ohne Erweiterungen", () => {
     const res = await handleApi(new Request("https://x/api/characters/anna"), store, undefined, opts);
     expect(res.status).toBe(200);
     expect(res.headers.get("Netlify-Cache-Tag")).toBeNull();
-    expect(await res.json()).not.toHaveProperty("erweiterungen");
+    expect(await res.json()).not.toHaveProperty("extensions");
   });
 
   test("Wochenzeitung ohne Meldungen von Erweiterungen; alte Rubrik Erfolge bleibt übersetzt", async () => {
     const store = await storeMitGilde();
     await storeWoche(store);
-    await runWeeklyEvaluation({ store, now: () => new Date(NOW), generator: phraseGenerator, serverStart: null, erweiterungen: [] });
+    await runWeeklyEvaluation({ store, now: () => new Date(NOW), generator: bausteinGenerator, serverStart: null, erweiterungen: [] });
     const record = await store.get<WeeklyRecord>("weekly/2026-11-14");
     expect(record).not.toBeNull();
     expect([record!.zeitung.lead, ...record!.zeitung.articles].map((a) => a.kind)).not.toContain("umfrage");
@@ -117,16 +121,16 @@ describe("Kern mit Test-Erweiterung", () => {
     const store = await storeMitGilde();
     const anna = await handleApi(new Request("https://x/api/characters/anna"), store, undefined, opts);
     expect(anna.headers.get("Netlify-Cache-Tag")).toBe("umfragen");
-    expect(((await anna.json()) as CharacterView).erweiterungen).toEqual({ umfragen: { stimmen: 42 } });
+    expect(((await anna.json()) as CharacterView).extensions).toEqual({ umfragen: { stimmen: 42 } });
     const bodo = await handleApi(new Request("https://x/api/characters/bodo"), store, undefined, opts);
     expect(bodo.headers.get("Netlify-Cache-Tag")).toBe("umfragen");
-    expect(await bodo.json()).not.toHaveProperty("erweiterungen");
+    expect(await bodo.json()).not.toHaveProperty("extensions");
   });
 
   test("Wochenartikel erscheint in der Ausgabe mit eigener Art, Rubrik und Texten in Deutsch und Englisch", async () => {
     const store = await storeMitGilde();
     await storeWoche(store);
-    await runWeeklyEvaluation({ store, now: () => new Date(NOW), generator: phraseGenerator, serverStart: null, erweiterungen: [testErweiterung] });
+    await runWeeklyEvaluation({ store, now: () => new Date(NOW), generator: bausteinGenerator, serverStart: null, erweiterungen: [testErweiterung] });
     const record = (await store.get<WeeklyRecord>("weekly/2026-11-14"))!;
     // Nachrichtenwert 90: der Aufmacher
     const lead = record.zeitung.lead;
@@ -134,16 +138,17 @@ describe("Kern mit Test-Erweiterung", () => {
     expect(lead.headline === "Große Umfrage" || lead.headline === "Die Gilde hat gewählt").toBe(true);
     expect((lead.dialekte as { en?: { text: string } }).en?.text).toBe("Anna votes 42 times.");
     expect(record.zeitung.bausteine?.some((b) => b.startsWith("umfrage-kopf:"))).toBe(true);
-    const view = buildNewspaperView(guild, record, ["2026-11-14"]);
+    const view = buildZeitungView(guild, record, ["2026-11-14"]);
     expect(view.lead.section).toMatchObject({ de: "Umfragen", en: "Umfragen" });
     // Mit der Erweiterung kennt die Ansicht die Übersetzung der Rubrik.
     expect(rubrik("Umfragen", [testErweiterung])).toEqual({ de: "Umfragen", en: "Polls" });
   });
 
   test("Dialekte fallen auf Deutsch zurück, die KI bekommt Rubrik, Art und die Felder der Erweiterung", async () => {
-    const facts = [umfrageFakt([1])];
-    const ctx = { week: "2026-11-14", name: (id: number) => (id === 1 ? "Anna" : "Bodo"), allNames: ["Anna", "Bodo"], sprachen: ["de", "en", "schwaebisch"] as const };
-    const r = await phraseGenerator(facts, ctx);
+    // 3.x: the core converts 2.x articles before its text generators see them.
+    const facts = [umfrageFakt([1])].map(fromLegacyFact);
+    const ctx = { week: "2026-11-14", name: (id: number) => (id === 1 ? "Anna" : "Bodo"), allNames: ["Anna", "Bodo"], languages: ["de", "en", "schwaebisch"] as const };
+    const r = await bausteinGenerator(facts, ctx);
     expect(r.articles[0].dialekte?.schwaebisch?.text).toBe("Anna stimmt 42 Mal ab.");
     expect(factsForModel(facts, ctx)).toEqual([{ nr: 0, rubrik: "Aufmacher", art: "umfrage", abstimmende: ["Anna"], stimmen: 42 }]);
   });

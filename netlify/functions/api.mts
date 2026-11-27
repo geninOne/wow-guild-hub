@@ -2,7 +2,7 @@ import { purgeCache, type Config, type Context } from "@netlify/functions";
 import { handleApi } from "../../src/api/router";
 import { createNetlifyStore } from "../../src/store";
 
-// Umgebung, IP und Cache-Leeren gehen an die Erweiterungen (src/erweiterungen); der Kern selbst braucht sie nicht.
+// Environment, IP and cache purging are for the extensions (src/extensions); the core itself does not need them.
 export default (req: Request, context: Context) =>
   handleApi(req, createNetlifyStore(), undefined, {
     env: process.env,

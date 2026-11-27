@@ -4,8 +4,8 @@ import { ActivityOverview } from "../components/ActivityOverview";
 import { DungeonOverview } from "../components/DungeonOverview";
 import { GuildDistribution } from "../components/GuildDistribution";
 import { GuildStats, PERIODS } from "../components/GuildStats";
-import { OBERFLAECHEN_ERWEITERUNGEN } from "../erweiterungen";
-import type { StatistikReiter } from "../erweiterungen/typen";
+import { registeredUiExtensions } from "../extensions/registry";
+import type { StatsTab } from "../extensions/types";
 import { useLanguage, type Translations } from "../lib/language";
 import { NotFoundPage } from "./NotFoundPage";
 
@@ -16,12 +16,12 @@ const TABS = [
   { id: "dungeons", label: { de: "Dungeons und Raids", en: "Dungeons and Raids", schwaebisch: "Dungeons ond Raids", bayrisch: "Dungeons und Raids" }, path: "/statistik/dungeons" },
 ] as const satisfies readonly { id: string; label: Translations; path: string }[];
 
-type Tab = { id: string; label: Translations; path: string; Komponente?: StatistikReiter["Komponente"] };
+type Tab = { id: string; label: Translations; path: string; Component?: StatsTab["Component"] };
 
 /** Tabs of the core, followed by those of the extensions. */
 function allTabs(): Tab[] {
-  const extra = OBERFLAECHEN_ERWEITERUNGEN.flatMap((e) => e.statistikReiter ?? []).filter((r) => !TABS.some((t) => t.id === r.id));
-  return [...TABS, ...extra.map((r) => ({ id: r.id, label: r.label, path: `/statistik/${r.id}`, Komponente: r.Komponente }))];
+  const extra = registeredUiExtensions().flatMap((e) => e.statsTabs ?? []).filter((r) => !TABS.some((t) => t.id === r.id));
+  return [...TABS, ...extra.map((r) => ({ id: r.id, label: r.label, path: `/statistik/${r.id}`, Component: r.Component }))];
 }
 
 const SECTIONS: Translations = { de: "Bereiche", en: "Sections" };
@@ -89,7 +89,7 @@ export function StatsPage() {
         {tab.id === "allgemein" && <GuildDistribution />}
         {tab.id === "aktivitaet" && <ActivityOverview />}
         {tab.id === "dungeons" && <DungeonOverview guild={guild} onGuild={(nextGuild) => update(kind, null, nextGuild)} />}
-        {tab.Komponente && <tab.Komponente guild={guild} onGuild={(nextGuild) => update(kind, null, nextGuild)} />}
+        {tab.Component && <tab.Component guild={guild} onGuild={(nextGuild) => update(kind, null, nextGuild)} />}
         {tab.id === "gilde" && (
           <GuildStats
             kind={kind}

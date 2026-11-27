@@ -15,7 +15,7 @@ const FACTS: NewspaperFact[] = [
 const names: Record<number, string> = { 1: "Anna", 2: "Bodo", 3: "Cleo" };
 const ctx = { week: "2026-W46", name: (id: number) => names[id], allNames: ["Anna", "Bodo", "Cleo"] };
 /** Like an installation with all languages (WEBSITE_LANGUAGES=de,schwaebisch,bayrisch,en). */
-const ctxAll = { ...ctx, sprachen: LANGUAGES };
+const ctxAll = { ...ctx, languages: LANGUAGES };
 
 const good = {
   artikel: [
