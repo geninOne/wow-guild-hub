@@ -4,7 +4,7 @@ import { loadFixture } from "../helpers/fixtures";
 
 const ICON = "https://render.worldofwarcraft.com/forever-eu/icons/56/134586.jpg";
 
-test("Rezept mit hergestelltem Gegenstand: Qualität, Stufe, Tooltip und Materialien", () => {
+test("recipe with a crafted item: quality, level, tooltip and reagents", () => {
   const r = toRecipeDetail(loadFixture("recipe-2408").data, ICON, loadFixture("item-4343").data);
   expect(r).toMatchObject({
     id: 2408,
@@ -27,7 +27,7 @@ test("Rezept mit hergestelltem Gegenstand: Qualität, Stufe, Tooltip und Materia
   });
 });
 
-test("Verzauberung ohne Gegenstand: Beschreibung statt Gegenstand", () => {
+test("enchantment without an item: description instead of item", () => {
   const r = toRecipeDetail(loadFixture("recipe-4289").data, null, null);
   expect(r.item).toBeNull();
   expect(r.name).toBe("Armschiene - Minderwertige Ausdauer");
@@ -35,7 +35,7 @@ test("Verzauberung ohne Gegenstand: Beschreibung statt Gegenstand", () => {
   expect(r.reagents).toEqual([{ id: 247786, name: "Magiepartikel", quantity: 1 }]);
 });
 
-test("Verbrauchsgut: keine Gegenstandsstufe, kein Platz, Wirkung als Zauber", () => {
+test("consumable: no item level, no slot, effect as a spell", () => {
   const recipe = {
     id: 1838,
     name: "Leinenverband",
@@ -52,13 +52,13 @@ test("Verbrauchsgut: keine Gegenstandsstufe, kein Platz, Wirkung als Zauber", ()
   expect(r.description).toBeNull();
 });
 
-test("Gegenstand nicht abrufbar: Name aus dem Rezept, sonst leer", () => {
+test("item not retrievable: name from the recipe, otherwise empty", () => {
   const r = toRecipeDetail({ ...loadFixture("recipe-2408").data, crafted_quantity: { value: 5 } }, null, null);
   expect(r.craftedQuantity).toBe(5);
   expect(r.item).toEqual({ id: 4343, name: "Braune Leinenhose", quality: null, itemLevel: null, tooltip: null });
 });
 
-test("Tasche: Platzzahl im Tooltip", () => {
+test("bag: slot count in the tooltip", () => {
   const item = { name: "Leinentasche", quality: { type: "COMMON" }, preview_item: { container_slots: { value: 6, display_string: "6 Platz Behälter" } } };
   const r = toRecipeDetail({ id: 3755, name: "Leinentasche", crafted_item: { id: 4238, name: "Leinentasche" } }, null, item);
   expect(r.item?.tooltip?.containerSlots).toBe("6 Platz Behälter");

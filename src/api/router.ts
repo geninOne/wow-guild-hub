@@ -12,7 +12,7 @@ import type {
 } from "../model";
 import type { JsonStore } from "../store";
 import { isMonth, isGuildWeek, isWeekId } from "../lib/time";
-import { SERVER_START } from "../serverstart";
+import { SERVER_START } from "../server-start";
 import { loadActivityView } from "./activity-view";
 import { loadZeitungArchive, loadZeitungView } from "./zeitung-view";
 import { buildCharacterView, findMember } from "./character-view";

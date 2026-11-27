@@ -1,6 +1,6 @@
 import type { LevelUpEvent, LevelUpLog } from "../model";
 
-/** Ein Ereignis je erreichtem Level, alle mit demselben Zeitpunkt. Ohne Vorwert keine Ereignisse. */
+/** One event per level reached, all with the same time. No events without a previous value. */
 export function detectLevelUps(
   characterId: number,
   prevLevel: number | undefined,
@@ -13,7 +13,7 @@ export function detectLevelUps(
   return events;
 }
 
-/** Hängt nur Ereignisse an, deren Paar (Charakter, Level) noch fehlt: das erste Erreichen zählt. */
+/** Appends only events whose (character, level) pair is still missing: the first time a level is reached counts. */
 export function appendLevelUps(log: LevelUpLog, events: LevelUpEvent[]): LevelUpLog {
   const seen = new Set(log.events.map((e) => `${e.characterId}:${e.level}`));
   const added: LevelUpEvent[] = [];

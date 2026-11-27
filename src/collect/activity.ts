@@ -4,19 +4,19 @@ import type { JsonStore } from "../store";
 
 export interface LoginSeen {
   characterId: number;
-  /** Login-Zeitpunkt laut Blizzard. */
+  /** Login time according to Blizzard. */
   at: string;
-  /** Ganze Tage seit dem vorigen bekannten Login. */
+  /** Whole days since the previous known login. */
   awayDays: number;
 }
 
-/** Ab so vielen Tagen Pause wird ein Login als Rückkehr festgehalten. */
+/** A login after a break of at least this many days is recorded as a return. */
 export const RETURN_MIN_DAYS = 7;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /**
- * Neuer Login, wenn sich der Zeitpunkt gegenüber dem gespeicherten Datensatz nach vorn bewegt hat.
- * Ohne Vorwert entsteht nur die Basislinie: sonst würde der erste Lauf alte Logins als frisch zählen.
+ * New login if the time has moved forward compared to the stored record.
+ * Without a previous value only the baseline is set: otherwise the first run would count old logins as fresh.
  */
 export function detectLogin(previous: CharacterRecord | null, next: CharacterRecord): LoginSeen | null {
   if (!previous?.lastLoginAt || !next.lastLoginAt) return null;
@@ -25,7 +25,7 @@ export function detectLogin(previous: CharacterRecord | null, next: CharacterRec
   return { characterId: next.id, at: next.lastLoginAt, awayDays };
 }
 
-/** Trägt Wochenstunden ein, sortiert und ohne Doppelte. `added` zählt die wirklich neuen Einträge. */
+/** Adds week hours, sorted and without duplicates. `added` counts the entries that are actually new. */
 export function addHours(
   week: ActivityWeek,
   entries: { characterId: number; hour: number }[],
@@ -42,7 +42,7 @@ export function addHours(
   return { week: { ...week, characters }, added };
 }
 
-/** Hält Rückkehrer ab `RETURN_MIN_DAYS` fest, je Charakter die längste Pause der Woche. */
+/** Records returners from `RETURN_MIN_DAYS` on, per character the longest break of the week. */
 export function addReturns(
   week: ActivityWeek,
   entries: { characterId: number; awayDays: number }[],
@@ -58,7 +58,7 @@ export function addReturns(
   return { week: changed ? { ...week, returns } : week, changed };
 }
 
-/** Schreibt die Logins in die Wochen-Blobs `activity/{Woche}`; je betroffener Woche ein Lesen und höchstens ein Schreiben. */
+/** Writes the logins to the week blobs `activity/{week}`; per affected week one read and at most one write. */
 export async function recordActivity(store: JsonStore, logins: LoginSeen[]): Promise<number> {
   const byWeek = new Map<string, { characterId: number; hour: number; awayDays: number }[]>();
   for (const login of logins) {

@@ -3,7 +3,7 @@ import type { CollectDeps } from "./collect/guild";
 import { loadConfig } from "./config";
 import { createNetlifyStore } from "./store";
 
-/** Verdrahtung für die Functions: Konfiguration aus der Umgebung, echter Client, Netlify Blobs. */
+/** Wiring for the functions: configuration from the environment, real client, Netlify Blobs. */
 export function createRuntime(env: Record<string, string | undefined> = process.env): CollectDeps {
   const config = loadConfig(env);
   return {

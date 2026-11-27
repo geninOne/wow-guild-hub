@@ -3,7 +3,7 @@ import { STAT_CATEGORIES, STAT_DEFINITIONS, statDefinition } from "../../src/sta
 import { mapStatValues } from "../../src/transform/character";
 import { loadFixture } from "../helpers/fixtures";
 
-test("Statische Liste: eindeutige IDs, jede Statistik in einer bekannten Kategorie, deutsche Namen", () => {
+test("static list: unique IDs, every statistic in a known category, German names", () => {
   const ids = STAT_DEFINITIONS.map((s) => s.id);
   expect(new Set(ids).size).toBe(ids.length);
   const categories = new Set(STAT_CATEGORIES.map((c) => c.id));
@@ -16,7 +16,7 @@ test("Statische Liste: eindeutige IDs, jede Statistik in einer bekannten Kategor
   expect(statDefinition(999999)).toBeUndefined();
 });
 
-test("Jede Statistik der Beispielantwort steht in der Liste", () => {
+test("every statistic of the sample response is in the list", () => {
   const values = mapStatValues(loadFixture("chordrak-statistics").data)!.values;
   for (const id of Object.keys(values)) expect(statDefinition(id), id).toBeDefined();
 });

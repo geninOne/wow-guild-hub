@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any -- Rohantworten der API sind untypisiert */
+/* eslint-disable @typescript-eslint/no-explicit-any -- raw API responses are untyped */
 import type { BlizzardClient, Namespace } from "../blizzard/client";
 import { INSTANCE_IMAGE_IDS } from "../instance-images";
 import { PROFESSION_NAMES_DE } from "../transform/professions";
@@ -31,29 +31,29 @@ export interface StaticRunReport {
   treesAdded: number;
   spellIconsAdded: number;
   itemIconsAdded: number;
-  /** Gegenstandsstufen aus `/data/wow/item/{id}`, Ersatz für die fehlende Stufe in der Ausrüstung. */
+  /** Item levels from `/data/wow/item/{id}`, a substitute for the missing level in the equipment. */
   itemLevelsAdded: number;
   instanceAchievementsAdded: number;
-  /** Erfolge, deren `is_account_wide` dieser Lauf geholt hat. */
+  /** Achievements whose `is_account_wide` this run fetched. */
   accountWideAdded: number;
   recipesAdded: number;
   reputationGroupsChecked: number;
   instanceImagesAdded: number;
   professionIconsAdded: number;
-  /** Charaktere, deren Werte dieser Lauf geholt hat (Ansicht "Werte"). */
+  /** Characters whose attributes this run fetched ("Werte" view). */
   attributesFetched: number;
-  /** Charaktere, deren Werte veraltet sind, aber im Budget keinen Platz mehr hatten; sie folgen im nächsten Lauf. */
+  /** Characters whose attributes are outdated but did not fit into the budget; they follow in the next run. */
   attributesPending: number;
   skipped: number;
-  /** Charaktere ohne Eintrag in `character-index`, die dieser Lauf selbst gelesen hat. */
+  /** Characters without an entry in `character-index` that this run read itself. */
   charactersRead: number;
-  /** Charaktere ohne Indexeintrag, für die das Zeitlimit der Vorarbeit nicht reichte. */
+  /** Characters without an index entry for which the time limit of the preparation was not enough. */
   charactersUnread: number;
-  /** Phasen, die wegen des Zeitbudgets gar nicht begonnen haben. */
+  /** Phases that did not start at all because of the time budget. */
   notStarted: string[];
-  /** Dauer je Phase in Millisekunden (prep, attributes, trees, spells, ... , finish). */
+  /** Duration per phase in milliseconds (prep, attributes, trees, spells, ... , finish). */
   phases: Record<string, number>;
-  /** Ein anderer Lauf hielt die Sperre; dieser hat nichts getan. */
+  /** Another run held the lock; this one did nothing. */
   busy?: true;
   durationMs: number;
 }
@@ -66,25 +66,25 @@ async function ensureList(client: BlizzardClient, store: JsonStore, key: string,
   await store.set(key, { items } satisfies NamedList);
 }
 
-/** Erfolgskategorien mit Dungeons und Schlachtzügen. Unterkategorien (Set-Erfolge) gehören nicht dazu. */
+/** Achievement categories with dungeons and raids. Subcategories (set achievements) are not included. */
 export const INSTANCE_CATEGORIES: Record<number, InstanceAchievement["kind"]> = { 15593: "dungeon", 15594: "raid" };
 
 const iconOf = (data: any): string | null => (data?.assets ?? []).find((a: any) => a.key === "icon")?.value ?? null;
 const tileOf = (data: any): string | null => (data?.assets ?? []).find((a: any) => a.key === "tile")?.value ?? null;
 
-/** Neue Gegenstandsstufen je Lauf; beim ersten Lauf sind es fast tausend, das Budget gehört auch den übrigen Tabellen. */
+/** New item levels per run; the first run has almost a thousand, and the budget also belongs to the other tables. */
 const MAX_NEW_ITEM_LEVELS_PER_RUN = 300;
-/** Neue Erfolgsangaben je Lauf; die Gilde kennt gut 80 Erfolge, die Grenze schützt nur das übrige Budget. */
+/** New achievement flags per run; the guild knows a good 80 achievements, the cap only protects the remaining budget. */
 const MAX_NEW_ACCOUNT_WIDE_PER_RUN = 200;
 
-/** Leereinträge werden frühestens nach dieser Zeit erneut abgefragt. */
+/** Empty entries are requested again no earlier than after this time. */
 export const RETRY_AFTER_MS = 7 * 24 * 60 * 60 * 1000;
-/** Höchstens so viele Leereinträge je Tabelle und Lauf neu prüfen, damit neue Einträge und spätere Tabellen Budget behalten. */
+/** Recheck at most this many empty entries per table and run so new entries and later tables keep some budget. */
 export const MAX_RETRIES_PER_RUN = 100;
 
 /**
- * Leereinträge, die wieder an der Reihe sind: ohne Zeitstempel (ältere Blobs) zuerst, dann die am längsten nicht geprüften.
- * `checked` ist der Nebenblob `<key>-checked` mit dem Zeitpunkt der letzten erfolglosen Abfrage je ID.
+ * Empty entries that are due again: without a timestamp (older blobs) first, then those unchecked for the longest time.
+ * `checked` is the side blob `<key>-checked` with the time of the last unsuccessful request per ID.
  */
 export function retriesDue(
   ids: number[],
@@ -105,10 +105,10 @@ export function retriesDue(
 }
 
 /**
- * Holt fehlende Einträge einer ID-Tabelle und prüft Leereinträge nach einiger Zeit erneut.
- * 404 oder eine Antwort ohne Wert wird als null gespeichert, mit Zeitstempel im Nebenblob `<key>-checked`;
- * andere Fehler lassen den Eintrag unverändert und werden beim nächsten Lauf erneut versucht.
- * `seed` sind schon bekannte Werte, die ohne Anfrage übernommen werden.
+ * Fetches missing entries of an ID table and rechecks empty entries after some time.
+ * 404 or a response without a value is stored as null, with a timestamp in the side blob `<key>-checked`;
+ * other errors leave the entry unchanged and are retried in the next run.
+ * `seed` are already known values that are taken over without a request.
  */
 async function fillMap<T>(
   deps: CollectDeps,
@@ -126,7 +126,7 @@ async function fillMap<T>(
   ]);
   const map = stored ?? {};
   const checked = storedChecked ?? {};
-  // Neu angelegte Tabellen werden auch leer geschrieben, danach nur noch bei Änderungen.
+  // Newly created tables are written even when empty, afterwards only on changes.
   let mapChanged = stored === null;
   let checkedChanged = false;
   for (const [id, value] of Object.entries(opts.seed ?? {})) {
@@ -162,17 +162,17 @@ async function fillMap<T>(
   return { added, skipped: pool.skipped.length };
 }
 
-/** Rezepte mit Lücken: nicht abrufbar, ohne Icon oder mit hergestelltem Gegenstand ohne Details. */
+/** Recipes with gaps: not available, without an icon, or with a crafted item without details. */
 function recipeIncomplete(detail: RecipeDetail | null | undefined): boolean {
   return detail === null || detail === undefined || detail.icon === null || (detail.item !== null && detail.item.tooltip === null);
 }
 
-/** Je Rezept bis zu drei Anfragen; weniger Neuprüfungen je Lauf als bei den einfachen Tabellen. */
+/** Up to three requests per recipe; fewer rechecks per run than for the simple tables. */
 const MAX_RECIPE_RETRIES_PER_RUN = 30;
 
 /**
- * Rezeptdetails: je Rezept Rezept, Icon und hergestellter Gegenstand. Ein Fehler lässt das ganze Rezept offen.
- * Rezepte mit Lücken werden wie die Icons nach einiger Zeit erneut abgefragt (Nebenblob `static/recipes-checked`).
+ * Recipe details: per recipe the recipe, icon and crafted item. One error leaves the whole recipe open.
+ * Recipes with gaps are requested again after some time, like the icons (side blob `static/recipes-checked`).
  */
 async function fillRecipes(
   deps: CollectDeps,
@@ -207,7 +207,7 @@ async function fillRecipes(
       const recipe = await deps.client.get(`/data/wow/recipe/${id}`, "static");
       let detail: RecipeDetail | null;
       if (!ok(recipe.status)) {
-        // Ein früher gespeichertes Rezept bleibt stehen, wenn es jetzt nicht abrufbar ist.
+        // A previously stored recipe is kept if it is not available now.
         detail = map[String(id)] ?? null;
       } else {
         const itemId = recipe.data?.crafted_item?.id;
@@ -241,7 +241,7 @@ function toInstanceAchievement(raw: any, kind: InstanceAchievement["kind"], orde
   };
 }
 
-/** Lädt fehlende Definitionen der Dungeon- und Raid-Erfolge; die Kategorien selbst jedes Mal (zwei Anfragen). */
+/** Loads missing definitions of dungeon and raid achievements; the categories themselves every time (two requests). */
 async function fillInstanceAchievements(deps: CollectDeps, deadline: number): Promise<{ added: number; skipped: number }> {
   const key = "static/instance-achievements";
   const categories = Object.entries(INSTANCE_CATEGORIES);
@@ -269,7 +269,7 @@ async function fillInstanceAchievements(deps: CollectDeps, deadline: number): Pr
     { concurrency: deps.config.concurrency, deadline },
   );
   if (added > 0) {
-    // Reihenfolge der Kategorien; Einträge, die Blizzard nicht mehr listet, bleiben am Ende erhalten.
+    // Order of the categories; entries Blizzard no longer lists are kept at the end.
     const listed = wanted.flatMap((w) => (known.has(w.id) ? [known.get(w.id)!] : []));
     const rest = [...known.values()].filter((a) => !wanted.some((w) => w.id === a.id));
     await deps.store.set(key, { achievements: [...listed, ...rest] } satisfies InstanceAchievementsRecord);
@@ -277,7 +277,7 @@ async function fillInstanceAchievements(deps: CollectDeps, deadline: number): Pr
   return { added, skipped: pool.skipped.length };
 }
 
-/** Fraktionsnamen bei jedem Lauf aus dem Verzeichnis (eine Anfrage), Gruppen inkrementell aus den Wurzelfraktionen. */
+/** Faction names on every run from the index (one request), groups incrementally from the root factions. */
 async function fillReputationFactions(deps: CollectDeps, deadline: number): Promise<{ checked: number; skipped: number }> {
   const key = "static/reputation-factions";
   const [res, prev] = await Promise.all([
@@ -311,12 +311,12 @@ async function fillReputationFactions(deps: CollectDeps, deadline: number): Prom
     ...[...groups.values()].filter((g) => !roots.includes(g.id)),
   ];
   const next: ReputationFactionsRecord = { names, groups: ordered, checkedRoots: [...checked] };
-  // Das Verzeichnis kommt jedes Mal; geschrieben wird nur, was sich geändert hat.
+  // The index is fetched every time; only what changed is written.
   if (JSON.stringify(next) !== JSON.stringify(prev)) await deps.store.set(key, next);
   return { checked: added, skipped: pool.skipped.length };
 }
 
-/** Was der Sammler über einen Charakter weiß, um zu entscheiden, ob seine Werte neu geholt werden. */
+/** What the collector knows about a character to decide whether its attributes are fetched again. */
 interface AttributeCandidate {
   id: number;
   slug: string;
@@ -324,8 +324,8 @@ interface AttributeCandidate {
 }
 
 /**
- * Charaktere, deren Werte fehlen oder seit dem letzten Abruf eingeloggt waren, nur dann ändern sich Werte.
- * Fehlende zuerst, dann die ältesten; was nicht ins Budget passt, kommt im nächsten Lauf dran.
+ * Characters whose attributes are missing or who logged in since the last fetch; only then do attributes change.
+ * Missing ones first, then the oldest; whatever does not fit into the budget is handled in the next run.
  */
 export function attributesDue(candidates: AttributeCandidate[], index: AttributesIndex): AttributeCandidate[] {
   const fetched = (c: AttributeCandidate) => index[String(c.id)] ?? "";
@@ -338,22 +338,22 @@ export function attributesDue(candidates: AttributeCandidate[], index: Attribute
 }
 
 /**
- * Anteil der Arbeitszeit, der zuerst den Charakterwerten gehört, solange Werte fällig sind.
- * Danach kommen die Nachholaufgaben (Icons, Rezepte, Gegenstandsstufen, Leereinträge) mit allem, was übrig ist,
- * und zum Schluss die Werte noch einmal mit dem Rest. So kommen die Werte in jedem Lauf voran.
+ * Share of the work time that goes to the character attributes first, as long as attributes are due.
+ * Then come the catch-up tasks (icons, recipes, item levels, empty entries) with everything that is left,
+ * and finally the attributes once more with the rest. This way the attributes make progress in every run.
  */
 export const ATTRIBUTES_BUDGET_SHARE = 0.4;
 
-/** Anteil des Budgets, den das Nachlesen von Charakteren ohne Indexeintrag höchstens bekommt. */
+/** Maximum share of the budget for reading characters without an index entry. */
 export const BOOTSTRAP_SHARE = 0.25;
-/** Gleichzeitige Blob-Zugriffe beim Nachlesen der Charaktere. */
+/** Concurrent blob reads when reading the characters. */
 const BOOTSTRAP_CONCURRENCY = 20;
 
 const ATTRIBUTES_INDEX_KEY = "attributes/index";
 
-/** Sperre gegen sich überlappende Läufe, wenn Netlify einen langsamen Lauf ein zweites Mal startet. */
+/** Lock against overlapping runs when Netlify starts a slow run a second time. */
 export const LOCK_KEY = "locks/collect-static";
-/** Nach dieser Zeit gilt eine Sperre als verwaist (abgestürzter Lauf) und wird übergangen. */
+/** After this time a lock counts as orphaned (crashed run) and is ignored. */
 export const LOCK_TTL_MS = 60_000;
 
 interface RunLock {
@@ -362,10 +362,10 @@ interface RunLock {
 }
 
 /**
- * Werte (`/statistics`) je Charakter in eigene Blobs `attributes/<id>`, gestaffelt über die Läufe alle vier Stunden.
- * 404 wird als Datensatz ohne Felder gespeichert, damit der Charakter erst nach dem nächsten Login wieder dran ist.
- * `due` kommt aus `attributesDue`: Charaktere ohne Werte zuerst, dann die ältesten fälligen Aktualisierungen.
- * Gibt zurück, wie viele geholt wurden und welche wegen der Deadline offen blieben.
+ * Attributes (`/statistics`) per character into own blobs `attributes/<id>`, staggered over the runs every four hours.
+ * 404 is stored as a record without fields so the character is only due again after the next login.
+ * `due` comes from `attributesDue`: characters without attributes first, then the oldest due updates.
+ * Returns how many were fetched and which stayed open because of the deadline.
  */
 async function fillAttributes(
   deps: CollectDeps,
@@ -383,7 +383,7 @@ async function fillAttributes(
       if (res.status === 200) {
         await deps.store.set(`attributes/${c.id}`, toAttributes(res.data, at));
       } else if (res.status === 404) {
-        // Vorhandene Werte bleiben stehen, nur ein Datensatz ohne Werte wird angelegt.
+        // Existing attributes are kept; only a record without attributes is created.
         if (!(await deps.store.get(`attributes/${c.id}`))) {
           await deps.store.set(`attributes/${c.id}`, { fetchedAt: at, fields: null, powerType: null });
         }
@@ -398,24 +398,24 @@ async function fillAttributes(
   return { fetched, open: pool.skipped };
 }
 
-/** Was der Lauf aus den Charakteren braucht: Gegenstände, Stufen, Rezepte und Kandidaten für die Werte. */
+/** What the run needs from the characters: items, levels, recipes and candidates for the attributes. */
 interface CharacterScan {
   itemIds: number[];
   equippedIds: number[];
   knownLevels: Record<string, number>;
   recipeIds: number[];
-  /** Abgeschlossene Erfolge aller Charaktere, für `is_account_wide`. */
+  /** Completed achievements of all characters, for `is_account_wide`. */
   achievementIds: number[];
   attributeCandidates: AttributeCandidate[];
-  /** Charaktere ohne Indexeintrag, die dieser Lauf selbst gelesen hat. */
+  /** Characters without an index entry that this run read itself. */
   read: number;
-  /** Charaktere ohne Indexeintrag, für die die Zeit nicht reichte; sie fehlen in diesem Lauf. */
+  /** Characters without an index entry for which the time was not enough; they are missing in this run. */
   unread: number;
 }
 
 /**
- * Sammelt die Angaben aus `character-index` (von `collect-guild` gepflegt). Nur Charaktere ohne Eintrag, etwa direkt
- * nach dem Update, werden aus `characters/<id>` gelesen, parallel und mit eigenem Zeitlimit.
+ * Collects the data from `character-index` (maintained by `collect-guild`). Only characters without an entry, e.g.
+ * right after the update, are read from `characters/<id>`, in parallel and with their own time limit.
  */
 async function scanCharacters(
   deps: CollectDeps,
@@ -450,7 +450,7 @@ async function scanCharacters(
     read: pool.completed.length,
     unread: pool.skipped.length + pool.failed.length,
   };
-  // Feste Reihenfolge, damit parallel gelesene Charaktere die Ergebnisse nicht umsortieren.
+  // Fixed order so characters read in parallel do not reorder the results.
   entries.sort((a, b) => a[0] - b[0]);
   for (const [id, e] of entries) {
     scan.itemIds.push(...e.itemIds);
@@ -488,13 +488,13 @@ const emptyReport = (at: string): StaticRunReport => ({
 export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunReport> {
   const { client, store, config } = deps;
   const started = Date.now();
-  /** Ab hier beginnt nichts Neues mehr; danach nur noch laufende Anfragen und das Schreiben am Ende. */
+  /** From here on nothing new starts; afterwards only running requests and the writes at the end. */
   const workEnd = workEndOf(started, config.budgetMs);
   const at = deps.now().toISOString();
   const report = emptyReport(at);
   const phases = report.phases;
 
-  /** Misst eine Phase; beginnt sie erst nach `deadline`, wird sie übersprungen und in `notStarted` vermerkt. */
+  /** Measures a phase; if it would only start after `deadline`, it is skipped and noted in `notStarted`. */
   async function phase<T>(name: string, deadline: number, fallback: T, fn: () => Promise<T>): Promise<T> {
     if (Date.now() >= deadline) {
       report.notStarted.push(name);
@@ -508,7 +508,7 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
     }
   }
 
-  // Vorarbeit: alles, was der Lauf aus dem Speicher braucht, in einem Zug.
+  // Preparation: everything the run needs from the store, in one go.
   let t = Date.now();
   const [lock, guild, characterIndex, attributesIndexStored, characterKeys, treeIndexStored] = await Promise.all([
     store.get<RunLock>(LOCK_KEY),
@@ -519,7 +519,7 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
     store.get<Record<string, number>>("static/talent-trees/index"),
   ]);
   if (lock && Date.parse(lock.until) > Date.now()) {
-    // Ein anderer Lauf arbeitet noch (Netlify hat neu gestartet); dieser endet sofort, ohne etwas zu schreiben.
+    // Another run is still working (Netlify restarted); this one ends right away without writing anything.
     phases.prep = Date.now() - t;
     return { ...report, busy: true, durationMs: Date.now() - started };
   }
@@ -540,11 +540,11 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
     const attributesToFetch = attributesDue(scan.attributeCandidates, attributesIndex);
     phases.prep = Date.now() - t;
 
-    // Zuerst die Werte mit ihrem Anteil an der verbleibenden Arbeitszeit.
+    // First the attributes with their share of the remaining work time.
     let attributesFetched = 0;
     let attributesOpen = attributesToFetch;
     if (attributesToFetch.length > 0) {
-      // Gemessen ab jetzt, damit eine lange Vorarbeit den Anteil der Werte nicht auffrisst.
+      // Measured from now so a long preparation does not eat up the attributes' share.
       const from = Date.now();
       const share = from + Math.floor((workEnd - from) * ATTRIBUTES_BUDGET_SHARE);
       const first = await phase("attributes", workEnd, null, () =>
@@ -556,7 +556,7 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
       }
     }
 
-    // Klassen, Völker und Talentbäume: je Klassenbaum einmal, mit allen zugehörigen Spec-Bäumen.
+    // Classes, races and talent trees: once per class tree, with all its spec trees.
     const treeIndex = treeIndexStored ?? {};
     let treesSkipped = 0;
     await phase("trees", workEnd, null, async () => {
@@ -590,7 +590,7 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
     });
 
     const none = { added: 0, skipped: 0 };
-    // Zauber-Icons für alle Talente aller gespeicherten Bäume.
+    // Spell icons for all talents of all stored trees.
     const spells = await phase("spells", workEnd, none, async () => {
       const trees = await Promise.all(
         Object.values(treeIndex).map((treeId) => store.get<TalentTreeRecord>(`static/talent-trees/${treeId}`)),
@@ -600,7 +600,7 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
       return fillMap(deps, "static/spell-icons", spellIds, (id) => `/data/wow/media/spell/${id}`, iconOf, workEnd, { at });
     });
 
-    // Rezeptdetails und Gegenstands-Icons für alles, was Gildenmitglieder tragen, kennen und verarbeiten.
+    // Recipe details and item icons for everything guild members wear, know and craft with.
     const recipes = await phase("recipes", workEnd, { map: {} as RecipeDetails, ...none }, () =>
       fillRecipes(deps, recipeIds, workEnd, at),
     );
@@ -608,7 +608,7 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
     const items = await phase("items", workEnd, none, () =>
       fillMap(deps, "static/item-icons", itemIds, (id) => `/data/wow/media/item/${id}`, iconOf, workEnd, { at }),
     );
-    // Seit dem 25.11.2026 fehlt die Stufe in der Ausrüstung frisch eingeloggter Charaktere; Ersatz aus dem Gegenstand selbst.
+    // Since 2026-11-25 the equipment of freshly logged-in characters lacks the level; substitute from the item itself.
     const levels = await phase("levels", workEnd, none, () =>
       fillMap(
         deps,
@@ -621,7 +621,7 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
       ),
     );
     const instances = await phase("instances", workEnd, none, () => fillInstanceAchievements(deps, workEnd));
-    // Accountweite Erfolge erbt jeder Twink; der Gildensammler zählt sie deshalb nicht als eigene Erfolge.
+    // Every alt inherits account-wide achievements; the guild collector therefore does not count them as its own.
     const accountWide = await phase("accountWide", workEnd, none, () =>
       fillMap(
         deps,
@@ -657,7 +657,7 @@ export async function runStaticCollection(deps: CollectDeps): Promise<StaticRunR
       ),
     );
 
-    // Zum Schluss die übrigen Werte mit allem, was die Nachholaufgaben übrig lassen.
+    // Finally the remaining attributes with everything the catch-up tasks leave over.
     if (attributesOpen.length > 0) {
       const rest = await phase("attributesRest", workEnd, null, () =>
         fillAttributes(deps, attributesOpen, attributesIndex, workEnd, at),

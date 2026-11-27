@@ -2,24 +2,25 @@ import { parseRankNames } from "./api/config";
 export interface Config {
   clientId: string;
   clientSecret: string;
-  /** Gildenslugs, die erste ist die Hauptgilde. Nie leer. */
+  /** Guild slugs, the first one is the main guild. Never empty. */
   guildSlugs: string[];
-  /** Spielversion für die Namespaces der Blizzard-API, derzeit nur `forever`. */
+  /** Game version for the Blizzard API namespaces, currently only `forever`. */
   gameVersion: GameVersion;
   region: string;
   locale: string;
   concurrency: number;
   budgetMs: number;
   /**
-   * Twink-Ränge je Gilden-Slug (Rangnummern), aufgelöst aus `TWINK_RANKS` und `GUILD_RANKS`. Twinks bekommen
-   * accountweite Erfolge nicht gezählt, weil sie sie vom Hauptcharakter erben. Fehlt es, zählen sie überall.
+   * Alt ranks per guild slug (rank numbers), resolved from `TWINK_RANKS` and `GUILD_RANKS`. Account-wide
+   * achievements are not counted for alts because they inherit them from the main character. If missing, they
+   * count everywhere.
    */
   twinkRanks?: Record<string, number[]>;
 }
 
 type Env = Record<string, string | undefined>;
 
-/** Unterstützte Spielversionen. Retail und Classic brauchen Realm-Pfade und folgen später. */
+/** Supported game versions. Retail and Classic need realm paths and follow later. */
 export const GAME_VERSIONS = ["forever"] as const;
 export type GameVersion = (typeof GAME_VERSIONS)[number];
 
@@ -27,40 +28,40 @@ function gameVersion(env: Env): GameVersion {
   const raw = (env.WOW_VERSION ?? "").trim().toLowerCase();
   if (raw === "") return "forever";
   if ((GAME_VERSIONS as readonly string[]).includes(raw)) return raw as GameVersion;
-  throw new Error(`Umgebungsvariable WOW_VERSION ist ungültig, erlaubt: ${GAME_VERSIONS.join(", ")}`);
+  throw new Error(`Environment variable WOW_VERSION is invalid, allowed: ${GAME_VERSIONS.join(", ")}`);
 }
 
 function required(env: Env, name: string): string {
   const value = env[name];
-  if (!value) throw new Error(`Umgebungsvariable ${name} fehlt`);
+  if (!value) throw new Error(`Environment variable ${name} is missing`);
   return value;
 }
 
-/** Zahl aus der Umgebung; ungültige Werte brechen mit dem Variablennamen ab (der Wert selbst wird nicht ausgegeben). */
+/** Number from the environment; invalid values abort with the variable name (the value itself is not printed). */
 function number(env: Env, name: string, fallback: number, opts: { min: number; integer?: boolean }): number {
   const raw = env[name];
   if (raw === undefined || raw === "") return fallback;
   const value = Number(raw);
   if (!Number.isFinite(value) || value < opts.min || (opts.integer && !Number.isInteger(value))) {
-    throw new Error(`Umgebungsvariable ${name} ist ungültig`);
+    throw new Error(`Environment variable ${name} is invalid`);
   }
   return value;
 }
 
-/** `GUILD_SLUGS` (kommagetrennt) vor `GUILD_SLUG`; eines von beiden ist Pflicht. */
+/** `GUILD_SLUGS` (comma-separated) before `GUILD_SLUG`; one of the two is required. */
 function guildSlugs(env: Env): string[] {
   if (env.GUILD_SLUGS === undefined || env.GUILD_SLUGS === "") {
     if (env.GUILD_SLUG) return [env.GUILD_SLUG];
-    throw new Error("Umgebungsvariable GUILD_SLUGS fehlt");
+    throw new Error("Environment variable GUILD_SLUGS is missing");
   }
   const slugs = [...new Set(env.GUILD_SLUGS.split(",").map((s) => s.trim()).filter((s) => s !== ""))];
-  if (slugs.length === 0) throw new Error("Umgebungsvariable GUILD_SLUGS ist ungültig");
+  if (slugs.length === 0) throw new Error("Environment variable GUILD_SLUGS is invalid");
   return slugs;
 }
 
 /**
- * `TWINK_RANKS`: kommagetrennte Rangnamen, wie sie in `GUILD_RANKS` stehen (Groß- und Kleinschreibung egal).
- * Ergebnis je Gilde die passenden Rangnummern; ohne Treffer leer.
+ * `TWINK_RANKS`: comma-separated rank names as they appear in `GUILD_RANKS` (case-insensitive).
+ * Result per guild: the matching rank numbers; empty without a match.
  */
 export function twinkRanks(env: Env): Record<string, number[]> {
   const wanted = new Set(

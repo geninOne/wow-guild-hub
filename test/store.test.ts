@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 import { createMemoryStore } from "../src/store";
 
-test("Speicher im RAM: get, set, list nach Präfix, Kopien statt Referenzen", async () => {
+test("in-memory store: get, set, list by prefix, copies instead of references", async () => {
   const s = createMemoryStore();
   expect(await s.get("x")).toBeNull();
   const value = { a: 1 };

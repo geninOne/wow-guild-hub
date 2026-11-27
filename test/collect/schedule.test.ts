@@ -4,10 +4,10 @@ import { expect, test } from "vitest";
 const scheduleOf = (name: string) =>
   /schedule:\s*"([^"]+)"/.exec(readFileSync(`netlify/functions/${name}.mts`, "utf8"))?.[1] ?? "";
 
-/** Minute eines Zeitplans; "@hourly" und "@daily" laufen zur vollen Stunde. */
+/** Minute of a schedule; "@hourly" and "@daily" run on the hour. */
 const minuteOf = (schedule: string) => (schedule.startsWith("@") ? 0 : Number(schedule.split(" ")[0]));
 
-test("collect-static läuft alle vier Stunden, versetzt zu collect-guild und collect-weekly", () => {
+test("collect-static runs every four hours, offset from collect-guild and collect-weekly", () => {
   const schedule = scheduleOf("collect-static");
   const [minute, hours, ...rest] = schedule.split(" ");
   expect(hours).toBe("*/4");

@@ -1,6 +1,6 @@
 import type { ApiResult, BlizzardClient } from "../../src/blizzard/client";
 
-/** Fake-Client: Schlüssel ist der Pfad ohne Query. Unbekannte Pfade liefern 404. Routen dürfen zwischen Läufen geändert werden. */
+/** Fake client: the key is the path without query. Unknown paths return 404. Routes may be changed between runs. */
 export function createFakeClient(routes: Record<string, ApiResult>): BlizzardClient & { calls: string[] } {
   const calls: string[] = [];
   return {

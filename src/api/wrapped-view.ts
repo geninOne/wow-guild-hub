@@ -2,8 +2,8 @@ import { addDays, berlinDate, dateOfWeekHour, isoWeeksBetween, monthOf, weekBoun
 import type { ActivityWeek, DaySnapshot, GuildRecord, MemberSummary, NamedList, WeeklyRecord } from "../model";
 import type { JsonStore } from "../store";
 import { withLateStarts } from "../lib/baseline";
-import { serverStartSnapshot, sinceServerStart, startsWithin } from "../lib/serverstart";
-import { SERVER_START } from "../serverstart";
+import { serverStartSnapshot, sinceServerStart, startsWithin } from "../lib/server-start";
+import { SERVER_START } from "../server-start";
 import { gain } from "../weekly/metrics";
 import { characterRef, characterTitles, weeklyIndex } from "./fun-common";
 import { lookupName } from "./guild-view";

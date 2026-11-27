@@ -1,4 +1,4 @@
-/** Deutsche Berufsnamen nach Berufs-ID. Die API liefert die Namen trotz de_DE englisch. */
+/** German profession names by profession ID. The API returns the names in English despite de_DE. */
 export const PROFESSION_NAMES_DE: Record<number, string> = {
   171: "Alchemie",
   164: "Schmiedekunst",
@@ -14,7 +14,7 @@ export const PROFESSION_NAMES_DE: Record<number, string> = {
   202: "Ingenieurskunst",
 };
 
-/** URL-Kürzel aus dem deutschen Namen: klein, Umlaute ausgeschrieben, Leerzeichen als Bindestrich. */
+/** URL slug from the German name: lowercase, umlauts spelled out, spaces as hyphens. */
 export function professionSlug(name: string): string {
   return name
     .toLowerCase()

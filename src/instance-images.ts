@@ -1,29 +1,35 @@
 import data from "../config/instanz-bilder.json";
 import dungeons from "../config/dungeons.json";
-import zusatz from "../config/zusatz-dungeons.json";
+import extraDungeons from "../config/zusatz-dungeons.json";
 
-/** Gepflegter Levelbereich und Bossliste je Instanz (`config/dungeons.json`). */
+/** Maintained level range and boss list per instance (`config/dungeons.json`). */
 export interface DungeonInfo {
   stufe: [number, number] | null;
   bosse: string[];
   /**
-   * Weitere Einträge der Boss-Kill-Statistik, die den Abschluss anzeigen, wenn die Statistik Instanz oder Endboss
-   * anders nennt als Erfolg und Bossliste (etwa "Siege über Erzmagier Arugal (Burg Schattenfang)").
+   * Additional entries of the boss kill statistic that indicate completion when the statistic names the instance
+   * or final boss differently than the achievement and boss list,
+   * e.g. "Siege über Erzmagier Arugal (Burg Schattenfang)".
    */
   statistik: { instanz: string; endboss: string }[];
-  /** Der Endboss steht nicht in der Boss-Kill-Statistik: kein Abschluss je Charakter nachweisbar. */
+  /** The final boss is not in the boss kill statistic: completion cannot be proven per character. */
   ohneStatistik: boolean;
 }
 
-/** Liest einen Eintrag aus `config/dungeons.json`; ungültige Stufen werden zu null, fehlende Bosse zu []. */
+/** Reads an entry from `config/dungeons.json`; invalid level ranges become null, missing bosses become []. */
 export function toDungeonInfo(raw: { stufe?: unknown; bosse?: unknown; statistik?: unknown; ohneStatistik?: unknown }): DungeonInfo {
-  const stufe = raw.stufe;
-  const valid = Array.isArray(stufe) && stufe.length === 2 && stufe.every((n) => typeof n === "number");
-  const bosse = Array.isArray(raw.bosse) ? raw.bosse.filter((b): b is string => typeof b === "string") : [];
-  const statistik = (Array.isArray(raw.statistik) ? raw.statistik : []).flatMap((e: { instanz?: unknown; endboss?: unknown }) =>
+  const levels = raw.stufe;
+  const valid = Array.isArray(levels) && levels.length === 2 && levels.every((n) => typeof n === "number");
+  const bosses = Array.isArray(raw.bosse) ? raw.bosse.filter((b): b is string => typeof b === "string") : [];
+  const stats = (Array.isArray(raw.statistik) ? raw.statistik : []).flatMap((e: { instanz?: unknown; endboss?: unknown }) =>
     typeof e?.instanz === "string" && typeof e.endboss === "string" ? [{ instanz: e.instanz, endboss: e.endboss }] : [],
   );
-  return { stufe: valid ? [stufe[0], stufe[1]] : null, bosse, statistik, ohneStatistik: raw.ohneStatistik === true };
+  return {
+    stufe: valid ? [levels[0], levels[1]] : null,
+    bosse: bosses,
+    statistik: stats,
+    ohneStatistik: raw.ohneStatistik === true,
+  };
 }
 
 export const DUNGEON_INFO: Record<string, DungeonInfo> = Object.fromEntries(
@@ -34,75 +40,75 @@ export const DUNGEON_INFO: Record<string, DungeonInfo> = Object.fromEntries(
 );
 
 /**
- * Dungeon außerhalb der Dungeonerforscher-Kriterien (`config/zusatz-dungeons.json`): einer, der in keinem Erfolg steht,
- * oder eine Hälfte eines Kriteriums für Gegenstücke beider Fraktionen. Der Abschluss kommt aus der Boss-Kill-Statistik
- * "Siege über ENDBOSS (INSTANZ)".
+ * Dungeon outside the "Dungeonerforscher" achievement criteria (`config/zusatz-dungeons.json`): one that is in no
+ * achievement, or one half of a criterion shared by counterparts of both factions. Completion comes from the boss kill
+ * statistic "Siege über ENDBOSS (INSTANZ)".
  */
 export interface ExtraDungeon {
   name: string;
-  /** Erfolgsstufe, in die er einsortiert wird ("Novize", "Erfahren", "Meister"). */
+  /** Achievement tier it is sorted into ("Novize", "Erfahren", "Meister"). */
   tier: string;
   info: DungeonInfo;
   source: { instance: string; finalBoss: string };
   image: number | string | null;
   /**
-   * Fraktion ("HORDE", "ALLIANCE"), für die der Dungeon zählt, sonst null. Blizzard spiegelt die Statistik von
-   * Gegenstücken auf die andere Fraktion; Siege von Charakteren der anderen Fraktion zählen deshalb nicht.
+   * Faction ("HORDE", "ALLIANCE") for which the dungeon counts, otherwise null. Blizzard mirrors the statistic of
+   * counterparts onto the other faction, so kills by characters of the other faction do not count.
    */
   faction: string | null;
-  /** Erfolgskriterien (Bezeichnung), die dieser Eintrag ersetzt; erledigt zählt dann für Charaktere der Fraktion. */
+  /** Achievement criteria (by name) this entry replaces; completion then counts for characters of the faction. */
   replaces: string[];
 }
 
 /**
- * Liest einen Eintrag aus `config/zusatz-dungeons.json`; unvollständige Einträge werden zu null. Fehlen Stufe und
- * Bosse, gelten die aus `config/dungeons.json` (`known`).
+ * Reads an entry from `config/zusatz-dungeons.json`; incomplete entries become null. If level range and bosses are
+ * missing, those from `config/dungeons.json` (`known`) apply.
  */
 export function toExtraDungeon(raw: Record<string, unknown>, known: Record<string, DungeonInfo> = {}): ExtraDungeon | null {
-  const quelle = (raw.quelle ?? {}) as { instanz?: unknown; endboss?: unknown };
-  const { name, rang, bild, fraktion, ersetzt } = raw;
-  if (typeof name !== "string" || typeof rang !== "string") return null;
-  if (typeof quelle.instanz !== "string" || typeof quelle.endboss !== "string") return null;
+  const source = (raw.quelle ?? {}) as { instanz?: unknown; endboss?: unknown };
+  const { name, rang: tier, bild: image, fraktion: faction, ersetzt: replaces } = raw;
+  if (typeof name !== "string" || typeof tier !== "string") return null;
+  if (typeof source.instanz !== "string" || typeof source.endboss !== "string") return null;
   const own = toDungeonInfo(raw);
   const fallback = known[name];
   return {
     name,
-    tier: rang,
+    tier,
     info: {
       stufe: own.stufe ?? fallback?.stufe ?? null,
       bosse: own.bosse.length > 0 ? own.bosse : (fallback?.bosse ?? []),
       statistik: own.statistik.length > 0 ? own.statistik : (fallback?.statistik ?? []),
-      // Zusatz-Dungeons haben mit `quelle` immer einen Eintrag in der Statistik.
+      // Extra dungeons always have an entry in the statistic via `quelle`.
       ohneStatistik: false,
     },
-    source: { instance: quelle.instanz, finalBoss: quelle.endboss },
-    image: typeof bild === "number" || typeof bild === "string" ? bild : null,
-    faction: typeof fraktion === "string" ? fraktion : null,
-    replaces: Array.isArray(ersetzt) ? ersetzt.filter((e): e is string => typeof e === "string") : [],
+    source: { instance: source.instanz, finalBoss: source.endboss },
+    image: typeof image === "number" || typeof image === "string" ? image : null,
+    faction: typeof faction === "string" ? faction : null,
+    replaces: Array.isArray(replaces) ? replaces.filter((e): e is string => typeof e === "string") : [],
   };
 }
 
-export const EXTRA_DUNGEONS: ExtraDungeon[] = (zusatz.dungeons as Record<string, unknown>[])
+export const EXTRA_DUNGEONS: ExtraDungeon[] = (extraDungeons.dungeons as Record<string, unknown>[])
   .map((raw) => toExtraDungeon(raw, DUNGEON_INFO))
   .filter((d): d is ExtraDungeon => d !== null);
 
 /**
- * Deutscher Instanzname zu Retail-`journal-instance`-ID (Kachelbild über die API) oder direkt zu einer
- * Bild-Adresse, gepflegt in `config/instanz-bilder.json`, dazu die Bilder der Zusatz-Dungeons.
+ * German instance name to retail `journal-instance` ID (tile image via the API) or directly to an image URL,
+ * maintained in `config/instanz-bilder.json`, plus the images of the extra dungeons.
  */
 export const INSTANCE_IMAGES: Record<string, number | string> = {
   ...data.instanzen,
   ...Object.fromEntries(EXTRA_DUNGEONS.flatMap((d) => (d.image === null ? [] : [[d.name, d.image]]))),
 };
 
-/** Nur die IDs, deren Bild der statische Lauf über die API holt. */
+/** Only the IDs whose image the static run fetches via the API. */
 export const INSTANCE_IMAGE_IDS: number[] = [
   ...new Set(Object.values(INSTANCE_IMAGES).filter((v): v is number => typeof v === "number")),
 ];
 
 /**
- * Vergleichsform für Instanz- und Bossnamen: klein, ohne führenden Artikel. Die Statistik beugt Namen ("Siege über
- * Mutanus den Verschlinger"), deshalb gilt "den" wie "der".
+ * Comparison form for instance and boss names: lowercase, without a leading German article. The statistic inflects
+ * names ("Siege über Mutanus den Verschlinger"), so "den" is treated like "der".
  */
 export function normName(name: string): string {
   return name.trim().toLowerCase().replace(/^(die|der|das|den) /, "").replace(/ den /g, " der ");

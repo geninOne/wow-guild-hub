@@ -5,7 +5,7 @@ import { createMemoryStore } from "../../src/store";
 
 const rec = (lastLoginAt: string | null): CharacterRecord => ({ id: 7, lastLoginAt }) as CharacterRecord;
 
-test("detectLogin: nur ein neuerer Zeitpunkt gegenüber einem Vorwert zählt", () => {
+test("detectLogin: only a newer time compared to a previous value counts", () => {
   expect(detectLogin(null, rec("2026-11-16T19:00:00.000Z"))).toBeNull();
   expect(detectLogin(rec(null), rec("2026-11-16T19:00:00.000Z"))).toBeNull();
   expect(detectLogin(rec("2026-11-16T19:00:00.000Z"), rec("2026-11-16T19:00:00.000Z"))).toBeNull();
@@ -17,7 +17,7 @@ test("detectLogin: nur ein neuerer Zeitpunkt gegenüber einem Vorwert zählt", (
   expect(detectLogin(rec("2026-10-20T19:00:00.000Z"), rec("2026-11-16T21:10:00.000Z"))?.awayDays).toBe(27);
 });
 
-test("addHours hält die Stunden sortiert und ohne Doppelte", () => {
+test("addHours keeps the hours sorted and without duplicates", () => {
   const week: ActivityWeek = { week: "2026-W47", characters: { "7": [20] } };
   const res = addHours(week, [{ characterId: 7, hour: 3 }, { characterId: 7, hour: 20 }, { characterId: 8, hour: 5 }]);
   expect(res.added).toBe(2);
@@ -25,11 +25,11 @@ test("addHours hält die Stunden sortiert und ohne Doppelte", () => {
   expect(week.characters).toEqual({ "7": [20] });
 });
 
-test("recordActivity schreibt je Woche des Logins, nicht des Laufs", async () => {
+test("recordActivity writes per week of the login, not of the run", async () => {
   const store = createMemoryStore();
   const added = await recordActivity(store, [
-    { characterId: 1, at: "2026-11-15T22:50:00.000Z", awayDays: 0 }, // Sonntag 23:50 Berlin
-    { characterId: 1, at: "2026-11-16T19:10:00.000Z", awayDays: 0 }, // Montag 20:10 Berlin
+    { characterId: 1, at: "2026-11-15T22:50:00.000Z", awayDays: 0 }, // Sunday 23:50 Berlin
+    { characterId: 1, at: "2026-11-16T19:10:00.000Z", awayDays: 0 }, // Monday 20:10 Berlin
     { characterId: 2, at: "2026-11-16T19:40:00.000Z", awayDays: 0 },
   ]);
   expect(added).toBe(3);
@@ -37,7 +37,7 @@ test("recordActivity schreibt je Woche des Logins, nicht des Laufs", async () =>
   expect(await store.get("activity/2026-W47")).toEqual({ week: "2026-W47", characters: { "1": [20], "2": [20] } });
 });
 
-test("recordActivity schreibt nicht, wenn nichts Neues dabei ist", async () => {
+test("recordActivity does not write when there is nothing new", async () => {
   const store = createMemoryStore();
   await store.set("activity/2026-W47", { week: "2026-W47", characters: { "1": [20] }, testdaten: true });
   let writes = 0;
@@ -50,7 +50,7 @@ test("recordActivity schreibt nicht, wenn nichts Neues dabei ist", async () => {
   });
 });
 
-test("recordActivity hält Rückkehrer ab 7 Tagen Pause fest, je Charakter die längste Pause", async () => {
+test("recordActivity records returners after a break of 7 days or more, per character the longest break", async () => {
   const store = createMemoryStore();
   await recordActivity(store, [
     { characterId: 1, at: "2026-11-16T19:10:00.000Z", awayDays: 20 },

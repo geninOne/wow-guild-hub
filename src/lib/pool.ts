@@ -5,8 +5,8 @@ export interface PoolResult<T> {
 }
 
 /**
- * Arbeitet die Liste mit begrenzter Gleichzeitigkeit ab. Nach der Deadline wird
- * nichts Neues mehr begonnen; laufende Arbeiten werden noch beendet.
+ * Processes the list with limited concurrency. After the deadline nothing new
+ * is started; work already running is still finished.
  */
 export async function runPool<T>(
   items: T[],

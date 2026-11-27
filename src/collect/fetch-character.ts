@@ -13,11 +13,11 @@ const PARTS = {
   reputations: "/reputations",
 } as const;
 
-/** 200 liefert die Daten, 404 null, alles andere ist ein Fehler. */
+/** 200 returns the data, 404 null, anything else is an error. */
 function dataOrNull(path: string, res: ApiResult): unknown {
   if (res.status === 200) return res.data;
   if (res.status === 404) return null;
-  throw new BlizzardError(`HTTP ${res.status} bei ${path}`);
+  throw new BlizzardError(`HTTP ${res.status} at ${path}`);
 }
 
 export async function fetchCharacter(

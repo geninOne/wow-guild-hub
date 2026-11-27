@@ -5,7 +5,7 @@ import { buildStatCardMembers, buildStatCards, resolveStatsPeriod, STAT_LEADERS,
 import type { StatCardMembersView, StatsView } from "../../src/api/types";
 import type { GuildRecord, MemberSummary } from "../../src/model";
 import { statDefinition } from "../../src/stats/definitions";
-import type { StatsStand } from "../../src/stats/stand";
+import type { StatsSnapshot } from "../../src/stats/snapshot";
 import { createMemoryStore } from "../../src/store";
 import { fassungIn, SPRACHEN, ueberall } from "../../src/sprache";
 
@@ -58,7 +58,7 @@ const guild: GuildRecord = {
   ],
 };
 
-const stand = (week: string, characters: StatsStand["characters"], extra: Partial<StatsStand> = {}): StatsStand => ({
+const stand = (week: string, characters: StatsSnapshot["characters"], extra: Partial<StatsSnapshot> = {}): StatsSnapshot => ({
   week, takenAt: `${week}T20:00:00.000Z`, characters, ...extra,
 });
 

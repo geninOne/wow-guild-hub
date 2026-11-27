@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any -- Rohantworten der API sind untypisiert */
+/* eslint-disable @typescript-eslint/no-explicit-any -- raw API responses are untyped */
 import type { CraftedItem, RecipeDetail } from "../model";
 import { mapItemTooltip } from "./character";
 
@@ -15,7 +15,7 @@ function craftedItem(recipe: any, item: any | null): CraftedItem | null {
   };
 }
 
-/** Kompakte Rezeptdetails aus `/data/wow/recipe/{id}`, Rezept-Icon und `/data/wow/item/{id}` des Ergebnisses. */
+/** Compact recipe details from `/data/wow/recipe/{id}`, the recipe icon and `/data/wow/item/{id}` of the result. */
 export function toRecipeDetail(recipe: any, icon: string | null, item: any | null): RecipeDetail {
   return {
     id: recipe?.id ?? 0,

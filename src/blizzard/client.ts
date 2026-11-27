@@ -1,9 +1,9 @@
-/** `static-retail` ist der statische Namespace des normalen WoW, nur für Instanzbilder (Forever hat keine). */
+/** `static-retail` is the static namespace of regular WoW, only for instance images (Forever has none). */
 export type Namespace = "profile" | "dynamic" | "static" | "static-retail";
 
 export interface ApiResult {
   status: number;
-  // Rohantworten der API sind bewusst untypisiert; die Aufbereitung prüft die Felder.
+  // Raw API responses are untyped on purpose; the transformation checks the fields.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
 }
@@ -12,7 +12,7 @@ export interface BlizzardClient {
   get(pathOrHref: string, ns: Namespace): Promise<ApiResult>;
 }
 
-/** Fehler ohne Geheimnisse: Text enthält nie Secret, Token oder Header, und es wird keine Ursache angehängt. */
+/** Error without secrets: the text never contains secret, token or headers, and no cause is attached. */
 export class BlizzardError extends Error {
   constructor(message: string) {
     super(message);
@@ -22,9 +22,9 @@ export class BlizzardError extends Error {
 
 const TOKEN_URL = "https://oauth.battle.net/token";
 const TOKEN_MARGIN_MS = 60_000;
-/** Netlify bricht geplante Functions nach 30 s ab; keine einzelne Anfrage darf das Budget sprengen. */
+/** Netlify aborts scheduled functions after 30 s; no single request may blow the budget. */
 const DEFAULT_REQUEST_TIMEOUT_MS = 8_000;
-/** Blizzard erlaubt 100 Anfragen pro Sekunde; mit Abstand darunter bleiben. */
+/** Blizzard allows 100 requests per second; stay well below that. */
 const DEFAULT_MAX_REQUESTS_PER_SECOND = 80;
 
 export function createBlizzardClient(opts: {
@@ -32,7 +32,7 @@ export function createBlizzardClient(opts: {
   clientSecret: string;
   region: string;
   locale: string;
-  /** Spielversion im Namespace, z. B. `forever` für `profile-forever-eu`. */
+  /** Game version in the namespace, e.g. `forever` for `profile-forever-eu`. */
   gameVersion?: string;
   fetch?: typeof fetch;
   now?: () => number;
@@ -47,7 +47,7 @@ export function createBlizzardClient(opts: {
   const spacingMs = 1000 / (opts.maxRequestsPerSecond ?? DEFAULT_MAX_REQUESTS_PER_SECOND);
   let nextSlot = 0;
 
-  /** Verteilt API-Anfragen gleichmäßig: jede startet frühestens spacingMs nach der vorigen. */
+  /** Spreads API requests evenly: each starts no earlier than spacingMs after the previous one. */
   async function waitForSlot(): Promise<void> {
     const t = Date.now();
     const start = Math.max(t, nextSlot);
@@ -66,16 +66,16 @@ export function createBlizzardClient(opts: {
         signal: AbortSignal.timeout(timeoutMs),
       });
     } catch {
-      throw new BlizzardError("Token-Abruf fehlgeschlagen: Netzwerkfehler");
+      throw new BlizzardError("Token request failed: network error");
     }
-    if (res.status !== 200) throw new BlizzardError(`Token-Abruf fehlgeschlagen: HTTP ${res.status}`);
+    if (res.status !== 200) throw new BlizzardError(`Token request failed: HTTP ${res.status}`);
     const body = (await res.json().catch(() => null)) as { access_token?: string; expires_in?: number } | null;
-    if (!body?.access_token) throw new BlizzardError("Token-Abruf fehlgeschlagen: keine Antwort mit Token");
+    if (!body?.access_token) throw new BlizzardError("Token request failed: no response with token");
     token = { value: body.access_token, expiresAt: now() + (body.expires_in ?? 0) * 1000 - TOKEN_MARGIN_MS };
     return token.value;
   }
 
-  /** Ein laufender Token-Abruf wird von allen wartenden Anfragen geteilt. */
+  /** A token request in progress is shared by all waiting requests. */
   let pendingToken: Promise<string> | null = null;
   function fetchToken(): Promise<string> {
     pendingToken ??= requestToken().finally(() => {
@@ -89,7 +89,7 @@ export function createBlizzardClient(opts: {
     return fetchToken();
   }
 
-  /** Erneuert nach 401; hat eine andere Anfrage das Token schon ersetzt, wird dieses genutzt. */
+  /** Renews after 401; if another request has already replaced the token, that one is used. */
   async function renewToken(rejected: string): Promise<string> {
     if (token && token.value !== rejected && now() < token.expiresAt) return token.value;
     return fetchToken();
@@ -107,7 +107,7 @@ export function createBlizzardClient(opts: {
     try {
       return await doFetch(url, { headers: { Authorization: `Bearer ${bearer}` }, signal: AbortSignal.timeout(timeoutMs) });
     } catch {
-      throw new BlizzardError(`Anfrage fehlgeschlagen: ${path}`);
+      throw new BlizzardError(`Request failed: ${path}`);
     }
   }
 

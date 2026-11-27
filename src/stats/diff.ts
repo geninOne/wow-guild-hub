@@ -1,16 +1,16 @@
 import { monthOf } from "../lib/time";
-import type { StatsStand, StatValues } from "./stand";
+import type { StatsSnapshot, StatValues } from "./snapshot";
 
-/** Zeitraum für eine Differenz: eine Wertungswoche (ihr Samstag), ein Kalendermonat oder alles seit dem Serverstart. */
+/** Period for a difference: a scoring week (its Saturday), a calendar month or everything since the server start. */
 export type StatsPeriod = { kind: "week"; week: string } | { kind: "month"; month: string } | { kind: "total" };
 
 /**
- * Welche Wochenstände (Samstage) für einen Zeitraum verglichen werden; `before: null` heißt Serverstart, also alles 0.
- * Woche: ihr Stand gegen den letzten davor. Monat: letzter Stand mit Samstag im Monat gegen den letzten davor
- * (eine Woche zählt zu dem Monat, in dem ihr Samstag liegt). Gesamt: neuester Stand gegen den Serverstart.
- * Stände vor dem Serverstart taugen nie als Vergleich. `after: null`, wenn es den Stand (noch) nicht gibt.
+ * Which weekly snapshots (Saturdays) are compared for a period; `before: null` means server start, i.e. all 0.
+ * Week: its snapshot against the last one before. Month: last snapshot with a Saturday in the month against the last
+ * one before (a week counts toward the month its Saturday falls in). Total: newest snapshot against the server start.
+ * Snapshots before the server start never serve as a comparison. `after: null` if the snapshot does not exist (yet).
  */
-export function pickStands(
+export function pickSnapshots(
   available: string[],
   period: StatsPeriod,
   serverStart: string | null,
@@ -28,13 +28,13 @@ export function pickStands(
 }
 
 /**
- * Zuwachs je Charakter und Statistik zwischen zwei Ständen; fehlende Werte gelten als 0, Nullen fallen weg.
- * `before: null` ist der Serverstart. Charaktere, die im früheren Stand ganz fehlen, zählen standardmäßig ab 0
- * (`newCharacters: "zero"`); mit `"skip"` bleiben sie außen vor, etwa für Neuzugänge mitten im Spiel.
+ * Increase per character and statistic between two snapshots; missing values count as 0, zeros are dropped.
+ * `before: null` is the server start. Characters missing entirely from the earlier snapshot count from 0 by default
+ * (`newCharacters: "zero"`); with `"skip"` they are left out, e.g. for newcomers in the middle of the game.
  */
 export function statDiff(
-  before: StatsStand | null,
-  after: StatsStand,
+  before: StatsSnapshot | null,
+  after: StatsSnapshot,
   opts: { newCharacters?: "zero" | "skip" } = {},
 ): Record<string, StatValues> {
   const result: Record<string, StatValues> = {};
@@ -51,7 +51,7 @@ export function statDiff(
   return result;
 }
 
-/** Summe je Statistik über alle Charaktere einer Differenz. */
+/** Sum per statistic over all characters of a difference. */
 export function sumDiff(diff: Record<string, StatValues>): StatValues {
   const sum: StatValues = {};
   for (const values of Object.values(diff)) {
