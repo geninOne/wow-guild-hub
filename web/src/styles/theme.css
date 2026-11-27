@@ -1868,7 +1868,10 @@ img {
   );
 }
 
-/* Abgeschlossen leuchtet golden; begonnen etwas ruhiger; offen dezent gedämpft, beim Zeigen wieder farbig. */
+/*
+ * Abgeschlossen leuchtet golden; begonnen etwas ruhiger; offen dezent gedämpft, beim Zeigen wieder farbig. "Auf diesem
+ * Account" ist für diesen Charakter nicht abgeschlossen und sieht deshalb aus wie offen.
+ */
 .instance-card-done {
   border-color: var(--gold-2);
   box-shadow: inset 0 0 0 2px var(--frame-gap), inset 0 0 0 3px var(--gold-1), 0 0 24px rgb(242 201 90 / 0.3), var(--shadow);
@@ -1879,18 +1882,23 @@ img {
   filter: saturate(0.75) brightness(0.9);
 }
 
-.instance-card-open {
+.instance-card-open,
+.instance-card-account {
   border-color: #3a3220;
   box-shadow: inset 0 0 0 2px var(--frame-gap), inset 0 0 0 3px #4a3c1d, var(--shadow);
 }
 
 .instance-card-open .instance-card-img,
-.instance-card-open .instance-card-art {
+.instance-card-open .instance-card-art,
+.instance-card-account .instance-card-img,
+.instance-card-account .instance-card-art {
   filter: grayscale(0.5) brightness(0.86);
 }
 
 .instance-card-open:hover .instance-card-img,
-.instance-card-open:hover .instance-card-art {
+.instance-card-open:hover .instance-card-art,
+.instance-card-account:hover .instance-card-img,
+.instance-card-account:hover .instance-card-art {
   filter: grayscale(0.15) brightness(0.92);
 }
 
@@ -1918,7 +1926,8 @@ img {
   overflow-wrap: break-word;
 }
 
-.instance-card-open .instance-card-name {
+.instance-card-open .instance-card-name,
+.instance-card-account .instance-card-name {
   color: var(--text);
 }
 
@@ -1984,7 +1993,7 @@ img {
   font-size: 0.78rem;
 }
 
-/* "Noch nicht besucht" und "x von y Bossen": klein und ruhig am selben Platz wie der Wimpel */
+/* "Noch nicht besucht", "Auf diesem Account" und "x von y Bossen": klein und ruhig am selben Platz wie der Wimpel */
 .instance-card-note {
   position: absolute;
   top: 0.85rem;
@@ -2003,6 +2012,13 @@ img {
 .instance-card-note-started {
   color: var(--text);
   border-right-color: var(--gold-2);
+}
+
+.instance-card-note-account {
+  color: var(--text);
+  border-right-style: dashed;
+  border-right-color: var(--gold-1);
+  cursor: help;
 }
 
 .instance-bosses {
@@ -4966,6 +4982,11 @@ img {
 
 .dungeon-stop-count {
   color: var(--gold-hi);
+}
+
+.dungeon-stop-untracked {
+  font-style: italic;
+  cursor: help;
 }
 
 .dungeon-fog .dungeon-stop-img {

@@ -52,10 +52,13 @@ function record(id: number, instances: InstanceProgress): CharacterRecord {
 }
 
 const records = [
-  // Anna: Flammenschlund dreimal (Kill), Todesminen per Erfolgskriterium
+  // Anna: Flammenschlund dreimal, Todesminen einmal (Kills); das Kriterium Todesminen gilt für ihren ganzen Account
   record(1, {
     achievements: [{ id: 10, completed: false, criteria: [102] }],
-    bossKills: [{ boss: "Bazzalan", instance: "Flammenschlund", quantity: 3, lastAt: "2026-11-10T10:00:00.000Z" }],
+    bossKills: [
+      { boss: "Bazzalan", instance: "Flammenschlund", quantity: 3, lastAt: "2026-11-10T10:00:00.000Z" },
+      { boss: "Edwin van Cleef", instance: "Todesminen", quantity: 1, lastAt: "2026-11-09T10:00:00.000Z" },
+    ],
   }),
   // Bodo (Allianz): Halle der Thanen einmal
   record(2, {
@@ -84,7 +87,7 @@ describe("buildGuildDungeons", () => {
       lastAt: "2026-11-12T10:00:00.000Z",
     });
     expect(flamme.best).toMatchObject({ character: { name: "Anna" }, times: 3 });
-    expect(todesminen).toMatchObject({ name: "Todesminen", completed: 1, timesCompleted: 0, best: null });
+    expect(todesminen).toMatchObject({ name: "Todesminen", completed: 1, timesCompleted: 1, best: { character: { name: "Anna" }, times: 1 } });
     expect(maraudon).toMatchObject({ completed: 0 });
     expect(v.raids).toEqual([{ name: "Onyxia", image: null, levels: expect.anything(), completed: 0, bosses: [{ name: "Onyxia", defeated: 0 }], who: [] }]);
     expect(v.frontier).toMatchObject({ dungeon: "Todesminen", characters: [{ name: "Anna" }] });
@@ -98,7 +101,7 @@ describe("buildGuildDungeons", () => {
     const v = buildGuildDungeons(guild, [records[0], records[1], onyxia], defs, null, null);
     const [flamme, todesminen, maraudon] = v.dungeons;
     expect(flamme.who).toEqual([[1, 3], [2, 1]]);
-    expect(todesminen.who).toEqual([[1, 0]]);
+    expect(todesminen.who).toEqual([[1, 1]]);
     expect(maraudon.who).toEqual([]);
     expect(v.raids[0]).toMatchObject({ name: "Onyxia", who: [[3, 1]] });
     expect(buildGuildDungeons(guild, records, defs, null, "goldene-bärenklaue").dungeons[0].who).toEqual([[2, 1]]);
@@ -113,6 +116,16 @@ describe("buildGuildDungeons", () => {
     expect(allianz.frontier).toMatchObject({ characters: [{ name: "Bodo" }] });
   });
 
+  test("Twink mit denselben accountweiten Erfolgen zählt nicht doppelt", () => {
+    // Cleo ist ein Twink auf Annas Account: Blizzard liefert dieselben Kriterien und Erfolge, aber keine eigenen Siege.
+    const twink = record(3, { achievements: records[0].instances!.achievements, bossKills: [] });
+    const v = buildGuildDungeons(guild, [records[0], twink], defs, null, null);
+    const [flamme, todesminen] = v.dungeons;
+    expect([flamme.completed, flamme.who]).toEqual([1, [[1, 3]]]);
+    expect([todesminen.completed, todesminen.who]).toEqual([1, [[1, 1]]]);
+    expect(v.frontier).toMatchObject({ dungeon: "Todesminen", characters: [{ name: "Anna" }] });
+  });
+
   test("ohne Definitionen nicht verfügbar", () => {
     expect(buildGuildDungeons(guild, records, null, null, null)).toMatchObject({ available: false, dungeons: [], raids: [] });
   });
@@ -120,7 +133,7 @@ describe("buildGuildDungeons", () => {
 
 describe("Zusatz-Dungeons", () => {
   const verlies: ExtraDungeon = {
-    name: "Das Verlies", tier: "Novize", info: { stufe: [24, 32], bosse: ["Bazil Thredd"] },
+    name: "Das Verlies", tier: "Novize", info: { stufe: [24, 32], bosse: ["Bazil Thredd"], statistik: [], ohneStatistik: false },
     source: { instance: "Verlies von Stormwind", finalBoss: "Bazil Thredd" }, image: null, faction: null, replaces: [],
   };
   const thredd = (id: number, quantity: number) =>

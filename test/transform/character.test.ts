@@ -207,6 +207,21 @@ test("Erfolgsfortschritt: nur Erfolge mit erledigten Kriterien, nur deren IDs", 
   expect(mapAchievementProgress(null)).toEqual([]);
 });
 
+test("Erfolg mit accountweitem Zeitstempel, aber offenem eigenem Kriterium zählt nicht (Twink)", () => {
+  // So liefert Blizzard "Erkundet Steinkrallengebirge" für einen Twink, dessen Hauptcharakter das Gebiet erkundet hat.
+  const twink = {
+    achievements: [
+      {
+        id: 847,
+        completed_timestamp: 1794775500000,
+        criteria: { id: 1, is_completed: false, child_criteria: [{ id: 127489, is_completed: false }] },
+      },
+      { id: 62000, completed_timestamp: 1794609000000 },
+    ],
+  };
+  expect(mapAchievementProgress(twink)).toEqual([{ id: 62000, completed: true, criteria: [] }]);
+});
+
 test("Boss-Kills aus der Statistik-Kategorie Dungeons & Schlachtzüge", () => {
   const kills = mapBossKills(f("chordrak-statistics"));
   expect(kills).toContainEqual({

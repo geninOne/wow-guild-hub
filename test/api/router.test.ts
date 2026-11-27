@@ -142,7 +142,10 @@ describe("handleApi", () => {
     expect(vorher.instances.available).toBe(false);
     await store.set("characters/1647409", {
       ...gelmar,
-      instances: { achievements: [{ id: 62031, completed: false, criteria: [11] }], bossKills: [] },
+      instances: {
+        achievements: [{ id: 62031, completed: false, criteria: [11] }],
+        bossKills: [{ boss: "Edwin van Cleef", instance: "Todesminen", quantity: 1, lastAt: "2026-11-20T20:00:00.000Z" }],
+      },
     });
     await store.set("static/instance-achievements", {
       achievements: [
@@ -152,7 +155,7 @@ describe("handleApi", () => {
     });
     const nachher = await body(await handleApi(req("/api/characters/gelmar-soulvenn"), store));
     const dungeons = nachher.instances.dungeonTiers[0].dungeons as { name: string; completed: boolean }[];
-    expect(dungeons.find((d) => d.name === "Todesminen")).toMatchObject({ completed: true });
+    expect(dungeons.find((d) => d.name === "Todesminen")).toMatchObject({ completed: true, onAccount: false });
     // Zusatz-Dungeons aus config/zusatz-dungeons.json stehen mit drin.
     expect(dungeons.map((d) => d.name)).toEqual(expect.arrayContaining(["Flammenschlund", "Halle der Thanen", "Das Verlies"]));
   });

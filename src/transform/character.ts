@@ -136,14 +136,19 @@ export function mapMedia(raw: any | null): Record<string, string> | null {
   return Object.fromEntries(assets.map((a) => [a.key, a.value]));
 }
 
-/** Nur Erfolge mit Fortschritt, nur IDs: Namen kommen deutsch aus den statischen Definitionen. */
+/**
+ * Nur Erfolge mit Fortschritt, nur IDs: Namen kommen deutsch aus den statischen Definitionen. `completed_timestamp`
+ * gilt bei WoW Forever für den ganzen Account (ein Twink "hat" dann etwa "Erkundet Steinkrallengebirge", ohne dort
+ * gewesen zu sein); maßgeblich ist deshalb das Wurzelkriterium des Charakters, nur ohne Kriterien der Zeitstempel.
+ * Bei accountweiten Erfolgen (`is_account_wide`, etwa "Dungeonerforscher") gilt auch das Kriterium für den Account.
+ */
 export function mapAchievementProgress(raw: any | null): AchievementProgress[] {
   const list: any[] = raw?.achievements ?? [];
   return list.flatMap((a) => {
     const criteria: number[] = (a.criteria?.child_criteria ?? [])
       .filter((c: any) => c?.is_completed === true)
       .map((c: any) => c.id);
-    const completed = a.completed_timestamp != null || a.criteria?.is_completed === true;
+    const completed = a.criteria ? a.criteria.is_completed === true : a.completed_timestamp != null;
     if (!completed && criteria.length === 0) return [];
     return [{ id: a.id, completed, criteria }];
   });

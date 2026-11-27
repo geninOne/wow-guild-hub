@@ -53,7 +53,7 @@ export function buildGuildDungeons(
         if (!acc) {
           acc = {
             key, name: firstAlternative(d.description), tier: tier.tier, image: d.image, levels: d.levels, completed: 0,
-            timesCompleted: 0, best: null, lastAt: null, who: [], alternatives: new Map(), order: order++,
+            tracked: d.tracked, timesCompleted: 0, best: null, lastAt: null, who: [], alternatives: new Map(), order: order++,
           };
           dungeons.set(key, acc);
         }

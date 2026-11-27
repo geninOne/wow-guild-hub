@@ -22,6 +22,19 @@ const T = {
   abgeschlossen: { de: "Abgeschlossen", en: "Completed", schwaebisch: "Gschafft", bayrisch: "Gschafft" },
   am: { de: "am", en: "on", schwaebisch: "am", bayrisch: "am" },
   mal: { de: "Mal", en: "times", schwaebisch: "Mol", bayrisch: "Moi" },
+  aufAccount: { de: "Auf diesem Account", en: "On this account", schwaebisch: "Uff dem Account", bayrisch: "Auf dem Account" },
+  aufAccountTitel: {
+    de: "Blizzard meldet diesen Abschluss nur für den ganzen Account. Die Statistik dieses Charakters enthält keinen Sieg über den Endboss.",
+    en: "Blizzard reports this completion for the whole account only. This character's statistics show no kill of the final boss.",
+    schwaebisch: "Blizzard meldet den Abschluss bloß fürs ganze Account. En dr Statistik von dem Charakter stoht koi Sieg übern Endboss.",
+    bayrisch: "Blizzard meldt den Abschluss nur fürs ganze Account. In da Statistik vo dem Charakter steht koa Sieg übern Endboss.",
+  },
+  aufAccountOhneStatistik: {
+    de: "Blizzard meldet diesen Abschluss nur für den ganzen Account und führt den Endboss dieses Dungeons nicht in der Statistik. Ob dieser Charakter ihn geschafft hat, ist deshalb nicht bekannt.",
+    en: "Blizzard reports this completion for the whole account only and does not track this dungeon's final boss in the statistics, so it is unknown whether this character cleared it.",
+    schwaebisch: "Blizzard meldet den Abschluss bloß fürs ganze Account ond führt den Endboss vo dem Dungeon net en dr Statistik. Ob der Charakter den gschafft hot, woiß mr deshalb net.",
+    bayrisch: "Blizzard meldt den Abschluss nur fürs ganze Account und führt an Endboss vo dem Dungeon ned in da Statistik. Ob da Charakter eam gschafft hod, woaß ma deshoib ned.",
+  },
   nichtBesucht: { de: "Noch nicht besucht", en: "Not visited yet", schwaebisch: "No net bsuacht", bayrisch: "No ned bsuacht" },
   bosse: { de: "Bosse", en: "Bosses", schwaebisch: "Bosse", bayrisch: "Bosse" },
   vonBossen: {
@@ -44,10 +57,14 @@ const T = {
 type Dungeon = InstancesView["dungeonTiers"][number]["dungeons"][number];
 type Raid = InstancesView["raids"][number];
 
-/** Zustand einer Karte: abgeschlossen (mit Datum und Anzahl, falls bekannt), begonnen oder offen. */
+/**
+ * Zustand einer Karte: abgeschlossen (mit Datum und Anzahl, falls bekannt), begonnen, nur auf dem Account erledigt
+ * (accountweiter Erfolg ohne eigenen Sieg) oder offen.
+ */
 type CardStatus =
   | { kind: "done"; at: string | null; times: number }
   | { kind: "started"; defeated: number; total: number }
+  | { kind: "account"; tracked: boolean }
   | { kind: "open" };
 
 function killText(k: KillRef, sprache: Sprache): string {
@@ -105,6 +122,13 @@ function StatusMark({ status }: { status: CardStatus }) {
   if (status.kind === "started") {
     return <p className="instance-card-note instance-card-note-started">{t(T.vonBossen)(status.defeated, status.total)}</p>;
   }
+  if (status.kind === "account") {
+    return (
+      <p className="instance-card-note instance-card-note-account" title={t(status.tracked ? T.aufAccountTitel : T.aufAccountOhneStatistik)}>
+        {t(T.aufAccount)}
+      </p>
+    );
+  }
   return <p className="instance-card-note">{t(T.nichtBesucht)}</p>;
 }
 
@@ -143,7 +167,8 @@ function InstanceCard({
 }
 
 function dungeonStatus(d: Dungeon): CardStatus {
-  return d.completed ? { kind: "done", at: d.completedAt, times: d.timesCompleted } : { kind: "open" };
+  if (d.completed) return { kind: "done", at: d.completedAt, times: d.timesCompleted };
+  return d.onAccount ? { kind: "account", tracked: d.tracked } : { kind: "open" };
 }
 
 /** Dungeon-Karte: Bosse nur als Info, der Endboss dezent hervorgehoben. */
@@ -174,7 +199,7 @@ function raidStatus(raid: Raid): CardStatus {
     return { kind: "done", at: dates.at(-1) ?? null, times: 0 };
   }
   if (defeated.length > 0) return { kind: "started", defeated: defeated.length, total: raid.bosses.length };
-  return { kind: "open" };
+  return raid.onAccount ? { kind: "account", tracked: true } : { kind: "open" };
 }
 
 function bossText(b: Raid["bosses"][number]): string {

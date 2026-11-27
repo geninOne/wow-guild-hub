@@ -15,6 +15,13 @@ const T = {
   bis: { de: "bis", en: "to", schwaebisch: "bis", bayrisch: "bis" },
   nachLevel: { de: "Dungeons nach Level", en: "Dungeons by level", schwaebisch: "Dungeons nach Level", bayrisch: "Dungeons nach Level" },
   nochNiemand: { de: "noch niemand", en: "nobody yet", schwaebisch: "no koiner", bayrisch: "no koana" },
+  ohneStatistik: { de: "ohne Statistik", en: "not tracked", schwaebisch: "ohne Statistik", bayrisch: "ohne Statistik" },
+  ohneStatistikTitel: {
+    de: "Blizzard führt den Endboss dieses Dungeons nicht in der Statistik der Charaktere. Wer durch ist, lässt sich deshalb nicht je Charakter sagen.",
+    en: "Blizzard does not track this dungeon's final boss in character statistics, so clears cannot be told per character.",
+    schwaebisch: "Blizzard führt den Endboss vo dem Dungeon net en dr Statistik vo de Charakter. Wer durch isch, woiß mr deshalb net.",
+    bayrisch: "Blizzard führt an Endboss vo dem Dungeon ned in da Statistik vo de Charaktere. Wer durch is, woaß ma deshoib ned.",
+  },
   durch: { de: (n: string) => `${n} durch`, en: (n: string) => `${n} cleared`, schwaebisch: (n: string) => `${n} durch`, bayrisch: (n: string) => `${n} durch` },
   geschafft: { de: (n: number) => `${n} geschafft`, en: (n: number) => `${n} cleared`, schwaebisch: (n: number) => `${n} gschafft`, bayrisch: (n: number) => `${n} gschafft` },
   verschlossen: { de: "verschlossen", en: "locked", schwaebisch: "verschlosse", bayrisch: "zuagsperrt" },
@@ -105,10 +112,10 @@ const T = {
     bayrisch: "De großn Brockn. Mit vierzg Leit und guada Laune.",
   },
   herkunft: {
-    de: 'Aus den Erfolgen und der Boss-Statistik aller aktiven Mitglieder mit Profil. "Durch" heißt: Erfolg erfüllt oder Endboss besiegt. Gegenstücke beider Fraktionen wie Flammenschlund und Halle der Thanen zählen zusammen.',
-    en: 'Based on the achievements and boss statistics of all active members with a profile. "Cleared" means: achievement earned or final boss defeated. Horde and Alliance counterparts of the same dungeon count together.',
-    schwaebisch: 'Aus de Erfolg ond dr Boss-Statistik vo älle aktive Mitglieder mit Profil. "Durch" hoißt: Erfolg erfüllt oder Endboss bsiegt. Gegestück vo beide Fraktiona wie Flammenschlund ond Halle der Thanen zählet zamme.',
-    bayrisch: 'Aus de Erfolge und da Boss-Statistik vo olle aktivn Mitglieder mit Profil. "Durch" hoaßt: Erfolg erfüllt oder Endboss bsiegt. Gegnstückl vo boade Fraktionen wia Flammenschlund und Halle der Thanen zähln zamm.',
+    de: 'Aus der Boss-Statistik aller aktiven Mitglieder mit Profil. "Durch" heißt: Der Charakter hat den Endboss selbst besiegt. Blizzards Dungeon-Erfolge gelten für den ganzen Account und zählen deshalb nicht, sonst würde jeder Twink mitzählen. Gegenstücke beider Fraktionen wie Flammenschlund und Halle der Thanen zählen zusammen.',
+    en: 'Based on the boss statistics of all active members with a profile. "Cleared" means: the character defeated the final boss themselves. Blizzard\'s dungeon achievements are account-wide and do not count, otherwise every alt would count too. Horde and Alliance counterparts of the same dungeon count together.',
+    schwaebisch: 'Aus dr Boss-Statistik vo älle aktive Mitglieder mit Profil. "Durch" hoißt: Dr Charakter hot den Endboss selber bsiegt. Blizzards Dungeon-Erfolg gelten fürs ganze Account ond zählet deshalb net, sonscht dät jeder Twink mitzähle. Gegestück vo beide Fraktiona wie Flammenschlund ond Halle der Thanen zählet zamme.',
+    bayrisch: 'Aus da Boss-Statistik vo olle aktivn Mitglieder mit Profil. "Durch" hoaßt: Da Charakter hod an Endboss söiba bsiegt. Blizzards Dungeon-Erfolge geltn fürs ganze Account und zähln deshoib ned, sonst dad jeda Twink mitzähln. Gegnstückl vo boade Fraktionen wia Flammenschlund und Halle der Thanen zähln zamm.',
   },
 } satisfies Record<string, Fassungen<unknown>>;
 const L = {
@@ -151,7 +158,7 @@ function AdventureMap({ view, onOpen }: { view: GuildDungeonsView; onOpen(reques
         return (
           <li
             key={d.key}
-            className={`dungeon-stop${d.completed === 0 ? " dungeon-fog" : ""}`}
+            className={`dungeon-stop${d.completed === 0 && d.tracked ? " dungeon-fog" : ""}${d.tracked ? "" : " dungeon-untracked"}`}
             style={{ ...idx(i), "--glow": glow.toFixed(2) } as CSSProperties}
           >
             {d.completed > 0 && (d.who ?? []).length > 0 ? (
@@ -182,9 +189,15 @@ function AdventureMap({ view, onOpen }: { view: GuildDungeonsView; onOpen(reques
                 <Medallion name={d.name} image={d.image} className="dungeon-stop-img" />
                 <span className="dungeon-stop-name">{d.name}</span>
                 {levelText(d, sprache) && <span className="dungeon-stop-level muted small">{levelText(d, sprache)}</span>}
-                <span className="dungeon-stop-count small">
-                  {d.completed === 0 ? t(T.nochNiemand) : t(T.durch)(fmt(d.completed))}
-                </span>
+                {d.tracked ? (
+                  <span className="dungeon-stop-count small">
+                    {d.completed === 0 ? t(T.nochNiemand) : t(T.durch)(fmt(d.completed))}
+                  </span>
+                ) : (
+                  <span className="dungeon-stop-count dungeon-stop-untracked small" title={t(T.ohneStatistikTitel)}>
+                    {t(T.ohneStatistik)}
+                  </span>
+                )}
               </>
             )}
           </li>
@@ -222,8 +235,10 @@ function Highlight({ kicker, dungeon, children }: { kicker: string; dungeon: Gui
 /** Lieblingsdungeon, nächstes Gildenziel und Dauergast. */
 function Highlights({ view }: { view: GuildDungeonsView }) {
   const { t, sprache } = useSprache();
-  const favourite = [...view.dungeons].sort((a, b) => b.completed - a.completed)[0] ?? null;
-  const next = view.dungeons.find((d) => d.completed === 0) ?? null;
+  // Dungeons ohne Statistik sagen über die Gilde nichts aus: weder Liebling noch nächstes Ziel.
+  const tracked = view.dungeons.filter((d) => d.tracked);
+  const favourite = [...tracked].sort((a, b) => b.completed - a.completed)[0] ?? null;
+  const next = tracked.find((d) => d.completed === 0) ?? null;
   const regular = [...view.dungeons].filter((d) => d.best).sort((a, b) => b.best!.times - a.best!.times)[0] ?? null;
   return (
     <ul className="dungeon-highlights">

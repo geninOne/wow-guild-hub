@@ -233,8 +233,8 @@ test("Dungeons und Raids: Abenteuerkarte, Highlights, Raids und Gildenfilter", a
   const dungeons: GuildDungeonsView = {
     available: true, guilds: guild.guilds, guild: null, characters: 3,
     dungeons: [
-      { key: "flammenschlund", name: "Flammenschlund", tier: "Novize", image: "https://render.worldofwarcraft.com/eu/zones/ragefire-chasm-small.jpg", levels: { min: 13, max: 18 }, completed: 2, timesCompleted: 4, best: { character: ref(1, "Anna", 5), times: 3 }, lastAt: "2026-11-12T10:00:00.000Z", who: [[1, 3], [2, 1]] },
-      { key: "maraudon", name: "Maraudon", tier: "Meister", image: null, levels: { min: 46, max: 55 }, completed: 0, timesCompleted: 0, best: null, lastAt: null, who: [] },
+      { key: "flammenschlund", name: "Flammenschlund", tier: "Novize", image: "https://render.worldofwarcraft.com/eu/zones/ragefire-chasm-small.jpg", levels: { min: 13, max: 18 }, completed: 2, tracked: true, timesCompleted: 4, best: { character: ref(1, "Anna", 5), times: 3 }, lastAt: "2026-11-12T10:00:00.000Z", who: [[1, 3], [2, 1]] },
+      { key: "maraudon", name: "Maraudon", tier: "Meister", image: null, levels: { min: 46, max: 55 }, completed: 0, tracked: true, timesCompleted: 0, best: null, lastAt: null, who: [] },
     ],
     raids: [{ name: "Onyxia", image: null, levels: { min: 60, max: 60 }, completed: 0, bosses: [{ name: "Onyxia", defeated: 0 }], who: [] }],
     frontier: { dungeon: "Flammenschlund", characters: [ref(1, "Anna", 5)] },
@@ -258,6 +258,29 @@ test("Dungeons und Raids: Abenteuerkarte, Highlights, Raids und Gildenfilter", a
   expect(await screen.findByTestId("ort")).toBeTruthy();
   expect(screen.getByTestId("ort").textContent).toBe(`/statistik/dungeons?gilde=${encodeURIComponent("goldene-bärenklaue")}`);
   expect(fetch).toHaveBeenCalledWith(`/api/dungeons?gilde=${encodeURIComponent("goldene-bärenklaue")}`, expect.anything());
+});
+
+test("Dungeons ohne Statistik: kein Nebel, kein \"noch niemand\", kein Gildenziel", async () => {
+  const dungeons: GuildDungeonsView = {
+    available: true, guilds: guild.guilds, guild: null, characters: 3,
+    dungeons: [
+      { key: "todesminen", name: "Todesminen", tier: "Novize", image: null, levels: { min: 17, max: 26 }, completed: 1, tracked: true, timesCompleted: 1, best: { character: ref(1, "Anna", 5), times: 1 }, lastAt: null, who: [[1, 1]] },
+      { key: "ausgrabungsstätte: sumpfland", name: "Ausgrabungsstätte: Sumpfland", tier: "Novize", image: null, levels: { min: 24, max: 29 }, completed: 0, tracked: false, timesCompleted: 0, best: null, lastAt: null, who: [] },
+      { key: "maraudon", name: "Maraudon", tier: "Meister", image: null, levels: { min: 46, max: 55 }, completed: 0, tracked: true, timesCompleted: 0, best: null, lastAt: null, who: [] },
+    ],
+    raids: [],
+    frontier: { dungeon: "Todesminen", characters: [ref(1, "Anna", 5)] },
+  };
+  mockFetch({ "/api/dungeons": dungeons });
+  renderAt("/statistik/dungeons");
+  await screen.findByRole("heading", { name: "Abenteuerkarte" });
+  const stops = within(screen.getByRole("list", { name: "Dungeons nach Level" })).getAllByRole("listitem");
+  expect(stops[1].className).not.toContain("dungeon-fog");
+  expect(stops[1].className).toContain("dungeon-untracked");
+  expect(stops[1].textContent).toContain("ohne Statistik");
+  expect(stops[1].textContent).not.toContain("noch niemand");
+  expect(stops[1].querySelector(".dungeon-stop-untracked")?.getAttribute("title")).toContain("nicht je Charakter");
+  expect(screen.getByText("Nächstes Gildenziel").closest("li")!.textContent).toContain("Maraudon");
 });
 
 test("Allgemein: Mitglieder und Level 60 öffnen die Liste, Umschalter der Seite gilt, Escape schließt", async () => {
@@ -315,8 +338,8 @@ test("Aktivität und Dungeons: Charaktere, Dungeon-Station und Raid öffnen die 
   const dungeons: GuildDungeonsView = {
     available: true, guilds: guild.guilds, guild: null, characters: 3,
     dungeons: [
-      { key: "flammenschlund", name: "Flammenschlund", tier: "Novize", image: null, levels: { min: 13, max: 18 }, completed: 2, timesCompleted: 4, best: null, lastAt: null, who: [[1, 3], [2, 1]] },
-      { key: "maraudon", name: "Maraudon", tier: "Meister", image: null, levels: { min: 46, max: 55 }, completed: 0, timesCompleted: 0, best: null, lastAt: null, who: [] },
+      { key: "flammenschlund", name: "Flammenschlund", tier: "Novize", image: null, levels: { min: 13, max: 18 }, completed: 2, tracked: true, timesCompleted: 4, best: null, lastAt: null, who: [[1, 3], [2, 1]] },
+      { key: "maraudon", name: "Maraudon", tier: "Meister", image: null, levels: { min: 46, max: 55 }, completed: 0, tracked: true, timesCompleted: 0, best: null, lastAt: null, who: [] },
     ],
     raids: [{ name: "Onyxia", image: null, levels: { min: 60, max: 60 }, completed: 0, bosses: [{ name: "Onyxia", defeated: 1 }], who: [[1, 1]] }],
     frontier: null,
@@ -478,8 +501,8 @@ test("Dungeons und Raids auf Schwäbisch und Bayrisch, Dungeon- und Bossnamen bl
   const dungeons: GuildDungeonsView = {
     available: true, guilds: guild.guilds, guild: null, characters: 3,
     dungeons: [
-      { key: "flammenschlund", name: "Flammenschlund", tier: "Novize", image: null, levels: { min: 13, max: 18 }, completed: 2, timesCompleted: 4, best: { character: ref(1, "Anna", 5), times: 3 }, lastAt: "2026-11-12T10:00:00.000Z", who: [[1, 3], [2, 1]] },
-      { key: "maraudon", name: "Maraudon", tier: "Meister", image: null, levels: { min: 46, max: 55 }, completed: 0, timesCompleted: 0, best: null, lastAt: null, who: [] },
+      { key: "flammenschlund", name: "Flammenschlund", tier: "Novize", image: null, levels: { min: 13, max: 18 }, completed: 2, tracked: true, timesCompleted: 4, best: { character: ref(1, "Anna", 5), times: 3 }, lastAt: "2026-11-12T10:00:00.000Z", who: [[1, 3], [2, 1]] },
+      { key: "maraudon", name: "Maraudon", tier: "Meister", image: null, levels: { min: 46, max: 55 }, completed: 0, tracked: true, timesCompleted: 0, best: null, lastAt: null, who: [] },
     ],
     raids: [{ name: "Onyxia", image: null, levels: { min: 60, max: 60 }, completed: 0, bosses: [{ name: "Onyxia", defeated: 0 }], who: [] }],
     frontier: { dungeon: "Flammenschlund", characters: [ref(1, "Anna", 5)] },
